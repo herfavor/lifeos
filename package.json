@@ -107,7 +107,7 @@
     "roughjs": "^4.6.6",
     "use-debounce": "^10.0.6",
     "use-image": "^1.1.4",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "write-excel-file": "^2.3.10",
     "zod": "^4.2.1",
     "zustand": "^5.0.8"
@@ -146,5 +146,11 @@
     "vite": "^7.3.0",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.16"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.5",
+    "mermaid": {
+      "uuid": "^14.0.0"
+    }
   }
 }

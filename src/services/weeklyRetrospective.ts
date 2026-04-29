@@ -142,7 +142,7 @@ function getTaskMetrics(weekStart: Date, weekEnd: Date): TaskMetrics {
 // ─── Time Metrics ───────────────────────────────────────────
 
 async function getTimeMetrics(weekStart: Date, weekEnd: Date): Promise<TimeMetrics> {
-  const store = useTimeTrackingStore_getState();
+  const store = getTimeTrackingStoreState();
   let entries: TimeEntry[];
 
   try {
@@ -196,7 +196,7 @@ async function getTimeMetrics(weekStart: Date, weekEnd: Date): Promise<TimeMetri
 }
 
 /** Helper to access time tracking store state without importing the store at module level */
-function useTimeTrackingStore_getState() {
+function getTimeTrackingStoreState() {
   // Dynamic require to avoid circular imports
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { useTimeTrackingStore } = require('../stores/useTimeTrackingStore') as {

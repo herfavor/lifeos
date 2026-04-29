@@ -59,7 +59,8 @@ const localStorageMock = {
   removeItem: vi.fn(),
   clear: vi.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'localStorage', { value: localStorageMock, configurable: true });
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, configurable: true });
 
 // Mock crypto.randomUUID
 let uuidCounter = 0;

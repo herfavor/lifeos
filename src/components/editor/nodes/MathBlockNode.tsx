@@ -97,7 +97,6 @@ function KaTeXRenderer({ source }: { source: string }) {
     );
   }
 
-  // eslint-disable-next-line react/no-danger -- katex.renderToString output is sanitized math markup
   return (
     <div
       className="katex-display-wrapper overflow-x-auto"

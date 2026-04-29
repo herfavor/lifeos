@@ -37,7 +37,8 @@ NeumanOS is a local-first application with a zero-data-host architecture:
 
 - `unsafe-eval` is required in CSP for WebContainers (Phantom Shell feature)
 - AI provider API keys transit the browser network when making API calls (inherent to BYOK browser apps)
-- Some npm dependencies have reported vulnerabilities in transitive packages (eslint toolchain, archiver in write-excel-file) that do not affect end users — these are dev-time or client-side-only with no exploitable attack vector
+- Dependency audit status after the April 29, 2026 maintenance pass: `npm audit --audit-level=low` reports 0 vulnerabilities.
+- Third-party dependency reports remain out of scope when there is no exploitable path in NeumanOS or the issue is browser/runtime-level rather than application-level.
 
 ## Scope
 

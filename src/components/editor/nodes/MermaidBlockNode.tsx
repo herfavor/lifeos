@@ -111,7 +111,6 @@ function MermaidRenderer({ source }: { source: string }) {
     );
   }
 
-  // eslint-disable-next-line react/no-danger -- mermaid.render with securityLevel:'strict' produces sanitized SVG
   return (
     <div
       className="mermaid-display-wrapper flex justify-center overflow-x-auto"

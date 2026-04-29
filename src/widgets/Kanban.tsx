@@ -122,7 +122,7 @@ export const Kanban: React.FC = () => {
   // Filter tasks based on search, view filters, and manual filters
   const filteredTasks = useMemo(() => {
     // First apply active view filters
-    let result = activeView.filters.length > 0 ? applyFilters(tasks, activeView.filters) : tasks;
+    const result = activeView.filters.length > 0 ? applyFilters(tasks, activeView.filters) : tasks;
 
     // Then apply manual filters
     return result.filter((task) => {

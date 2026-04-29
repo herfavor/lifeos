@@ -50,7 +50,7 @@ function convertNotionMarkdown(content: string): string {
 
   // Convert Notion callouts: > 💡 text → > **Note:** text
   result = result.replace(
-    /^>\s*[🔴🟠🟡🟢🔵🟣⚪⚫💡📌⚠️❗❓✅📝🔗]\s*/gm,
+    /^>\s*(?:🔴|🟠|🟡|🟢|🔵|🟣|⚪|⚫|💡|📌|⚠️|❗|❓|✅|📝|🔗)\s*/gmu,
     '> **Note:** '
   );
 

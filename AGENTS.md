@@ -38,6 +38,14 @@ Only run commands supported by checked-in docs/config. Confidently discovered co
 - `npm run audit`
 - `npm run ci`
 
+Current unit-test baseline after the April 29, 2026 maintenance pass: `npm test -- --run` runs 24 Vitest files / 694 tests.
+
+## Dependency/security maintenance notes
+
+- Use controlled `npm audit fix` / targeted package updates first; avoid `npm audit fix --force` unless the breaking changes are understood and verified.
+- `uuid` is intentionally constrained to `^14.0.0`, and package overrides keep transitive `serialize-javascript` / Mermaid `uuid` on fixed versions. Re-check these before removing overrides.
+- Vitest setup installs an in-memory `localStorage` shim before test modules load. Zustand persisted stores hydrate during import, so do not move that shim later in the setup file.
+
 ## Compatibility and safety constraints
 
 - Local-first privacy is a core constraint: do not add server dependency, account requirement, or cloud sync without explicit approval.

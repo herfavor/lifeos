@@ -2,6 +2,29 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
 
+// In-memory browser storage shim. Vitest 4 can expose a Node-backed
+// localStorage placeholder without the Storage methods unless a file is wired;
+// Zustand persists stores during module import, so install this before tests load.
+const localStorageStore = new Map<string, string>();
+const localStorageShim = {
+  get length() {
+    return localStorageStore.size;
+  },
+  key: vi.fn((index: number) => Array.from(localStorageStore.keys())[index] ?? null),
+  getItem: vi.fn((key: string) => localStorageStore.get(key) ?? null),
+  setItem: vi.fn((key: string, value: string) => {
+    localStorageStore.set(key, String(value));
+  }),
+  removeItem: vi.fn((key: string) => {
+    localStorageStore.delete(key);
+  }),
+  clear: vi.fn(() => {
+    localStorageStore.clear();
+  }),
+};
+Object.defineProperty(window, 'localStorage', { value: localStorageShim, configurable: true });
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageShim, configurable: true });
+
 // In-memory store for IndexedDB mock
 const indexedDBStore = new Map<string, string>();
 
@@ -70,8 +93,11 @@ Object.defineProperty(window, 'matchMedia', {
 // Cleanup after each test
 afterEach(() => {
   cleanup();
-  // Clear localStorage to prevent test interference
-  localStorage.clear();
+  // Clear localStorage to prevent test interference. Some focused tests replace
+  // the jsdom Storage object with a small mock, so guard the cleanup method.
+  if (typeof window.localStorage?.clear === 'function') {
+    window.localStorage.clear();
+  }
   // Clear IndexedDB mock store
   indexedDBStore.clear();
 });
