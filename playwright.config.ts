@@ -46,29 +46,29 @@ export default defineConfig({
   retries: 0,
 
   // Each shard stops after enough evidence to keep the hosted lane bounded.
-  maxFailures: 20,
+  maxFailures: 10,
 
   // Limit parallel workers on CI
   workers: 1,
 
   // Reporter
   reporter: [
-    ['html', { outputFolder: 'tests/reports' }],
     ['list'],
+    ['json', { outputFile: 'tests/results/results.json' }],
   ],
 
   // Shared settings for all projects
   use: {
     baseURL: localPreviewURL,
 
-    // Preserve one diagnostic record without requiring a retry.
-    trace: 'retain-on-failure',
+    // Keep hosted evidence bounded; JSON, screenshots, and text context are retained.
+    trace: 'off',
 
     // Screenshot on failure
     screenshot: 'only-on-failure',
 
     // Video on failure
-    video: 'retain-on-failure',
+    video: 'off',
   },
 
   // Configure projects for major browsers + mobile

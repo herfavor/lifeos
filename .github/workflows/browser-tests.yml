@@ -79,8 +79,9 @@ jobs:
         with:
           name: browser-failure-${{ matrix.lane.name }}-shard-${{ matrix.shard }}-${{ github.sha }}
           path: |
-            tests/reports/
-            tests/results/
+            tests/results/results.json
+            tests/results/**/test-failed-*.png
+            tests/results/**/error-context.md
           if-no-files-found: ignore
           retention-days: 3
 
