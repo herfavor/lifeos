@@ -35,7 +35,7 @@ jobs:
         run: npm run ci
 
   browser:
-    name: Browser tests (${{ matrix.lane }})
+    name: Browser tests (${{ matrix.lane.name }}, shard ${{ matrix.shard }}/4)
     if: github.repository == 'travisjneuman/neumanos'
     needs: quality
     runs-on: ubuntu-24.04
@@ -43,16 +43,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - lane: chromium-and-mobile-chrome
+        lane:
+          - name: chromium-and-mobile-chrome
             browser: chromium
             project_arguments: --project=chromium --project=mobile-chrome
-          - lane: firefox
+          - name: firefox
             browser: firefox
             project_arguments: --project=firefox
-          - lane: webkit-and-mobile-safari
+          - name: webkit-and-mobile-safari
             browser: webkit
             project_arguments: --project=webkit --project=mobile-safari
+        shard: [1, 2, 3, 4]
     steps:
       - name: Check out the dispatched commit
         uses: actions/checkout@v6
@@ -67,16 +68,16 @@ jobs:
         run: npm ci
 
       - name: Install the hosted runner browser
-        run: npx playwright install --with-deps "${{ matrix.browser }}"
+        run: npx playwright install --with-deps "${{ matrix.lane.browser }}"
 
       - name: Run the hosted browser projects
-        run: npm run test:e2e -- ${{ matrix.project_arguments }}
+        run: npm run test:e2e -- ${{ matrix.lane.project_arguments }} --shard=${{ matrix.shard }}/4
 
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: browser-failure-${{ matrix.lane }}-${{ github.sha }}
+          name: browser-failure-${{ matrix.lane.name }}-shard-${{ matrix.shard }}-${{ github.sha }}
           path: |
             tests/reports/
             tests/results/

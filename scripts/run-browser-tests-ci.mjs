@@ -11,6 +11,7 @@ const ALLOWED_PROJECT_SETS = new Set([
   '--project=firefox',
   '--project=webkit --project=mobile-safari',
 ]);
+const ALLOWED_SHARDS = new Set(['--shard=1/4', '--shard=2/4', '--shard=3/4', '--shard=4/4']);
 
 export function getHostedRunnerViolations({ env, platform, cwd }) {
   const violations = [];
@@ -42,6 +43,21 @@ export function getHostedRunnerViolations({ env, platform, cwd }) {
   return violations;
 }
 
+export function getBrowserInvocationViolations(projectArguments) {
+  const violations = [];
+  const shardArgument = projectArguments.at(-1);
+  const projectSet = projectArguments.slice(0, -1).join(' ');
+
+  if (!ALLOWED_PROJECT_SETS.has(projectSet)) {
+    violations.push(`unsupported browser-test project set: ${projectSet || '(none)'}`);
+  }
+  if (!ALLOWED_SHARDS.has(shardArgument)) {
+    violations.push(`unsupported browser-test shard: ${shardArgument || '(none)'}`);
+  }
+
+  return violations;
+}
+
 function main() {
   const violations = getHostedRunnerViolations({
     env: process.env,
@@ -49,11 +65,7 @@ function main() {
     cwd: process.cwd(),
   });
   const projectArguments = process.argv.slice(2);
-
-  const projectSet = projectArguments.join(' ');
-  if (!ALLOWED_PROJECT_SETS.has(projectSet)) {
-    violations.push(`unsupported browser-test project set: ${projectSet || '(none)'}`);
-  }
+  violations.push(...getBrowserInvocationViolations(projectArguments));
 
   if (violations.length > 0) {
     console.error('Hosted browser-test guard denied execution:');

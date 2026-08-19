@@ -42,8 +42,11 @@ export default defineConfig({
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: true,
 
-  // Retry on CI only
-  retries: 2,
+  // Do not multiply deterministic failures across the diagnostic matrix.
+  retries: 0,
+
+  // Each shard stops after enough evidence to keep the hosted lane bounded.
+  maxFailures: 20,
 
   // Limit parallel workers on CI
   workers: 1,
@@ -58,14 +61,14 @@ export default defineConfig({
   use: {
     baseURL: localPreviewURL,
 
-    // Collect trace when retrying the failed test
-    trace: 'on-first-retry',
+    // Preserve one diagnostic record without requiring a retry.
+    trace: 'retain-on-failure',
 
     // Screenshot on failure
     screenshot: 'only-on-failure',
 
     // Video on failure
-    video: 'on-first-retry',
+    video: 'retain-on-failure',
   },
 
   // Configure projects for major browsers + mobile
