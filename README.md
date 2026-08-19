@@ -133,7 +133,7 @@ In-app documentation is available directly inside NeumanOS. Open the app and nav
 | Charts | Recharts |
 | Knowledge Graph | D3 force-directed |
 | Diagrams | Konva |
-| Testing | Vitest + Playwright |
+| Testing | Vitest + hosted GitHub Actions browser suite |
 | Linting | ESLint 10 |
 
 ---

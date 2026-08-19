@@ -3,13 +3,31 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * Playwright E2E Test Configuration for NeumanOS
  *
- * Set TEST_BASE_URL to run tests against a remote deployment:
- *   TEST_BASE_URL=https://migrate-tailwind4-eslint10.neumanos.pages.dev npx playwright test
+ * This configuration is hosted-CI-only. It must not run on TJNMPM or target
+ * a remote/production deployment.
  *
  * @see https://playwright.dev/docs/test-configuration
  */
 
-const remoteBaseURL = process.env.TEST_BASE_URL;
+const isApprovedHostedRunner =
+  process.platform === 'linux' &&
+  process.env.CI === 'true' &&
+  process.env.GITHUB_ACTIONS === 'true' &&
+  process.env.RUNNER_ENVIRONMENT === 'github-hosted' &&
+  process.env.RUNNER_OS === 'Linux' &&
+  process.env.GITHUB_EVENT_NAME === 'workflow_dispatch' &&
+  process.env.GITHUB_REPOSITORY === 'travisjneuman/neumanos' &&
+  process.env.GITHUB_WORKSPACE?.startsWith('/home/runner/work/');
+
+if (!isApprovedHostedRunner) {
+  throw new Error('Browser tests are restricted to the approved GitHub-hosted Linux workflow.');
+}
+
+if (process.env.TEST_BASE_URL) {
+  throw new Error('TEST_BASE_URL is forbidden; browser tests use the task-owned local preview.');
+}
+
+const localPreviewURL = 'http://127.0.0.1:4173';
 
 export default defineConfig({
   // Test directory
@@ -22,13 +40,13 @@ export default defineConfig({
   fullyParallel: true,
 
   // Fail the build on CI if you accidentally left test.only in the source code
-  forbidOnly: !!process.env.CI,
+  forbidOnly: true,
 
   // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
+  retries: 2,
 
   // Limit parallel workers on CI
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
 
   // Reporter
   reporter: [
@@ -38,8 +56,7 @@ export default defineConfig({
 
   // Shared settings for all projects
   use: {
-    // Use remote URL if provided, otherwise local dev server
-    baseURL: remoteBaseURL || 'http://localhost:5173',
+    baseURL: localPreviewURL,
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -75,24 +92,21 @@ export default defineConfig({
     },
   ],
 
-  // Only start local dev server when not testing against a remote URL
-  ...(!remoteBaseURL && {
-    webServer: {
-      command: 'npm run dev',
-      url: 'http://localhost:5173',
-      reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
-    },
-  }),
+  // Build and serve the production PWA only inside the hosted runner.
+  webServer: {
+    command: 'npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort',
+    url: localPreviewURL,
+    reuseExistingServer: false,
+    timeout: 180 * 1000,
+  },
 
   // Output directory for test artifacts
   outputDir: 'tests/results',
 
-  // Global timeout for each test (longer for remote targets)
-  timeout: remoteBaseURL ? 60 * 1000 : 30 * 1000,
+  timeout: 60 * 1000,
 
   // Expect timeout
   expect: {
-    timeout: remoteBaseURL ? 10 * 1000 : 5 * 1000,
+    timeout: 10 * 1000,
   },
 });

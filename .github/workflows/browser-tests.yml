@@ -1,0 +1,103 @@
+name: Hosted browser tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-browser-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    if: github.repository == 'travisjneuman/neumanos'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@v6
+
+      - name: Use the repository Node version
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install application dependencies
+        run: npm ci
+
+      - name: Report browser-test coverage readiness
+        run: npm run test:browser:inventory
+
+      - name: Run non-browser quality checks
+        run: npm run ci
+
+  browser:
+    name: Browser tests (${{ matrix.lane }})
+    if: github.repository == 'travisjneuman/neumanos'
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lane: chromium-and-mobile-chrome
+            browser: chromium
+            project_arguments: --project=chromium --project=mobile-chrome
+          - lane: firefox
+            browser: firefox
+            project_arguments: --project=firefox
+          - lane: webkit-and-mobile-safari
+            browser: webkit
+            project_arguments: --project=webkit --project=mobile-safari
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@v6
+
+      - name: Use the repository Node version
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install application dependencies
+        run: npm ci
+
+      - name: Install the hosted runner browser
+        run: npx playwright install --with-deps "${{ matrix.browser }}"
+
+      - name: Run the hosted browser projects
+        run: npm run test:e2e -- ${{ matrix.project_arguments }}
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: browser-failure-${{ matrix.lane }}-${{ github.sha }}
+          path: |
+            tests/reports/
+            tests/results/
+          if-no-files-found: ignore
+          retention-days: 3
+
+  critical-coverage-readiness:
+    if: always() && github.repository == 'travisjneuman/neumanos'
+    needs:
+      - quality
+      - browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@v6
+
+      - name: Use the repository Node version
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+
+      - name: Require critical browser coverage to be active
+        run: node scripts/check-browser-test-inventory.mjs --require-critical

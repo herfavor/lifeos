@@ -1,190 +1,97 @@
-# E2E Test Suite
+# Hosted browser-test suite
 
-Comprehensive end-to-end tests for NeumanOS, covering critical user flows and data integrity scenarios.
+NeumanOS keeps its browser-test source in this directory, but executes it only through the repository's manual **Hosted browser tests** GitHub Actions workflow on GitHub-hosted Linux. TJNMPM is not a browser-test runner and must not install or launch Playwright, Chromium, Firefox, WebKit, Chrome, or another external browser payload.
 
-## Overview
+## Execution boundary
 
-This test suite uses **Playwright** to test the application across Chromium, Firefox, and WebKit browsers. Tests are designed using **Pareto analysis** to maximize bug coverage (88% of critical bugs) with minimal test overhead.
+- Trigger `.github/workflows/browser-tests.yml` manually from the repository's Actions page.
+- The workflow uses Node from `.node-version`, installs browsers only on disposable GitHub-hosted Linux runners, and grants the workflow token `contents: read` only.
+- Tests build NeumanOS and serve a task-owned production preview on `127.0.0.1:4173`. They cannot accept `TEST_BASE_URL` or target production.
+- Browser contexts use synthetic test data only. Never add credentials, authenticated profiles, cookies, tokens, private backups, or production data.
+- Failure reports, screenshots, videos, and traces are retained for three days. Successful runs upload no browser artifact.
+- CamoFox on TJN-SERVE is a source-intake browser, not an end-to-end test runner.
 
-## Test Coverage
+The checked-in `npm run test:e2e` entry is intentionally guarded. It fails closed unless invoked by the exact manual GitHub-hosted Linux workflow with one approved browser project. Do not attempt to bypass that guard or emulate hosted-runner environment variables locally.
 
-| Priority | File | Tests | Coverage | Bug Impact |
-|----------|------|-------|----------|------------|
-| **#1** | `data-persistence.spec.ts` | 5 | IndexedDB persistence, offline mode, large datasets | **30%** of bugs |
-| **#2** | `cross-feature-integration.spec.ts` | 6 | Task→Calendar→Timer, Automation, Wikilinks, CSV export | **25%** of bugs |
-| **#3** | `backup-restore.spec.ts` | 4 | Export/import round-trip, edge cases, schema migration | **15%** of bugs |
-| **#4** | `automation-engine.spec.ts` | 4 | Rule execution, loop prevention, conditional triggers | **10%** of bugs |
-| **#5** | `recurring-tasks-events.spec.ts` | 5 | RRULE patterns, leap years, DST, exception dates | **8%** of bugs |
+## Current inventory and readiness
 
-**Total:** 24 tests covering **88%** of critical bug scenarios.
+Run `npm run test:browser:inventory` for a static, non-browser inventory. It reports spec files, source-level test declarations, missing critical files, exclusive tests, and every `skip` or `fixme` site.
 
-## Running Tests
+Stage A establishes the hosted lane but does not pretend skipped coverage is green. The workflow's final `critical-coverage-readiness` job fails while any browser test remains skipped or fixed. At the Stage-A baseline:
 
-### Quick Start
+- persistence across reloads, tabs, IndexedDB stores, and large synthetic datasets has active coverage;
+- offline mutation coverage is skipped;
+- the basic backup test may skip dynamically when its UI contract is absent, while edge-case and schema-migration cases are skipped;
+- multiple automation-engine behaviors and all six cross-feature integration scenarios are skipped;
+- accessibility coverage checks semantic structure, focus, and ARIA behavior but is not a complete WCAG audit;
+- responsive coverage includes mobile, tablet, and desktop viewports, with some assertions still needing strengthening;
+- the file named `visual-regression.spec.ts` performs computed-style smoke checks and has no golden-image baseline;
+- performance coverage uses route-load, navigation, request-count, and idle-error smoke thresholds.
+
+Dependency isolation or removal is a later gate. Do not remove the root browser-test dependency until a hosted run proves the replacement lane at an exact commit and the critical readiness gaps have a reviewed disposition.
+
+## Hosted project matrix
+
+The manual workflow preserves all five configured projects while limiting each runner to the browser family it needs:
+
+| Hosted lane | Projects |
+|---|---|
+| Chromium | `chromium`, `mobile-chrome` |
+| Firefox | `firefox` |
+| WebKit | `webkit`, `mobile-safari` |
+
+Each project runs with one worker and bounded retries against the same production preview. The workflow does not cache browser binaries.
+
+## Test organization
+
+Critical data and integration files include:
+
+| File | Intended protection |
+|---|---|
+| `data-persistence.spec.ts` | IndexedDB persistence, reload/tab lifecycle, large data, offline behavior |
+| `persistence-flows.spec.ts` | Task, note, settings, and cross-page persistence |
+| `backup-restore.spec.ts` | `.brain` export/import integrity, edge cases, large data, schema migration |
+| `automation-engine.spec.ts` | Execution ordering, conditions, and loop prevention |
+| `automation-rules.spec.ts` | Rule creation, editing, toggling, deletion, triggers, and history |
+| `cross-feature-integration.spec.ts` | Tasks, calendar, timers, automations, wikilinks, exports, dependencies, and tags |
+| `accessibility.spec.ts` | Landmarks, semantics, keyboard focus, and modal focus containment |
+| `responsive.spec.ts` | Mobile, tablet, and desktop layout behavior |
+| `visual-regression.spec.ts` | Styling and theme smoke checks |
+| `performance.spec.ts` | Load, navigation, request-count, and idle-error thresholds |
+
+Shared deterministic factories and IndexedDB helpers live in `tests/fixtures/test-data.ts`. The custom fixture in `tests/fixtures/test-utils.ts` creates isolated browser state. Tests should continue to:
+
+1. use synthetic deterministic data;
+2. isolate or explicitly seed IndexedDB/local storage;
+3. use semantic selectors;
+4. wait for durable storage after mutations;
+5. assert the complete behavior rather than conditionally passing when UI is absent;
+6. close task-owned resources and avoid external network dependencies.
+
+## Non-browser local checks
+
+These checks do not install or launch a browser:
 
 ```bash
-# Run all E2E tests (all browsers)
-npm run test:e2e
-
-# Run with interactive UI (debug mode)
-npm run test:e2e:ui
-
-# Run specific browser
-npm run test:e2e:chromium
-npm run test:e2e:firefox
-npm run test:e2e:webkit
-
-# View test report
-npm run test:e2e:report
+npm run test:browser:inventory
+npm test -- --run
+npm run type-check
+npm run build
+npm run ci
 ```
 
-### Advanced Options
+Do not run the hosted browser-test command, interactive test UI, headed/debug modes, browser installers, report viewers, or a local preview server for this suite on TJNMPM.
 
-```bash
-# Run specific test file
-npx playwright test data-persistence.spec.ts
+## Failure evidence
 
-# Run specific test
-npx playwright test -g "task persists across page refresh"
+On failure, the workflow may retain `tests/reports/` and `tests/results/` for three days. Treat those artifacts as potentially sensitive even though the suite must use synthetic data. Do not publish them to a public site or copy them into the repository.
 
-# Run with headed browser (see what's happening)
-npx playwright test --headed
+Before accepting a run, record:
 
-# Run with debugging
-npx playwright test --debug
-
-# Generate HTML report
-npx playwright test --reporter=html
-```
-
-## Test Structure
-
-Each test file follows this pattern:
-
-1. **Setup**: `beforeEach` clears all IndexedDB stores for isolation
-2. **Arrange**: Create test data via UI or direct store manipulation
-3. **Act**: Perform user actions (clicks, navigation, etc.)
-4. **Assert**: Verify expected outcomes in UI and IndexedDB
-5. **Cleanup**: Automatic via `beforeEach` in next test
-
-## Test Data Factories
-
-Located in `tests/fixtures/test-data.ts`:
-
-- `createMockTask()` - Generate task with realistic defaults
-- `createMockNote()` - Generate note with wikilinks
-- `createMockEvent()` - Generate calendar event with recurrence
-- `createMockTimeEntry()` - Generate time tracking entry
-- `createMockAutomationRule()` - Generate automation rule
-
-### IndexedDB Helpers
-
-- `clearAllStores(page)` - Reset all Zustand stores
-- `waitForIndexedDB(page, timeout?)` - Wait for DB writes to complete
-- `getStoreData(page, storeName)` - Read store data directly
-- `setStoreData(page, storeName, data)` - Write store data directly
-
-## Selector Strategy
-
-Tests use **semantic selectors** (accessible by default):
-
-```typescript
-// ✅ Good: Semantic, accessible
-page.getByRole('button', { name: /add.*task/i })
-page.getByPlaceholder('Task title...')
-page.getByLabel(/priority/i)
-page.getByText('Expected text')
-
-// ❌ Bad: Brittle CSS/XPath selectors
-page.locator('.btn-primary')
-page.locator('div > button:nth-child(2)')
-```
-
-**Strict Mode**: All selectors must match exactly one element. Use `.first()` when multiple matches are expected.
-
-## Local Testing Only
-
-**E2E tests run locally only, not in CI.**
-
-**Rationale:**
-- Local-first app architecture = testing where app runs (locally) makes most sense
-- No server/deployment to verify in CI
-- E2E tests more valuable during local development
-- Avoids CI flakiness and overhead
-
-**Before committing:** Run `npm run test && npm run type-check` locally. Optionally run `npx playwright test` for E2E verification of critical flows.
-
-### Artifacts
-
-When tests fail locally, the following artifacts are saved to `tests/results/`:
-- **Screenshots** - Visual snapshots of failures
-- **Videos** - Test execution recordings
-- **Trace files** - Detailed execution timeline (view with `npx playwright show-trace`)
-
-## Debugging Failures
-
-1. **Run in UI mode** to see test execution step-by-step:
-   ```bash
-   npm run test:e2e:ui
-   ```
-
-2. **View trace** for detailed timeline:
-   ```bash
-   npx playwright test --trace on
-   npx playwright show-trace trace.zip
-   ```
-
-3. **Check screenshots** in `tests/results/` after failures
-
-4. **Read error context** in `tests/results/*/error-context.md`
-
-## Writing New Tests
-
-1. Follow existing patterns in test files
-2. Use test data factories from `test-data.ts`
-3. Always reset state in `beforeEach`
-4. Use semantic selectors (roles, labels, placeholders)
-5. Add `.first()` for buttons that appear multiple times
-6. Wait for IndexedDB after mutations: `await waitForIndexedDB(page)`
-7. Add new tests to the coverage table in this README
-
-## Common Patterns
-
-### Creating a Task via UI
-
-```typescript
-const addButton = page.getByRole('button', { name: /add.*task/i }).first();
-await addButton.click();
-await page.getByPlaceholder('Task title...').fill('My Task');
-await page.getByRole('button', { name: /save|create/i }).first().click();
-await expect(page.getByText('My Task')).toBeVisible();
-await waitForIndexedDB(page);
-```
-
-### Verifying Store Data
-
-```typescript
-const kanbanData = await getStoreData(page, 'kanban-store');
-expect(kanbanData.state.tasks).toHaveLength(1);
-expect(kanbanData.state.tasks[0].title).toBe('My Task');
-```
-
-### Testing Offline Mode
-
-```typescript
-await page.goto('/tasks'); // Navigate FIRST
-await page.context().setOffline(true); // THEN go offline
-// ... perform actions offline ...
-await page.context().setOffline(false);
-```
-
-## Maintenance
-
-- **Fix flaky tests immediately** - don't commit `.skip()`
-- **Add Pareto priority** to new test files (analyze bug impact × frequency)
-- **Keep selectors accessible** - follow ARIA best practices
-
-## Related Documentation
-
-- [Playwright Config](../../playwright.config.ts) - Test runner configuration
-- [Test Fixtures](../fixtures/test-data.ts) - Factory functions and helpers
+- exact repository commit;
+- workflow run URL and conclusion;
+- each project result;
+- passed, failed, flaky, and skipped counts;
+- critical readiness result;
+- artifact names and expiry, if any;
+- confirmation that no production URL, credential, or external account was used.

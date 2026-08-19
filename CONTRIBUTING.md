@@ -35,7 +35,10 @@ Thank you for your interest in contributing to NeumanOS! This document provides 
 | `npm run test` | Run unit tests (Vitest) |
 | `npm run type-check` | TypeScript type checking |
 | `npm run lint` | ESLint |
-| `npm run test:e2e` | End-to-end tests (Playwright) |
+| `npm run test:browser:inventory` | Static browser-test inventory (no browser launch) |
+| `npm run test:e2e` | Hosted GitHub Actions only; fails closed outside the approved runner |
+
+Browser tests run only through the repository's manual **Hosted browser tests** GitHub Actions workflow. Do not install or launch Playwright browsers locally, and never point the suite at production or provide account credentials. The hosted workflow builds a local production preview and uses synthetic test data.
 
 ### Before Submitting
 
