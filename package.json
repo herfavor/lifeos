@@ -47,7 +47,6 @@
     "@lexical/react": "^0.40.0",
     "@lexical/rich-text": "^0.40.0",
     "@lexical/table": "^0.40.0",
-    "@playwright/test": "^1.56.1",
     "@tiptap/extension-color": "^3.14.0",
     "@tiptap/extension-highlight": "^3.14.0",
     "@tiptap/extension-image": "^3.14.0",
@@ -63,9 +62,6 @@
     "@tiptap/extension-underline": "^3.14.0",
     "@tiptap/react": "^3.14.0",
     "@tiptap/starter-kit": "^3.14.0",
-    "@types/crypto-js": "^4.2.2",
-    "@types/d3": "^7.4.3",
-    "@types/katex": "^0.16.8",
     "@webcontainer/api": "^1.6.1",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/addon-search": "^0.16.0",
@@ -146,7 +142,11 @@
     "typescript-eslint": "^8.50.1",
     "vite": "^7.3.0",
     "vite-plugin-pwa": "^1.2.0",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "@playwright/test": "^1.56.1",
+    "@types/crypto-js": "^4.2.2",
+    "@types/d3": "^7.4.3",
+    "@types/katex": "^0.16.8"
   },
   "overrides": {
     "serialize-javascript": "^7.0.5",
