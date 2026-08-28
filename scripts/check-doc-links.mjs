@@ -21,13 +21,13 @@ function collect(target) {
 }
 
 const failures = [];
-const linkPattern = /!?[[^]]*](([^)]+))/g;
+const linkPattern = /!?\[[^\]\r\n]*\]\(([^)\r\n]+)\)/g;
 
 for (const file of scanRoots.flatMap(collect)) {
   const content = fs.readFileSync(file, 'utf8');
   for (const match of content.matchAll(linkPattern)) {
     const rawTarget = match[1].trim().replace(/^<|>$/g, '');
-    const target = rawTarget.split(/s+["']/)[0];
+    const target = rawTarget.split(/\s+["']/)[0];
     if (!target || target.startsWith('#')) continue;
     if (/^(?:https?:|mailto:|tel:|data:)/i.test(target)) continue;
 
@@ -38,20 +38,20 @@ for (const file of scanRoots.flatMap(collect)) {
     try {
       decoded = decodeURIComponent(withoutAnchor);
     } catch {
-      failures.push(`${path.relative(root, file)}: invalid encoded link ${target}`);
+      failures.push(path.relative(root, file) + ': invalid encoded link ' + target);
       continue;
     }
 
     const resolved = path.resolve(path.dirname(file), decoded);
     if (!fs.existsSync(resolved)) {
-      failures.push(`${path.relative(root, file)} -> ${target}`);
+      failures.push(path.relative(root, file) + ' -> ' + target);
     }
   }
 }
 
 if (failures.length) {
   console.error('Documentation link check failed:');
-  for (const failure of failures) console.error(`- ${failure}`);
+  for (const failure of failures) console.error('- ' + failure);
   process.exit(1);
 }
 
