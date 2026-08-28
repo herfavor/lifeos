@@ -124,8 +124,23 @@ const LEGACY_LIFEOS_DEFAULT = [
 ];
 
 const REMOVED_AI_WIDGETS = new Set(['aibriefing', 'ainews']);
+const BUILTIN_WIDGET_IDS = new Set([
+  'taskssummary',
+  'upcomingevents',
+  'recentnotes',
+  'habitsummary',
+  'pomodoro',
+  'bookmarks',
+  'activityfeed',
+  'energytracker',
+  'portfolio',
+  'weeklyinsights',
+  'quickadd',
+  'shortcuts',
+]);
+
 const isDefaultUiWidget = (id: string): boolean =>
-  !REMOVED_AI_WIDGETS.has(id) && isWidgetExposed(id);
+  id.startsWith('custom-') || (BUILTIN_WIDGET_IDS.has(id) && isWidgetExposed(id));
 const EMPTY_WIDGET_SETTINGS: WidgetSettings = {};
 
 /**
@@ -165,26 +180,8 @@ export const useWidgetStore = create<WidgetState>()(
       // Saved layouts
       savedLayouts: [],
 
-      // Default settings
       widgetSettings: {
-        quote: { refreshRate: 60 }, // 1 hour
-        crypto: { refreshRate: 1 }, // 1 minute
-        hackernews: { refreshRate: 15 }, // 15 minutes
-        facts: { refreshRate: 60 },
-        github: { refreshRate: 60, username: '' },
-        weather: { refreshRate: 60 },
-        joke: { refreshRate: 30 },
-        unsplash: { refreshRate: 60, category: 'nature' },
-        pomodoro: { duration: 25 }, // 25 minutes
-        reddit: { refreshRate: 15, subreddit: 'programming' },
-        devto: { refreshRate: 30 },
-        wordofday: { refreshRate: 1440 }, // Once per day
-        currency: { refreshRate: 60 },
-        worldclock: {},
-        ipinfo: { refreshRate: 60 },
-        qrcode: {},
-        colorpalette: {},
-        weathermap: { refreshRate: 60 },
+        pomodoro: { duration: 25 },
       },
 
       enableWidget: (widgetId) => {
@@ -313,7 +310,7 @@ export const useWidgetStore = create<WidgetState>()(
     }),
     {
       name: 'dashboard-widgets',
-      version: 11, // Increment this when you need to trigger migrations
+      version: 12, // Increment this when persisted dashboard state needs migration
       migrate: (persistedState: any, version: number) => {
         const state = persistedState as WidgetState;
 
@@ -382,7 +379,7 @@ export const useWidgetStore = create<WidgetState>()(
           }
         }
 
-        // Migration for version 4 -> 5: Remove myday widget (Phase 5 cleanup)
+        // Migration for version 4 -> 5: Remove the legacy myday widget
         // Users should use the dedicated Today page instead
         if (version < 5) {
           // Remove myday from enabled widgets
@@ -451,6 +448,15 @@ export const useWidgetStore = create<WidgetState>()(
         // saved between v10 and v11 cannot keep it.
         if (version < 11) {
           Object.assign(state, sanitizeHiddenFeatureWidgets(state));
+        }
+
+        // Version 12: keep the built-in dashboard focused on LifeOS domain data.
+        // Removed portal/API widget ids are stripped from current and saved layouts.
+        if (version < 12) {
+          Object.assign(state, sanitizeHiddenFeatureWidgets(state));
+          state.widgetSettings = Object.fromEntries(
+            Object.entries(state.widgetSettings ?? {}).filter(([id]) => isDefaultUiWidget(id))
+          );
         }
 
         return persistedState;

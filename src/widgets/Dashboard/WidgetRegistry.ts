@@ -1,21 +1,17 @@
 /**
- * Dashboard Widget Registry
+ * Dashboard widget registry.
  *
- * Central registry of all available widgets with metadata, API configuration,
- * and lazy-loaded component references.
- *
- * Adding a new widget:
- * 1. Create the widget component in src/widgets/Dashboard/
- * 2. Add an entry to WIDGET_REGISTRY below
- * 3. That's it! The widget will be available in the Widget Manager
+ * Built-in widgets are intentionally limited to LifeOS domain data and local
+ * productivity views. Generic portal/news/finance/entertainment widgets do not
+ * belong in the core repository; custom widgets remain available for users who
+ * explicitly want external data sources.
  */
 
 import { lazy, type LazyExoticComponent, type FC } from 'react';
 import type { CustomWidgetConfig } from '../../stores/useWidgetStore';
 
-export type WidgetCategory = 'core' | 'productivity' | 'news' | 'fun' | 'finance' | 'visual' | 'dev' | 'utility' | 'custom';
+export type WidgetCategory = 'core' | 'productivity' | 'custom';
 
-// Props interface for widget components
 export interface WidgetComponentProps {
   widgetId?: string;
 }
@@ -24,692 +20,155 @@ export interface WidgetDefinition {
   id: string;
   name: string;
   description: string;
-  icon: string; // Emoji icon
+  icon: string;
   category: WidgetCategory;
-  apiUrl?: string;
-  apiKey?: string; // 'DEMO_KEY' for APIs that need keys but offer demo access
-  requiresAuth?: boolean; // If user needs to provide API key/username
   defaultEnabled: boolean;
-  // Lazy-loaded component (automatically generated from id)
   component?: LazyExoticComponent<FC<WidgetComponentProps>>;
 }
 
-/**
- * Maps widget ID to its file name in the Dashboard folder
- * Uses convention: widget ID -> PascalCase + "Widget"
- * e.g., "hackernews" -> "HackerNewsWidget"
- */
 const WIDGET_FILE_NAMES: Record<string, string> = {
-  myday: 'MyDayWidget',
   taskssummary: 'TasksSummaryWidget',
-  tasksquickadd: 'TasksQuickAddWidget',
   upcomingevents: 'UpcomingEventsWidget',
   recentnotes: 'RecentNotesWidget',
-  quote: 'QuoteWidget',
-  crypto: 'CryptoWidget',
-  hackernews: 'HackerNewsWidget',
-  facts: 'FactsWidget',
-  github: 'GitHubWidget',
-  joke: 'JokeWidget',
-  unsplash: 'UnsplashWidget',
-  pomodoro: 'PomodoroWidget',
-  reddit: 'RedditWidget',
-  devto: 'DevToWidget',
-  wordofday: 'WordOfDayWidget',
-  currency: 'CurrencyWidget',
-  worldclock: 'WorldClockWidget',
-  ipinfo: 'IPInfoWidget',
-  qrcode: 'QRCodeWidget',
-  colorpalette: 'ColorPaletteWidget',
-  weathermap: 'WeatherMapWidget',
-  calculator: 'CalculatorWidget',
-  unitconverter: 'UnitConverterWidget',
-  countdown: 'CountdownWidget',
-  shortcuts: 'ShortcutsWidget',
-  stockmarket: 'StockMarketWidget',
-  wikipedia: 'WikipediaWidget',
-  bored: 'BoredWidget',
-  dictionary: 'DictionaryWidget',
-  airquality: 'AirQualityWidget',
-  packagestats: 'PackageStatsWidget',
-  pixelart: 'PixelArtWidget',
-  typingtest: 'TypingTestWidget',
-  memorygame: 'MemoryGameWidget',
-  motivational: 'MotivationalWidget',
-  githubtrending: 'GitHubTrendingWidget',
-  awesomelists: 'AwesomeListsWidget',
-  repostats: 'RepoStatsWidget',
-  sports: 'SportsWidget',
-  twitch: 'TwitchWidget',
-  youtube: 'YouTubeWidget',
-  analytics: 'AnalyticsWidget',
-  clipboard: 'ClipboardWidget',
-  tabmanager: 'TabManagerWidget',
-  uptime: 'UptimeWidget',
-  forms: 'FormWidget',
   habitsummary: 'HabitSummaryWidget',
+  pomodoro: 'PomodoroWidget',
   bookmarks: 'BookmarksWidget',
   activityfeed: 'ActivityFeedWidget',
-  flashcard: 'FlashcardWidget',
-  dailyquests: 'DailyQuestsWidget',
   energytracker: 'EnergyTrackerWidget',
   portfolio: 'PortfolioWidget',
   weeklyinsights: 'WeeklyInsightsWidget',
-  weatherforecast: 'WeatherForecastWidget',
   quickadd: 'QuickAddWidget',
-  productivitykarma: 'ProductivityKarmaWidget',
+  shortcuts: 'ShortcutsWidget',
 };
 
-/**
- * Creates a lazy-loaded component for a widget
- * Uses Vite's glob import for reliable dynamic loading in production
- *
- * Note: We use import.meta.glob to pre-discover all widget modules at build time.
- * This avoids the "variable imports cannot import their own directory" warning
- * and ensures proper chunk generation in production.
- */
-
-// Pre-discover all widget modules using Vite's glob import
-// This creates a map of module path -> lazy import function
 const widgetModules = import.meta.glob<{ [key: string]: FC<WidgetComponentProps> }>([
-  './*Widget.tsx',
-  '!./AIBriefingWidget.tsx',
-  '!./AINewsWidget.tsx',
+  './TasksSummaryWidget.tsx',
+  './UpcomingEventsWidget.tsx',
+  './RecentNotesWidget.tsx',
+  './HabitSummaryWidget.tsx',
+  './PomodoroWidget.tsx',
+  './BookmarksWidget.tsx',
+  './ActivityFeedWidget.tsx',
+  './EnergyTrackerWidget.tsx',
+  './PortfolioWidget.tsx',
+  './WeeklyInsightsWidget.tsx',
+  './QuickAddWidget.tsx',
+  './ShortcutsWidget.tsx',
 ]);
 
 function createLazyWidget(widgetId: string): LazyExoticComponent<FC<WidgetComponentProps>> | undefined {
   const fileName = WIDGET_FILE_NAMES[widgetId];
   if (!fileName) return undefined;
 
-  const modulePath = `./${fileName}.tsx`;
-  const moduleLoader = widgetModules[modulePath];
+  const loader = widgetModules[`./${fileName}.tsx`];
+  if (!loader) return undefined;
 
-  if (!moduleLoader) {
-    return undefined;
-  }
-
-  // Dynamic import with named export
   return lazy(() =>
-    moduleLoader().then((m) => ({
-      default: m[fileName] as FC<WidgetComponentProps>,
+    loader().then((module) => ({
+      default: module[fileName] as FC<WidgetComponentProps>,
     }))
   );
 }
 
 export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
-  // Core App Widgets (always useful, enabled by default)
-  myday: {
-    id: 'myday',
-    name: 'My Day',
-    description: 'Unified view of today\'s tasks and events',
-    icon: '☀️',
-    category: 'core',
-    defaultEnabled: true,
-  },
-
   taskssummary: {
     id: 'taskssummary',
-    name: 'Tasks Summary',
-    description: 'Task counts and overview',
+    name: '任务概览',
+    description: '查看任务数量与当前状态',
     icon: '📊',
     category: 'core',
     defaultEnabled: false,
   },
-
-  tasksquickadd: {
-    id: 'tasksquickadd',
-    name: 'Quick Add Task',
-    description: 'Quickly add tasks to Kanban',
-    icon: '➕',
-    category: 'core',
-    defaultEnabled: false,
-  },
-
   upcomingevents: {
     id: 'upcomingevents',
-    name: 'Upcoming Events',
-    description: 'Your next calendar events',
+    name: '即将到来的日程',
+    description: '查看接下来的日历事件',
     icon: '📅',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
-
   recentnotes: {
     id: 'recentnotes',
-    name: 'Recent Notes',
-    description: 'Recently updated notes',
+    name: '最近笔记',
+    description: '快速回到最近更新的笔记',
     icon: '📝',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
-
   habitsummary: {
     id: 'habitsummary',
-    name: 'Habit Tracker',
-    description: 'Track daily habits and streaks',
+    name: '习惯概览',
+    description: '查看今日习惯与连续完成情况',
     icon: '🎯',
-    category: 'core',
-    defaultEnabled: false,
-  },
-
-  quote: {
-    id: 'quote',
-    name: 'Daily Quote',
-    description: 'Inspirational quotes to start your day',
-    icon: '💭',
     category: 'productivity',
-    apiUrl: 'https://api.quotable.io/random',
     defaultEnabled: false,
   },
-
-
-  crypto: {
-    id: 'crypto',
-    name: 'Crypto Tracker',
-    description: 'BTC, ETH, SOL prices with 24h change',
-    icon: '₿',
-    category: 'finance',
-    apiUrl: 'https://api.coingecko.com/api/v3/simple/price',
-    defaultEnabled: false,
-  },
-
-  hackernews: {
-    id: 'hackernews',
-    name: 'Hacker News',
-    description: 'Top tech stories from HN',
-    icon: '📰',
-    category: 'news',
-    apiUrl: 'https://hacker-news.firebaseio.com/v0',
-    defaultEnabled: false,
-  },
-
-  facts: {
-    id: 'facts',
-    name: 'Random Facts',
-    description: 'Interesting facts and trivia',
-    icon: '🧠',
-    category: 'fun',
-    apiUrl: 'https://uselessfacts.jsph.pl/random.json',
-    defaultEnabled: false,
-  },
-
-  github: {
-    id: 'github',
-    name: 'GitHub Activity',
-    description: 'Your contributions and trending repos',
-    icon: '🐙',
-    category: 'dev',
-    apiUrl: 'https://api.github.com',
-    requiresAuth: true, // Needs username in settings
-    defaultEnabled: false,
-  },
-
-  joke: {
-    id: 'joke',
-    name: 'Developer Jokes',
-    description: 'Programming jokes for a laugh',
-    icon: '😄',
-    category: 'fun',
-    apiUrl: 'https://v2.jokeapi.dev/joke/Programming',
-    defaultEnabled: false,
-  },
-
-  unsplash: {
-    id: 'unsplash',
-    name: 'Photo of the Day',
-    description: 'Beautiful photography from Unsplash',
-    icon: '📸',
-    category: 'visual',
-    apiUrl: 'https://source.unsplash.com/random',
-    defaultEnabled: false,
-  },
-
   pomodoro: {
     id: 'pomodoro',
-    name: 'Pomodoro Timer',
-    description: 'Focus timer for productivity',
+    name: '番茄钟',
+    description: '使用 LifeOS 统一番茄钟状态',
     icon: '⏱️',
     category: 'productivity',
     defaultEnabled: false,
   },
-
-  // News & Info Widgets
-  reddit: {
-    id: 'reddit',
-    name: 'Reddit Posts',
-    description: 'Hot posts from programming subreddits',
-    icon: '📰',
-    category: 'news',
-    apiUrl: 'https://www.reddit.com/r/programming/hot.json',
-    defaultEnabled: false,
-  },
-
-  devto: {
-    id: 'devto',
-    name: 'Dev.to Articles',
-    description: 'Latest dev articles from Dev.to',
-    icon: '📝',
-    category: 'news',
-    apiUrl: 'https://dev.to/api/articles',
-    defaultEnabled: false,
-  },
-
-  // Productivity Widgets
-  wordofday: {
-    id: 'wordofday',
-    name: 'Word of the Day',
-    description: 'Expand your vocabulary',
-    icon: '📖',
-    category: 'productivity',
-    apiUrl: 'https://api.dictionaryapi.dev/api/v2/entries/en',
-    defaultEnabled: false,
-  },
-
-  currency: {
-    id: 'currency',
-    name: 'Currency Exchange',
-    description: 'Real-time exchange rates',
-    icon: '💱',
-    category: 'productivity',
-    apiUrl: 'https://api.exchangerate-api.com/v4/latest/USD',
-    defaultEnabled: false,
-  },
-
-  worldclock: {
-    id: 'worldclock',
-    name: 'World Clock',
-    description: 'Time in multiple timezones',
-    icon: '🌍',
-    category: 'productivity',
-    defaultEnabled: false,
-  },
-
-  // Utility Widgets
-  ipinfo: {
-    id: 'ipinfo',
-    name: 'IP Information',
-    description: 'Your IP address and location',
-    icon: '🌐',
-    category: 'utility',
-    apiUrl: 'https://ipapi.co/json/',
-    defaultEnabled: false,
-  },
-
-  qrcode: {
-    id: 'qrcode',
-    name: 'QR Code Generator',
-    description: 'Generate QR codes instantly',
-    icon: '📱',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  colorpalette: {
-    id: 'colorpalette',
-    name: 'Color Palette',
-    description: 'Random color combinations',
-    icon: '🎨',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  // Visual Widgets
-  weathermap: {
-    id: 'weathermap',
-    name: 'Weather & Map',
-    description: 'Interactive weather map with current conditions & 5-day forecast',
-    icon: '🗺️',
-    category: 'visual',
-    apiUrl: 'https://api.open-meteo.com/v1/forecast',
-    defaultEnabled: false,
-  },
-
-  // Utility Widgets (New)
-  calculator: {
-    id: 'calculator',
-    name: 'Calculator',
-    description: 'Basic calculator with memory functions',
-    icon: '🔢',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  unitconverter: {
-    id: 'unitconverter',
-    name: 'Unit Converter',
-    description: 'Convert temperature, length, and weight units',
-    icon: '📏',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  countdown: {
-    id: 'countdown',
-    name: 'Countdown Timer',
-    description: 'Track countdowns to important events',
-    icon: '⏳',
-    category: 'productivity',
-    defaultEnabled: false,
-  },
-
-  shortcuts: {
-    id: 'shortcuts',
-    name: 'Keyboard Shortcuts',
-    description: 'Quick reference for app shortcuts',
-    icon: '⌨️',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  stockmarket: {
-    id: 'stockmarket',
-    name: 'Stock Market',
-    description: 'Real-time stock prices (AAPL, GOOGL, TSLA)',
-    icon: '📈',
-    category: 'finance',
-    apiUrl: 'https://finnhub.io/api/v1/quote',
-    defaultEnabled: false,
-  },
-
-  wikipedia: {
-    id: 'wikipedia',
-    name: 'Wikipedia',
-    description: 'Random Wikipedia articles for daily learning',
-    icon: '📚',
-    category: 'news',
-    apiUrl: 'https://en.wikipedia.org/api/rest_v1/page/random/summary',
-    defaultEnabled: false,
-  },
-
-  // Phase 2: Simple API Widgets
-  bored: {
-    id: 'bored',
-    name: 'Bored?',
-    description: 'Random activity suggestions when you\'re bored',
-    icon: '🎲',
-    category: 'fun',
-    apiUrl: 'https://www.boredapi.com/api/activity',
-    defaultEnabled: false,
-  },
-
-  dictionary: {
-    id: 'dictionary',
-    name: 'Dictionary',
-    description: 'Look up word definitions and synonyms',
-    icon: '📖',
-    category: 'utility',
-    apiUrl: 'https://api.dictionaryapi.dev/api/v2/entries/en',
-    defaultEnabled: false,
-  },
-
-  // REMOVED: Product Hunt (CORS issues with RSS feed, GraphQL API requires authentication)
-  // Alternative: dev.to and Hacker News widgets provide similar tech/product content
-
-  airquality: {
-    id: 'airquality',
-    name: 'Air Quality',
-    description: 'Current air quality index for your location',
-    icon: '🌫️',
-    category: 'productivity',
-    apiUrl: 'https://api.waqi.info',
-    defaultEnabled: false,
-  },
-
-  packagestats: {
-    id: 'packagestats',
-    name: 'NPM Stats',
-    description: 'NPM package download statistics',
-    icon: '📦',
-    category: 'dev',
-    apiUrl: 'https://api.npmjs.org/downloads',
-    defaultEnabled: false,
-  },
-
-  // Phase 3: Creative & Utility Widgets
-  pixelart: {
-    id: 'pixelart',
-    name: 'Pixel Art',
-    description: 'Simple pixel art drawing tool',
-    icon: '🎨',
-    category: 'fun',
-    defaultEnabled: false,
-  },
-
-  typingtest: {
-    id: 'typingtest',
-    name: 'Typing Test',
-    description: 'Test your typing speed (WPM)',
-    icon: '⌨️',
-    category: 'fun',
-    defaultEnabled: false,
-  },
-
-  memorygame: {
-    id: 'memorygame',
-    name: 'Memory Game',
-    description: 'Classic memory matching card game',
-    icon: '🧠',
-    category: 'fun',
-    defaultEnabled: false,
-  },
-
-  motivational: {
-    id: 'motivational',
-    name: 'Daily Motivation',
-    description: 'Inspirational quotes with beautiful images',
-    icon: '✨',
-    category: 'productivity',
-    defaultEnabled: false,
-  },
-
-  // Phase 3: Complex API Widgets
-  githubtrending: {
-    id: 'githubtrending',
-    name: 'GitHub Trending',
-    description: 'Top trending repositories on GitHub',
-    icon: '🔥',
-    category: 'dev',
-    apiUrl: 'https://api.github.com/search/repositories',
-    defaultEnabled: false,
-  },
-
-  awesomelists: {
-    id: 'awesomelists',
-    name: 'Awesome Lists',
-    description: 'Curated awesome lists (highest stars)',
-    icon: '📋',
-    category: 'dev',
-    apiUrl: 'https://api.github.com/search/repositories',
-    defaultEnabled: false,
-  },
-
-  repostats: {
-    id: 'repostats',
-    name: 'Repo Stats',
-    description: 'GitHub repository statistics',
-    icon: '📊',
-    category: 'dev',
-    apiUrl: 'https://api.github.com/repos',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  sports: {
-    id: 'sports',
-    name: 'NBA Scores',
-    description: 'Live NBA scores and game status',
-    icon: '🏀',
-    category: 'news',
-    apiUrl: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
-    defaultEnabled: false,
-  },
-
-
-  twitch: {
-    id: 'twitch',
-    name: 'Twitch',
-    description: 'Track your favorite Twitch streamers',
-    icon: '🎮',
-    category: 'fun',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  youtube: {
-    id: 'youtube',
-    name: 'YouTube',
-    description: 'Track YouTube channels',
-    icon: '📺',
-    category: 'fun',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  analytics: {
-    id: 'analytics',
-    name: 'Analytics',
-    description: 'Website analytics tracker',
-    icon: '📈',
-    category: 'utility',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  clipboard: {
-    id: 'clipboard',
-    name: 'Clipboard',
-    description: 'Clipboard history manager',
-    icon: '📋',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
-  tabmanager: {
-    id: 'tabmanager',
-    name: 'Tab Manager',
-    description: 'Manage browser tabs and quick links',
-    icon: '🗂️',
-    category: 'utility',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  uptime: {
-    id: 'uptime',
-    name: 'Uptime Monitor',
-    description: 'Monitor website uptime status',
-    icon: '🔔',
-    category: 'utility',
-    requiresAuth: true,
-    defaultEnabled: false,
-  },
-
-  forms: {
-    id: 'forms',
-    name: 'Forms',
-    description: 'Quick access to forms and responses',
-    icon: '📋',
-    category: 'core',
-    defaultEnabled: false,
-  },
-
   bookmarks: {
     id: 'bookmarks',
-    name: 'Bookmarks',
-    description: 'Save and organize quick links to your favorite sites',
+    name: '收藏',
+    description: '快速访问 LifeOS 中保存的链接',
     icon: '🔖',
-    category: 'productivity',
+    category: 'core',
     defaultEnabled: false,
   },
-
   activityfeed: {
     id: 'activityfeed',
-    name: 'Activity Feed',
-    description: 'Recent activity across all modules',
+    name: '活动记录',
+    description: '查看 LifeOS 各模块的最近活动',
     icon: '📊',
     category: 'core',
     defaultEnabled: false,
   },
-
-  flashcard: {
-    id: 'flashcard',
-    name: 'Flashcards',
-    description: 'Spaced repetition flashcard review with SM-2 algorithm',
-    icon: '🧠',
-    category: 'productivity',
-    defaultEnabled: false,
-  },
-
-  dailyquests: {
-    id: 'dailyquests',
-    name: 'Daily Quests',
-    description: 'Gamified daily habit challenges with XP rewards',
-    icon: '📜',
-    category: 'productivity',
-    defaultEnabled: false,
-  },
-
   energytracker: {
     id: 'energytracker',
-    name: 'Energy Tracker',
-    description: 'Track your energy levels and find optimal work times',
+    name: '精力追踪',
+    description: '记录并查看精力变化',
     icon: '⚡',
     category: 'productivity',
     defaultEnabled: false,
   },
-
   portfolio: {
     id: 'portfolio',
-    name: 'Portfolio',
-    description: 'Cross-project health overview with task counts',
+    name: '项目组合',
+    description: '查看跨项目的健康度与任务概览',
     icon: '📂',
     category: 'productivity',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
-
   weeklyinsights: {
     id: 'weeklyinsights',
-    name: 'Weekly Insights',
-    description: 'Productivity score, top win, and improvement from your weekly retrospective',
-    icon: '📊',
+    name: '每周洞察',
+    description: '查看每周回顾中的关键结果',
+    icon: '📈',
     category: 'productivity',
     defaultEnabled: false,
   },
-
-
-  weatherforecast: {
-    id: 'weatherforecast',
-    name: 'Weather Forecast',
-    description: 'Multi-day weather forecast with temperature, conditions, and precipitation',
-    icon: '🌤️',
-    category: 'utility',
-    defaultEnabled: false,
-  },
-
   quickadd: {
     id: 'quickadd',
-    name: 'Quick Add',
-    description: 'Quickly create notes, tasks, and events from a single widget',
+    name: '快速添加',
+    description: '快速创建任务、笔记或日程',
     icon: '⚡',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
-
-
-  productivitykarma: {
-    id: 'productivitykarma',
-    name: 'Productivity Karma',
-    description: 'Unified productivity score combining tasks, habits, time tracking, and energy',
-    icon: '🔮',
+  shortcuts: {
+    id: 'shortcuts',
+    name: '快捷键',
+    description: '查看 LifeOS 常用键盘快捷键',
+    icon: '⌨️',
     category: 'productivity',
     defaultEnabled: false,
   },
 };
 
-/**
- * Register a custom widget in the registry at runtime.
- * Called when custom widgets are loaded from persisted state.
- */
 export function registerCustomWidget(config: CustomWidgetConfig): void {
   WIDGET_REGISTRY[config.id] = {
     id: config.id,
@@ -721,84 +180,53 @@ export function registerCustomWidget(config: CustomWidgetConfig): void {
   };
 }
 
-/**
- * Remove a custom widget from the registry at runtime.
- */
 export function unregisterCustomWidget(id: string): void {
   delete WIDGET_REGISTRY[id];
 }
 
-// Helper to get widgets by category
 export function getWidgetsByCategory(category: WidgetCategory): WidgetDefinition[] {
-  return Object.values(WIDGET_REGISTRY).filter((w) => w.category === category);
+  return Object.values(WIDGET_REGISTRY).filter((widget) => widget.category === category);
 }
 
-// Helper to get all available widgets
 export function getAllWidgets(): WidgetDefinition[] {
   return Object.values(WIDGET_REGISTRY);
 }
 
-// Helper to get widget by ID
 export function getWidget(id: string): WidgetDefinition | undefined {
   return WIDGET_REGISTRY[id];
 }
 
-// Helper to get default enabled widgets
 export function getDefaultEnabledWidgets(): string[] {
   return Object.values(WIDGET_REGISTRY)
-    .filter((w) => w.defaultEnabled)
-    .map((w) => w.id);
+    .filter((widget) => widget.defaultEnabled)
+    .map((widget) => widget.id);
 }
 
-// Lazy-loaded CustomWidget component for custom widgets
-// Uses a separate glob path since CustomWidget is not named *Widget.tsx pattern for registry
 const customWidgetModule = import.meta.glob<{ CustomWidget: FC<WidgetComponentProps> }>(
   './CustomWidget.tsx'
 );
 
-let _cachedCustomWidgetLazy: LazyExoticComponent<FC<WidgetComponentProps>> | undefined;
+let cachedCustomWidget: LazyExoticComponent<FC<WidgetComponentProps>> | undefined;
 
 function getCustomWidgetLazy(): LazyExoticComponent<FC<WidgetComponentProps>> {
-  if (!_cachedCustomWidgetLazy) {
+  if (!cachedCustomWidget) {
     const loader = customWidgetModule['./CustomWidget.tsx'];
-    if (loader) {
-      _cachedCustomWidgetLazy = lazy(() =>
-        loader().then((m) => ({ default: m.CustomWidget }))
-      );
-    }
+    if (!loader) throw new Error('Custom widget module is unavailable');
+    cachedCustomWidget = lazy(() => loader().then((module) => ({ default: module.CustomWidget })));
   }
-  return _cachedCustomWidgetLazy!;
+  return cachedCustomWidget;
 }
 
-/**
- * Get the lazy-loaded component for a widget
- * Returns undefined if widget not found
- */
 export function getWidgetComponent(id: string): LazyExoticComponent<FC<WidgetComponentProps>> | undefined {
-  if (id.startsWith('custom-')) {
-    return getCustomWidgetLazy();
-  }
+  if (id.startsWith('custom-')) return getCustomWidgetLazy();
   return createLazyWidget(id);
 }
 
-/**
- * Get all widget components as a map (for backwards compatibility)
- * This is used by Dashboard.tsx to render widgets
- */
 export function getWidgetComponentMap(): Record<string, LazyExoticComponent<FC<WidgetComponentProps>>> {
   const map: Record<string, LazyExoticComponent<FC<WidgetComponentProps>>> = {};
-
   for (const id of Object.keys(WIDGET_REGISTRY)) {
-    if (id.startsWith('custom-')) {
-      // Custom widgets all use the same component
-      map[id] = getCustomWidgetLazy();
-    } else {
-      const component = createLazyWidget(id);
-      if (component) {
-        map[id] = component;
-      }
-    }
+    const component = id.startsWith('custom-') ? getCustomWidgetLazy() : createLazyWidget(id);
+    if (component) map[id] = component;
   }
-
   return map;
 }
