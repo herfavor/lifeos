@@ -251,22 +251,6 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'hidden',
     description: '表单构建与填写（保留能力）',
   },
-  {
-    id: 'invoices',
-    label: '发票',
-    icon: '💳',
-    path: '/schedule?tab=timer&section=invoices',
-    tier: 'hidden',
-    description: '从计时记录生成发票（自由职业向，保留能力）',
-  },
-  {
-    id: 'billable-reports',
-    label: '计时报表',
-    icon: '🧮',
-    path: '/schedule?tab=timer&section=reports',
-    tier: 'hidden',
-    description: '可计费时间报表（自由职业向，保留能力）',
-  },
 ];
 
 // ─────────────────────────────────────────────────────────── helpers

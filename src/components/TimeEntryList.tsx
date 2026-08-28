@@ -559,15 +559,6 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                       <td className="px-4 py-3 text-sm text-text-light-primary dark:text-text-dark-primary">
                         <div className="flex items-center gap-2">
                           <div className="font-medium">{entry.description}</div>
-                          {entry.billable && (
-                            <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full bg-status-success/10 text-status-success-text border border-status-success/20">
-                              可计费
-                              {(() => {
-                                const rate = entry.hourlyRate || projects.find(p => p.id === entry.projectId)?.hourlyRate;
-                                return rate ? ` @ $${rate.toFixed(2)}/小时` : '';
-                              })()}
-                            </span>
-                          )}
                         </div>
                         {entry.tags && entry.tags.length > 0 && (
                           <div className="mt-1">

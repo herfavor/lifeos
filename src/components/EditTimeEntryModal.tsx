@@ -23,8 +23,6 @@ export function EditTimeEntryModal({ entry, onClose }: EditTimeEntryModalProps) 
   const [projectId, setProjectId] = useState<string | null>(entry.projectId || null);
   const [notes, setNotes] = useState(entry.notes || '');
   const [entryTags, setEntryTags] = useState<string[]>(entry.tags || []);
-  const [billable, setBillable] = useState(entry.billable || false);
-  const [hourlyRate, setHourlyRate] = useState(entry.hourlyRate?.toString() || '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -80,9 +78,7 @@ export function EditTimeEntryModal({ entry, onClose }: EditTimeEntryModalProps) 
         duration: newDuration,
         projectId: projectId || undefined,
         notes: notes.trim() || undefined,
-        tags: entryTags,
-        billable,
-        hourlyRate: hourlyRate ? parseFloat(hourlyRate) : undefined
+        tags: entryTags
       });
 
       onClose();
@@ -230,50 +226,6 @@ export function EditTimeEntryModal({ entry, onClose }: EditTimeEntryModalProps) 
             <TagInput tags={entryTags} onChange={setEntryTags} compact />
           </div>
 
-          {/* Billable Toggle */}
-          <div className="flex items-center gap-2">
-            <input
-              id="billable"
-              type="checkbox"
-              checked={billable}
-              onChange={(e) => setBillable(e.target.checked)}
-              className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded focus:ring-2 focus:ring-accent-primary"
-            />
-            <label
-              htmlFor="billable"
-              className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
-            >
-              可计费时间
-            </label>
-          </div>
-
-          {/* Hourly Rate (only show if billable) */}
-          {billable && (
-            <div>
-              <label
-                htmlFor="hourlyRate"
-                className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
-              >
-                小时费率 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-                  $
-                </span>
-                <input
-                  id="hourlyRate"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={hourlyRate}
-                  onChange={(e) => setHourlyRate(e.target.value)}
-                  className="w-full pl-6 pr-2.5 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-          )}
-
           {/* Duration Preview */}
           {startTime && endTime && (
             <div className="px-2.5 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-button border border-border-light dark:border-border-dark">
@@ -290,16 +242,6 @@ export function EditTimeEntryModal({ entry, onClose }: EditTimeEntryModalProps) 
                   })()}
                 </span>
               </div>
-              {billable && hourlyRate && (
-                <div className="text-xs text-status-success-text font-medium mt-1">
-                  预计收入：${(() => {
-                    const start = new Date(startTime).getTime();
-                    const end = new Date(endTime).getTime();
-                    const durationSeconds = Math.floor((end - start) / 1000);
-                    return ((durationSeconds / 3600) * parseFloat(hourlyRate)).toFixed(2);
-                  })()}
-                </div>
-              )}
             </div>
           )}
         </div>
