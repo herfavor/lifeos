@@ -1,31 +1,28 @@
 /**
- * PresentationExportDialog Component
+ * Presentation export dialog.
  *
- * Dialog for exporting presentations to PDF or PPTX.
+ * LifeOS keeps PDF export for hidden presentation data compatibility.
+ * PPTX export was removed because its dependency chain contained unresolved
+ * high-severity vulnerabilities.
  */
 
 import { useState } from 'react';
-import { X, FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { X, FileText, Loader2 } from 'lucide-react';
 import { toast } from '../../stores/useToastStore';
-import type { Slide, SlideTheme } from '../../types';
-import { exportToPDF, exportToPPTX } from './presentationExport';
+import type { Slide } from '../../types';
+import { exportToPDF } from './presentationExport';
 
 interface PresentationExportDialogProps {
   slides: Slide[];
   title: string;
-  theme: SlideTheme;
   onClose: () => void;
 }
-
-type ExportFormat = 'pdf' | 'pptx';
 
 export function PresentationExportDialog({
   slides,
   title,
-  theme,
   onClose,
 }: PresentationExportDialogProps) {
-  const [format, setFormat] = useState<ExportFormat>('pdf');
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
 
@@ -34,30 +31,25 @@ export function PresentationExportDialog({
     setProgress({ current: 0, total: slides.length });
 
     try {
-      if (format === 'pdf') {
-        await exportToPDF(slides, title, (current, total) => {
-          setProgress({ current, total });
-        });
-        toast.success('PDF 导出成功');
-      } else {
-        await exportToPPTX(slides, title, theme, (current, total) => {
-          setProgress({ current, total });
-        });
-        toast.success('PPTX 导出成功');
-      }
+      await exportToPDF(slides, title, (current, total) => {
+        setProgress({ current, total });
+      });
+      toast.success('PDF 导出成功');
       onClose();
     } catch (error) {
       console.error('Export failed:', error);
-      toast.error(`导出 ${format.toUpperCase()} 失败`);
+      toast.error('导出 PDF 失败');
     } finally {
       setIsExporting(false);
     }
   };
 
+  const percentage =
+    progress.total > 0 ? (progress.current / progress.total) * 100 : 0;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg shadow-xl w-[400px]">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
             导出演示文稿
@@ -66,57 +58,23 @@ export function PresentationExportDialog({
             onClick={onClose}
             disabled={isExporting}
             className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary disabled:opacity-50"
+            aria-label="关闭导出对话框"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-4 space-y-4">
-          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            选择格式以导出您的演示文稿：
-          </p>
-
-          {/* Format selection */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setFormat('pdf')}
-              disabled={isExporting}
-              className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
-                format === 'pdf'
-                  ? 'border-accent-primary bg-accent-primary/5'
-                  : 'border-border-light dark:border-border-dark hover:border-accent-primary/50'
-              } ${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <FileText className="w-8 h-8 text-status-error" />
-              <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                PDF
-              </span>
-              <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                适合查看
-              </span>
-            </button>
-
-            <button
-              onClick={() => setFormat('pptx')}
-              disabled={isExporting}
-              className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
-                format === 'pptx'
-                  ? 'border-accent-primary bg-accent-primary/5'
-                  : 'border-border-light dark:border-border-dark hover:border-accent-primary/50'
-              } ${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <FileSpreadsheet className="w-8 h-8 text-accent-orange" />
-              <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                PPTX
-              </span>
-              <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                可在 PowerPoint 中编辑
-              </span>
-            </button>
+          <div className="p-4 rounded-lg border-2 border-accent-primary bg-accent-primary/5 flex flex-col items-center gap-2">
+            <FileText className="w-8 h-8 text-status-error" />
+            <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
+              PDF
+            </span>
+            <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+              保留视觉布局，适合查看与分享
+            </span>
           </div>
 
-          {/* Progress */}
           {isExporting && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -130,23 +88,17 @@ export function PresentationExportDialog({
               <div className="w-full h-2 bg-surface-light-alt dark:bg-surface-dark rounded-full overflow-hidden">
                 <div
                   className="h-full bg-accent-primary transition-all duration-300"
-                  style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                  style={{ width: `${percentage}%` }}
                 />
               </div>
             </div>
           )}
 
-          {/* Info */}
-          <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            <p>
-              {format === 'pdf'
-                ? 'PDF 文件保留视觉布局，但无法编辑。'
-                : 'PPTX 文件可在 Microsoft PowerPoint 或兼容软件中打开和编辑。'}
-            </p>
-          </div>
+          <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+            PDF 导出不会修改原始演示数据。
+          </p>
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end gap-3 p-4 border-t border-border-light dark:border-border-dark">
           <button
             onClick={onClose}
@@ -166,9 +118,7 @@ export function PresentationExportDialog({
                 正在导出…
               </>
             ) : (
-              <>
-                导出 {format.toUpperCase()}
-              </>
+              <>导出 PDF</>
             )}
           </button>
         </div>

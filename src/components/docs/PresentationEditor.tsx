@@ -584,7 +584,6 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
         <PresentationExportDialog
           slides={slides}
           title={doc.title || 'Presentation'}
-          theme={doc.theme}
           onClose={() => setShowExportDialog(false)}
         />
       )}

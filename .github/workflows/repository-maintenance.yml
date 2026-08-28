@@ -1,5 +1,7 @@
 name: Repository maintenance
 
+# Temporary lockfile regeneration after dependency pruning.
+
 on:
   push:
     branches:
