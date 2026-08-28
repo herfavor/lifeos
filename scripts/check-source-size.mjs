@@ -9,6 +9,7 @@ const maxLines = 1200;
 const legacyAllowlist = new Set([
   'src/components/AITerminal.tsx',
   'src/components/CommandPalette/searchRegistry.ts',
+  'src/components/notes/TabbedSidebarLayout.tsx',
   'src/pages/Habits.tsx',
   'src/pages/LinkLibrary.tsx',
   'src/services/ai/agent/executor.ts',

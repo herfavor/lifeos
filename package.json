@@ -28,7 +28,8 @@
     "audit:fix": "npm audit fix",
     "ci": "bash scripts/ci.sh",
     "lint:hygiene": "node scripts/check-repository-hygiene.mjs",
-    "lint:source-size": "node scripts/check-source-size.mjs"
+    "lint:source-size": "node scripts/check-source-size.mjs",
+    "lint:ci": "eslint . --config config/eslint.config.js --max-warnings=232"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

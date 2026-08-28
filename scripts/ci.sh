@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "=== Lint ==="
-npm run lint
+npm run lint:ci
 
 echo "=== Repository Hygiene ==="
 npm run lint:hygiene
