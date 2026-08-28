@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  Plus, Target, Flame, Trophy, Archive, RotateCcw, Trash2, Edit2,
+  Plus, Target, Flame, Archive, RotateCcw, Trash2, Edit2,
   Check, MoreVertical, ChevronDown, ChevronRight, BarChart3, BookTemplate,
   Grid3X3, Lock, Bell, BellOff, Link2, Snowflake,
   TrendingUp, Search, MessageSquare, Play, Clock, Repeat, X,
@@ -851,7 +851,6 @@ function CategorySection({ category, habits, renderHabit }: CategorySectionProps
 
 export function HabitsContent() {
   const habits = useHabitStore((s) => s.habits);
-  const achievements = useHabitStore((s) => s.achievements);
   const addHabit = useHabitStore((s) => s.addHabit);
   const updateHabit = useHabitStore((s) => s.updateHabit);
   const archiveHabit = useHabitStore((s) => s.archiveHabit);
@@ -1124,15 +1123,6 @@ export function HabitsContent() {
           </div>
         </div>
 
-        <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-xl p-4 border border-border-light dark:border-border-dark">
-          <div className="flex items-center gap-2 text-accent-yellow mb-1">
-            <Trophy className="w-5 h-5" />
-            <span className="text-sm font-medium">成就</span>
-          </div>
-          <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            {achievements.length}
-          </div>
-        </div>
       </div>
 
       {/* Tab Navigation */}
