@@ -133,11 +133,13 @@ export async function clickPrimaryNavigationLink(page: Page, label: string): Pro
 export async function openNotesSidebarIfNeeded(page: Page): Promise<void> {
   if (!isMobileViewport(page)) return;
 
+  const closeButton = page.getByRole('button', { name: '关闭侧边栏菜单' });
+  if (await closeButton.isVisible().catch(() => false)) return;
+
   const openButton = page.getByRole('button', { name: '打开侧边栏菜单' });
-  if (await openButton.isVisible().catch(() => false)) {
-    await openButton.click();
-    await expect(page.getByRole('button', { name: '关闭侧边栏菜单' })).toBeVisible();
-  }
+  await expect(openButton).toBeVisible();
+  await openButton.click();
+  await expect(closeButton).toBeVisible();
 }
 
 export async function createBlankNote(page: Page, title?: string) {
