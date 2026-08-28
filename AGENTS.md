@@ -1,60 +1,51 @@
-# AGENTS.md — Provider-Agnostic Agent Instructions
+# AGENTS.md — LifeOS agent instructions
 
-## Workspace storage conservation
+LifeOS is a local-first Web/PWA personal workspace built with React, TypeScript, Vite, Zustand, IndexedDB/local storage, Vitest, and hosted Playwright tests.
 
-<!-- workspace-scratch-storage-contract-v1 -->
-Use only this repository's existing canonical live checkout. A dirty, divergent, detached, ambiguous, or concurrently owned checkout is a blocker: preserve it and stop. Do not create a clone, fork, worktree, feature branch, full repository/workspace copy, or external dependency/build environment to bypass that blocker. Never place repositories, worktrees, workspace copies, package installations, builds, or development servers under `/tmp` or `/private/tmp`, including aliases that resolve there. Small, bounded non-repository temporary files remain allowed. Load the Agent Operating Layer `workspace-scratch-storage-policy` contract through the workspace registry when available.
+## Before editing
 
+- Read nearby source, tests, `README.md`, `CONTRIBUTING.md`, and relevant config before changing behavior.
+- Reuse the existing domain store/service/component before creating another implementation.
+- Prefer the smallest change that satisfies the requested behavior.
+- Preserve local-first privacy, backup/restore behavior, persisted data compatibility, and public routes unless a migration is explicitly part of the task.
 
-<!-- phase-5-provider-agnostic-baseline -->
+## Repository hygiene
 
-Last updated: 2026-08-28
+- Do not create audit, implementation, progress, phase, handoff, completion, status, or planning Markdown files as task artifacts.
+- Use GitHub Issues/PR descriptions for temporary plans, investigations, checklists, and completion notes.
+- Update canonical documentation in place; delete obsolete documentation instead of creating `archive` folders.
+- Final source code must not contain implementation chronology such as `Phase N`, `Wave N`, `P0/P1/P2`, parity percentages, or “final polish” notes. Comments should explain domain intent or non-obvious constraints.
+- Do not preserve dead code or hidden duplicate implementations by default. Keep compatibility shims only when existing user data or a documented migration requires them.
+- Do not add a second source of truth for an existing domain concept. Shared concepts such as timers, tasks, notes, and projects must use their canonical store/service.
+- Do not broaden product scope as part of an unrelated task.
 
-## Project overview
+## Development workflow
 
-LifeOS (a fork of the MIT-licensed NeumanOS; see NOTICE.md) is a local-first Web/PWA personal workspace built with React, TypeScript, Vite, IndexedDB/local storage, Vitest, and a hosted-only Playwright browser-test suite.
+- Use a short-lived branch and Pull Request for repository changes unless the user explicitly requests another workflow.
+- Keep each PR focused on one concern and document why it exists, what changed, and how it was verified.
+- Do not push directly to `main` unless explicitly requested.
+- Do not commit secrets, credentials, tokens, cookies, private keys, personal data, or production-only configuration.
 
-## Operating rules for AI agents
+## Verification
 
-- Read before editing: inspect README.md, package.json, docs/config, and nearby source before making changes.
-- Preserve existing documentation. Do not delete docs; update or append when behavior changes.
-- Do not modify CLAUDE.md files if one is added later.
-- Prefer compatibility-first changes. Avoid breaking data storage, import/export behavior, public routes, or documented workflows unless explicitly requested.
-- Do not commit, push, deploy, rotate secrets, or run destructive commands unless explicitly asked in the current session.
+Run the checks appropriate to the change:
 
-## Documentation expectations
+```bash
+npm run lint
+npm run type-check
+npm test -- --run
+npm run lint:design-tokens
+npm run test:browser:inventory
+npm run build
+```
 
-- Update README/docs when commands, user-visible behavior, data contracts, environment variables, or operational procedures change.
-- Include or update tests for code changes when the documented test toolchain applies.
+Full Playwright browser tests run only through the repository's hosted GitHub Actions workflow. Do not point browser tests at production data or real accounts.
 
-## Build, test, and local commands
+## Architecture and data constraints
 
-Only run commands supported by checked-in docs/config. Confidently discovered commands:
-
-- `npm install`
-- `npm run dev`
-- `npm run build`
-- `npm run build:production`
-- `npm run lint`
-- `npm test`
-- `npm run test:coverage`
-- `npm run test:browser:inventory` (static, no browser)
-- `npm run type-check`
-- `npm run audit`
-- `npm run ci`
-
-Browser tests are prohibited on TJNMPM. Do not run `npm run test:e2e`, a Playwright CLI, a browser installer, or a browser server locally. The sole approved execution lane is the manual `Hosted browser tests` GitHub Actions workflow on GitHub-hosted Linux. It uses synthetic data and a task-owned production preview; it must not target production or receive credentials.
-
-Current verified unit-test baseline on 2026-08-28 main CI: `npm test -- --run` runs 67 Vitest files / 898 tests.
-
-## Dependency/security maintenance notes
-
-- Use controlled `npm audit fix` / targeted package updates first; avoid `npm audit fix --force` unless the breaking changes are understood and verified.
-- `uuid` is intentionally constrained to `^14.0.0`, and package overrides keep transitive `serialize-javascript` / Mermaid `uuid` on fixed versions. Re-check these before removing overrides.
-- Vitest setup installs an in-memory `localStorage` shim before test modules load. Zustand persisted stores hydrate during import, so do not move that shim later in the setup file.
-
-## Compatibility and safety constraints
-
-- Local-first privacy is a core constraint: do not add server dependency, account requirement, or cloud sync without explicit approval.
-- Preserve IndexedDB/local-storage data compatibility, `.brain` backup/restore behavior, and export/import paths.
-- Treat API-provider keys as local user secrets. Never print, commit, or invent credentials, tokens, cookies, private keys, OAuth secrets, API keys, personal data, or production-only configuration. Use placeholders in docs/examples.
+- Zustand is the business-state source of truth; UI widgets must not reimplement the same state machine locally.
+- Dexie / IndexedDB and local storage are primary persistence layers.
+- Zod belongs at I/O and AI-tool boundaries.
+- AI executors must call domain stores/services rather than duplicate business rules.
+- Provider API keys are local user secrets.
+- Legacy persisted identifiers documented in `docs/technical/PERSISTENCE_COMPATIBILITY.md` must not be renamed without an explicit backward-compatible migration.
