@@ -58,13 +58,11 @@ export function useHabitReminders() {
   }, [habits, isCompletedOnDate]);
 
   useEffect(() => {
-    // Request permission on mount
-    requestNotificationPermission();
+    // Notification permission must be requested from an explicit user action.
+    // The scheduler only runs when permission has already been granted.
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
-    // Check every minute
     const interval = setInterval(checkReminders, 60_000);
-
-    // Also check immediately
     checkReminders();
 
     return () => clearInterval(interval);

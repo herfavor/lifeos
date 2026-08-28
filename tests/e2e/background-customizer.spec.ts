@@ -25,7 +25,7 @@ test.describe('Background Customizer', () => {
 
   test('opens background customizer modal', async ({ page }) => {
     await openBackgroundCustomizer(page);
-    await expect(page.getByText('自定义背景')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '自定义背景', exact: true })).toBeVisible();
     assertNoConsoleErrors(page);
   });
 

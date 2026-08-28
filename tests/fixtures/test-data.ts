@@ -319,42 +319,67 @@ export function createMockAutomationRule(
 
 // ==================== BROWSER HELPERS ====================
 
+async function moveToStorageSandbox(page: Page): Promise<string | null> {
+  const currentUrl = page.url();
+  const canReturn = currentUrl.startsWith('http://127.0.0.1:4173') && !currentUrl.endsWith('/favicon.svg');
+
+  await page.goto('/favicon.svg');
+  await page.waitForLoadState('load');
+
+  return canReturn ? currentUrl : null;
+}
+
+async function returnFromStorageSandbox(page: Page, returnUrl: string | null): Promise<void> {
+  if (!returnUrl) return;
+
+  await page.goto(returnUrl);
+  await page.waitForLoadState('domcontentloaded');
+  await page.locator('#root').waitFor({ state: 'visible' });
+}
+
+
 /**
  * Clear all IndexedDB stores for test isolation
  */
 export async function clearAllStores(page: Page): Promise<void> {
+  const returnUrl = await moveToStorageSandbox(page);
+
   await page.evaluate(async () => {
-    const databases = await indexedDB.databases();
-    await Promise.all(databases.map((database) => new Promise<void>((resolve, reject) => {
-      if (!database.name) {
-        resolve();
-        return;
-      }
-      const request = indexedDB.open(database.name);
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open('neumanos-db');
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
-        const connection = request.result;
-        const storeNames = Array.from(connection.objectStoreNames);
-        if (storeNames.length === 0) {
-          connection.close();
+        const db = request.result;
+
+        if (!db.objectStoreNames.contains('brain-data')) {
+          db.close();
           resolve();
           return;
         }
-        const transaction = connection.transaction(storeNames, 'readwrite');
-        storeNames.forEach((storeName) => transaction.objectStore(storeName).clear());
+
+        const transaction = db.transaction('brain-data', 'readwrite');
+        transaction.objectStore('brain-data').clear();
         transaction.oncomplete = () => {
-          connection.close();
+          db.close();
           resolve();
         };
         transaction.onerror = () => {
-          connection.close();
+          db.close();
+          reject(transaction.error);
+        };
+        transaction.onabort = () => {
+          db.close();
           reject(transaction.error);
         };
       };
-    })));
+    });
+
     localStorage.clear();
     sessionStorage.clear();
   });
+
+  await returnFromStorageSandbox(page, returnUrl);
 }
 
 /**
@@ -424,24 +449,26 @@ export async function setStoreData<T = unknown>(
   storeName: string,
   data: T
 ): Promise<void> {
-  // Map test name to actual IndexedDB key
   const actualStoreName = STORE_NAME_MAP[storeName] || storeName;
+  const returnUrl = await moveToStorageSandbox(page);
 
-  // Tests should pass data in Zustand persist format: { state: {...}, version: 0 }
-  // This function writes it directly to IndexedDB without modification
   await page.evaluate(
     async ({ name, value }) => {
-      const dbName = 'neumanos-db';
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open(dbName);
+      await new Promise<void>((resolve, reject) => {
+        const request = indexedDB.open('neumanos-db');
 
         request.onerror = () => reject(request.error);
-
         request.onsuccess = () => {
           const db = request.result;
+
+          if (!db.objectStoreNames.contains('brain-data')) {
+            db.close();
+            reject(new Error('brain-data object store is not initialized'));
+            return;
+          }
+
           const transaction = db.transaction('brain-data', 'readwrite');
-          const store = transaction.objectStore('brain-data');
-          store.put(JSON.stringify(value), name);
+          transaction.objectStore('brain-data').put(JSON.stringify(value), name);
 
           transaction.oncomplete = () => {
             db.close();
@@ -460,14 +487,16 @@ export async function setStoreData<T = unknown>(
     },
     { name: actualStoreName, value: data }
   );
+
+  await returnFromStorageSandbox(page, returnUrl);
 }
 
 /**
  * Check if app has finished loading and IndexedDB is ready
  */
 export async function waitForAppLoaded(page: Page): Promise<void> {
-  // Wait for main content
-  await page.waitForSelector('[role="main"], main, #root', { state: 'visible' });
+  await page.waitForLoadState('domcontentloaded');
+  await page.locator('#root').waitFor({ state: 'visible' });
 
   // Wait for IndexedDB to be initialized
   await page.evaluate(async () => {

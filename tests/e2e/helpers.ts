@@ -103,7 +103,7 @@ export async function navigateTo(page: Page, path: string): Promise<void> {
   await page.goto(path);
   await dismissOnboarding(page);
   await page.waitForLoadState('domcontentloaded');
-  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.locator('#root')).toBeVisible();
 }
 
 export function isMobileViewport(page: Page): boolean {

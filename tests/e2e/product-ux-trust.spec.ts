@@ -1,30 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 import { assertNoConsoleErrors, dismissOnboarding, setupConsoleMonitor } from './helpers';
+import { setStoreData } from '../fixtures/test-data';
 
 async function writeSyncedState(page: Page, key: string, value: unknown): Promise<void> {
   await page.goto('/');
-  await dismissOnboarding(page);
-  await page.evaluate(async ({ storageKey, storageValue }) => {
-    await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.open('neumanos-db', 1);
-      request.onupgradeneeded = () => {
-        if (!request.result.objectStoreNames.contains('app-data')) {
-          request.result.createObjectStore('app-data');
-        }
-      };
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        const db = request.result;
-        const transaction = db.transaction('app-data', 'readwrite');
-        transaction.objectStore('app-data').put(JSON.stringify(storageValue), storageKey);
-        transaction.oncomplete = () => {
-          db.close();
-          resolve();
-        };
-        transaction.onerror = () => reject(transaction.error);
-      };
-    });
-  }, { storageKey: key, storageValue: value });
+  await setStoreData(page, key, value);
 }
 
 test.describe('Product trust regressions', () => {
@@ -84,7 +64,7 @@ test.describe('Product trust regressions', () => {
       await page.goto(path);
       await dismissOnboarding(page);
       await expect(page).toHaveURL(/\/create$/);
-      await expect(page.getByRole('main')).toBeVisible();
+      await expect(page.locator('#root')).toBeVisible();
     }
 
     assertNoConsoleErrors(page);

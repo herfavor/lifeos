@@ -15,6 +15,7 @@ import {
   HabitTemplatePicker,
   useCompletionAnimation,
   useHabitReminders,
+  requestNotificationPermission,
   ConfettiEffect,
   StreakBump,
   HABIT_ANIMATION_STYLES,
@@ -370,7 +371,13 @@ function HabitModal({ habit, initialTemplate, allHabits, onClose, onSave }: Habi
                 </label>
                 <button
                   type="button"
-                  onClick={() => setReminderEnabled(!reminderEnabled)}
+                  onClick={async () => {
+                    const nextEnabled = !reminderEnabled;
+                    if (nextEnabled) {
+                      await requestNotificationPermission();
+                    }
+                    setReminderEnabled(nextEnabled);
+                  }}
                   className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
                     reminderEnabled
                       ? 'bg-accent-primary/10 text-accent-primary'

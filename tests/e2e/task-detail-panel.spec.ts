@@ -1,133 +1,56 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, createTask } from './helpers';
-
-/**
- * Task Detail Panel E2E Tests
- *
- * Tests every interaction in the task detail side panel:
- * title editing, description, priority, dates, tags, subtasks,
- * checklist, comments, activity, time tracking, dependencies.
- */
+import { createTask, navigateTo } from './helpers';
 
 test.describe('Task Detail Panel', () => {
   test.beforeEach(async ({ page }) => {
     await navigateTo(page, '/tasks');
     await createTask(page, 'Detail Panel Test');
-    // Open the detail panel
-    await page.getByText('Detail Panel Test').click();
-    await page.waitForTimeout(500);
+    await page.getByText('Detail Panel Test', { exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Detail Panel Test' })).toBeVisible();
   });
 
-  test('detail panel opens with task title', async ({ page }) => {
-    // The detail panel should show the task title
-    await expect(page.getByDisplayValue('Detail Panel Test').or(
-      page.locator('input').filter({ hasText: 'Detail Panel Test' })
-    ).or(page.getByText('Detail Panel Test').nth(1))).toBeVisible();
+  test('opens with the task title', async ({ page }) => {
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
+    await expect(dialog.locator('input[type="text"]').first()).toHaveValue('Detail Panel Test');
   });
 
   test('can edit task title', async ({ page }) => {
-    // Find the title input in the detail panel
-    const titleInput = page.getByDisplayValue('Detail Panel Test');
-    if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await titleInput.click();
-      await titleInput.clear();
-      await titleInput.fill('Renamed Task');
-      await page.keyboard.press('Tab'); // Trigger save
-      await page.waitForTimeout(300);
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
+    const titleInput = dialog.locator('input[type="text"]').first();
 
-      // Verify renamed on the board
-      await expect(page.getByText('Renamed Task')).toBeVisible();
-    }
+    await titleInput.fill('Renamed Task');
+    await titleInput.blur();
+
+    await expect(page.getByText('Renamed Task', { exact: true }).first()).toBeVisible();
   });
 
   test('can set task priority', async ({ page }) => {
-    // Look for priority selector
-    const priorityBtn = page.getByRole('button', { name: /优先级|低|中|高/i }).first();
-    if (await priorityBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await priorityBtn.click();
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
+    const priority = dialog.locator('select').filter({ has: page.locator('option[value="high"]') }).first();
 
-      // Select High priority
-      const highOption = page.getByText('高', { exact: true }).or(
-        page.getByRole('option', { name: /高/i })
-      );
-      if (await highOption.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await highOption.click();
-      }
-    }
+    await priority.selectOption('high');
+    await expect(priority).toHaveValue('high');
   });
 
   test('can add a description', async ({ page }) => {
-    const descInput = page.getByPlaceholder(/描述|详情|添加描述/i);
-    if (await descInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await descInput.click();
-      await descInput.fill('This is a test description for the task');
-      await expect(descInput).toHaveValue(/test description/);
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
+    const description = dialog.getByPlaceholder('添加描述…');
+
+    await description.fill('This is a test description for the task');
+    await description.blur();
+    await expect(description).toHaveValue(/test description/);
+  });
+
+  test('exposes detail sections', async ({ page }) => {
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
+    for (const section of ['子任务', '清单', '评论', '动态']) {
+      await expect(dialog.getByText(section, { exact: false }).first()).toBeVisible();
     }
   });
 
-  test('has subtasks tab', async ({ page }) => {
-    const subtasksTab = page.getByRole('button', { name: /子任务/i }).or(
-      page.getByText('子任务', { exact: false })
-    );
-    if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await subtasksTab.click();
-    }
-  });
-
-  test('can add a subtask', async ({ page }) => {
-    // Click subtasks tab
-    const subtasksTab = page.getByRole('button', { name: /子任务/i }).or(
-      page.getByText('子任务', { exact: false })
-    );
-    if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await subtasksTab.click();
-      await page.waitForTimeout(200);
-
-      // Add subtask
-      const addSubtaskBtn = page.getByRole('button', { name: /添加子任务|\+/i });
-      if (await addSubtaskBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await addSubtaskBtn.click();
-
-        const subtaskInput = page.getByPlaceholder(/子任务|标题/i);
-        if (await subtaskInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await subtaskInput.fill('Test Subtask');
-          await page.keyboard.press('Enter');
-          await expect(page.getByText('Test Subtask')).toBeVisible();
-        }
-      }
-    }
-  });
-
-  test('has checklist tab', async ({ page }) => {
-    const checklistTab = page.getByRole('button', { name: /清单/i }).or(
-      page.getByText('清单', { exact: false })
-    );
-    if (await checklistTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await checklistTab.click();
-    }
-  });
-
-  test('has comments tab', async ({ page }) => {
-    const commentsTab = page.getByRole('button', { name: /评论/i }).or(
-      page.getByText('评论', { exact: false })
-    );
-    if (await commentsTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await commentsTab.click();
-    }
-  });
-
-  test('has activity tab', async ({ page }) => {
-    const activityTab = page.getByRole('button', { name: /动态/i }).or(
-      page.getByText('动态', { exact: false })
-    );
-    if (await activityTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await activityTab.click();
-    }
-  });
-
-  test('can close detail panel', async ({ page }) => {
-    // Close button or escape
+  test('closes with Escape', async ({ page }) => {
+    const dialog = page.getByRole('dialog', { name: 'Detail Panel Test' });
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
+    await expect(dialog).not.toBeVisible();
   });
 });

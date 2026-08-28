@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors, createTask, createNote } from './helpers';
+import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors, createTask, createNote, isMobileViewport } from './helpers';
 
 /**
  * Persistence Flow E2E Tests
@@ -209,7 +209,8 @@ test.describe('Cross-Page Data Visibility', () => {
     await navigateTo(page, '/');
 
     // App should still be healthy after rapid navigation
-    await expect(page.getByRole('navigation')).toBeVisible();
+    const navigationName = isMobileViewport(page) ? '移动端导航' : '主导航';
+    await expect(page.getByRole('navigation', { name: navigationName })).toBeVisible();
     assertNoConsoleErrors(page);
   });
 });

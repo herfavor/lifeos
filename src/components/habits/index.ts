@@ -8,7 +8,7 @@ export {
   useCompletionAnimation,
   HABIT_ANIMATION_STYLES,
 } from './HabitCompletionAnimation';
-export { useHabitReminders } from './HabitReminders';
+export { useHabitReminders, requestNotificationPermission } from './HabitReminders';
 export { HabitAnalytics } from './HabitAnalytics';
 export { HabitJournal } from './HabitJournal';
 export { HabitStreakCalendar } from './HabitStreakCalendar';

@@ -17,54 +17,20 @@ test.describe('Automation Rules - User Flows', () => {
     await navigateTo(page, '/automations');
   });
 
+  async function createRuleFromTemplate(page: import('@playwright/test').Page, name: string) {
+    await page.getByRole('button', { name: '完成后标记待回顾', exact: true }).click();
+
+    const nameInput = page.getByPlaceholder('例如：自动归档已完成的任务');
+    await expect(nameInput).toBeVisible();
+    await nameInput.fill(name);
+
+    await page.getByRole('button', { name: '创建规则', exact: true }).click();
+    await expect(page.getByText(name, { exact: true })).toBeVisible();
+  }
+
   test('can create a new automation rule', async ({ page }) => {
-    // Look for create rule button
-    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule|\+/i });
-
-    if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await createRuleButton.click();
-      await page.waitForTimeout(300);
-
-      // Fill in rule details
-      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
-      if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await nameInput.fill('E2E Test Automation Rule');
-
-        // Select a trigger
-        const triggerSelect = page.getByLabel(/触发器|当/i);
-        if (await triggerSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await triggerSelect.click();
-
-          // Select task.completed trigger
-          const taskCompletedOption = page.getByText(/任务已完成|任务.*完成/i);
-          if (await taskCompletedOption.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await taskCompletedOption.click();
-          }
-        }
-
-        // Select an action
-        const actionSelect = page.getByLabel(/操作|然后/i);
-        if (await actionSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await actionSelect.click();
-
-          // Select create task action
-          const createTaskAction = page.getByText(/创建.*任务|新建.*任务/i);
-          if (await createTaskAction.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await createTaskAction.click();
-          }
-        }
-
-        // Save the rule
-        const saveButton = page.getByRole('button', { name: /保存|创建|添加/i });
-        if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await saveButton.click();
-          await page.waitForTimeout(500);
-
-          // Verify rule appears in the list
-          await expect(page.getByText('E2E Test Automation Rule')).toBeVisible();
-        }
-      }
-    }
+    await createRuleFromTemplate(page, 'E2E Test Automation Rule');
+    assertNoConsoleErrors(page);
   });
 
   test('can edit an existing automation rule', async ({ page }) => {
@@ -297,22 +263,12 @@ test.describe('Automation Rules - User Flows', () => {
   });
 
   test('automation rules list displays all rules', async ({ page }) => {
-    // Create a couple of rules
-    for (let i = 1; i <= 2; i++) {
-      const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
-      if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await createRuleButton.click();
-        const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
-        await nameInput.fill(`Test Rule ${i}`);
-        const saveButton = page.getByRole('button', { name: /保存|创建/i });
-        await saveButton.click();
-        await page.waitForTimeout(500);
-      }
-    }
+    await createRuleFromTemplate(page, 'Test Rule 1');
+    await createRuleFromTemplate(page, 'Test Rule 2');
 
-    // Verify both rules appear
-    await expect(page.getByText('Test Rule 1')).toBeVisible();
-    await expect(page.getByText('Test Rule 2')).toBeVisible();
+    await expect(page.getByText('Test Rule 1', { exact: true })).toBeVisible();
+    await expect(page.getByText('Test Rule 2', { exact: true })).toBeVisible();
+    assertNoConsoleErrors(page);
   });
 
   test('can view automation rule execution history', async ({ page }) => {

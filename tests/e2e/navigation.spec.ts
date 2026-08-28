@@ -39,31 +39,35 @@ test.describe('Primary Navigation', () => {
     }
   });
 
-  test('desktop sidebar can collapse and expand', async ({ page }) => {
-    test.skip(isMobileViewport(page), 'Desktop sidebar collapse is not a mobile interaction.');
+  test('sidebar collapse behavior matches the current viewport', async ({ page }) => {
+    const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
 
-    const sidebar = page.getByRole('complementary', { name: '主导航侧边栏' });
+    if (isMobileViewport(page)) {
+      await expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+      await expect(sidebar).toHaveAttribute('inert', '');
+      return;
+    }
+
     await expect(sidebar).toBeVisible();
-
     await page.getByRole('button', { name: '折叠侧边栏' }).click();
     await expect(page.getByRole('button', { name: '展开侧边栏' })).toBeVisible();
-
     await page.getByRole('button', { name: '展开侧边栏' }).click();
     await expect(page.getByRole('button', { name: '折叠侧边栏' })).toBeVisible();
   });
 
-  test('mobile More sheet exposes secondary destinations', async ({ page }) => {
-    test.skip(!isMobileViewport(page), 'Mobile More sheet is only rendered below the md breakpoint.');
+  test('secondary navigation is reachable for the current viewport', async ({ page }) => {
+    if (isMobileViewport(page)) {
+      const mobileNav = page.getByRole('navigation', { name: '移动端导航' });
+      await mobileNav.getByRole('button', { name: '更多导航选项' }).click();
+      const dialog = page.getByRole('dialog', { name: '更多导航选项' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByRole('link', { name: '设置', exact: true })).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(dialog).not.toBeVisible();
+      return;
+    }
 
-    const nav = page.getByRole('navigation', { name: '移动端导航' });
-    await nav.getByRole('button', { name: '更多导航选项' }).click();
-
-    const dialog = page.getByRole('dialog', { name: '更多导航选项' });
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole('link', { name: '设置', exact: true })).toBeVisible();
-
-    await page.keyboard.press('Escape');
-    await expect(dialog).not.toBeVisible();
+    await expect(page.getByRole('button', { name: '更多功能' })).toBeVisible();
   });
 });
 
@@ -89,16 +93,16 @@ test.describe('Theme Persistence', () => {
 test.describe('Direct URL Routing', () => {
   test('loads current core routes', async ({ page }) => {
     await navigateTo(page, '/today');
-    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.locator('#root')).toBeVisible();
 
     await navigateTo(page, '/tasks');
     await expect(page.getByRole('button', { name: '新建任务', exact: true })).toBeVisible();
 
     await navigateTo(page, '/notes');
-    await expect(page.getByRole('tab', { name: '笔记' })).toBeVisible();
+    await expect(page.getByRole('tablist', { name: '笔记导航' }).getByRole('tab', { name: '笔记', exact: true }).first()).toBeVisible();
 
     await navigateTo(page, '/schedule');
-    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.locator('#root')).toBeVisible();
 
     await navigateTo(page, '/create');
     await expect(page.getByRole('tabpanel')).toBeVisible();

@@ -342,6 +342,7 @@ export const Sidebar: React.FC = () => {
         className={rowClass}
         style={{ pointerEvents: isDisablingClicks ? 'none' : 'auto' }}
         title={isCollapsed ? feature.label : undefined}
+        aria-label={feature.label}
         aria-current={active ? 'page' : undefined}
       >
         {content}

@@ -103,10 +103,9 @@ test.describe('Onboarding Flow', () => {
     await page.getByRole('button', { name: '深色', exact: true }).click();
 
     // Verify dark class is applied
-    const isDark = await page.evaluate(() =>
-      document.documentElement.classList.contains('dark')
-    );
-    expect(isDark).toBe(true);
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(true);
   });
 
   test('onboarding does not reappear after completion', async ({ page }) => {

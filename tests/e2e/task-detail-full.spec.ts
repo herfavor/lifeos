@@ -61,7 +61,8 @@ test.describe('Task Detail Panel — Full Interactions', () => {
       const addBtn = page.getByRole('button', { name: '添加', exact: true }).last();
       await addBtn.click();
       await page.waitForTimeout(300);
-      await expect(page.getByText('e2e-test')).toBeVisible();
+      const dialog = page.getByRole('dialog', { name: 'Full Detail Test' });
+      await expect(dialog.getByText('e2e-test', { exact: true }).first()).toBeVisible();
     }
     assertNoConsoleErrors(page);
   });

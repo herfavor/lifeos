@@ -15,7 +15,7 @@ test.describe('Responsive - Mobile (375px)', () => {
 
   test('notes and tasks expose their primary mobile actions', async ({ page }) => {
     await navigateTo(page, '/notes');
-    await expect(page.getByRole('tab', { name: '笔记' })).toBeVisible();
+    await expect(page.getByRole('tablist', { name: '笔记导航' }).getByRole('tab', { name: '笔记', exact: true }).first()).toBeVisible();
 
     await navigateTo(page, '/tasks');
     await expect(page.getByRole('button', { name: '新建任务', exact: true })).toBeVisible();
