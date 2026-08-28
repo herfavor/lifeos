@@ -159,7 +159,7 @@ export const Kanban: React.FC = () => {
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
 
-        // Phase A: Support searching by card number (e.g., "KAN-1", "1", "kan1")
+        // Support searching by card number (e.g., "KAN-1", "1", "kan1")
         const cardNumberStr = task.cardNumber ? `KAN-${task.cardNumber}`.toLowerCase() : '';
         const cardNumberSimple = task.cardNumber?.toString() || '';
 
@@ -339,12 +339,12 @@ export const Kanban: React.FC = () => {
     localStorage.setItem('kanban-view-mode', viewMode);
   }, [viewMode]);
 
-  // Phase A: Auto-archive completed tasks on mount
+  // Auto-archive completed tasks on mount
   useEffect(() => {
     autoArchiveCompletedTasks();
   }, []); // Run once on mount
 
-  // Phase A: Global keyboard shortcut for Quick Add (Cmd/Ctrl+K)
+  // Global keyboard shortcut for Quick Add (Cmd/Ctrl+K)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       // Cmd/Ctrl+K to open Quick Add
@@ -733,7 +733,7 @@ export const Kanban: React.FC = () => {
         onClose={() => setShowArchivedView(false)}
       />
 
-      {/* Quick Add Modal (Phase A: Quick Add Cmd+K) */}
+      {/* Quick Add Modal (Quick Add Cmd+K) */}
       <QuickAddModal
         isOpen={showQuickAdd}
         onClose={handleQuickAddClose}

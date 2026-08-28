@@ -261,7 +261,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
       <div className={coverImage ? 'p-3' : ''}>
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex-1">
-          {/* Phase A: Card Number */}
+          {/* Card Number */}
           {task.cardNumber && (
             <span className="mr-2 text-[10px] font-mono text-text-light-tertiary dark:text-text-dark-tertiary">
               KAN-{task.cardNumber}
@@ -405,7 +405,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           </span>
         )}
 
-        {/* Time Tracked (Phase A: Time Tracking Integration) */}
+        {/* Time Tracked (Time Tracking Integration) */}
         {hasTimeTracked && (
           <span
             onClick={(e) => {

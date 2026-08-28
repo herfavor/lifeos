@@ -16,7 +16,7 @@ interface QuickAddModalProps {
 
 /**
  * QuickAddModal - Quick task creation with Cmd/Ctrl+K
- * Phase A: Quick Wins - Quick Add Feature
+ * Quick Wins - Quick Add Feature
  *
  * Features:
  * - Keyboard-first design (Cmd/Ctrl+K to open)

@@ -9,7 +9,7 @@ interface ArchivedViewProps {
 
 /**
  * ArchivedView - Modal to view and manage archived tasks
- * Phase A: Quick Wins - Archive System
+ * Quick Wins - Archive System
  */
 export function ArchivedView({ isOpen, onClose }: ArchivedViewProps) {
   const { getArchivedTasks, restoreTask, deleteArchivedTask } = useKanbanStore();

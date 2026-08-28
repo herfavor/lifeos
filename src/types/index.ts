@@ -334,12 +334,12 @@ export interface Task {
   // FIELDS:
   subtasks?: Subtask[];            // Rich nested tasks
 
-  // PHASE A (QUICK WINS) FIELDS:
+  // (QUICK WINS) FIELDS:
   archivedAt?: string;             // ISO date (when task was archived)
   lastCompletedAt?: string;        // ISO date (when moved to "done" for auto-archive)
   cardNumber?: number;             // Auto-incrementing card number (KAN-1, KAN-2, etc.)
 
-  // PHASE B (KANBAN PM) FIELDS:
+  // (KANBAN PM) FIELDS:
   effort?: EffortEstimate;         // Story points (1, 2, 3, 5, 8, 13)
   customStatus?: CustomStatus;     // Additional status labels (in-review, testing, deployed, blocked)
   timeTracking?: TimeTracking;     // Time tracking with history
@@ -401,8 +401,8 @@ export interface KanbanState {
   // NOTE: dependencies moved to Task.dependencies (task-level instead of global)
   // NOTE: archivedTasks moved to useKanbanArchiveStore ()
   /** @deprecated Use useKanbanArchiveStore instead. Kept for migration compatibility. */
-  archivedTasks?: Task[];          // Phase A: Archived tasks (separate from active)
-  nextCardNumber?: number;         // Phase A: Auto-incrementing counter for card numbers
+  archivedTasks?: Task[];          // Archived tasks (separate from active)
+  nextCardNumber?: number;         // Auto-incrementing counter for card numbers
   visibleColumns?: number;         // Number of columns to show at once before scrolling (default: 5)
   baseline?: ProjectBaseline | null; // Project baseline snapshot
 }
