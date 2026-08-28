@@ -170,6 +170,21 @@ export async function createBlankNote(page: Page, title?: string) {
   return editor;
 }
 
+export async function selectNoteByTitle(page: Page, title: string): Promise<void> {
+  await openNotesSidebarIfNeeded(page);
+
+  const noteItem = page.getByText(title, { exact: true }).first();
+  await expect(noteItem).toBeVisible();
+  await noteItem.click();
+
+  const closeSidebar = page.getByRole('button', { name: '关闭侧边栏菜单' });
+  if (await closeSidebar.isVisible().catch(() => false)) {
+    await closeSidebar.click();
+  }
+
+  await expect(page.getByPlaceholder('无标题笔记')).toHaveValue(title);
+}
+
 /**
  * Open Command Palette (Synapse) with Ctrl+K
  */
