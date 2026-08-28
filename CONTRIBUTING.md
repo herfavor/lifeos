@@ -39,13 +39,10 @@ chore/...
 ## 提交前检查
 
 ```bash
-npm run lint
-npm run type-check
-npm test -- --run
-npm run lint:design-tokens
-npm run test:browser:inventory
-npm run build
+npm run ci
 ```
+
+不要复制一套“差不多”的本地检查命令；`scripts/ci.sh` 是普通 PR CI 的唯一命令真源。
 
 完整 Playwright 浏览器矩阵通过 GitHub Actions 的 **Hosted browser tests** 手动运行；不要把浏览器测试指向真实生产数据或真实账户。
 
@@ -72,15 +69,18 @@ npm run build
 
 ## CI
 
-`.github/workflows/ci.yml` 在 PR 与 `main` push 上执行：
+`.github/workflows/ci.yml` 在 PR 与 `main` push 上执行 `npm ci` 后统一调用 `npm run ci`。当前门禁包含：
 
-- `npm ci`
-- `npm run lint`
-- `npm run type-check`
-- `npm test -- --run`
-- `npm run lint:design-tokens`
-- `npm run test:browser:inventory`
-- `npm run build`
+- lint warning budget；
+- repository hygiene；
+- source-size ratchet；
+- Markdown 相对链接；
+- TypeScript；
+- Vitest；
+- design token；
+- browser-test inventory；
+- production build；
+- production dependency audit（当前为 non-blocking）。
 
 ## Repository settings
 

@@ -28,16 +28,13 @@ LifeOS is a local-first Web/PWA personal workspace built with React, TypeScript,
 
 ## Verification
 
-Run the checks appropriate to the change:
+Run the repository verification gate:
 
 ```bash
-npm run lint
-npm run type-check
-npm test -- --run
-npm run lint:design-tokens
-npm run test:browser:inventory
-npm run build
+npm run ci
 ```
+
+This includes lint warning budget, repository hygiene, source-size and documentation-link checks, TypeScript, unit tests, design tokens, browser-test inventory, production build, and a non-blocking production dependency audit.
 
 Full Playwright browser tests run only through the repository's hosted GitHub Actions workflow. Do not point browser tests at production data or real accounts.
 

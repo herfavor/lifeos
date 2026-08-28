@@ -8,12 +8,8 @@
 
 ## Verification
 
-- [ ] `npm run lint`
-- [ ] `npm run type-check`
-- [ ] `npm test -- --run`
-- [ ] `npm run lint:design-tokens`
-- [ ] `npm run test:browser:inventory`
-- [ ] `npm run build`
+- [ ] `npm run ci`
+- [ ] Hosted browser tests when browser behavior or critical integration paths changed
 
 ## Repository hygiene
 
