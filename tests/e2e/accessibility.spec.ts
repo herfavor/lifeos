@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo } from './helpers';
+import { isMobileViewport, navigateTo } from './helpers';
 
 /**
  * Accessibility E2E Tests
@@ -9,21 +9,29 @@ import { navigateTo } from './helpers';
  */
 
 test.describe('Accessibility - ARIA Landmarks', () => {
-  test('dashboard has navigation landmark', async ({ page }) => {
+  test('dashboard exposes the active navigation landmark', async ({ page }) => {
     await navigateTo(page, '/');
-    await expect(page.getByRole('navigation')).toBeVisible();
+    const label = isMobileViewport(page) ? '移动端导航' : '主导航';
+    await expect(page.getByRole('navigation', { name: label })).toBeVisible();
   });
 
-  test('sidebar has proper aria-label', async ({ page }) => {
+  test('sidebar is accessible on desktop and inert while closed on mobile', async ({ page }) => {
     await navigateTo(page, '/');
     const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
-    await expect(sidebar).toBeVisible();
+
+    if (isMobileViewport(page)) {
+      await expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+      await expect(sidebar).toHaveAttribute('inert', '');
+    } else {
+      await expect(sidebar).toBeVisible();
+      await expect(sidebar).not.toHaveAttribute('aria-hidden', 'true');
+    }
   });
 
-  test('primary nav has proper aria-label', async ({ page }) => {
+  test('primary navigation has an explicit accessible name', async ({ page }) => {
     await navigateTo(page, '/');
-    const nav = page.locator('nav[aria-label="主导航"]');
-    await expect(nav).toBeVisible();
+    const label = isMobileViewport(page) ? '移动端导航' : '主导航';
+    await expect(page.getByRole('navigation', { name: label })).toBeVisible();
   });
 });
 
@@ -53,37 +61,28 @@ test.describe('Accessibility - Focus Management', () => {
 
     // Tab should keep focus within the dialog
     await page.keyboard.press('Tab');
-    const focusedElement = page.locator(':focus');
-    // Focus should still be within the dialog
-    const isInDialog = await page.evaluate(() => {
-      const focused = document.activeElement;
-      const dialog = document.querySelector('[role="dialog"]');
-      return dialog?.contains(focused) ?? false;
-    });
-    expect(isInDialog).toBe(true);
+    const dialog = page.getByRole('dialog', { name: 'Synapse 搜索' });
+    await expect.poll(() =>
+      dialog.evaluate((element) => element.contains(document.activeElement))
+    ).toBe(true);
   });
 });
 
-test.describe('Accessibility - Task Tabs', () => {
-  test('tasks page has proper tablist role', async ({ page }) => {
+test.describe('Accessibility - Task Surface', () => {
+  test('tasks page exposes a named primary create action', async ({ page }) => {
     await navigateTo(page, '/tasks');
-
-    const tablist = page.locator('[role="tablist"][aria-label="任务导航"]');
-    await expect(tablist).toBeVisible();
+    await expect(page.getByRole('button', { name: '新建任务', exact: true })).toBeVisible();
   });
 
-  test('active tab has aria-selected=true', async ({ page }) => {
+  test('task view controls remain keyboard-addressable buttons', async ({ page }) => {
     await navigateTo(page, '/tasks');
-
-    const activeTab = page.getByRole('tab', { name: '任务' });
-    await expect(activeTab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('button', { name: /看板/ }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /列表/ }).first()).toBeVisible();
   });
 
-  test('tab panels have proper role', async ({ page }) => {
+  test('task search is present on the primary surface', async ({ page }) => {
     await navigateTo(page, '/tasks');
-
-    const tabpanel = page.locator('[role="tabpanel"]');
-    await expect(tabpanel.first()).toBeVisible();
+    await expect(page.getByPlaceholder(/搜索任务/)).toBeVisible();
   });
 });
 

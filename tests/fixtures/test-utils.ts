@@ -10,20 +10,12 @@ import { test as base, expect } from '@playwright/test';
 export const test = base.extend({
   // Clear IndexedDB before each test for isolation
   page: async ({ page }, use) => {
-    // Navigate to app to ensure DB is accessible
+    // Playwright gives every test a fresh browser context, so IndexedDB/local
+    // storage are already isolated. Deleting databases here races with the app
+    // opening its persistence layer and can destroy page.evaluate contexts.
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
-    // Clear IndexedDB databases for test isolation
-    await page.evaluate(async () => {
-      const databases = await indexedDB.databases();
-      for (const db of databases) {
-        if (db.name) {
-          indexedDB.deleteDatabase(db.name);
-        }
-      }
-    });
-
-    // Use the page in the test
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(page);
   },

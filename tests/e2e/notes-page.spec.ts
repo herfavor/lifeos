@@ -1,27 +1,25 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, switchTab } from './helpers';
-
-/**
- * Notes Page E2E Tests (comprehensive rewrite)
- *
- * Tests note creation, editing, deletion, folder management,
- * search, tags, tab navigation (Notes/Daily/Graph), and editor features.
- */
+import {
+  createBlankNote,
+  navigateTo,
+  openNotesSidebarIfNeeded,
+  switchTab,
+} from './helpers';
+import { getStoreData } from '../fixtures/test-data';
 
 test.describe('Notes Page - Tab Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await navigateTo(page, '/notes');
   });
 
-  test('shows all notes tabs', async ({ page }) => {
+  test('shows the primary notes tabs by default', async ({ page }) => {
     await expect(page.getByRole('tab', { name: '笔记' })).toBeVisible();
     await expect(page.getByRole('tab', { name: '每日笔记' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: '图谱' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '图谱' })).toHaveCount(0);
   });
 
   test('notes tab is selected by default', async ({ page }) => {
-    const notesTab = page.getByRole('tab', { name: '笔记' });
-    await expect(notesTab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: '笔记' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Daily Notes tab', async ({ page }) => {
@@ -29,16 +27,17 @@ test.describe('Notes Page - Tab Navigation', () => {
     await expect(page.getByRole('tab', { name: '每日笔记' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  test('can switch to Graph tab', async ({ page }) => {
-    await switchTab(page, '图谱');
+  test('advanced graph view remains reachable by URL', async ({ page }) => {
+    await navigateTo(page, '/notes?tab=graph');
     await expect(page.getByRole('tab', { name: '图谱' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel')).toBeVisible();
   });
 
-  test('tabs accessible via URL params', async ({ page }) => {
-    await page.goto('/notes?tab=daily');
+  test('tabs are addressable through URL params', async ({ page }) => {
+    await navigateTo(page, '/notes?tab=daily');
     await expect(page.getByRole('tab', { name: '每日笔记' })).toHaveAttribute('aria-selected', 'true');
 
-    await page.goto('/notes?tab=graph');
+    await navigateTo(page, '/notes?tab=graph');
     await expect(page.getByRole('tab', { name: '图谱' })).toHaveAttribute('aria-selected', 'true');
   });
 });
@@ -46,43 +45,37 @@ test.describe('Notes Page - Tab Navigation', () => {
 test.describe('Notes Page - Folder Sidebar', () => {
   test.beforeEach(async ({ page }) => {
     await navigateTo(page, '/notes');
+    await openNotesSidebarIfNeeded(page);
   });
 
   test('displays folder sidebar elements', async ({ page }) => {
-    await expect(page.getByText('文件夹')).toBeVisible();
+    await expect(page.getByText('文件夹', { exact: true })).toBeVisible();
     await expect(page.getByPlaceholder(/搜索笔记/)).toBeVisible();
   });
 
   test('has All Notes button', async ({ page }) => {
-    const allNotes = page.getByRole('button', { name: /全部笔记/i });
-    await expect(allNotes).toBeVisible();
+    await expect(page.getByRole('button', { name: /全部笔记/i })).toBeVisible();
   });
 
   test('can create a new folder', async ({ page }) => {
-    const newFolderBtn = page.locator('button[title="新建文件夹"]');
-    await newFolderBtn.click();
+    await page.locator('button[title="新建文件夹"]').click();
 
-    // Folder name input should appear
     const folderInput = page.getByPlaceholder(/文件夹.*名称|名称/i);
     await expect(folderInput).toBeVisible();
     await folderInput.fill('E2E Folder');
-    await page.keyboard.press('Enter');
+    await folderInput.press('Enter');
 
-    // Folder should appear in the tree
-    await expect(page.getByText('E2E Folder')).toBeVisible();
+    await expect(page.getByText('E2E Folder', { exact: true })).toBeVisible();
   });
 
   test('has Manage Tags button', async ({ page }) => {
-    const manageTagsBtn = page.getByRole('button', { name: /管理标签/i });
-    await expect(manageTagsBtn).toBeVisible();
+    await expect(page.getByRole('button', { name: /管理标签/i })).toBeVisible();
   });
 
-  test('search filters notes', async ({ page }) => {
+  test('search accepts a note query without blocking the UI', async ({ page }) => {
     const searchInput = page.getByPlaceholder(/搜索笔记/);
     await searchInput.fill('nonexistent note xyz123');
-    await page.waitForTimeout(300);
-
-    // Search should filter — might show "No notes found" or empty state
+    await expect(searchInput).toHaveValue('nonexistent note xyz123');
   });
 });
 
@@ -92,53 +85,41 @@ test.describe('Notes Page - CRUD', () => {
   });
 
   test('can create a new note', async ({ page }) => {
-    // Find the create note button
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    await createButton.click();
-
-    // Editor should appear
-    const editor = page.locator('[contenteditable="true"]').first();
-    await expect(editor).toBeVisible();
-
-    // Type content
+    const editor = await createBlankNote(page, 'E2E Created Note');
     await editor.click();
     await page.keyboard.type('E2E Created Note Content');
 
-    // Content should be in editor
     await expect(editor).toContainText('E2E Created Note Content');
   });
 
-  test('notes auto-save', async ({ page }) => {
-    // Create a note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    await createButton.click();
-
-    const editor = page.locator('[contenteditable="true"]').first();
+  test('notes auto-save to persisted storage', async ({ page }) => {
+    const editor = await createBlankNote(page, 'Auto-Save Test Note');
     await editor.click();
     await page.keyboard.type('Auto-Save Test Content');
+    await expect(editor).toContainText('Auto-Save Test Content');
 
-    // Wait for auto-save
-    await page.waitForTimeout(1500);
+    await expect.poll(async () => {
+      const persisted = await getStoreData<{ state?: { notes?: Record<string, { title?: string; contentText?: string }> } }>(
+        page,
+        'notes-store'
+      );
+      return Object.values(persisted?.state?.notes ?? {}).some(
+        (note) => note.title === 'Auto-Save Test Note' && note.contentText?.includes('Auto-Save Test Content')
+      );
+    }, { timeout: 10_000 }).toBe(true);
 
-    // Reload page
     await page.reload();
     await navigateTo(page, '/notes');
-
-    // Note should persist
-    await expect(page.getByText('Auto-Save Test Content')).toBeVisible();
+    await openNotesSidebarIfNeeded(page);
+    await expect(page.getByText('Auto-Save Test Note', { exact: true }).first()).toBeVisible();
   });
 
   test('can edit note content', async ({ page }) => {
-    // Create a note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    await createButton.click();
-
-    const editor = page.locator('[contenteditable="true"]').first();
+    const editor = await createBlankNote(page, 'Editable Note');
     await editor.click();
     await page.keyboard.type('Initial Note Content');
-    await page.waitForTimeout(500);
+    await expect(editor).toContainText('Initial Note Content');
 
-    // Select all and replace
     await page.keyboard.press('Control+a');
     await page.keyboard.type('Updated Note Content');
 
@@ -149,11 +130,7 @@ test.describe('Notes Page - CRUD', () => {
 test.describe('Notes Page - Editor Features', () => {
   test.beforeEach(async ({ page }) => {
     await navigateTo(page, '/notes');
-
-    // Create a note to work with
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    await createButton.click();
-    await page.waitForTimeout(300);
+    await createBlankNote(page, 'Formatting Test Note');
   });
 
   test('supports bold formatting with Ctrl+B', async ({ page }) => {
@@ -164,7 +141,6 @@ test.describe('Notes Page - Editor Features', () => {
     await page.keyboard.type('bold');
     await page.keyboard.press('Control+b');
 
-    // Editor should contain bold text (rendered as <strong> or <b>)
     await expect(editor.locator('strong, b')).toContainText('bold');
   });
 
@@ -180,21 +156,14 @@ test.describe('Notes Page - Editor Features', () => {
   });
 });
 
-test.describe('Notes Page - Daily Notes', () => {
-  test('daily notes tab shows calendar grid', async ({ page }) => {
+test.describe('Notes Page - Advanced Views', () => {
+  test('daily notes tab renders a tab panel', async ({ page }) => {
     await navigateTo(page, '/notes?tab=daily');
-
-    // Daily notes tab should render some calendar-like interface
-    // with clickable dates
     await expect(page.getByRole('tabpanel')).toBeVisible();
   });
-});
 
-test.describe('Notes Page - Graph', () => {
-  test('graph tab renders', async ({ page }) => {
+  test('graph tab renders a tab panel', async ({ page }) => {
     await navigateTo(page, '/notes?tab=graph');
-
-    // Graph tab should load the force-directed graph view
     await expect(page.getByRole('tabpanel')).toBeVisible();
   });
 });

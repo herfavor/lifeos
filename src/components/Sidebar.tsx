@@ -6,6 +6,7 @@ import { useNavExpansionStore } from '../stores/useNavExpansionStore';
 import { useThemeStore } from '../stores/useThemeStore';
 import { useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { BREAKPOINTS, useMediaQuery } from '../hooks/useMediaQuery';
 import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -117,6 +118,8 @@ export const Sidebar: React.FC = () => {
   const disableTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const dailyNotesEnabled = useSettingsStore((state) => state.dailyNotes.enabled);
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+  const mobileSidebarHidden = isMobile && !isMobileMenuOpen;
   const moreExpanded = isExpanded(MORE_PANEL_KEY);
 
   // Split core features into the three rendered groups
@@ -387,6 +390,8 @@ export const Sidebar: React.FC = () => {
       {/* Sidebar */}
       <aside
         aria-label="主导航侧边栏"
+        aria-hidden={mobileSidebarHidden || undefined}
+        inert={mobileSidebarHidden || undefined}
         className={`
           fixed left-0 top-0 h-screen
           bg-surface-light dark:bg-surface-dark
