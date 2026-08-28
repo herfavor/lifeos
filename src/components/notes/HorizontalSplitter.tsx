@@ -2,7 +2,7 @@
  * HorizontalSplitter Component
  *
  * Resizable horizontal splitter for dividing folder pane from notes list.
- * Part of the Notes Page Revolution - Phase 2.
+ * Part of the Notes Page Revolution - .
  *
  * Features:
  * - 8px hit area for easy grabbing

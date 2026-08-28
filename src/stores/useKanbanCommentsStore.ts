@@ -5,7 +5,7 @@ import { logger } from '../services/logger';
 const log = logger.module('KanbanCommentsStore');
 
 /**
- * Phase 8.3: Comment statistics interface
+ * Comment statistics interface
  */
 export interface CommentStats {
   totalComments: number;
@@ -14,7 +14,7 @@ export interface CommentStats {
 }
 
 /**
- * Phase 8.3: Activity statistics interface
+ * Activity statistics interface
  */
 export interface ActivityStats {
   totalActivities: number;
@@ -23,7 +23,7 @@ export interface ActivityStats {
 }
 
 /**
- * Phase 8.3: Kanban Comments Store State
+ * Kanban Comments Store State
  *
  * Manages:
  * - Comment CRUD operations (delegates to useKanbanStore)
@@ -140,7 +140,7 @@ interface KanbanCommentsState {
 }
 
 /**
- * Phase 8.3: Kanban Comments Store
+ * Kanban Comments Store
  *
  * Single-responsibility store for:
  * - Comment CRUD operations

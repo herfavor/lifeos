@@ -14,14 +14,14 @@ export type DiagramElementType =
   | 'text'
   | 'freehand'
   | 'connector'
-  | 'shape'; // P0: Shape library shapes
+  | 'shape'; // Shape library shapes
 
 export type StrokeStyle = 'solid' | 'dashed' | 'dotted';
 export type FontWeight = 'normal' | 'bold';
 export type TextAlign = 'left' | 'center' | 'right';
 export type ConnectorType = 'straight' | 'curved' | 'orthogonal';
 
-// P2: Hand-drawn style
+// Hand-drawn style
 export type DrawingStyle = 'normal' | 'hand-drawn' | 'cartoon';
 
 export interface Point {
@@ -40,7 +40,7 @@ export interface DiagramElement {
   id: string;
   type: DiagramElementType;
 
-  // P0: Shape library reference
+  // Shape library reference
   shapeId?: string; // References ShapeDefinition if type === 'shape'
   pathData?: string; // SVG path for custom shapes
 
@@ -58,7 +58,7 @@ export interface DiagramElement {
   strokeStyle?: StrokeStyle;
   cornerRadius?: number; // for rectangles
 
-  // P2: Hand-drawn style
+  // Hand-drawn style
   drawingStyle?: DrawingStyle; // default: 'normal'
   roughness?: number; // 0-3, how sketchy the lines are
   bowing?: number; // 0-5, how much lines curve
@@ -85,10 +85,10 @@ export interface DiagramElement {
   // Z-index
   zIndex: number;
 
-  // P0: Grouping support
+  // Grouping support
   groupId?: string; // ID of group this element belongs to
 
-  // P1: Layer management
+  // Layer management
   locked?: boolean; // Prevent editing/moving
   hidden?: boolean; // Hide from view
 }
@@ -115,7 +115,7 @@ export interface Diagram {
   // Elements
   elements: DiagramElement[];
 
-  // P0: Groups
+  // Groups
   groups?: DiagramGroup[];
 
   // Metadata
@@ -147,7 +147,7 @@ export interface ExportOptions {
   scale?: number; // for PNG export (1 = normal, 2 = 2x resolution)
 }
 
-// P1: Templates
+// Templates
 export interface DiagramTemplate {
   id: string;
   name: string;
@@ -158,10 +158,10 @@ export interface DiagramTemplate {
   canvasState: Partial<CanvasState>;
 }
 
-// P1: Auto-layout
+// Auto-layout
 export type LayoutAlgorithm = 'tree' | 'force' | 'grid';
 
-// P1: Layer management
+// Layer management
 export interface LayerState {
   locked: boolean;
   visible: boolean;

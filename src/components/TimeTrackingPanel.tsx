@@ -161,7 +161,7 @@ export function TimeTrackingPanel() {
   };
 
   const handleViewAll = () => {
-    navigate('/schedule?tab=entries'); // P2 #3 Phase 6B: Navigate to Entries tab instead of Calendar
+    navigate('/schedule?tab=entries'); // Navigate to Entries tab instead of Calendar
   };
 
   const handleContinueEntry = (entry: TimeEntry) => {

@@ -12,7 +12,7 @@ vi.mock('../../lib/syncedStorage', () => ({
 }));
 
 /**
- * Phase 8.1: Unit tests for useKanbanArchiveStore
+ * Unit tests for useKanbanArchiveStore
  *
  * Tests archive store functionality in isolation:
  * - Archive/restore operations

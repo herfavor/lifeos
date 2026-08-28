@@ -2,7 +2,7 @@
  * useReducedMotion Hook
  *
  * Detects user preference for reduced motion (prefers-reduced-motion).
- * Part of the Notes Page Revolution - Phase 6.
+ * Part of the Notes Page Revolution - .
  *
  * Usage:
  * const prefersReducedMotion = useReducedMotion();

@@ -15,7 +15,7 @@ interface SidebarNavStore {
 }
 
 // Dashboard (/) is fixed at top and not part of drag-drop order
-// Updated for Phase 5 sidebar restructuring:
+// Updated for sidebar restructuring:
 // - /habits removed (now a tab under /tasks)
 // - /docs renamed to /create
 const DEFAULT_NAV_ORDER = ['/schedule', '/notes', '/tasks', '/create'];
@@ -29,7 +29,7 @@ export const useSidebarNavStore = create<SidebarNavStore>()(
     }),
     {
       name: 'sidebar-nav-order',
-      version: 4, // Incremented for Phase 5: /habits removed, /docs -> /create
+      version: 4, // Incremented for /habits removed, /docs -> /create
       migrate: (persisted, version) => {
         const state = persisted as { navOrder?: string[] };
         if (version < 4) {

@@ -2,7 +2,7 @@
  * useNotesListKeyboard Hook
  *
  * Keyboard navigation for notes list in Notes page.
- * Part of the Notes Page Revolution - Phase 4.
+ * Part of the Notes Page Revolution - .
  *
  * Shortcuts:
  * - ↓/J: Next note

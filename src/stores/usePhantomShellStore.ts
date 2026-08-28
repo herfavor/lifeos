@@ -60,7 +60,7 @@ export interface PhantomShellState {
   terminalInstance: XTerm | null;
   isTerminalReady: boolean;
 
-  // WebContainer (Phase 2)
+  // WebContainer ()
   isWebContainerReady: boolean;
   isWebContainerBooting: boolean;
   webContainerError: string | null;

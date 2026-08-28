@@ -90,37 +90,37 @@ export interface SettingsState {
   // Daily Notes
   dailyNotes: DailyNotesSettings;
 
-  // Custom Fields (P2 #3)
+  // Custom Fields ()
   customFieldDefinitions: CustomFieldDefinitions;
 
-  // Pomodoro Timer (P2)
+  // Pomodoro Timer ()
   pomodoroSettings: PomodoroSettings;
 
-  // Automatic Time Tracking (P2)
+  // Automatic Time Tracking ()
   autoTrackingSettings: AutoTrackingSettings;
 
-  // Celebration Settings (Phase 2 Quick Wins)
+  // Celebration Settings (Quick Wins)
   celebrationSettings: CelebrationSettings;
 
-  // Task Management (Phase 1.2)
+  // Task Management ()
   autoShiftDependentTasks: boolean; // Auto-shift dependent tasks when dates change
 
-  // Kanban WIP Limits (Phase 3.3)
+  // Kanban WIP Limits ()
   enforceWipLimits: boolean; // Enforce WIP limits strictly (prevent moves vs warnings)
 
-  // Team Members (Phase 3.1)
+  // Team Members ()
   members: Member[];
 
-  // People List (P2 - for Person custom field type)
+  // People List (- for Person custom field type)
   peopleList: string[]; // Simple list of person names for autocomplete
 
-  // Tag Colors (P2 - Tags feature)
+  // Tag Colors (- Tags feature)
   tagColors: Record<string, string>; // tag name → color (semantic token)
 
-  // Onboarding (Phase 1.3)
+  // Onboarding ()
   onboardingComplete: boolean; // First-time onboarding completed
 
-  // Natural Language Date Shortcuts (Phase 2 Quick Wins)
+  // Natural Language Date Shortcuts (Quick Wins)
   enableDateShortcuts: boolean; // Enable @tomorrow, +3d shortcuts
 
   // Synapse Settings (neural search interface)
@@ -143,7 +143,7 @@ export interface SettingsState {
   setOnboardingComplete: (complete: boolean) => void;
   setEnableDateShortcuts: (enabled: boolean) => void;
 
-  // Tag color actions (P2)
+  // Tag color actions ()
   setTagColor: (tag: string, color: string) => void;
   removeTagColor: (tag: string) => void;
 
@@ -166,7 +166,7 @@ export interface SettingsState {
   updateMember: (id: string, updates: Partial<Member>) => void;
   deleteMember: (id: string) => void;
 
-  // People list actions (P2)
+  // People list actions ()
   addPerson: (name: string) => void;
   removePerson: (name: string) => void;
   updatePerson: (oldName: string, newName: string) => void;
@@ -370,7 +370,7 @@ export const useSettingsStore = create<SettingsState>()(
           members: state.members.filter((m) => m.id !== id),
         })),
 
-      // People list management (P2)
+      // People list management ()
       addPerson: (name) =>
         set((state) => {
           // Prevent duplicates
@@ -390,7 +390,7 @@ export const useSettingsStore = create<SettingsState>()(
           peopleList: state.peopleList.map((p) => (p === oldName ? newName : p)),
         })),
 
-      // Tag color actions (P2)
+      // Tag color actions ()
       setTagColor: (tag, color) =>
         set((state) => ({
           tagColors: { ...state.tagColors, [tag]: color },

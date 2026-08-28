@@ -2,7 +2,7 @@
  * Diagrams Page - Library View
  * Grid of all diagrams with create/search/delete
  *
- * Phase 5: Exports DiagramsContent component for embedding in Create page
+ * Exports DiagramsContent component for embedding in Create page
  */
 
 import { useState } from 'react';
@@ -16,7 +16,7 @@ import { Plus, Search, Grid3x3, List, FileText, Trash2, RotateCcw } from 'lucide
 
 /**
  * DiagramsContent - Exportable content component for embedding in Create page
- * Phase 5: Renders without page wrapper for use as a tab
+ * Renders without page wrapper for use as a tab
  */
 export function DiagramsContent() {
   const navigate = useNavigate();

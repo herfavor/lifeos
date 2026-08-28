@@ -23,10 +23,10 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
     { id: 'basic', label: '基础' },
     { id: 'uml', label: 'UML' },
     { id: 'network', label: '网络' },
-    { id: 'cloud-computing', label: '云' }, // P2
-    { id: 'people', label: '人物' }, // P2
-    { id: 'data-flow', label: '数据流' }, // P2
-    { id: 'charts', label: '图表' }, // P2
+    { id: 'cloud-computing', label: '云' }, // 
+    { id: 'people', label: '人物' }, // 
+    { id: 'data-flow', label: '数据流' }, // 
+    { id: 'charts', label: '图表' }, // 
   ];
 
   // Filter shapes by search query or selected category

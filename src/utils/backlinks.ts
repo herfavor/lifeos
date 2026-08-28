@@ -117,7 +117,7 @@ export function hasWikiLinks(content: string): boolean {
 }
 
 /**
- * P1: Find unlinked mentions of a note title in other notes
+ * Find unlinked mentions of a note title in other notes
  * Returns mentions with context snippets for display
  */
 export interface UnlinkedMention {
@@ -189,7 +189,7 @@ export function findUnlinkedMentions(
 }
 
 /**
- * P1: Find broken wiki links in a note
+ * Find broken wiki links in a note
  * Returns wiki link titles that don't resolve to existing notes
  */
 export interface BrokenLink {

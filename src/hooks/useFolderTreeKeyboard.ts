@@ -2,7 +2,7 @@
  * useFolderTreeKeyboard Hook
  *
  * Keyboard navigation for folder tree in Notes page.
- * Part of the Notes Page Revolution - Phase 4.
+ * Part of the Notes Page Revolution - .
  *
  * Shortcuts:
  * - ↓/J: Next folder

@@ -10,10 +10,10 @@ export type ShapeCategory =
   | 'basic'
   | 'uml'
   | 'network'
-  | 'cloud-computing' // P2
-  | 'people' // P2
-  | 'data-flow' // P2
-  | 'charts'; // P2
+  | 'cloud-computing' // 
+  | 'people' // 
+  | 'data-flow' // 
+  | 'charts'; // 
 
 export interface ShapeDefinition {
   id: string;
@@ -35,8 +35,8 @@ export interface ShapeLibrary {
   basic: ShapeDefinition[];
   uml: ShapeDefinition[];
   network: ShapeDefinition[];
-  'cloud-computing': ShapeDefinition[]; // P2
-  people: ShapeDefinition[]; // P2
-  'data-flow': ShapeDefinition[]; // P2
-  charts: ShapeDefinition[]; // P2
+  'cloud-computing': ShapeDefinition[]; // 
+  people: ShapeDefinition[]; // 
+  'data-flow': ShapeDefinition[]; // 
+  charts: ShapeDefinition[]; // 
 }

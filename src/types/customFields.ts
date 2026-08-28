@@ -13,14 +13,14 @@ export type FieldType =
   | 'number'
   | 'date'
   | 'select'
-  | 'multi-select' // P2 #3: Multi-select with tag-style picker
+  | 'multi-select' // Multi-select with tag-style picker
   | 'checkbox'
-  | 'url'          // P2 #3: URL with open link button
-  | 'email'        // P2 #3: Email with mailto button
-  | 'person'       // P2: Person/user assignment
-  | 'status'       // P2: Status with visual indicators
-  | 'timeline'     // P2: Date range (start/end)
-  | 'formula';     // P2: Calculated fields
+  | 'url'          // URL with open link button
+  | 'email'        // Email with mailto button
+  | 'person'       // Person/user assignment
+  | 'status'       // Status with visual indicators
+  | 'timeline'     // Date range (start/end)
+  | 'formula';     // Calculated fields
 
 /**
  * Status option configuration for status field type
@@ -65,7 +65,7 @@ export interface FieldDefinition {
   /** Timestamp when field was last modified */
   updatedAt: Date;
 
-  // P2: Advanced field type settings
+  // Advanced field type settings
   /** For 'person' type: allow multiple people */
   allowMultiple?: boolean;
   /** For 'status' type: status options with colors */

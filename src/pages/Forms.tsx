@@ -2,7 +2,7 @@
  * Forms Page - Library View
  * Grid of all form templates with create/search/delete
  *
- * Phase 5: Exports FormsContent component for embedding in Create page
+ * Exports FormsContent component for embedding in Create page
  */
 
 import { useState, useMemo } from 'react';
@@ -14,7 +14,7 @@ import { Plus, Search, Grid3x3, List, FileText, Trash2, RotateCcw } from 'lucide
 
 /**
  * FormsContent - Exportable content component for embedding in Create page
- * Phase 5: Renders without page wrapper for use as a tab
+ * Renders without page wrapper for use as a tab
  */
 export function FormsContent() {
   const navigate = useNavigate();

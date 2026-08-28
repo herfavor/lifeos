@@ -35,7 +35,7 @@ export default function DiagramEditor() {
   const [isSaving, setIsSaving] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
-  // P0: Drag-and-drop state for shape palette
+  // Drag-and-drop state for shape palette
   const [dragState, setDragState] = useState<{
     active: boolean;
     shape: ShapeDefinition | null;
@@ -302,7 +302,7 @@ export default function DiagramEditor() {
     setDiagram({ ...diagram, elements: updatedElements });
   }, [diagram, currentTool, updateDiagram]);
 
-  // P1: Auto-layout handler
+  // Auto-layout handler
   const handleApplyLayout = useCallback((algorithm: LayoutAlgorithm) => {
     if (!diagram) return;
 
@@ -316,7 +316,7 @@ export default function DiagramEditor() {
     setDiagram({ ...diagram, elements: layoutedElements });
   }, [diagram, selectedElementIds, updateDiagram]);
 
-  // P0: Shape palette drag-and-drop handlers
+  // Shape palette drag-and-drop handlers
   const handleShapeDragStart = useCallback((shape: ShapeDefinition, startX: number, startY: number) => {
     setDragState({
       active: true,
@@ -465,7 +465,7 @@ export default function DiagramEditor() {
             onApplyLayout={handleApplyLayout}
           />
 
-          {/* P0: Shape Palette */}
+          {/* Shape Palette */}
           <ShapePalette
             onShapeDragStart={handleShapeDragStart}
             isOpen={shapePaletteOpen}
@@ -499,7 +499,7 @@ export default function DiagramEditor() {
             )}
           </div>
 
-          {/* P1: Layer Panel */}
+          {/* Layer Panel */}
           <LayerPanel
             elements={diagram.elements}
             selectedElementIds={selectedElementIds}
@@ -513,7 +513,7 @@ export default function DiagramEditor() {
           />
         </div>
 
-        {/* P0: Drag Preview Ghost */}
+        {/* Drag Preview Ghost */}
         {dragState.active && dragState.shape && (
           <div
             className="fixed pointer-events-none z-50 opacity-50"

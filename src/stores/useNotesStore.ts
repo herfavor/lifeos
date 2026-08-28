@@ -124,7 +124,7 @@ export function normalizePersistedNotes(value: unknown): Record<string, Note> {
 }
 
 /**
- * Phase 4: Default note templates for quick note creation
+ * Default note templates for quick note creation
  */
 const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   {
@@ -236,7 +236,7 @@ interface NotesStore {
   renameTagGlobally: (oldTag: string, newTag: string) => void;
   deleteTagGlobally: (tag: string) => void;
 
-  // P2: Bulk tag operations
+  // Bulk tag operations
   bulkAddTag: (noteIds: string[], tag: string) => void;
   bulkRemoveTag: (noteIds: string[], tag: string) => void;
   replaceTag: (oldTag: string, newTag: string) => void;
@@ -253,14 +253,14 @@ interface NotesStore {
   importNotes: (notes: Note[], merge: boolean) => void;
   clearAllNotes: () => void;
 
-  // Actions - Backlinks (Phase 4)
+  // Actions - Backlinks ()
   getBacklinks: (noteId: string) => Note[];
   updateLinkedNotes: (noteId: string, content: string) => void;
 
-  // P1: Unlinked mentions - Convert text to wiki link
+  // Unlinked mentions - Convert text to wiki link
   convertToWikiLink: (noteId: string, position: number, targetTitle: string) => void;
 
-  // Actions - Templates (Phase 4)
+  // Actions - Templates ()
   getNoteTemplates: () => NoteTemplate[];
   createNoteFromTemplate: (templateId: string) => Note | null;
   createNoteTemplate: (params: Partial<NoteTemplate>) => NoteTemplate;
@@ -274,7 +274,7 @@ interface NotesStore {
   createDailyNote: (date: Date) => Note;
   getOrCreateDailyNote: (date: Date) => Note;
 
-  // P2: Block-level links & hover preview helpers
+  // Block-level links & hover preview helpers
   getBlockContent: (noteId: string, blockId: string) => string | null;
   getNotePreview: (noteId: string, blockId?: string) => import('../types/notes').NotePreview | null;
 
@@ -285,11 +285,11 @@ interface NotesStore {
   canSetParentNote: (noteId: string, parentNoteId: string | null) => boolean;
   isDescendantNote: (noteId: string, potentialAncestorId: string) => boolean;
 
-  // Calendar-Notes bidirectional linking (Wave 5D)
+  // Calendar-Notes bidirectional linking ()
   linkEventToNote: (noteId: string, eventId: string) => void;
   unlinkEventFromNote: (noteId: string, eventId: string) => void;
 
-  // Wave 6A: Note aliases
+  // Note aliases
   updateAliases: (noteId: string, aliases: string[]) => void;
 }
 
@@ -1016,7 +1016,7 @@ export const useNotesStore = create<NotesStore>()(
         }
       },
 
-      // ==================== BULK TAG OPERATIONS (P2) ====================
+      // ==================== BULK TAG OPERATIONS () ====================
 
       bulkAddTag: (noteIds, tag) => {
         const notes = get().notes;
@@ -1160,7 +1160,7 @@ export const useNotesStore = create<NotesStore>()(
         log.info('All notes cleared');
       },
 
-      // ==================== BACKLINKS (Phase 4) ====================
+      // ==================== BACKLINKS () ====================
 
       getBacklinks: (noteId: string) => {
         const state = get();
@@ -1197,7 +1197,7 @@ export const useNotesStore = create<NotesStore>()(
         });
       },
 
-      // ==================== P1: UNLINKED MENTIONS ====================
+      // ==================== UNLINKED MENTIONS ====================
 
       convertToWikiLink: (noteId: string, position: number, targetTitle: string) => {
         const state = get();
@@ -1252,7 +1252,7 @@ export const useNotesStore = create<NotesStore>()(
         });
       },
 
-      // ==================== TEMPLATES (Phase 4) ====================
+      // ==================== TEMPLATES () ====================
 
       getNoteTemplates: () => {
         return DEFAULT_NOTE_TEMPLATES;
@@ -1409,7 +1409,7 @@ export const useNotesStore = create<NotesStore>()(
         return newNote;
       },
 
-      // ==================== P2: BLOCK-LEVEL LINKS & HOVER PREVIEW ====================
+      // ==================== BLOCK-LEVEL LINKS & HOVER PREVIEW ====================
 
       getBlockContent: (noteId: string, blockId: string) => {
         const note = get().notes[noteId];
@@ -1535,7 +1535,7 @@ export const useNotesStore = create<NotesStore>()(
         return get().isDescendantNote(note.parentNoteId, potentialAncestorId);
       },
 
-      // ==================== CALENDAR-NOTES LINKING (Wave 5D) ====================
+      // ==================== CALENDAR-NOTES LINKING () ====================
 
       linkEventToNote: (noteId: string, eventId: string) => {
         const note = get().notes[noteId];
@@ -1578,7 +1578,7 @@ export const useNotesStore = create<NotesStore>()(
         log.debug('Unlinked event from note', { noteId, eventId });
       },
 
-      // ==================== WAVE 6A: NOTE ALIASES ====================
+      // ==================== NOTE ALIASES ====================
 
       updateAliases: (noteId: string, aliases: string[]) => {
         const note = get().notes[noteId];

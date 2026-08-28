@@ -32,13 +32,13 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
   const members = useSettingsStore((state) => state.members);
   const taskFieldDefinitions = useSettingsStore((state) => state.customFieldDefinitions.tasks);
 
-  // Phase 1.3: Check if this task is on critical path
+  // Check if this task is on critical path
   const isCritical = getCriticalPath().includes(task.id);
 
-  // P1: Get overdue blockers for dependency warnings
+  // Get overdue blockers for dependency warnings
   const overdueBlockers = getOverdueBlockers(task.id);
 
-  // Phase 3.1: Get assigned members
+  // Get assigned members
   const assignedMembers = (task.assignees || [])
     .map(id => members.find(m => m.id === id))
     .filter(Boolean) as typeof members;
@@ -225,7 +225,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
     );
   }
 
-  // Phase 3.4: Get first image attachment for cover
+  // Get first image attachment for cover
   const coverImage = task.attachments?.find(a => a.fileType.startsWith('image/'));
   const coverMode = task.coverMode || 'fit';
 
@@ -242,7 +242,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
         isSelected ? 'ring-2 ring-accent-blue ring-offset-2 ring-offset-surface-light dark:ring-offset-surface-dark' : ''
       } ${coverImage ? 'p-0' : 'p-3'} overflow-hidden rounded-lg`}
     >
-      {/* Phase 3.4: Card Cover Image */}
+      {/* Card Cover Image */}
       {coverImage && (
         <div className="relative w-full h-[120px] overflow-hidden rounded-t-lg">
           <img
@@ -268,19 +268,19 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
             </span>
           )}
           <h4 className="line-clamp-2 text-sm font-medium leading-5 text-text-light-primary dark:text-text-dark-primary">
-            {/* Phase 1.6: Milestone indicator */}
+            {/* Milestone indicator */}
             {task.isMilestone && (
               <span className="shrink-0 text-sm" title="里程碑">📍</span>
             )}
             {task.title}
           </h4>
-          {/* Phase 1.3: Critical path indicator */}
+          {/* Critical path indicator */}
           {isCritical && (
             <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark border border-status-error-border dark:border-status-error-border-dark">
               🔴 关键路径
             </span>
           )}
-          {/* P1: Overdue blocker warning */}
+          {/* Overdue blocker warning */}
           {overdueBlockers.length > 0 && (
             <span
               className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark border border-status-warning-border dark:border-status-warning-border-dark"
@@ -381,7 +381,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           );
         })()}
 
-        {/* P1: Recurring Task Indicator */}
+        {/* Recurring Task Indicator */}
         {(task.recurrence || task.recurrenceId) && (
           <span
             className="text-xs px-2 py-0.5 rounded bg-accent-blue/10 dark:bg-accent-blue/20 text-accent-blue dark:text-accent-blue-hover font-medium"
@@ -395,7 +395,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           </span>
         )}
 
-        {/* When Tag (Wave 4E) */}
+        {/* When Tag () */}
         {task.whenTag && <WhenTagBadge tag={task.whenTag} />}
 
         {/* Estimated Hours */}
@@ -445,7 +445,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           </span>
         ))}
 
-        {/* Custom Fields (P1 Feature) */}
+        {/* Custom Fields () */}
         {activeCustomFields.map(({ field, value }) => (
           <CustomFieldDisplay
             key={field.id}
@@ -455,7 +455,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           />
         ))}
 
-        {/* Dependency Indicators (PHASE 5 PART 6) */}
+        {/* Dependency Indicators () */}
         {(() => {
           const blockers = getBlockers(task.id);
           const incompleteBlockers = blockers.filter((b) => b.status !== 'done');
@@ -525,7 +525,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           );
         })()}
 
-        {/* Assignee Avatars - Phase 3.1 */}
+        {/* Assignee Avatars - */}
         {assignedMembers.length > 0 && (
           <div className="flex items-center -space-x-1.5">
             {assignedMembers.slice(0, 3).map((member, index) => (
@@ -552,7 +552,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           </div>
         )}
 
-        {/* Attachment Badge - Phase 3.2 */}
+        {/* Attachment Badge - */}
         {task.attachments && task.attachments.length > 0 && (
           <span
             className="flex items-center gap-1 text-xs text-text-light-secondary dark:text-text-dark-secondary"

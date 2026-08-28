@@ -296,7 +296,7 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
               <th className="p-3 text-center font-semibold text-text-light-primary dark:text-text-dark-primary w-12">
                 计时器
               </th>
-              {/* Custom Field Columns (P1 Feature) */}
+              {/* Custom Field Columns () */}
               {visibleFieldDefinitions.map(field => (
                 <th key={field.id} className="p-3 text-left font-semibold text-text-light-primary dark:text-text-dark-primary">
                   {field.name}
@@ -377,7 +377,7 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
                     <td className="p-3 text-center" onClick={(e) => e.stopPropagation()}>
                       <TaskTimerButton taskId={task.id} taskTitle={task.title} size="sm" />
                     </td>
-                    {/* Custom Field Cells (P1 Feature) */}
+                    {/* Custom Field Cells () */}
                     {visibleFieldDefinitions.map(field => {
                       const value = task.customFields?.[field.id];
                       return (

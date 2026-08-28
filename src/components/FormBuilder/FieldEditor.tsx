@@ -14,8 +14,8 @@ import { toast } from '../../stores/useToastStore';
 
 interface FieldEditorProps {
   field: FormField | null;
-  allFields: FormField[]; // P0: All fields for conditional logic
-  form: FormTemplate; // P1: Form template for quiz mode detection
+  allFields: FormField[]; // All fields for conditional logic
+  form: FormTemplate; // Form template for quiz mode detection
   onSave: (field: FormField) => void;
   onCancel: () => void;
 }
@@ -32,9 +32,9 @@ const FIELD_TYPES: { value: FieldType; label: string }[] = [
   { value: 'checkbox', label: '复选框' },
   { value: 'rating', label: '评分（1-5）' },
   { value: 'scale', label: '量表（1-10）' },
-  { value: 'file', label: '文件上传' }, // P0: File upload field type
-  { value: 'calculation', label: '计算' }, // P2: Calculated field type
-  { value: 'hidden', label: '隐藏（URL 参数）' }, // P1: Hidden field type
+  { value: 'file', label: '文件上传' }, // File upload field type
+  { value: 'calculation', label: '计算' }, // Calculated field type
+  { value: 'hidden', label: '隐藏（URL 参数）' }, // Hidden field type
 ];
 
 export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldEditorProps) {

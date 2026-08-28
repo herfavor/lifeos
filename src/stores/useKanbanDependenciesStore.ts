@@ -13,7 +13,7 @@ import { createBaselineSnapshot } from '../utils/baseline';
 const log = logger.module('KanbanDependenciesStore');
 
 /**
- * Phase 8.2: Task shift interface for dependent task date adjustments
+ * Task shift interface for dependent task date adjustments
  * Used by applyDependentShifts for cascading date changes
  */
 export interface TaskShift {
@@ -24,7 +24,7 @@ export interface TaskShift {
 }
 
 /**
- * Phase 8.2: Dependencies Store State
+ * Dependencies Store State
  * Manages:
  * - Project baseline snapshots for variance tracking
  * - Dependency query helpers (blockers, blocked tasks)
@@ -116,7 +116,7 @@ export interface DependencyStats {
 }
 
 /**
- * Phase 8.2: Kanban Dependencies Store
+ * Kanban Dependencies Store
  *
  * Single-responsibility store for:
  * - Project baseline management

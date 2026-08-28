@@ -8,7 +8,7 @@ import {
 import type { Task, ChecklistItem } from '../../types';
 
 /**
- * Phase 8.4: Tests for useKanbanChecklistStore
+ * Tests for useKanbanChecklistStore
  *
  * Tests checklist CRUD, toggle, reorder, progress, and statistics.
  */

@@ -108,7 +108,7 @@ export const Kanban: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showMoreActions, setShowMoreActions] = useState(false);
 
-  // Phase 3.1: Get members for assignee filter
+  // Get members for assignee filter
   const members = useSettingsStore((state) => state.members);
 
   // Refs for columns to trigger their add forms
@@ -183,7 +183,7 @@ export const Kanban: React.FC = () => {
         if (!hasSelectedTag) return false;
       }
 
-      // Assignee filter (Phase 3.1)
+      // Assignee filter ()
       if (selectedAssignees.size > 0 || showUnassigned) {
         const taskAssignees = task.assignees || [];
 
@@ -297,7 +297,7 @@ export const Kanban: React.FC = () => {
     const taskId = active.id as string;
     const newStatus = over.id as TaskStatus;
 
-    // WIP Limit validation (Phase 3.3)
+    // WIP Limit validation ()
     const targetColumn = columns.find((c) => c.id === newStatus);
     const currentTask = tasks.find((t) => t.id === taskId);
     const tasksInTargetColumn = tasks.filter((t) => t.status === newStatus);
@@ -538,7 +538,7 @@ export const Kanban: React.FC = () => {
               </div>
             )}
 
-            {/* Assignee Filter - Phase 3.1 */}
+            {/* Assignee Filter - */}
             {members.length > 0 && (
               <div>
                 <label className="block text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-2 uppercase tracking-wide">
@@ -740,7 +740,7 @@ export const Kanban: React.FC = () => {
         defaultProjectId={quickAddProjectId}
       />
 
-      {/* Task Templates Picker (Wave 4E) */}
+      {/* Task Templates Picker () */}
       <TaskTemplatesPicker
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}

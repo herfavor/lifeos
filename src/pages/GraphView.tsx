@@ -30,14 +30,14 @@ export default function GraphView() {
   const addTag = useNotesStore((state) => state.addTag);
 
   const [hideOrphans, setHideOrphans] = useState(true);
-  const [colorBy, setColorBy] = useState<'none' | 'folder' | 'tag'>('none'); // P1: Color grouping
-  const [sizeByConnections, setSizeByConnections] = useState(true); // P1: Node sizing
+  const [colorBy, setColorBy] = useState<'none' | 'folder' | 'tag'>('none'); // Color grouping
+  const [sizeByConnections, setSizeByConnections] = useState(true); // Node sizing
 
-  // P2: New state for advanced features
+  // New state for advanced features
   const [showLinkStrength, setShowLinkStrength] = useState(false); // Link strength is an advanced display option
-  const [graphSearchFilters, setGraphSearchFilters] = useState<GraphSearchFilters>({}); // P2: Graph search
-  const [searchResult, setSearchResult] = useState<SearchResult | null>(null); // P2: Search results
-  const [showOrphanPanel, setShowOrphanPanel] = useState(false); // P2: Orphan panel
+  const [graphSearchFilters, setGraphSearchFilters] = useState<GraphSearchFilters>({}); // Graph search
+  const [searchResult, setSearchResult] = useState<SearchResult | null>(null); // Search results
+  const [showOrphanPanel, setShowOrphanPanel] = useState(false); // Orphan panel
   const [showDisplayOptions, setShowDisplayOptions] = useState(false);
 
   // Focus mode state
@@ -111,8 +111,8 @@ export default function GraphView() {
       hideOrphans,
       focusNodeId: focusNodeId || undefined,
       focusDepth: focusNodeId ? focusDepth : undefined,
-      colorBy, // P1: Color grouping
-      sizeByConnections, // P1: Node sizing
+      colorBy, // Color grouping
+      sizeByConnections, // Node sizing
     };
     return buildGraphData(notes, filters);
   }, [notes, hideOrphans, focusNodeId, focusDepth, colorBy, sizeByConnections]);
@@ -128,7 +128,7 @@ export default function GraphView() {
     return buildGraphData(notes, filters);
   }, [notes, colorBy, sizeByConnections]);
 
-  // P1: Get color groups for legend
+  // Get color groups for legend
   const colorGroups = useMemo(() => getColorGroups(graphData, colorBy), [graphData, colorBy]);
 
   const orphanIds = useMemo(() => {
@@ -140,7 +140,7 @@ export default function GraphView() {
     return getOrphansWithSuggestions(completeGraphData.nodes, completeGraphData.edges, notes);
   }, [completeGraphData, notes, showOrphanPanel]);
 
-  // P2: Perform graph search when filters change
+  // Perform graph search when filters change
   useEffect(() => {
     if (Object.keys(graphSearchFilters).length === 0) {
       setSearchResult(null);
@@ -176,7 +176,7 @@ export default function GraphView() {
     setSearchParams({});
   };
 
-  // P2: Handle creating link from orphan panel
+  // Handle creating link from orphan panel
   const handleCreateLink = (orphanId: string, targetId: string) => {
     const orphanNote = notes[orphanId];
     const targetNote = notes[targetId];
@@ -196,12 +196,12 @@ export default function GraphView() {
     }
   };
 
-  // P2: Handle adding tag from orphan panel
+  // Handle adding tag from orphan panel
   const handleAddTag = (orphanId: string, tag: string) => {
     addTag(orphanId, tag);
   };
 
-  // P2: Handle focusing orphan from panel
+  // Handle focusing orphan from panel
   const handleFocusOrphan = (nodeId: string) => {
     setFocusNodeId(nodeId);
     setSearchParams({ focus: nodeId });
@@ -397,10 +397,10 @@ export default function GraphView() {
             </div>
           </div>
 
-          {/* P2: Link Strength Legend */}
+          {/* Link Strength Legend */}
           <LinkStrengthLegend enabled={showLinkStrength} />
 
-          {/* P1: Color Groups Legend */}
+          {/* Color Groups Legend */}
           {colorBy !== 'none' && colorGroups.size > 0 && (
             <div className="flex items-center gap-4 text-xs text-text-light-tertiary dark:text-text-dark-tertiary flex-wrap">
               <span className="font-medium">{colorBy === 'folder' ? '文件夹：' : '标签：'}</span>
@@ -422,7 +422,7 @@ export default function GraphView() {
         </div>
         </div>
 
-        {/* P2: Orphan Panel (Sidebar) */}
+        {/* Orphan Panel (Sidebar) */}
         {showOrphanPanel && (
           <OrphanPanel
             orphans={orphanNodes}

@@ -1717,7 +1717,7 @@ export function HabitsContent() {
 
 /**
  * Habits Page - Wraps HabitsContent with PageContent for standalone page usage
- * Note: This route will redirect to /tasks?tab=habits after Phase 5 restructuring
+ * Note: This route will redirect to /tasks?tab=habits after restructuring
  */
 export function Habits() {
   return (

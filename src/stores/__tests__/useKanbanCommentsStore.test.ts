@@ -3,7 +3,7 @@ import { useKanbanCommentsStore, selectTotalComments, selectTaskHasComments, sel
 import type { Task, TaskComment, ActivityLogEntry } from '../../types';
 
 /**
- * Phase 8.3: Tests for useKanbanCommentsStore
+ * Tests for useKanbanCommentsStore
  *
  * Tests comment CRUD, activity logging, query helpers, and statistics.
  */

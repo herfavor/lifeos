@@ -5,7 +5,7 @@ import { logger } from '../services/logger';
 const log = logger.module('KanbanChecklistStore');
 
 /**
- * Phase 8.4: Checklist statistics interface
+ * Checklist statistics interface
  */
 export interface ChecklistStats {
   totalItems: number;
@@ -16,7 +16,7 @@ export interface ChecklistStats {
 }
 
 /**
- * Phase 8.4: Checklist progress for a single task
+ * Checklist progress for a single task
  */
 export interface ChecklistProgress {
   total: number;
@@ -25,7 +25,7 @@ export interface ChecklistProgress {
 }
 
 /**
- * Phase 8.4: Kanban Checklist Store State
+ * Kanban Checklist Store State
  *
  * Manages:
  * - Checklist item CRUD operations (delegates to useKanbanStore)
@@ -146,7 +146,7 @@ interface KanbanChecklistState {
 }
 
 /**
- * Phase 8.4: Kanban Checklist Store
+ * Kanban Checklist Store
  *
  * Single-responsibility store for:
  * - Checklist item CRUD operations

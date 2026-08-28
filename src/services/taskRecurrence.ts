@@ -219,7 +219,7 @@ export function generateNextInstance(parentTask: Task, lastCompletedInstance?: T
     archivedAt: undefined,
   };
 
-  // P2: Apply template if templateId is set
+  // Apply template if templateId is set
   if (parentTask.recurrence.templateId) {
     const { getTemplate } = useTemplateStore.getState();
     const template = getTemplate(parentTask.recurrence.templateId);

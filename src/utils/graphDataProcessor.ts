@@ -11,7 +11,7 @@ export interface GraphNode {
   label: string;
   color: string; // Semantic color token
   size: number; // Based on connection count
-  connections?: number; // P1: Connection count for tooltips
+  connections?: number; // Connection count for tooltips
   metadata: {
     createdAt?: string;
     folder?: string;
@@ -62,12 +62,12 @@ export interface GraphFilters {
   hideOrphans?: boolean;
   focusNodeId?: string;
   focusDepth?: number; // 1-3 hops from focused node
-  colorBy?: 'folder' | 'tag' | 'none'; // P1: Color grouping
-  sizeByConnections?: boolean; // P1: Node sizing (default: true)
+  colorBy?: 'folder' | 'tag' | 'none'; // Color grouping
+  sizeByConnections?: boolean; // Node sizing (default: true)
 }
 
 /**
- * P1: Generate color palette for graph node groups
+ * Generate color palette for graph node groups
  * Returns HSL colors with good visual separation
  */
 function generateColorPalette(count: number): string[] {
@@ -85,7 +85,7 @@ function generateColorPalette(count: number): string[] {
 }
 
 /**
- * P1: Assign colors to nodes based on grouping strategy
+ * Assign colors to nodes based on grouping strategy
  */
 function assignNodeColors(
   nodes: GraphNode[],
@@ -290,7 +290,7 @@ export function buildGraphData(
     }
   });
 
-  // P1: Calculate connection counts for all nodes (used for sizing and tooltips)
+  // Calculate connection counts for all nodes (used for sizing and tooltips)
   const connectionCounts = new Map<string, number>();
   edges.forEach((edge) => {
     connectionCounts.set(edge.source, (connectionCounts.get(edge.source) || 0) + 1);
@@ -314,7 +314,7 @@ export function buildGraphData(
   }
   // If sizeByConnections is false, keep default sizes (already set at node creation)
 
-  // P1: Apply color grouping if specified
+  // Apply color grouping if specified
   if (filters.colorBy && filters.colorBy !== 'none') {
     const colorMap = assignNodeColors(nodes, filters.colorBy);
 
@@ -398,7 +398,7 @@ export function getUniqueTags(notes: Record<string, Note>): string[] {
 }
 
 /**
- * P1: Get color groups for legend display
+ * Get color groups for legend display
  * Returns map of group names to colors
  */
 export function getColorGroups(
