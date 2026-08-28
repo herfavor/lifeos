@@ -1,6 +1,6 @@
 /**
  * Create Page (formerly Docs)
- * Phase 5: Renamed from Docs to Create, added TabNavigation with 6 tabs
+ * Renamed from Docs to Create, added TabNavigation with 6 tabs
  * - Create (all docs)
  * - Documents
  * - Spreadsheets
@@ -323,7 +323,7 @@ function FolderContextMenu({ x, y, folder: _folder, onClose, onRename, onDelete 
   );
 }
 
-// Phase 5: Tab configuration for Create page (simplified - removed redundant document type tabs)
+// Tab configuration for Create page (simplified - removed redundant document type tabs)
 type CreateTabType = 'create' | 'diagrams' | 'forms';
 type DocCollectionView = 'active' | 'archived' | 'trash';
 
@@ -347,13 +347,13 @@ export function Docs() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
 
-  // Phase 5: Tab state management (simplified - only create, diagrams, forms tabs)
+  // Tab state management (simplified - only create, diagrams, forms tabs)
   const getTabFromUrl = (): CreateTabType => {
     const tab = searchParams.get('tab');
     if (tab && VALID_TABS.includes(tab as CreateTabType)) {
       return tab as CreateTabType;
     }
-    return 'create'; // Default tab
+ return 'create'; // Default tab
   };
 
   const [activeTab, setActiveTab] = useState<CreateTabType>(getTabFromUrl);
@@ -618,7 +618,7 @@ export function Docs() {
 
   return (
     <PageContent page="create">
-      {/* Phase 5: Tab Navigation */}
+      {/* Tab Navigation */}
       {EXPOSED_CREATE_TABS.length > 1 && (
         <TabNavigation
           tabs={EXPOSED_CREATE_TABS}

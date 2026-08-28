@@ -113,12 +113,12 @@ function App() {
                 </StoreErrorBoundary>
               }
             />
-            {/* Phase 5: Redirect /graph to /notes?tab=graph */}
+            {/* Redirect /graph to /notes?tab=graph */}
             <Route
               path="/graph"
               element={<Navigate to="/notes?tab=graph" replace />}
             />
-            {/* Phase 5: Redirect /diagrams to /create?tab=diagrams */}
+            {/* Redirect /diagrams to /create?tab=diagrams */}
             <Route
               path="/diagrams"
               element={<Navigate to="/create?tab=diagrams" replace />}
@@ -131,7 +131,7 @@ function App() {
                 </StoreErrorBoundary>
               }
             />
-            {/* Phase 5: Redirect /forms to /create?tab=forms */}
+            {/* Redirect /forms to /create?tab=forms */}
             <Route
               path="/forms"
               element={<Navigate to="/create?tab=forms" replace />}
@@ -252,7 +252,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             {/* Focus mode - rendered inside Layout, which swaps to a bare standalone shell */}
             <Route path="/focus" element={<Focus />} />
-            {/* Phase 5: Redirect /habits to /tasks?tab=habits */}
+            {/* Redirect /habits to /tasks?tab=habits */}
             <Route
               path="/habits"
               element={<Navigate to="/tasks?tab=habits" replace />}
@@ -264,7 +264,7 @@ function App() {
               path="/calendar"
               element={<Navigate to="/schedule" replace />}
             />
-            {/* Phase 5: Redirect /docs to /create */}
+            {/* Redirect /docs to /create */}
             <Route
               path="/docs"
               element={<Navigate to="/create" replace />}

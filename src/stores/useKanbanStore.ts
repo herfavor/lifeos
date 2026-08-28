@@ -8,7 +8,7 @@ import type {
   KanbanColumn,
   KanbanSection,
   ChecklistItem,
-  // Phase 8.3: TaskComment now managed by useKanbanCommentsStore
+  // TaskComment now managed by useKanbanCommentsStore
   ActivityLogEntry,
   UndoHistoryEntry,
   Subtask,
@@ -23,7 +23,7 @@ import { generateNextInstance, shouldGenerateNextInstance, getTaskInstances, upd
 import { evaluateRules } from '../services/automationEngine';
 import type { AutomationContext } from '../types/automation';
 import { migrateDependenciesToTaskLevel, needsMigration } from '../services/dependencyMigration';
-// Phase 8.2: criticalPath and baseline utilities now used via useKanbanDependenciesStore
+// criticalPath and baseline utilities now used via useKanbanDependenciesStore
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
 import { toast } from './useToastStore';
 import { useActivityStore } from './useActivityStore';
@@ -34,7 +34,7 @@ import { useKanbanChecklistStore } from './useKanbanChecklistStore';
 
 const log = logger.module('KanbanStore');
 
-// Phase 4: Default columns (replaces hardcoded columns)
+// Default columns (replaces hardcoded columns)
 const DEFAULT_COLUMNS: KanbanColumn[] = [
   { id: 'backlog', title: '待处理', color: 'bg-text-light-secondary', order: 0 },
   { id: 'todo', title: '待办', color: 'bg-accent-blue', order: 1 },
@@ -43,13 +43,13 @@ const DEFAULT_COLUMNS: KanbanColumn[] = [
   { id: 'done', title: '已完成', color: 'bg-accent-green', order: 4 },
 ];
 
-// Phase 4: Default card templates for quick task creation
+// Default card templates for quick task creation
 const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   {
     id: 'bug-report',
     name: '缺陷报告',
     icon: '🐛',
-    description: '**复现步骤：**\n1. \n\n**预期行为：**\n\n**实际行为：**\n\n**环境：**\n- 浏览器：\n- 操作系统：',
+ description: '**复现步骤：**\n1. \n\n**预期行为：**\n\n**实际行为：**\n\n**环境：**\n- 浏览器：\n- 操作系统：',
     defaultPriority: 'high',
     defaultTags: ['bug'],
     defaultColumn: 'todo',
@@ -59,7 +59,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'feature-request',
     name: '功能请求',
     icon: '✨',
-    description: '**要解决的问题：**\n\n**建议方案：**\n\n**验收标准：**\n- [ ] \n- [ ] ',
+ description: '**要解决的问题：**\n\n**建议方案：**\n\n**验收标准：**\n- [ ] \n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: ['feature'],
     defaultColumn: 'backlog',
@@ -69,7 +69,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'task',
     name: '任务',
     icon: '📋',
-    description: '**目标：**\n\n**交付物：**\n- [ ] ',
+ description: '**目标：**\n\n**交付物：**\n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: [],
     defaultColumn: 'todo',
@@ -79,7 +79,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'meeting-notes',
     name: '会议记录',
     icon: '📝',
-    description: '**日期：** \n**参会人：** \n\n**议程：**\n1. \n\n**行动项：**\n- [ ] \n\n**备注：**',
+ description: '**日期：** \n**参会人：** \n\n**议程：**\n1. \n\n**行动项：**\n- [ ] \n\n**备注：**',
     defaultPriority: 'low',
     defaultTags: ['meeting'],
     defaultColumn: 'backlog',
@@ -89,7 +89,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'research',
     name: '研究',
     icon: '🔬',
-    description: '**研究问题：**\n\n**关键发现：**\n\n**来源：**\n- \n\n**结论：**',
+ description: '**研究问题：**\n\n**关键发现：**\n\n**来源：**\n- \n\n**结论：**',
     defaultPriority: 'medium',
     defaultTags: ['research'],
     defaultColumn: 'backlog',
@@ -101,71 +101,71 @@ interface KanbanStore extends KanbanState {
   // Existing task actions
   addTask: (task: Omit<Task, 'id' | 'created'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
-  /** Phase 8.3: Direct task field update without auto-logging (for cross-store use) */
+  /** Direct task field update without auto-logging (for cross-store use) */
   _updateTaskFieldsDirect: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   moveTask: (id: string, newStatus: TaskStatus) => void;
   getTasksByStatus: (status: TaskStatus) => Task[];
   getFilteredTasks: () => Task[];
 
-  // P1: Recurring tasks
+  // Recurring tasks
   setTaskRecurrence: (taskId: string, recurrence: Task['recurrence']) => void;
   generateNextRecurringInstance: (parentTaskId: string, lastCompletedInstance?: Task) => void;
   getRecurringTaskInstances: (parentTaskId: string) => Task[];
 
-  // Phase 4: Column management
+  // Column management
   addColumn: (column: Omit<KanbanColumn, 'id' | 'order'>) => void;
   updateColumn: (id: string, updates: Partial<KanbanColumn>) => void;
   deleteColumn: (id: string) => void;
   reorderColumns: (columnIds: string[]) => void;
   replaceAllColumns: (newColumns: Omit<KanbanColumn, 'id' | 'order'>[]) => void;
 
-  // Phase 4: Checklist management
+  // Checklist management
   addChecklistItem: (taskId: string, text: string) => void;
   updateChecklistItem: (taskId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
   deleteChecklistItem: (taskId: string, itemId: string) => void;
   toggleChecklistItem: (taskId: string, itemId: string) => void;
   reorderChecklistItems: (taskId: string, itemIds: string[]) => void;
 
-  // Phase 4: Comment management
+  // Comment management
   addComment: (taskId: string, text: string) => void;
   updateComment: (taskId: string, commentId: string, text: string) => void;
   deleteComment: (taskId: string, commentId: string) => void;
 
-  // Phase 4: Activity log (auto-tracked)
+  // Activity log (auto-tracked)
   logActivity: (taskId: string, entry: Omit<ActivityLogEntry, 'id' | 'timestamp'>) => void;
 
-  // Phase 4: Bulk actions
+  // Bulk actions
   bulkUpdateStatus: (taskIds: string[], newStatus: TaskStatus) => void;
   bulkUpdatePriority: (taskIds: string[], newPriority: TaskPriority) => void;
   bulkDeleteTasks: (taskIds: string[]) => void;
 
-  // Phase 5: Subtask management
+  // Subtask management
   addSubtask: (taskId: string, subtaskData: Omit<Subtask, 'id' | 'parentTaskId' | 'createdAt' | 'order'>) => void;
   updateSubtask: (taskId: string, subtaskId: string, updates: Partial<Subtask>) => void;
   deleteSubtask: (taskId: string, subtaskId: string) => void;
   toggleSubtask: (taskId: string, subtaskId: string) => void;
   reorderSubtasks: (taskId: string, subtaskIds: string[]) => void;
 
-  // Phase 3.2: File attachment management
+  // File attachment management
   addAttachment: (taskId: string, attachment: Omit<TaskAttachment, 'id' | 'taskId' | 'uploadedAt'>) => void;
   deleteAttachment: (taskId: string, attachmentId: string) => void;
 
-  // Phase 5: Dependency management (Professional types: FS/SS/FF/SF with lag)
+  // Dependency management (Professional types: FS/SS/FF/SF with lag)
   addDependency: (taskId: string, dependency: TaskDependency) => void;
   removeDependency: (taskId: string, dependencyId: string) => void;
   getBlockers: (taskId: string) => Task[];
   getBlocked: (taskId: string) => Task[];
-  getOverdueBlockers: (taskId: string) => Task[]; // P1: Dependency Warnings
+ getOverdueBlockers: (taskId: string) => Task[]; // Dependency Warnings
 
-  // Phase 1.2: Auto-shift dependent tasks
+  // Auto-shift dependent tasks
   applyDependentShifts: (shifts: Array<{taskId: string; newStartDate: string | null; newDueDate: string | null; reason: string}>) => void;
 
-  // Phase 1.3: Critical path analysis
+  // Critical path analysis
   getCriticalPath: () => string[];
   getTaskSlack: (taskId: string) => number;
 
-  // Phase 1.4: Baseline comparison
+  // Baseline comparison
   setBaseline: () => void;
   clearBaseline: () => void;
   getBaseline: () => ProjectBaseline | null;
@@ -210,10 +210,10 @@ interface KanbanStore extends KanbanState {
   undo: () => void;
   clearUndoHistory: () => void;
 
-  // Phase 4: Card templates
+  // Card templates
   getCardTemplates: () => CardTemplate[];
 
-  // Phase 8F: Section management
+  // Section management
   addSection: (columnId: string, title: string) => void;
   deleteSection: (id: string) => void;
   renameSection: (id: string, title: string) => void;
@@ -226,13 +226,13 @@ export const useKanbanStore = create<KanbanStore>()(
       // Initial state
       tasks: [],
       columns: DEFAULT_COLUMNS,
-      sections: [], // Phase 8F: Kanban sections
-      dependencies: [], // Phase 5: Task dependencies
-      // Phase 8.1: archivedTasks moved to useKanbanArchiveStore
-      nextCardNumber: 1, // Phase A: Auto-incrementing card number counter
-      visibleColumns: 5, // UI: Number of columns visible before scrolling (default: 5)
-      undoHistory: [], // Undo system: stores last 5 actions
-      baseline: null, // Phase 1.4: Project baseline snapshot
+ sections: [], // Kanban sections
+ dependencies: [], // Task dependencies
+      // archivedTasks moved to useKanbanArchiveStore
+ nextCardNumber: 1, // Phase A: Auto-incrementing card number counter
+ visibleColumns: 5, // UI: Number of columns visible before scrolling (default: 5)
+ undoHistory: [], // Undo system: stores last 5 actions
+ baseline: null, // Project baseline snapshot
 
       // ==================== TASK ACTIONS ====================
 
@@ -243,7 +243,7 @@ export const useKanbanStore = create<KanbanStore>()(
           ...taskData,
           id: Date.now().toString(),
           created: new Date().toISOString(),
-          cardNumber: currentNumber, // Phase A: Assign auto-incrementing card number
+ cardNumber: currentNumber, // Phase A: Assign auto-incrementing card number
           checklist: [],
           comments: [],
           activityLog: [],
@@ -251,7 +251,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         set((state) => ({
           tasks: [...state.tasks, newTask],
-          nextCardNumber: currentNumber + 1, // Increment counter
+ nextCardNumber: currentNumber + 1, // Increment counter
         }));
 
         // Log creation
@@ -265,7 +265,7 @@ export const useKanbanStore = create<KanbanStore>()(
           entityTitle: newTask.title,
         });
 
-        // P1: Trigger automation rules for 'task.created'
+        // Trigger automation rules for 'task.created'
         setTimeout(async () => {
           const { useAutomationStore } = await import('./useAutomationStore');
           const automationStore = useAutomationStore.getState();
@@ -289,7 +289,7 @@ export const useKanbanStore = create<KanbanStore>()(
         const oldTask = get().tasks.find((t) => t.id === id);
         if (!oldTask) return;
 
-        // Phase 1.2: Check if date changes trigger dependent shifts
+        // Check if date changes trigger dependent shifts
         // Note: This only updates the primary task. Components must call
         // calculateDependentShifts separately and show confirmation dialog
         // before calling applyDependentShifts.
@@ -302,7 +302,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         // Log updates (track specific fields)
         Object.keys(updates).forEach((field) => {
-          if (field !== 'activityLog') { // Don't log the log itself
+ if (field !== 'activityLog') { // Don't log the log itself
             get().logActivity(id, {
               action: 'updated',
               field,
@@ -320,7 +320,7 @@ export const useKanbanStore = create<KanbanStore>()(
       },
 
       /**
-       * Phase 8.3: Direct task field update without auto-logging
+       * Direct task field update without auto-logging
        * Used by useKanbanCommentsStore to avoid double-logging when updating comments/activity
        */
       _updateTaskFieldsDirect: (id, updates) => {
@@ -341,7 +341,7 @@ export const useKanbanStore = create<KanbanStore>()(
         const oldTask = get().tasks.find((t) => t.id === id);
         if (!oldTask) return;
 
-        // PHASE 5 PART 6: Validate dependencies before moving to "done"
+        // Validate dependencies before moving to "done"
         if (newStatus === 'done') {
           const blockers = get().getBlockers(id);
           const incompleteBlockers = blockers.filter((b) => b.status !== 'done');
@@ -358,7 +358,7 @@ export const useKanbanStore = create<KanbanStore>()(
               `无法完成“${oldTask.title}”`,
               `被以下任务阻塞：${blockerNames}${suffix}`
             );
-            return; // Prevent move
+ return; // Prevent move
           }
         }
 
@@ -368,7 +368,7 @@ export const useKanbanStore = create<KanbanStore>()(
           updates.lastCompletedAt = new Date().toISOString();
         }
 
-        // P1: AUTO-GENERATE NEXT RECURRING INSTANCE
+        // AUTO-GENERATE NEXT RECURRING INSTANCE
         // If completing a recurring task instance, generate next occurrence
         const isCompletingRecurringInstance = newStatus === 'done' && oldTask.recurrenceId;
 
@@ -403,7 +403,7 @@ export const useKanbanStore = create<KanbanStore>()(
           });
         }
 
-        // P1: Trigger automation rules for 'task.moved' and potentially 'task.completed'
+        // Trigger automation rules for 'task.moved' and potentially 'task.completed'
         setTimeout(async () => {
           const { useAutomationStore } = await import('./useAutomationStore');
           const automationStore = useAutomationStore.getState();
@@ -455,7 +455,7 @@ export const useKanbanStore = create<KanbanStore>()(
         );
       },
 
-      // ==================== RECURRING TASK ACTIONS (P1) ====================
+      // ==================== RECURRING TASK ACTIONS  ====================
 
       setTaskRecurrence: (taskId, recurrence) => {
         const task = get().tasks.find((t) => t.id === taskId);
@@ -648,7 +648,7 @@ export const useKanbanStore = create<KanbanStore>()(
       },
 
       // ==================== CHECKLIST ACTIONS ====================
-      // Phase 8.4: Delegated to useKanbanChecklistStore
+      // Delegated to useKanbanChecklistStore
 
       addChecklistItem: (taskId, text) => {
         const checklistStore = useKanbanChecklistStore.getState();
@@ -694,7 +694,7 @@ export const useKanbanStore = create<KanbanStore>()(
       },
 
       // ==================== COMMENT ACTIONS ====================
-      // Phase 8.3: Delegated to useKanbanCommentsStore
+      // Delegated to useKanbanCommentsStore
 
       addComment: (taskId, text) => {
         const commentsStore = useKanbanCommentsStore.getState();
@@ -721,7 +721,7 @@ export const useKanbanStore = create<KanbanStore>()(
       },
 
       // ==================== ACTIVITY LOG ====================
-      // Phase 8.3: Delegated to useKanbanCommentsStore
+      // Delegated to useKanbanCommentsStore
 
       logActivity: (taskId, entry) => {
         const commentsStore = useKanbanCommentsStore.getState();
@@ -762,7 +762,7 @@ export const useKanbanStore = create<KanbanStore>()(
         set({
           columns: lastEntry.previousState.columns,
           tasks: lastEntry.previousState.tasks,
-          undoHistory: history.slice(0, -1), // Remove this entry from history
+ undoHistory: history.slice(0, -1), // Remove this entry from history
         });
       },
 
@@ -860,7 +860,7 @@ export const useKanbanStore = create<KanbanStore>()(
         }));
       },
 
-      // ==================== PHASE 5: SUBTASK ACTIONS ====================
+      // ==================== SUBTASK ACTIONS ====================
 
       addSubtask: (taskId, subtaskData) => {
         set((state) => ({
@@ -1003,7 +1003,7 @@ export const useKanbanStore = create<KanbanStore>()(
         });
       },
 
-      // ==================== PHASE 3.2: FILE ATTACHMENT ACTIONS ====================
+      // ==================== FILE ATTACHMENT ACTIONS ====================
 
       addAttachment: (taskId, attachment) => {
         set((state) => ({
@@ -1063,13 +1063,13 @@ export const useKanbanStore = create<KanbanStore>()(
         }
       },
 
-      // ==================== PHASE 5: DEPENDENCY ACTIONS ====================
+      // ==================== DEPENDENCY ACTIONS ====================
 
       addDependency: (taskId, dependency) => {
         const tasks = get().tasks;
         const dependenciesStore = useKanbanDependenciesStore.getState();
 
-        // Phase 8.2: Use centralized validation from dependencies store
+        // Use centralized validation from dependencies store
         const validation = dependenciesStore.validateDependency(taskId, dependency, tasks);
         if (!validation.valid) {
           log.error(validation.error || 'Invalid dependency', { taskId, dependsOn: dependency.taskId });
@@ -1150,7 +1150,7 @@ export const useKanbanStore = create<KanbanStore>()(
         });
       },
 
-      // Phase 8.2: Dependency queries delegated to useKanbanDependenciesStore
+      // Dependency queries delegated to useKanbanDependenciesStore
 
       getBlockers: (taskId) => {
         const tasks = get().tasks;
@@ -1170,7 +1170,7 @@ export const useKanbanStore = create<KanbanStore>()(
         return dependenciesStore.getOverdueBlockers(taskId, tasks);
       },
 
-      // ==================== PHASE 1.2: AUTO-SHIFT DEPENDENT TASKS ====================
+      // ==================== AUTO-SHIFT DEPENDENT TASKS ====================
 
       applyDependentShifts: (shifts) => {
         if (shifts.length === 0) return;
@@ -1202,8 +1202,8 @@ export const useKanbanStore = create<KanbanStore>()(
         log.info('Dependent shifts applied successfully');
       },
 
-      // ==================== PHASE 1.3: CRITICAL PATH ANALYSIS ====================
-      // Phase 8.2: Delegated to useKanbanDependenciesStore for single-responsibility
+      // ==================== CRITICAL PATH ANALYSIS ====================
+      // Delegated to useKanbanDependenciesStore for single-responsibility
 
       getCriticalPath: () => {
         const tasks = get().tasks;
@@ -1217,8 +1217,8 @@ export const useKanbanStore = create<KanbanStore>()(
         return dependenciesStore.getTaskSlack(taskId, tasks);
       },
 
-      // ==================== PHASE 1.4: BASELINE COMPARISON ====================
-      // Phase 8.2: Delegated to useKanbanDependenciesStore for single-responsibility
+      // ==================== BASELINE COMPARISON ====================
+      // Delegated to useKanbanDependenciesStore for single-responsibility
 
       setBaseline: () => {
         const tasks = get().tasks;
@@ -1237,7 +1237,7 @@ export const useKanbanStore = create<KanbanStore>()(
       },
 
       // ==================== PHASE A: ARCHIVE ACTIONS ====================
-      // Phase 8.1: Delegated to useKanbanArchiveStore for single-responsibility
+      // Delegated to useKanbanArchiveStore for single-responsibility
 
       archiveTask: (id) => {
         let task = get().tasks.find((t) => t.id === id);
@@ -1362,7 +1362,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         const startTime = new Date(task.timeTracking.activeTimerStart);
         const endTime = new Date(now);
-        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000); // seconds
+ const duration = Math.floor((endTime.getTime - startTime.getTime) / 1000); // seconds
 
         set((state) => ({
           tasks: state.tasks.map((t) => {
@@ -1571,7 +1571,7 @@ export const useKanbanStore = create<KanbanStore>()(
         return DEFAULT_CARD_TEMPLATES;
       },
 
-      // ==================== PHASE 8F: SECTION MANAGEMENT ====================
+      // ==================== SECTION MANAGEMENT ====================
 
       addSection: (columnId, title) => {
         const sections = get().sections;
@@ -1618,7 +1618,7 @@ export const useKanbanStore = create<KanbanStore>()(
     {
       name: 'kanban-tasks',
       storage: createJSONStorage(() => createSyncedStorage()),
-      version: 5, // v5: Migrate baseline to useKanbanDependenciesStore
+ version: 5, // v5: Migrate baseline to useKanbanDependenciesStore
       migrate: (persistedState: any, version: number) => {
         let state = persistedState;
 
@@ -1633,7 +1633,7 @@ export const useKanbanStore = create<KanbanStore>()(
           state = {
             ...state,
             tasks: migratedTasks,
-            dependencies: undefined, // Remove old dependencies field
+ dependencies: undefined, // Remove old dependencies field
           };
         }
 
