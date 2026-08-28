@@ -26,7 +26,9 @@
     "type-check": "tsc -b --noEmit",
     "audit": "npm audit --audit-level=high",
     "audit:fix": "npm audit fix",
-    "ci": "bash scripts/ci.sh"
+    "ci": "bash scripts/ci.sh",
+    "lint:hygiene": "node scripts/check-repository-hygiene.mjs",
+    "lint:source-size": "node scripts/check-source-size.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
