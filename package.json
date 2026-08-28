@@ -97,6 +97,7 @@
     "remark-gfm": "4.0.1",
     "use-debounce": "^10.0.6",
     "uuid": "^14.0.0",
+    "write-excel-file": "^2.3.10",
     "zod": "^4.2.1",
     "zustand": "^5.0.8"
   },
