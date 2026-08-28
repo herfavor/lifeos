@@ -5,7 +5,7 @@ const root = process.cwd();
 const sourceRoot = path.join(root, 'src');
 
 const processDocPattern = /(?:^|[-_.])(audit|implementation|progress|status|handoff|complete|completion|phase[-_.]?\d+|wave[-_.]?\d+)(?:[-_.]|$)/i;
-const processCommentPattern = /\b(?:phase\s+\d+(?:\.\d+|[a-z])?|wave\s+\d+[a-z]?|p[012](?:\s*#\d+)?|\d+%\s*parity|final\s+polish)\b/i;
+const processCommentPattern = /\b(?:phase\s+(?:\d+(?:\.\d+|[a-z])?|[a-z])|wave\s+\d+[a-z]?|p[012](?:\s*#\d+)?|\d+%\s*parity|final\s+polish)\b/i;
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {

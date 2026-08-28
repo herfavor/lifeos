@@ -139,7 +139,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     deleteAttachment,
   } = useKanbanStore();
 
-  // Time tracking store (Phase A: Time Tracking Integration)
+  // Time tracking store (Time Tracking Integration)
   const {
     getEntriesForCard,
     getTotalTimeForCard,
@@ -178,7 +178,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
   const [customStatus, setCustomStatus] = useState<CustomStatus | undefined>(undefined);
   const [timeEstimate, setTimeEstimate] = useState<number | undefined>(undefined);
   const [assignees, setAssignees] = useState<string[]>([]);
- const [progress, setProgress] = useState<number>(0); // Progress %
+  const [progress, setProgress] = useState<number>(0); // Progress %
 
   // Recurring tasks state
   const [showRecurrencePicker, setShowRecurrencePicker] = useState(false);
@@ -212,7 +212,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
       setCustomStatus(task.customStatus);
       setTimeEstimate(task.timeTracking?.estimated);
       setAssignees(task.assignees || []);
- setProgress(task.progress || 0); // 
+      setProgress(task.progress || 0); // 
     }
   }, [task]);
 
@@ -511,7 +511,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             />
           </div>
 
-          {/* Effort (Story Points) - Phase B */}
+          {/* Effort (Story Points) - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               工作量（故事点）
@@ -537,7 +537,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Custom Status - Phase B */}
+          {/* Custom Status - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               自定义状态
@@ -561,7 +561,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Time Estimate - Phase B */}
+          {/* Time Estimate - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               预计时长（小时）
@@ -863,7 +863,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Custom Fields  */}
+          {/* Custom Fields () */}
           <TaskCustomFields task={task} onSave={onSave} />
         </div>
 
@@ -968,7 +968,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               <ActivityTabContent activityLog={task.activityLog} />
             )}
 
-            {/* Time Tracking Tab (Phase A: Time Tracking Integration) */}
+            {/* Time Tracking Tab (Time Tracking Integration) */}
             {activeTab === 'timetracking' && task && (
               <TimeTrackingTabContent
                 entries={getEntriesForCard(task.id)}
@@ -980,7 +980,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               />
             )}
 
-            {/* Attachments Tab  */}
+            {/* Attachments Tab () */}
             {activeTab === 'attachments' && task && (
               <AttachmentsTabContent
                 attachments={task.attachments || []}

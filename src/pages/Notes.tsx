@@ -101,7 +101,7 @@ export const Notes: React.FC = () => {
     if (searchParams.get('daily') === 'true') {
       return 'daily';
     }
- return 'notes'; // Default tab
+    return 'notes'; // Default tab
   }, [searchParams]);
 
   const [activeTab, setActiveTab] = useState<NotesTabType>(getTabFromUrl);

@@ -49,7 +49,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'bug-report',
     name: '缺陷报告',
     icon: '🐛',
- description: '**复现步骤：**\n1. \n\n**预期行为：**\n\n**实际行为：**\n\n**环境：**\n- 浏览器：\n- 操作系统：',
+    description: '**复现步骤：**\n1. \n\n**预期行为：**\n\n**实际行为：**\n\n**环境：**\n- 浏览器：\n- 操作系统：',
     defaultPriority: 'high',
     defaultTags: ['bug'],
     defaultColumn: 'todo',
@@ -59,7 +59,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'feature-request',
     name: '功能请求',
     icon: '✨',
- description: '**要解决的问题：**\n\n**建议方案：**\n\n**验收标准：**\n- [ ] \n- [ ] ',
+    description: '**要解决的问题：**\n\n**建议方案：**\n\n**验收标准：**\n- [ ] \n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: ['feature'],
     defaultColumn: 'backlog',
@@ -69,7 +69,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'task',
     name: '任务',
     icon: '📋',
- description: '**目标：**\n\n**交付物：**\n- [ ] ',
+    description: '**目标：**\n\n**交付物：**\n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: [],
     defaultColumn: 'todo',
@@ -79,7 +79,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'meeting-notes',
     name: '会议记录',
     icon: '📝',
- description: '**日期：** \n**参会人：** \n\n**议程：**\n1. \n\n**行动项：**\n- [ ] \n\n**备注：**',
+    description: '**日期：** \n**参会人：** \n\n**议程：**\n1. \n\n**行动项：**\n- [ ] \n\n**备注：**',
     defaultPriority: 'low',
     defaultTags: ['meeting'],
     defaultColumn: 'backlog',
@@ -89,7 +89,7 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
     id: 'research',
     name: '研究',
     icon: '🔬',
- description: '**研究问题：**\n\n**关键发现：**\n\n**来源：**\n- \n\n**结论：**',
+    description: '**研究问题：**\n\n**关键发现：**\n\n**来源：**\n- \n\n**结论：**',
     defaultPriority: 'medium',
     defaultTags: ['research'],
     defaultColumn: 'backlog',
@@ -156,7 +156,7 @@ interface KanbanStore extends KanbanState {
   removeDependency: (taskId: string, dependencyId: string) => void;
   getBlockers: (taskId: string) => Task[];
   getBlocked: (taskId: string) => Task[];
- getOverdueBlockers: (taskId: string) => Task[]; // Dependency Warnings
+  getOverdueBlockers: (taskId: string) => Task[]; // Dependency Warnings
 
   // Auto-shift dependent tasks
   applyDependentShifts: (shifts: Array<{taskId: string; newStartDate: string | null; newDueDate: string | null; reason: string}>) => void;
@@ -170,7 +170,7 @@ interface KanbanStore extends KanbanState {
   clearBaseline: () => void;
   getBaseline: () => ProjectBaseline | null;
 
-  // Phase A: Archive management
+  // Archive management
   archiveTask: (id: string) => void;
   notify: (title: string, body: string) => void;
   restoreTask: (id: string) => void;
@@ -178,12 +178,12 @@ interface KanbanStore extends KanbanState {
   getArchivedTasks: () => Task[];
   autoArchiveCompletedTasks: () => void;
 
-  // Phase B: Time tracking
+  // Time tracking
   startTimer: (taskId: string) => void;
   stopTimer: (taskId: string) => void;
   updateTimeEstimate: (taskId: string, hours: number) => void;
 
-  // Phase B: Custom fields
+  // Custom fields
   updateEffort: (taskId: string, effort: import('../types').EffortEstimate | undefined) => void;
   updateCustomStatus: (taskId: string, customStatus: import('../types').CustomStatus | undefined) => void;
 
@@ -226,13 +226,13 @@ export const useKanbanStore = create<KanbanStore>()(
       // Initial state
       tasks: [],
       columns: DEFAULT_COLUMNS,
- sections: [], // Kanban sections
- dependencies: [], // Task dependencies
+      sections: [], // Kanban sections
+      dependencies: [], // Task dependencies
       // archivedTasks moved to useKanbanArchiveStore
- nextCardNumber: 1, // Phase A: Auto-incrementing card number counter
- visibleColumns: 5, // UI: Number of columns visible before scrolling (default: 5)
- undoHistory: [], // Undo system: stores last 5 actions
- baseline: null, // Project baseline snapshot
+      nextCardNumber: 1, // Auto-incrementing card number counter
+      visibleColumns: 5, // UI: Number of columns visible before scrolling (default: 5)
+      undoHistory: [], // Undo system: stores last 5 actions
+      baseline: null, // Project baseline snapshot
 
       // ==================== TASK ACTIONS ====================
 
@@ -243,7 +243,7 @@ export const useKanbanStore = create<KanbanStore>()(
           ...taskData,
           id: Date.now().toString(),
           created: new Date().toISOString(),
- cardNumber: currentNumber, // Phase A: Assign auto-incrementing card number
+          cardNumber: currentNumber, // Assign auto-incrementing card number
           checklist: [],
           comments: [],
           activityLog: [],
@@ -251,7 +251,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         set((state) => ({
           tasks: [...state.tasks, newTask],
- nextCardNumber: currentNumber + 1, // Increment counter
+          nextCardNumber: currentNumber + 1, // Increment counter
         }));
 
         // Log creation
@@ -302,7 +302,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         // Log updates (track specific fields)
         Object.keys(updates).forEach((field) => {
- if (field !== 'activityLog') { // Don't log the log itself
+          if (field !== 'activityLog') { // Don't log the log itself
             get().logActivity(id, {
               action: 'updated',
               field,
@@ -358,11 +358,11 @@ export const useKanbanStore = create<KanbanStore>()(
               `无法完成“${oldTask.title}”`,
               `被以下任务阻塞：${blockerNames}${suffix}`
             );
- return; // Prevent move
+            return; // Prevent move
           }
         }
 
-        // PHASE A: Track when task is completed (for auto-archive)
+        // Track when task is completed (for auto-archive)
         const updates: Partial<Task> = { status: newStatus };
         if (newStatus === 'done' && oldTask.status !== 'done') {
           updates.lastCompletedAt = new Date().toISOString();
@@ -455,7 +455,7 @@ export const useKanbanStore = create<KanbanStore>()(
         );
       },
 
-      // ==================== RECURRING TASK ACTIONS  ====================
+      // ==================== RECURRING TASK ACTIONS () ====================
 
       setTaskRecurrence: (taskId, recurrence) => {
         const task = get().tasks.find((t) => t.id === taskId);
@@ -762,7 +762,7 @@ export const useKanbanStore = create<KanbanStore>()(
         set({
           columns: lastEntry.previousState.columns,
           tasks: lastEntry.previousState.tasks,
- undoHistory: history.slice(0, -1), // Remove this entry from history
+          undoHistory: history.slice(0, -1), // Remove this entry from history
         });
       },
 
@@ -1236,7 +1236,7 @@ export const useKanbanStore = create<KanbanStore>()(
         return dependenciesStore.getBaseline();
       },
 
-      // ==================== PHASE A: ARCHIVE ACTIONS ====================
+      // ==================== ARCHIVE ACTIONS ====================
       // Delegated to useKanbanArchiveStore for single-responsibility
 
       archiveTask: (id) => {
@@ -1320,7 +1320,7 @@ export const useKanbanStore = create<KanbanStore>()(
         log.info('Auto-archived completed tasks', { count: tasksToArchive.length });
       },
 
-      // ==================== PHASE B: TIME TRACKING ====================
+      // ==================== TIME TRACKING ====================
 
       startTimer: (taskId) => {
         const now = new Date().toISOString();
@@ -1362,7 +1362,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         const startTime = new Date(task.timeTracking.activeTimerStart);
         const endTime = new Date(now);
- const duration = Math.floor((endTime.getTime - startTime.getTime) / 1000); // seconds
+        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000); // seconds
 
         set((state) => ({
           tasks: state.tasks.map((t) => {
@@ -1423,7 +1423,7 @@ export const useKanbanStore = create<KanbanStore>()(
         });
       },
 
-      // ==================== PHASE B: CUSTOM FIELDS ====================
+      // ==================== CUSTOM FIELDS ====================
 
       updateEffort: (taskId, effort) => {
         set((state) => ({
@@ -1618,7 +1618,7 @@ export const useKanbanStore = create<KanbanStore>()(
     {
       name: 'kanban-tasks',
       storage: createJSONStorage(() => createSyncedStorage()),
- version: 5, // v5: Migrate baseline to useKanbanDependenciesStore
+      version: 5, // v5: Migrate baseline to useKanbanDependenciesStore
       migrate: (persistedState: any, version: number) => {
         let state = persistedState;
 
@@ -1633,7 +1633,7 @@ export const useKanbanStore = create<KanbanStore>()(
           state = {
             ...state,
             tasks: migratedTasks,
- dependencies: undefined, // Remove old dependencies field
+            dependencies: undefined, // Remove old dependencies field
           };
         }
 

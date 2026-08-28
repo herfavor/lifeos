@@ -353,7 +353,7 @@ export function Docs() {
     if (tab && VALID_TABS.includes(tab as CreateTabType)) {
       return tab as CreateTabType;
     }
- return 'create'; // Default tab
+    return 'create'; // Default tab
   };
 
   const [activeTab, setActiveTab] = useState<CreateTabType>(getTabFromUrl);
