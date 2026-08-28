@@ -1,10 +1,5 @@
 /**
- * Docs Components
- *
- * Components for the documentation system including
- * markdown rendering and document viewing.
+ * Components for the current document system.
  */
 
 export { DocViewer } from './DocViewer';
-export { PresentationPropertiesPanel } from './PresentationPropertiesPanel';
-export { PresentationAnimationPanel } from './PresentationAnimationPanel';

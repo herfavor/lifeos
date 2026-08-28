@@ -108,9 +108,8 @@ export function executeTemplateAction(
 
     case 'create-doc': {
       const docsStore = useDocsStore.getState();
-      const docType = (data.type as 'doc' | 'sheet') || 'doc';
       const docId = docsStore.createDoc(
-        docType,
+        'doc',
         (data.title as string) || '未命名文档'
       );
       return `文档：${data.title}（${docId}）`;
