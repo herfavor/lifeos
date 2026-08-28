@@ -79,8 +79,8 @@ npm run preview
 
 ## 接下来
 
-- [AI 管理指南](./ai-management.md)
-- [收件箱](./inbox.md)
-- [任务与看板](./tasks-kanban.md)
-- [日程与事件](./calendar-events.md)
+- [核心工作流](./workflow.md)
+- [日程、专注与时间](./schedule-and-focus.md)
+- [笔记与收藏](./knowledge.md)
+- [AI](./ai.md)
 - [备份与恢复](./backup-sync.md)

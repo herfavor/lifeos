@@ -38,7 +38,7 @@ Vite 配置明确关闭了开发模式 Service Worker。
 
 不同 provider 的浏览器策略不同。以设置页 provider metadata 的“需代理”提示为准。
 
-优先尝试 OpenRouter；需要原生 provider 时再参考 [后端代理](./backend-proxy-setup.md)。
+优先尝试 OpenRouter；需要原生 provider 时参考 [AI](./ai.md) 中的“浏览器 CORS 与代理”。
 
 ## AI 为什么没有每次问我
 
@@ -88,4 +88,4 @@ npm run build
 
 - [PWA 安装](./install-pwa.md)
 - [备份与恢复](./backup-sync.md)
-- [AI 管理](./ai-management.md)
+- [AI](./ai.md)
