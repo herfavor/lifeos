@@ -267,27 +267,6 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'hidden',
     description: '可计费时间报表（自由职业向，保留能力）',
   },
-  {
-    id: 'quests',
-    label: '每日任务 (Quest/XP)',
-    icon: '📜',
-    tier: 'hidden',
-    description: '游戏化任务与经验值（默认不展示，也不进入首页组件管理器）',
-  },
-  {
-    id: 'flashcards',
-    label: '闪卡复习',
-    icon: '🃏',
-    tier: 'hidden',
-    description: '间隔重复记忆卡片（默认不展示，也不进入首页组件管理器）',
-  },
-  {
-    id: 'gamification',
-    label: '生产力评分 / XP',
-    icon: '🔮',
-    tier: 'hidden',
-    description: '游戏化统计组件与生产力评分（默认不展示，也不进入首页组件管理器）',
-  },
 ];
 
 // ─────────────────────────────────────────────────────────── helpers
@@ -342,9 +321,6 @@ export function isFeatureExposed(id: string): boolean {
  */
 const WIDGET_FEATURE_IDS: Readonly<Record<string, string>> = {
   forms: 'forms',
-  flashcard: 'flashcards',
-  dailyquests: 'quests',
-  productivitykarma: 'gamification',
 };
 
 export function isWidgetExposed(widgetId: string): boolean {

@@ -8,14 +8,9 @@ export {
   useCompletionAnimation,
   HABIT_ANIMATION_STYLES,
 } from './HabitCompletionAnimation';
-export { HabitRewardsPanel } from './HabitRewards';
 export { useHabitReminders } from './HabitReminders';
 export { HabitAnalytics } from './HabitAnalytics';
-export { HabitAchievementsBadges } from './HabitAchievementsBadges';
 export { HabitJournal } from './HabitJournal';
 export { HabitStreakCalendar } from './HabitStreakCalendar';
-export { FlashcardReview } from './FlashcardReview';
-export { FlashcardCreator } from './FlashcardCreator';
-export { DailyQuestsPanel } from './DailyQuestsPanel';
 export { RoutineBuilder } from './RoutineBuilder';
 export { RoutineRunner } from './RoutineRunner';
