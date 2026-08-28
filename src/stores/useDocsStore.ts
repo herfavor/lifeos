@@ -6,64 +6,11 @@ import type {
   DocFolder,
   PlatformDocMeta,
   ProfessionalDoc,
-  SpreadsheetDoc,
-  PresentationDoc,
-  SpreadsheetSheet,
-  Slide,
-  SlideTheme,
-  DocType,
 } from '../types';
 import { createSyncedStorage } from '../lib/syncedStorage';
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
 import { toast } from './useToastStore';
 import { useActivityStore } from './useActivityStore';
-
-// Default slide theme
-const DEFAULT_THEME: SlideTheme = {
-  id: 'default',
-  name: '默认',
-  colors: {
-    primary: '#6366F1',
-    secondary: '#8B5CF6',
-    accent: '#06B6D4',
-    background: '#FFFFFF',
-    text: '#1F2937',
-  },
-  fonts: {
-    heading: 'Inter',
-    body: 'Inter',
-  },
-};
-
-// Create empty sheet
-function createEmptySheet(name: string = '工作表 1'): SpreadsheetSheet {
-  // Create 100 rows x 26 columns of empty cells
-  const data: string[][] = Array.from({ length: 100 }, () =>
-    Array.from({ length: 26 }, () => '')
-  );
-
-  return {
-    id: nanoid(),
-    name,
-    data,
-    columnWidths: Array(26).fill(100),
-    rowHeights: Array(100).fill(24),
-    cellStyles: {},
-    mergedCells: [],
-  };
-}
-
-// Create empty slide
-function createEmptySlide(order: number): Slide {
-  return {
-    id: nanoid(),
-    order,
-    background: { type: 'color', color: '#FFFFFF' },
-    elements: [],
-    speakerNotes: '',
-    layout: 'blank',
-  };
-}
 
 interface DocsStoreState {
   // User documents (persisted)
@@ -80,7 +27,7 @@ interface DocsStoreState {
   sidebarExpanded: boolean;
 
   // Document CRUD
-  createDoc: (type: DocType, title?: string, folderId?: string) => string;
+  createDoc: (type: 'doc', title?: string, folderId?: string) => string;
   updateDoc: (id: string, updates: Partial<Doc>) => void;
   deleteDoc: (id: string) => void;
   archiveDoc: (id: string) => void;
@@ -130,77 +77,36 @@ export const useDocsStore = create<DocsStoreState>()(
       viewMode: 'list',
       sidebarExpanded: true,
 
-      // Create a new document
-      createDoc: (type, title, folderId) => {
+      // Create a new rich-text document. Legacy sheet/slide records remain
+      // readable in persisted data but cannot be created by the runtime.
+      createDoc: (_type, title, folderId) => {
         const id = nanoid();
         const now = new Date().toISOString();
         const activeProjects = useProjectContextStore.getState().activeProjectIds;
 
-        let newDoc: Doc;
-
-        switch (type) {
-          case 'doc':
-            newDoc = {
-              id,
-              title: title || '未命名文档',
-              source: 'user',
-              type: 'doc',
-              folderId: folderId || undefined,
-              createdAt: now,
-              updatedAt: now,
-              order: get().docs.length,
-              version: 1,
-              projectIds: activeProjects,
-              content: JSON.stringify({
-                type: 'doc',
-                content: [{ type: 'paragraph' }],
-              }),
-            } as ProfessionalDoc;
-            break;
-
-          case 'sheet':
-            newDoc = {
-              id,
-              title: title || '未命名电子表格',
-              source: 'user',
-              type: 'sheet',
-              folderId: folderId || undefined,
-              createdAt: now,
-              updatedAt: now,
-              order: get().docs.length,
-              version: 1,
-              projectIds: activeProjects,
-              sheets: [createEmptySheet()],
-              activeSheetIndex: 0,
-            } as SpreadsheetDoc;
-            break;
-
-          case 'slides':
-            newDoc = {
-              id,
-              title: title || '未命名演示文稿',
-              source: 'user',
-              type: 'slides',
-              folderId: folderId || undefined,
-              createdAt: now,
-              updatedAt: now,
-              order: get().docs.length,
-              version: 1,
-              projectIds: activeProjects,
-              slides: [createEmptySlide(0)],
-              theme: DEFAULT_THEME,
-            } as PresentationDoc;
-            break;
-        }
+        const newDoc: ProfessionalDoc = {
+          id,
+          title: title || '未命名文档',
+          source: 'user',
+          type: 'doc',
+          folderId: folderId || undefined,
+          createdAt: now,
+          updatedAt: now,
+          order: get().docs.length,
+          version: 1,
+          projectIds: activeProjects,
+          content: JSON.stringify({
+            type: 'doc',
+            content: [{ type: 'paragraph' }],
+          }),
+        };
 
         set((state) => ({
           docs: [...state.docs, newDoc],
           activeDocId: id,
         }));
 
-        toast.success(
-          `已创建${type === 'doc' ? '文档' : type === 'sheet' ? '电子表格' : '演示文稿'}`
-        );
+        toast.success('已创建文档');
         useActivityStore.getState().logActivity({
           type: 'created',
           module: 'docs',
@@ -289,6 +195,10 @@ export const useDocsStore = create<DocsStoreState>()(
       duplicateDoc: (id) => {
         const doc = get().docs.find((d) => d.id === id);
         if (!doc || doc.source === 'platform') return null;
+        if (doc.type !== 'doc') {
+          toast.info('旧版文档类型不可复制', '该编辑器已从 LifeOS 核心运行时移除');
+          return null;
+        }
 
         const newId = nanoid();
         const now = new Date().toISOString();

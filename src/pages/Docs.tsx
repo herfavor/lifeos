@@ -1,15 +1,12 @@
 /**
- * Create Page (formerly Docs)
- * Renamed from Docs to Create, added TabNavigation with 6 tabs
- * - Create (all docs)
- * - Documents
- * - Spreadsheets
- * - Presentations
- * - Diagrams (embedded from Diagrams page)
- * - Forms (embedded from Forms page)
+ * LifeOS document center.
+ *
+ * Rich-text documents remain editable. Legacy spreadsheet/presentation records
+ * stay in persisted data for compatibility but their editors are no longer part
+ * of the runtime.
  */
 import { useState, useEffect, useMemo, Suspense, lazy } from 'react';
-import { useNavigate, useParams, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   FileText,
   Table2,
@@ -28,9 +25,6 @@ import {
   Copy,
   BookOpen,
   ArrowLeft,
-  Sparkles,
-  Shapes,
-  ClipboardList,
   Archive,
   RotateCcw,
   MoreHorizontal,
@@ -38,25 +32,17 @@ import {
 import { StoreErrorBoundary } from '../components/StoreErrorBoundary';
 import { useDocsStore } from '../stores/useDocsStore';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import type { Doc, DocFolder, DocType } from '../types';
+import type { Doc, DocFolder } from '../types';
 import { platformDocsMeta, getPlatformDoc } from 'virtual:platform-docs';
 import type { PlatformDocMeta } from 'virtual:platform-docs';
 import { PageContent } from '../components/PageContent';
-import { TabNavigation, type Tab } from '../components/TabNavigation';
-import { DiagramsContent } from './Diagrams';
-import { FormsContent } from './Forms';
-import { isFeatureExposed } from '../config/features';
 
 // Lazy load RecentDocsList
 const RecentDocsList = lazy(() => import('../components/docs/RecentDocsList'));
 
-// Lazy load DocViewer, DocumentEditor, SpreadsheetEditor, PresentationEditor, and TemplatePicker for code splitting
+// Lazy-load document surfaces for code splitting
 const DocViewer = lazy(() => import('../components/docs/DocViewer'));
 const DocumentEditor = lazy(() => import('../components/docs/DocumentEditor'));
-const SpreadsheetEditor = lazy(() => import('../components/docs/SpreadsheetEditor'));
-const PresentationEditor = lazy(() =>
-  import('../components/docs/PresentationEditor').then((m) => ({ default: m.PresentationEditor }))
-);
 const TemplatePicker = lazy(() => import('../components/docs/TemplatePicker'));
 
 // Icon mapping for document types
@@ -248,9 +234,11 @@ function ContextMenu({ x, y, doc, onClose }: ContextMenuProps) {
             <button onClick={handleEdit} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
               <Edit className="w-4 h-4" /><span className="text-sm">编辑</span>
             </button>
-            <button onClick={handleDuplicate} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
-              <Copy className="w-4 h-4" /><span className="text-sm">创建副本</span>
-            </button>
+            {doc.type === 'doc' && (
+              <button onClick={handleDuplicate} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
+                <Copy className="w-4 h-4" /><span className="text-sm">创建副本</span>
+              </button>
+            )}
             <button onClick={() => { archiveDoc(doc.id); onClose(); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
               <Archive className="w-4 h-4" /><span className="text-sm">归档</span>
             </button>
@@ -323,57 +311,12 @@ function FolderContextMenu({ x, y, folder: _folder, onClose, onRename, onDelete 
   );
 }
 
-// Tab configuration for Create page (simplified - removed redundant document type tabs)
-type CreateTabType = 'create' | 'diagrams' | 'forms';
 type DocCollectionView = 'active' | 'archived' | 'trash';
-
-const VALID_TABS: CreateTabType[] = ['create', 'diagrams', 'forms'];
-
-// Tab configuration for TabNavigation component
-const CREATE_TABS: Tab[] = [
-  { id: 'create', label: '创建', icon: Sparkles },
-  { id: 'diagrams', label: '绘图', icon: Shapes },
-  { id: 'forms', label: '表单', icon: ClipboardList },
-];
-const EXPOSED_CREATE_TABS = CREATE_TABS.filter((tab) => {
-  if (tab.id === 'diagrams') return isFeatureExposed('diagrams');
-  if (tab.id === 'forms') return isFeatureExposed('forms');
-  return true;
-});
 
 export function Docs() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-
-  // Tab state management (simplified - only create, diagrams, forms tabs)
-  const getTabFromUrl = (): CreateTabType => {
-    const tab = searchParams.get('tab');
-    if (tab && VALID_TABS.includes(tab as CreateTabType)) {
-      return tab as CreateTabType;
-    }
-    return 'create'; // Default tab
-  };
-
-  const [activeTab, setActiveTab] = useState<CreateTabType>(getTabFromUrl);
-
-  // Update tab when URL changes
-  useEffect(() => {
-    const newTab = getTabFromUrl();
-    if (newTab !== activeTab) {
-      setActiveTab(newTab);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  // Update URL when tab changes
-  const handleTabChange = (tab: CreateTabType) => {
-    setActiveTab(tab);
-    navigate(`/create?tab=${tab}`, { replace: true });
-  };
-
-
   // Check if viewing a platform doc (supports both legacy /docs and new /create)
   const isPlatformDocRoute = location.pathname.startsWith('/create/platform/') || location.pathname.startsWith('/docs/platform/');
   const platformDocId = isPlatformDocRoute ? id : null;
@@ -484,21 +427,14 @@ export function Docs() {
     });
   };
 
-  const handleCreateDoc = (type: DocType, templateContent?: object) => {
-    // For documents, use template content if provided
-    if (type === 'doc' && templateContent) {
-      const docId = createDoc(type);
-      // Update with template content
+  const handleCreateDoc = (templateContent?: object) => {
+    if (templateContent) {
+      const docId = createDoc('doc');
       updateDoc(docId, { content: JSON.stringify(templateContent) });
       navigate(`/create/${docId}`);
-    } else if (type === 'doc') {
-      // Show template picker for documents
-      setShowTemplatePicker(true);
-    } else {
-      // For sheets and slides, create directly
-      const docId = createDoc(type);
-      navigate(`/create/${docId}`);
+      return;
     }
+    setShowTemplatePicker(true);
   };
 
   const handleTemplateSelect = (template: import('../components/docs/documentTemplates').DocumentTemplate) => {
@@ -613,49 +549,15 @@ export function Docs() {
     );
   };
 
-  // Check if we're showing docs content (create tab) or embedded content (diagrams, forms)
-  const isDocsTab = activeTab === 'create';
-
   return (
     <PageContent page="create">
-      {/* Tab Navigation */}
-      {EXPOSED_CREATE_TABS.length > 1 && (
-        <TabNavigation
-          tabs={EXPOSED_CREATE_TABS}
-          activeTab={activeTab}
-          onTabChange={(tabId) => handleTabChange(tabId as CreateTabType)}
-          ariaLabel="文档导航"
-        />
-      )}
-
-      {/* Tab Content */}
+      {/* Document content */}
       <div
         role="tabpanel"
-        id={`tabpanel-${activeTab}`}
-        aria-labelledby={`tab-${activeTab}`}
+        id="tabpanel-create"
         className="min-h-[600px]"
       >
-        {/* Diagrams Tab - Embedded DiagramsContent */}
-        {activeTab === 'diagrams' && (
-          <StoreErrorBoundary storeName="diagrams">
-            <div className="flex flex-col h-full">
-              <DiagramsContent />
-            </div>
-          </StoreErrorBoundary>
-        )}
-
-        {/* Forms Tab - Embedded FormsContent */}
-        {activeTab === 'forms' && (
-          <StoreErrorBoundary storeName="forms">
-            <div className="flex flex-col h-full">
-              <FormsContent />
-            </div>
-          </StoreErrorBoundary>
-        )}
-
-        {/* Docs Tabs (Create, Documents, Spreadsheets, Presentations) */}
-        {isDocsTab && (
-          <StoreErrorBoundary storeName="docs">
+        <StoreErrorBoundary storeName="docs">
             <div className="flex h-full">
               {/* Sidebar */}
               {sidebarExpanded && (
@@ -663,33 +565,13 @@ export function Docs() {
                   {/* Sidebar header - direct create buttons */}
                   <div className="p-3 border-b border-border-light dark:border-border-dark space-y-1.5">
                     <button
-                      onClick={() => handleCreateDoc('doc')}
+                      onClick={() => handleCreateDoc()}
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
                     >
                       <Plus className="w-4 h-4 text-accent-primary" />
                       <FileText className="w-4 h-4 text-accent-primary" />
                       <span className="text-sm">文档</span>
                     </button>
-                    {isFeatureExposed('spreadsheets') && (
-                      <button
-                        onClick={() => handleCreateDoc('sheet')}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
-                      >
-                        <Plus className="w-4 h-4 text-accent-primary" />
-                        <Table2 className="w-4 h-4 text-accent-primary" />
-                        <span className="text-sm">电子表格</span>
-                      </button>
-                    )}
-                    {isFeatureExposed('presentations') && (
-                      <button
-                        onClick={() => handleCreateDoc('slides')}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
-                      >
-                        <Plus className="w-4 h-4 text-accent-purple" />
-                        <Presentation className="w-4 h-4 text-accent-purple" />
-                        <span className="text-sm">演示文稿</span>
-                      </button>
-                    )}
                   </div>
 
                   {/* Sidebar content */}
@@ -949,17 +831,15 @@ export function Docs() {
                             documentId={activeDoc.id}
                           />
                         )}
-                        {activeDoc.type === 'sheet' && (
-                          <SpreadsheetEditor
-                            doc={activeDoc as import('../types').SpreadsheetDoc}
-                            onSave={(updates) => updateDoc(activeDoc.id, updates)}
-                          />
-                        )}
-                        {activeDoc.type === 'slides' && (
-                          <PresentationEditor
-                            doc={activeDoc as import('../types').PresentationDoc}
-                            onSave={(updates) => updateDoc(activeDoc.id, updates)}
-                          />
+                        {activeDoc.type !== 'doc' && (
+                          <div className="mx-auto max-w-xl rounded-xl border border-border-light bg-surface-light-elevated p-6 text-center dark:border-border-dark dark:bg-surface-dark-elevated">
+                            <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+                              旧版{DOC_TYPE_LABELS[activeDoc.type]}
+                            </h3>
+                            <p className="mt-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                              此类型编辑器已从 LifeOS 核心运行时移除。记录仍保留在本地数据中，可通过备份保留；你可以归档或删除该记录。
+                            </p>
+                          </div>
                         )}
                       </Suspense>
                     </div>
@@ -1045,8 +925,7 @@ export function Docs() {
                 variant="danger"
               />
             </div>
-          </StoreErrorBoundary>
-        )}
+        </StoreErrorBoundary>
       </div>
     </PageContent>
   );

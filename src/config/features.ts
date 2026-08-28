@@ -217,40 +217,8 @@ export const FEATURES: FeatureDefinition[] = [
     description: '富文本文档的创作与管理',
   },
 
-  // ─────────────────────────────────────────────── hidden (preserved)
-  // Routes stay registered; data stays intact; no default UI entry points.
-  {
-    id: 'spreadsheets',
-    label: '表格',
-    icon: '📊',
-    path: '/create?tab=spreadsheets',
-    tier: 'hidden',
-    description: '电子表格（保留能力，未默认展示）',
-  },
-  {
-    id: 'presentations',
-    label: '演示文稿',
-    icon: '📽️',
-    path: '/create?tab=presentations',
-    tier: 'hidden',
-    description: '幻灯片编辑（保留能力，未默认展示）',
-  },
-  {
-    id: 'diagrams',
-    label: '绘图',
-    icon: '🔷',
-    path: '/create?tab=diagrams',
-    tier: 'hidden',
-    description: '图表与流程图画布（保留能力）',
-  },
-  {
-    id: 'forms',
-    label: '表单',
-    icon: '🧾',
-    path: '/create?tab=forms',
-    tier: 'hidden',
-    description: '表单构建与填写（保留能力）',
-  },
+  // No hidden runtime features are registered here. Legacy persisted shapes may
+  // remain in compatibility types/stores, but unsupported editors are not routes.
 ];
 
 // ─────────────────────────────────────────────────────────── helpers
