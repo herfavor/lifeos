@@ -10,6 +10,9 @@ npm run lint:hygiene
 echo "=== Source Size ==="
 npm run lint:source-size
 
+echo "=== Documentation Links ==="
+npm run lint:docs
+
 echo "=== Type Check ==="
 npm run type-check
 
