@@ -29,7 +29,7 @@ echo "=== Build ==="
 npm run build
 
 echo "=== Audit (production deps) ==="
-npm audit --omit=dev --audit-level=high || echo "⚠ Audit found issues (non-blocking)"
+npm audit --omit=dev --audit-level=high
 
 echo "=== Non-browser checks passed ==="
 echo "Full browser tests run only through the hosted GitHub Actions workflow."

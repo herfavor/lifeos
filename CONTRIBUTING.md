@@ -80,7 +80,7 @@ npm run ci
 - design token；
 - browser-test inventory；
 - production build；
-- production dependency audit（当前为 non-blocking）。
+- production dependency audit（high/critical 为 blocking）。
 
 ## Repository settings
 
