@@ -81,7 +81,7 @@ const UptimeBadge: React.FC<{ percentage: number | null; label: string }> = ({
   return (
     <div
       className={`px-2 py-0.5 rounded text-xs font-medium ${getColor(percentage)}`}
-      title={`${label} uptime`}
+      title={`${label} 可用率`}
     >
       {percentage !== null ? `${percentage}%` : '–'}
     </div>
@@ -156,7 +156,7 @@ const SiteStatusRow: React.FC<{
           {/* Uptime Percentages */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-              Uptime:
+              可用率：
             </span>
             <div className="flex gap-2">
               <div className="text-center">
@@ -177,7 +177,7 @@ const SiteStatusRow: React.FC<{
           {/* Response Time */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-              Avg RT:
+              平均响应：
             </span>
             <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
               {avgResponseTime !== null ? `${avgResponseTime}ms` : '–'}
@@ -192,7 +192,7 @@ const SiteStatusRow: React.FC<{
           {/* Actions */}
           <div className="flex justify-between items-center pt-2">
             <span className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-              {site.checks.length} checks recorded
+              {site.checks.length} 次检查记录
             </span>
             <button
               onClick={(e) => {
@@ -201,7 +201,7 @@ const SiteStatusRow: React.FC<{
               }}
               className="text-xs text-accent-red hover:underline"
             >
-              Remove
+              移除
             </button>
           </div>
         </div>
@@ -277,7 +277,7 @@ export const UptimeWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Uptime Monitor"
+      title="在线监测"
       icon="📡"
       onRefresh={checkAllSites}
       loading={checking}
@@ -290,14 +290,14 @@ export const UptimeWidget: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleAddSite()}
-            placeholder="Enter URL (e.g., google.com)"
+            placeholder="输入 URL（如 google.com）"
             className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary transition-all duration-standard ease-smooth"
           />
           <button
             onClick={handleAddSite}
             className="px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
           >
-            Add
+            添加
           </button>
         </div>
 
@@ -321,10 +321,10 @@ export const UptimeWidget: React.FC = () => {
           <div className="text-center py-6">
             <div className="text-4xl mb-2">📡</div>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Add websites to monitor their uptime
+              添加网站以监测其可用性
             </p>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              Checks run every minute
+              每分钟自动检查
             </p>
           </div>
         )}
@@ -333,9 +333,9 @@ export const UptimeWidget: React.FC = () => {
         {sites.length > 0 && (
           <div className="flex items-center justify-between text-xs text-text-light-secondary dark:text-text-dark-secondary pt-2 border-t border-border-light dark:border-border-dark">
             <span>
-              {sites.filter((s) => s.isCurrentlyUp).length}/{sites.length} online
+              {sites.filter((s) => s.isCurrentlyUp).length}/{sites.length} 在线
             </span>
-            <span>Checks every 1m</span>
+            <span>每 1 分钟检查</span>
           </div>
         )}
       </div>

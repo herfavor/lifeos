@@ -24,19 +24,19 @@ const ENERGY_MATCH_STYLES = {
     bg: 'bg-accent-green/10',
     border: 'border-accent-green/30',
     text: 'text-accent-green',
-    label: 'Good fit',
+    label: '很合适',
   },
   ok: {
     bg: 'bg-accent-yellow/10',
     border: 'border-accent-yellow/30',
     text: 'text-accent-yellow',
-    label: 'Okay fit',
+    label: '一般',
   },
   poor: {
     bg: 'bg-accent-red/10',
     border: 'border-accent-red/30',
     text: 'text-accent-red',
-    label: 'Poor fit',
+    label: '不合适',
   },
 } as const;
 
@@ -130,10 +130,10 @@ export const SmartScheduleButton: React.FC<SmartScheduleButtonProps> = ({ dateKe
       <button
         onClick={handleGenerate}
         className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/10 text-accent-primary hover:bg-accent-primary/20 border border-accent-primary/20 transition-colors text-sm font-medium"
-        title="Auto-fill today's schedule with unscheduled tasks"
+        title="用未排期任务自动填充今日日程"
       >
         <Wand2 className="w-4 h-4" />
-        Smart Schedule
+        智能日程
       </button>
 
       {/* Preview Modal */}
@@ -148,17 +148,17 @@ export const SmartScheduleButton: React.FC<SmartScheduleButtonProps> = ({ dateKe
                 </div>
                 <div>
                   <h2 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
-                    Suggested Schedule
+                    建议日程
                   </h2>
                   <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    {schedule.length} tasks, {Math.round(totalMinutes / 60 * 10) / 10}h total
+                    {schedule.length} 个任务，共 {Math.round(totalMinutes / 60 * 10) / 10} 小时
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleClose}
                 className="p-1.5 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                aria-label="Close"
+                aria-label="关闭"
               >
                 <X className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
               </button>
@@ -169,9 +169,9 @@ export const SmartScheduleButton: React.FC<SmartScheduleButtonProps> = ({ dateKe
               {schedule.length === 0 ? (
                 <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
                   <AlertTriangle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No tasks to schedule</p>
+                  <p className="text-sm">没有可排期的任务</p>
                   <p className="text-xs opacity-70 mt-1">
-                    Add tasks with due dates or mark them as "To Do"
+                    添加带有截止日期的任务，或将其标记为“待办”
                   </p>
                 </div>
               ) : (
@@ -211,7 +211,7 @@ export const SmartScheduleButton: React.FC<SmartScheduleButtonProps> = ({ dateKe
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                            {block.durationMinutes}min
+                            {block.durationMinutes}分钟
                           </span>
                           <span className={`text-xs px-1.5 py-0.5 rounded-full ${style.bg} ${style.text} flex items-center gap-1`}>
                             <Zap className="w-2.5 h-2.5" />
@@ -232,21 +232,21 @@ export const SmartScheduleButton: React.FC<SmartScheduleButtonProps> = ({ dateKe
                   onClick={handleAcceptAll}
                   className="text-sm text-accent-primary hover:text-accent-primary/80 transition-colors"
                 >
-                  Select All
+                  全选
                 </button>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleClose}
                     className="px-3 py-1.5 rounded-lg text-sm text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                   >
-                    Cancel
+                    取消
                   </button>
                   <button
                     onClick={handleApply}
                     className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-primary text-white text-sm font-medium hover:bg-accent-primary/90 transition-colors"
                   >
                     <Check className="w-3.5 h-3.5" />
-                    Apply {appliedCount} {appliedCount === 1 ? 'block' : 'blocks'}
+                    应用 {appliedCount} 个时间块
                   </button>
                 </div>
               </div>

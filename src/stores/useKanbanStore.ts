@@ -36,20 +36,20 @@ const log = logger.module('KanbanStore');
 
 // Phase 4: Default columns (replaces hardcoded columns)
 const DEFAULT_COLUMNS: KanbanColumn[] = [
-  { id: 'backlog', title: 'Backlog', color: 'bg-text-light-secondary', order: 0 },
-  { id: 'todo', title: 'To Do', color: 'bg-accent-blue', order: 1 },
-  { id: 'inprogress', title: 'In Progress', color: 'bg-accent-yellow', order: 2 },
-  { id: 'review', title: 'In Review', color: 'bg-accent-purple', order: 3 },
-  { id: 'done', title: 'Done', color: 'bg-accent-green', order: 4 },
+  { id: 'backlog', title: '待处理', color: 'bg-text-light-secondary', order: 0 },
+  { id: 'todo', title: '待办', color: 'bg-accent-blue', order: 1 },
+  { id: 'inprogress', title: '进行中', color: 'bg-accent-yellow', order: 2 },
+  { id: 'review', title: '评审中', color: 'bg-accent-purple', order: 3 },
+  { id: 'done', title: '已完成', color: 'bg-accent-green', order: 4 },
 ];
 
 // Phase 4: Default card templates for quick task creation
 const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   {
     id: 'bug-report',
-    name: 'Bug Report',
+    name: '缺陷报告',
     icon: '🐛',
-    description: '**Steps to reproduce:**\n1. \n\n**Expected behavior:**\n\n**Actual behavior:**\n\n**Environment:**\n- Browser: \n- OS: ',
+    description: '**复现步骤：**\n1. \n\n**预期行为：**\n\n**实际行为：**\n\n**环境：**\n- 浏览器：\n- 操作系统：',
     defaultPriority: 'high',
     defaultTags: ['bug'],
     defaultColumn: 'todo',
@@ -57,9 +57,9 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   },
   {
     id: 'feature-request',
-    name: 'Feature Request',
+    name: '功能请求',
     icon: '✨',
-    description: '**Problem to solve:**\n\n**Proposed solution:**\n\n**Acceptance criteria:**\n- [ ] \n- [ ] ',
+    description: '**要解决的问题：**\n\n**建议方案：**\n\n**验收标准：**\n- [ ] \n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: ['feature'],
     defaultColumn: 'backlog',
@@ -67,9 +67,9 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   },
   {
     id: 'task',
-    name: 'Task',
+    name: '任务',
     icon: '📋',
-    description: '**Objective:**\n\n**Deliverables:**\n- [ ] ',
+    description: '**目标：**\n\n**交付物：**\n- [ ] ',
     defaultPriority: 'medium',
     defaultTags: [],
     defaultColumn: 'todo',
@@ -77,9 +77,9 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   },
   {
     id: 'meeting-notes',
-    name: 'Meeting Notes',
+    name: '会议记录',
     icon: '📝',
-    description: '**Date:** \n**Attendees:** \n\n**Agenda:**\n1. \n\n**Action items:**\n- [ ] \n\n**Notes:**',
+    description: '**日期：** \n**参会人：** \n\n**议程：**\n1. \n\n**行动项：**\n- [ ] \n\n**备注：**',
     defaultPriority: 'low',
     defaultTags: ['meeting'],
     defaultColumn: 'backlog',
@@ -87,9 +87,9 @@ const DEFAULT_CARD_TEMPLATES: CardTemplate[] = [
   },
   {
     id: 'research',
-    name: 'Research',
+    name: '研究',
     icon: '🔬',
-    description: '**Research question:**\n\n**Key findings:**\n\n**Sources:**\n- \n\n**Conclusions:**',
+    description: '**研究问题：**\n\n**关键发现：**\n\n**来源：**\n- \n\n**结论：**',
     defaultPriority: 'medium',
     defaultTags: ['research'],
     defaultColumn: 'backlog',
@@ -331,10 +331,11 @@ export const useKanbanStore = create<KanbanStore>()(
         }));
       },
 
-      deleteTask: (id) =>
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        })),
+      // User-facing deletion follows the recoverable lifecycle. Permanent
+      // removal is available only from ArchivedView after a second decision.
+      deleteTask: (id) => {
+        get().archiveTask(id);
+      },
 
       moveTask: (id, newStatus) => {
         const oldTask = get().tasks.find((t) => t.id === id);
@@ -351,11 +352,11 @@ export const useKanbanStore = create<KanbanStore>()(
               taskTitle: oldTask.title,
               blockerCount: incompleteBlockers.length
             });
-            const blockerNames = incompleteBlockers.map(b => b.title).slice(0, 2).join(', ');
-            const suffix = incompleteBlockers.length > 2 ? ` and ${incompleteBlockers.length - 2} more` : '';
+            const blockerNames = incompleteBlockers.map(b => b.title).slice(0, 2).join('、');
+            const suffix = incompleteBlockers.length > 2 ? ` 等 ${incompleteBlockers.length - 2} 个` : '';
             toast.warning(
-              `Cannot complete "${oldTask.title}"`,
-              `Blocked by: ${blockerNames}${suffix}`
+              `无法完成“${oldTask.title}”`,
+              `被以下任务阻塞：${blockerNames}${suffix}`
             );
             return; // Prevent move
           }
@@ -553,7 +554,7 @@ export const useKanbanStore = create<KanbanStore>()(
         // Save undo entry BEFORE making changes
         get().addToUndoHistory({
           action: 'deleteColumn',
-          description: `Deleted column '${columnToDelete.title}'`,
+          description: `已删除列“${columnToDelete.title}”`,
           previousState: {
             columns: state.columns,
             tasks: state.tasks,
@@ -595,7 +596,7 @@ export const useKanbanStore = create<KanbanStore>()(
         // Save undo entry BEFORE making changes
         get().addToUndoHistory({
           action: 'replaceAllColumns',
-          description: `Applied template`,
+          description: `已应用模板`,
           previousState: {
             columns: state.columns,
             tasks: state.tasks,
@@ -777,7 +778,7 @@ export const useKanbanStore = create<KanbanStore>()(
         // Save undo state
         get().addToUndoHistory({
           action: 'bulkDelete',
-          description: `Changed status of ${taskIds.length} tasks`,
+          description: `已更改 ${taskIds.length} 个任务的状态`,
           previousState: {
             columns: state.columns,
             tasks: state.tasks,
@@ -812,7 +813,7 @@ export const useKanbanStore = create<KanbanStore>()(
         // Save undo state
         get().addToUndoHistory({
           action: 'bulkDelete',
-          description: `Changed priority of ${taskIds.length} tasks`,
+          description: `已更改 ${taskIds.length} 个任务的优先级`,
           previousState: {
             columns: state.columns,
             tasks: state.tasks,
@@ -847,7 +848,7 @@ export const useKanbanStore = create<KanbanStore>()(
         // Save undo state
         get().addToUndoHistory({
           action: 'bulkDelete',
-          description: `Deleted ${taskIds.length} tasks`,
+          description: `已删除 ${taskIds.length} 个任务`,
           previousState: {
             columns: state.columns,
             tasks: state.tasks,
@@ -969,7 +970,7 @@ export const useKanbanStore = create<KanbanStore>()(
           get().logActivity(taskId, {
             action: 'updated',
             field: 'subtask',
-            newValue: subtask.completed ? 'completed' : 'uncompleted',
+            newValue: subtask.completed ? '已完成' : '未完成',
           });
         }
       },
@@ -998,7 +999,7 @@ export const useKanbanStore = create<KanbanStore>()(
         get().logActivity(taskId, {
           action: 'updated',
           field: 'subtasks',
-          newValue: 'reordered',
+          newValue: '已重新排序',
         });
       },
 
@@ -1091,20 +1092,20 @@ export const useKanbanStore = create<KanbanStore>()(
 
         // Log activity with dependency type info
         const dependencyLabel = {
-          'finish-to-start': 'FS (Finish-to-Start)',
-          'start-to-start': 'SS (Start-to-Start)',
-          'finish-to-finish': 'FF (Finish-to-Finish)',
-          'start-to-finish': 'SF (Start-to-Finish)',
+          'finish-to-start': 'FS（完成到开始）',
+          'start-to-start': 'SS（开始到开始）',
+          'finish-to-finish': 'FF（完成到完成）',
+          'start-to-finish': 'SF（开始到完成）',
         }[dependency.type];
 
         const lagLabel = dependency.lag !== 0
-          ? ` with ${dependency.lag > 0 ? '+' : ''}${dependency.lag} day${Math.abs(dependency.lag) !== 1 ? 's' : ''} lag`
+          ? `，滞后 ${dependency.lag > 0 ? '+' : ''}${dependency.lag} 天`
           : '';
 
         get().logActivity(taskId, {
           action: 'created',
           field: 'dependency',
-          newValue: `Depends on task ${dependency.taskId} (${dependencyLabel}${lagLabel})`,
+          newValue: `依赖任务 ${dependency.taskId}（${dependencyLabel}${lagLabel}）`,
         });
       },
 
@@ -1145,7 +1146,7 @@ export const useKanbanStore = create<KanbanStore>()(
         get().logActivity(taskId, {
           action: 'updated',
           field: 'dependency',
-          oldValue: `Depended on task ${dependencyId} (${dependencyLabel})`,
+          oldValue: `曾依赖任务 ${dependencyId}（${dependencyLabel}）`,
         });
       },
 
@@ -1239,8 +1240,17 @@ export const useKanbanStore = create<KanbanStore>()(
       // Phase 8.1: Delegated to useKanbanArchiveStore for single-responsibility
 
       archiveTask: (id) => {
-        const task = get().tasks.find((t) => t.id === id);
+        let task = get().tasks.find((t) => t.id === id);
         if (!task) return;
+
+        // Record the transition while the task is still in the active store,
+        // then archive the updated snapshot so the audit trail is preserved.
+        get().logActivity(id, {
+          action: 'updated',
+          field: 'archived',
+          newValue: 'true',
+        });
+        task = get().tasks.find((t) => t.id === id) ?? task;
 
         // Delegate to archive store
         const archiveStore = useKanbanArchiveStore.getState();
@@ -1250,13 +1260,6 @@ export const useKanbanStore = create<KanbanStore>()(
         set((state) => ({
           tasks: state.tasks.filter((t) => t.id !== id),
         }));
-
-        // Log archive action
-        get().logActivity(id, {
-          action: 'updated',
-          field: 'archived',
-          newValue: 'true',
-        });
       },
 
       notify: (title, body) => {
@@ -1343,7 +1346,7 @@ export const useKanbanStore = create<KanbanStore>()(
         get().logActivity(taskId, {
           action: 'updated',
           field: 'timer',
-          newValue: 'started',
+          newValue: '已开始',
         });
       },
 
@@ -1389,8 +1392,8 @@ export const useKanbanStore = create<KanbanStore>()(
         get().logActivity(taskId, {
           action: 'updated',
           field: 'timer',
-          oldValue: 'running',
-          newValue: `stopped (+${Math.floor(duration / 60)}m)`,
+          oldValue: '运行中',
+          newValue: `已停止（+${Math.floor(duration / 60)} 分钟）`,
         });
       },
 

@@ -9,12 +9,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, TrendingUp, CheckCircle, ArrowRight } from 'lucide-react';
 import { generateRetrospectiveData } from '../../services/weeklyRetrospective';
-import { generateInsights } from '../../services/ai/insightsGenerator';
+import { generateInsights, hasRetrospectiveEvidence } from '../../services/ai/insightsGenerator';
 import type { WeeklyInsights } from '../../services/ai/insightsGenerator';
 
 export const WeeklyInsightsWidget: React.FC = () => {
   const navigate = useNavigate();
   const [insights, setInsights] = useState<WeeklyInsights | null>(null);
+  const [hasEvidence, setHasEvidence] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export const WeeklyInsightsWidget: React.FC = () => {
       try {
         const data = await generateRetrospectiveData(new Date());
         if (cancelled) return;
+        setHasEvidence(hasRetrospectiveEvidence(data));
         const result = generateInsights(data);
         if (!cancelled) setInsights(result);
       } catch {
@@ -40,9 +42,9 @@ export const WeeklyInsightsWidget: React.FC = () => {
   if (loading) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-4 bg-bg-light-tertiary dark:bg-bg-dark-tertiary rounded w-2/3" />
-        <div className="h-3 bg-bg-light-tertiary dark:bg-bg-dark-tertiary rounded w-full" />
-        <div className="h-3 bg-bg-light-tertiary dark:bg-bg-dark-tertiary rounded w-4/5" />
+        <div className="h-4 bg-surface-light-elevated dark:bg-surface-dark-secondary rounded w-2/3" />
+        <div className="h-3 bg-surface-light-elevated dark:bg-surface-dark-secondary rounded w-full" />
+        <div className="h-3 bg-surface-light-elevated dark:bg-surface-dark-secondary rounded w-4/5" />
       </div>
     );
   }
@@ -50,7 +52,7 @@ export const WeeklyInsightsWidget: React.FC = () => {
   if (!insights) {
     return (
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-        No data yet. Complete some tasks and habits to see your weekly insights.
+        暂无数据。完成一些任务和习惯后即可查看你的每周洞察。
       </p>
     );
   }
@@ -68,24 +70,24 @@ export const WeeklyInsightsWidget: React.FC = () => {
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
             <path
-              className="stroke-current text-primary-cyan"
+              className="stroke-current text-accent-primary"
               strokeWidth="3"
               fill="none"
-              strokeDasharray={`${insights.productivityScore}, 100`}
+              strokeDasharray={`${hasEvidence ? insights.productivityScore : 0}, 100`}
               strokeLinecap="round"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
           </svg>
           <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-text-light-primary dark:text-text-dark-primary">
-            {insights.productivityScore}
+            {hasEvidence ? insights.productivityScore : '—'}
           </span>
         </div>
         <div>
           <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Productivity Score
+            {hasEvidence ? '生产力评分' : '数据不足'}
           </p>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            This week
+            {hasEvidence ? '本周' : '本周不评分'}
           </p>
         </div>
       </div>
@@ -109,10 +111,10 @@ export const WeeklyInsightsWidget: React.FC = () => {
       {/* View Report Link */}
       <button
         onClick={() => navigate('/retrospective')}
-        className="flex items-center gap-1 text-xs text-primary-cyan hover:text-primary-cyan/80 transition-colors mt-1"
+        className="flex items-center gap-1 text-xs text-accent-primary hover:text-accent-primary/80 transition-colors mt-1"
       >
         <Sparkles size={12} />
-        View Full Report
+        查看完整报告
         <ArrowRight size={12} />
       </button>
     </div>

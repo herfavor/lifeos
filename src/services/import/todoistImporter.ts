@@ -61,9 +61,9 @@ function parseCSVLine(line: string): string[] {
 }
 
 /**
- * Map Todoist priority (1-4) to NeumanOS priority
+ * Map Todoist priority (1-4) to LifeOS priority
  * Todoist: 1 = lowest, 4 = highest (inverted)
- * NeumanOS: low, medium, high
+ * LifeOS: low, medium, high
  */
 function mapTodoistPriority(value: string): 'low' | 'medium' | 'high' {
   const num = parseInt(value, 10);
@@ -115,7 +115,7 @@ export function parseTodoistCSV(csvText: string): {
 
   const lines = csvText.split(/\r?\n/);
   if (lines.length < 2) {
-    return { tasks: [], summary: { errors: ['CSV file is empty or has no data rows'], warnings, projectsDetected: [] } };
+    return { tasks: [], summary: { errors: ['CSV 文件为空或没有数据行'], warnings, projectsDetected: [] } };
   }
 
   const headers = parseCSVLine(lines[0]);
@@ -138,13 +138,13 @@ export function parseTodoistCSV(csvText: string): {
       return {
         tasks: [],
         summary: {
-          errors: ['Could not find a CONTENT or similar column in the CSV. Is this a Todoist export?'],
+          errors: ['无法在 CSV 中找到 CONTENT 或类似列。这是 Todoist 的导出文件吗？'],
           warnings,
           projectsDetected: [],
         },
       };
     }
-    warnings.push('Using fallback column detection. File may not be a standard Todoist export.');
+    warnings.push('正在使用备用列检测。该文件可能不是标准的 Todoist 导出文件。');
   }
 
   const effectiveContentIdx = contentIdx === -1 ? 0 : contentIdx;
@@ -200,7 +200,7 @@ export function parseTodoistCSV(csvText: string): {
   }
 
   if (tasks.length === 0) {
-    warnings.push('No tasks found in the CSV file.');
+    warnings.push('在 CSV 文件中未找到任务。');
   }
 
   return {

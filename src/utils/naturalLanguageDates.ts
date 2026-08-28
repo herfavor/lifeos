@@ -73,15 +73,15 @@ export function formatDateForDisplay(date: Date): string {
 
   // Relative terms for nearby dates
   if (isToday(date)) {
-    return `Today (${format(date, 'MMM d')})`;
+    return `今天 (${format(date, 'MMM d')})`;
   }
 
   if (isTomorrow(date)) {
-    return `Tomorrow (${format(date, 'MMM d')})`;
+    return `明天 (${format(date, 'MMM d')})`;
   }
 
   if (isYesterday(date)) {
-    return `Yesterday (${format(date, 'MMM d')})`;
+    return `昨天 (${format(date, 'MMM d')})`;
   }
 
   // Within this week: show day name
@@ -92,7 +92,7 @@ export function formatDateForDisplay(date: Date): string {
   // Within 7 days: show "Next [Day]"
   const daysUntil = Math.floor((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
   if (daysUntil > 0 && daysUntil <= 7) {
-    return `Next ${format(date, 'EEEE')} (${format(date, 'MMM d')})`;
+    return `下周${format(date, 'EEEE')} (${format(date, 'MMM d')})`;
   }
 
   // This year: show month and day

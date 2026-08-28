@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const gruvboxTheme: ThemeDefinition = {
   id: 'gruvbox',
   name: 'Gruvbox Dark',
-  description: 'Retro groove with warm earthy tones',
+  description: '温暖大地色调的复古律动',
   category: 'vibrant',
   preview: {
     primary: '#FABD2F',

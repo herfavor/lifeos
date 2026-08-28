@@ -29,7 +29,7 @@ export function FieldList({
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-border-light dark:border-border-dark rounded-lg">
         <p className="text-text-light-secondary dark:text-text-dark-secondary">
-          No fields yet. Click "Add Field" to get started.
+          还没有字段。点击“添加字段”开始。
         </p>
       </div>
     );
@@ -77,17 +77,17 @@ function FieldListItem({
 }: FieldListItemProps) {
   const getFieldTypeLabel = (type: string): string => {
     const labels: Record<string, string> = {
-      text: 'Text',
-      textarea: 'Text Area',
-      number: 'Number',
-      date: 'Date',
-      time: 'Time',
-      select: 'Select',
-      multiselect: 'Multi-Select',
-      radio: 'Radio',
-      checkbox: 'Checkbox',
-      rating: 'Rating',
-      scale: 'Scale',
+      text: '文本',
+      textarea: '多行文本',
+      number: '数字',
+      date: '日期',
+      time: '时间',
+      select: '选择',
+      multiselect: '多选',
+      radio: '单选',
+      checkbox: '复选框',
+      rating: '评分',
+      scale: '量表',
     };
     return labels[type] || type;
   };
@@ -107,12 +107,12 @@ function FieldListItem({
           </h4>
           {field.required && (
             <span className="text-xs px-1.5 py-0.5 bg-accent-red/10 text-accent-red rounded">
-              Required
+              必填
             </span>
           )}
         </div>
         <div className="flex items-center gap-2 text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-          <span className="px-2 py-0.5 bg-primary-light/10 dark:bg-primary-dark/10 text-primary-light dark:text-primary-dark rounded">
+          <span className="px-2 py-0.5 bg-accent-primary/10 text-accent-primary rounded">
             {getFieldTypeLabel(field.type)}
           </span>
           {field.description && (
@@ -122,23 +122,23 @@ function FieldListItem({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
         {/* Move Up/Down */}
         <button
           onClick={onMoveUp}
           disabled={isFirst}
-          className="p-1 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Move up"
-          aria-label="Move field up"
+          className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded disabled:opacity-30 disabled:cursor-not-allowed"
+          title="上移"
+          aria-label="上移字段"
         >
           <ChevronUp className="w-4 h-4" />
         </button>
         <button
           onClick={onMoveDown}
           disabled={isLast}
-          className="p-1 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Move down"
-          aria-label="Move field down"
+          className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded disabled:opacity-30 disabled:cursor-not-allowed"
+          title="下移"
+          aria-label="下移字段"
         >
           <ChevronDown className="w-4 h-4" />
         </button>
@@ -146,9 +146,9 @@ function FieldListItem({
         {/* Edit */}
         <button
           onClick={onEdit}
-          className="p-1 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded"
-          title="Edit field"
-          aria-label="Edit field"
+          className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded"
+          title="编辑字段"
+          aria-label="编辑字段"
         >
           <Edit className="w-4 h-4" />
         </button>
@@ -156,9 +156,9 @@ function FieldListItem({
         {/* Duplicate */}
         <button
           onClick={onDuplicate}
-          className="p-1 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded"
-          title="Duplicate field"
-          aria-label="Duplicate field"
+          className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded"
+          title="复制字段"
+          aria-label="复制字段"
         >
           <Copy className="w-4 h-4" />
         </button>
@@ -167,8 +167,8 @@ function FieldListItem({
         <button
           onClick={onDelete}
           className="p-1 hover:bg-accent-red/10 text-accent-red rounded"
-          title="Delete field"
-          aria-label="Delete field"
+          title="删除字段"
+          aria-label="删除字段"
         >
           <Trash2 className="w-4 h-4" />
         </button>

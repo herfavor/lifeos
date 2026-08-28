@@ -15,6 +15,7 @@ import type { TimeEntry } from '../types';
 // ─── Types ──────────────────────────────────────────────────
 
 export interface TaskMetrics {
+  total: number;
   completed: number;
   created: number;
   overdue: number;
@@ -29,6 +30,7 @@ export interface TimeMetrics {
 }
 
 export interface HabitMetrics {
+  trackedHabits: number;
   overallCompletionRate: number; // percentage 0-100
   streaksGained: number;
   streaksLost: number;
@@ -87,12 +89,12 @@ function getCalendarDateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAY_NAMES = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
 function formatWeekLabel(start: Date, end: Date): string {
   const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  const startStr = start.toLocaleDateString('en-US', opts);
-  const endStr = end.toLocaleDateString('en-US', { ...opts, year: 'numeric' });
+  const startStr = start.toLocaleDateString('zh-CN', opts);
+  const endStr = end.toLocaleDateString('zh-CN', { ...opts, year: 'numeric' });
   return `${startStr} - ${endStr}`;
 }
 
@@ -136,7 +138,7 @@ function getTaskMetrics(weekStart: Date, weekEnd: Date): TaskMetrics {
 
   const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-  return { completed, created, overdue, completionRate };
+  return { total, completed, created, overdue, completionRate };
 }
 
 // ─── Time Metrics ───────────────────────────────────────────
@@ -167,7 +169,7 @@ async function getTimeMetrics(weekStart: Date, weekEnd: Date): Promise<TimeMetri
   const projects = store.projects;
   const hoursByProject = Array.from(projectMap.entries())
     .map(([id, seconds]) => ({
-      projectName: projects.find((p) => p.id === id)?.name || 'No Project',
+      projectName: projects.find((p) => p.id === id)?.name || '无项目',
       seconds,
     }))
     .sort((a, b) => b.seconds - a.seconds)
@@ -212,7 +214,7 @@ function getHabitMetrics(weekStart: Date, weekEnd: Date): HabitMetrics {
   const activeHabits = habits.filter((h) => !h.archivedAt);
 
   if (activeHabits.length === 0) {
-    return { overallCompletionRate: 0, streaksGained: 0, streaksLost: 0, bestHabit: null, worstHabit: null };
+    return { trackedHabits: 0, overallCompletionRate: 0, streaksGained: 0, streaksLost: 0, bestHabit: null, worstHabit: null };
   }
 
   // Build set of date keys for this week
@@ -255,7 +257,7 @@ function getHabitMetrics(weekStart: Date, weekEnd: Date): HabitMetrics {
   const bestHabit = habitRates[0]?.title || null;
   const worstHabit = habitRates.length > 1 ? habitRates[habitRates.length - 1]?.title || null : null;
 
-  return { overallCompletionRate, streaksGained, streaksLost, bestHabit, worstHabit };
+  return { trackedHabits: activeHabits.length, overallCompletionRate, streaksGained, streaksLost, bestHabit, worstHabit };
 }
 
 // ─── Calendar Metrics ───────────────────────────────────────

@@ -80,7 +80,7 @@ interface SpacedRepetitionStore {
 }
 
 const DEFAULT_DECKS: FlashcardDeck[] = [
-  { id: 'general', name: 'General', color: '#3b82f6', createdAt: new Date().toISOString() },
+  { id: 'general', name: '通用', color: '#3b82f6', createdAt: new Date().toISOString() },
 ];
 
 export const useSpacedRepetitionStore = create<SpacedRepetitionStore>()(

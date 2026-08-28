@@ -15,7 +15,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('calendar page loads', async ({ page }) => {
-    const heading = page.getByText(/Schedule|Calendar/i).first();
+    const heading = page.getByText(/日程|日历/i).first();
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has month view button', async ({ page }) => {
-    const monthBtn = page.getByRole('button', { name: /month/i });
+    const monthBtn = page.getByRole('button', { name: /月/i });
     if (await monthBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(monthBtn).toBeVisible();
     }
@@ -31,7 +31,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has week view button', async ({ page }) => {
-    const weekBtn = page.getByRole('button', { name: /week/i });
+    const weekBtn = page.getByRole('button', { name: /周/i });
     if (await weekBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(weekBtn).toBeVisible();
     }
@@ -39,7 +39,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has day view button', async ({ page }) => {
-    const dayBtn = page.getByRole('button', { name: /day/i });
+    const dayBtn = page.getByRole('button', { name: /日/i });
     if (await dayBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(dayBtn).toBeVisible();
     }
@@ -47,7 +47,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('can switch to week view', async ({ page }) => {
-    const weekBtn = page.getByRole('button', { name: /week/i });
+    const weekBtn = page.getByRole('button', { name: /周/i });
     if (await weekBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await weekBtn.click();
       await page.waitForTimeout(300);
@@ -56,7 +56,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('can switch to day view', async ({ page }) => {
-    const dayBtn = page.getByRole('button', { name: /day/i });
+    const dayBtn = page.getByRole('button', { name: /日/i });
     if (await dayBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await dayBtn.click();
       await page.waitForTimeout(300);
@@ -65,7 +65,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has today button', async ({ page }) => {
-    const todayBtn = page.getByRole('button', { name: /today/i });
+    const todayBtn = page.getByRole('button', { name: /今天/i });
     if (await todayBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(todayBtn).toBeVisible();
     }
@@ -73,8 +73,8 @@ test.describe('Calendar Views', () => {
   });
 
   test('has navigation arrows', async ({ page }) => {
-    const prevBtn = page.locator('[aria-label*="previous"], [aria-label*="Previous"], [title*="Previous"]').first();
-    const nextBtn = page.locator('[aria-label*="next"], [aria-label*="Next"], [title*="Next"]').first();
+    const prevBtn = page.locator('[aria-label*="上一个"], [title*="上一个"]').first();
+    const nextBtn = page.locator('[aria-label*="下一个"], [title*="下一个"]').first();
     if (await prevBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(prevBtn).toBeVisible();
     }
@@ -85,7 +85,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('can navigate to next month', async ({ page }) => {
-    const nextBtn = page.locator('[aria-label*="next"], [aria-label*="Next"], [title*="Next"]').first();
+    const nextBtn = page.locator('[aria-label*="下一个"], [title*="下一个"]').first();
     if (await nextBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await nextBtn.click();
       await page.waitForTimeout(300);
@@ -94,7 +94,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('can navigate to previous month', async ({ page }) => {
-    const prevBtn = page.locator('[aria-label*="previous"], [aria-label*="Previous"], [title*="Previous"]').first();
+    const prevBtn = page.locator('[aria-label*="上一个"], [title*="上一个"]').first();
     if (await prevBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await prevBtn.click();
       await page.waitForTimeout(300);
@@ -103,7 +103,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has create event button', async ({ page }) => {
-    const createBtn = page.getByRole('button', { name: /create.*event|add.*event|new.*event|\+/i }).first();
+    const createBtn = page.getByRole('button', { name: /新建事件|创建事件|\+/i }).first();
     if (await createBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(createBtn).toBeVisible();
     }
@@ -111,7 +111,7 @@ test.describe('Calendar Views', () => {
   });
 
   test('has ICS import button', async ({ page }) => {
-    const importBtn = page.getByRole('button', { name: /import.*ics|import.*calendar/i });
+    const importBtn = page.getByRole('button', { name: /导入/i });
     if (await importBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(importBtn).toBeVisible();
     }

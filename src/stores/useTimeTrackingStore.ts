@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { TimeEntry, TimeTrackingProject, EntryFilters, TimeViewMode, TimeTrackingState, DailySummary, WeeklySummary, MonthlyReport, ProjectSummary } from '../types';
+import type { TimeEntry, TimeTrackingProject, EntryFilters, TimeViewMode, TimeTrackingState, DailySummary, WeeklySummary, MonthlyReport, ProjectSummary, ProjectContext } from '../types';
 import { timeTrackingDb } from '../db/timeTrackingDb';
 import { logger } from '../services/logger';
 import { roundDuration } from '../utils/timeFormatters';
@@ -8,6 +8,36 @@ import { useProjectContextStore, matchesProjectFilter } from './useProjectContex
 import { useActivityStore } from './useActivityStore';
 
 const log = logger.module('TimeTracking');
+
+/**
+ * Present the core project model in time tracking while retaining legacy
+ * billing projects for historical entries. Legacy-only projects stay archived
+ * so users cannot accidentally create a second active project taxonomy.
+ */
+export function mergeTimeTrackingProjects(
+  legacyProjects: TimeTrackingProject[],
+  coreProjects: ProjectContext[]
+): TimeTrackingProject[] {
+  const legacyById = new Map(legacyProjects.map((project) => [project.id, project]));
+  const coreIds = new Set(coreProjects.map((project) => project.id));
+  const projectedCore = coreProjects.map((project) => {
+    const legacy = legacyById.get(project.id);
+    return {
+      ...legacy,
+      id: project.id,
+      name: project.name,
+      color: project.color,
+      active: !project.archivedAt,
+      archived: Boolean(project.archivedAt),
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    } satisfies TimeTrackingProject;
+  });
+  const historicalLegacy = legacyProjects
+    .filter((project) => !coreIds.has(project.id))
+    .map((project) => ({ ...project, active: false, archived: true }));
+  return [...projectedCore, ...historicalLegacy];
+}
 
 interface TimeTrackingStore extends TimeTrackingState {
   // ==================== BILLING SETTINGS ====================
@@ -370,19 +400,26 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
         if (activeEntry) return; // Already tracking
 
         // Create description from context
-        const description = currentContext.name || `Working on ${currentContext.type}`;
+        const description = currentContext.name || `正在处理 ${currentContext.type}`;
 
         get().startTimer({
           description,
           taskId: currentContext.type === 'task' ? currentContext.id || undefined : undefined,
-          billable: true,
+          billable: false,
           automatic: true,
         });
       },
 
       // ==================== TIMER ACTIONS ====================
 
-      startTimer: ({ description, projectId, taskId, billable = true, automatic = false }) => {
+      startTimer: ({ description, projectId, taskId, billable = false, automatic = false }) => {
+        const existing = get().activeEntry;
+        if (existing) {
+          // Never silently discard a running session: persist it first so
+          // both sessions survive (the new one becomes active).
+          void get().stopTimer();
+        }
+
         const entry: TimeEntry = {
           id: crypto.randomUUID(),
           workspaceId: DEFAULT_WORKSPACE_ID,
@@ -395,7 +432,7 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
           tags: automatic ? ['Automatic'] : [],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          projectIds: [],
+          projectIds: projectId ? [projectId] : [],
           automatic, // Track if this was auto-started
         };
 
@@ -404,7 +441,7 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
           type: 'created',
           module: 'time-tracking',
           entityId: entry.id,
-          entityTitle: description || 'Timer',
+          entityTitle: description || '计时器',
         });
 
         // Save to localStorage for persistence (backup)
@@ -451,9 +488,10 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
       },
 
       stopTimer: async () => {
-        const { activeEntry, entries, roundingMinutes } = get();
+        const { activeEntry, roundingMinutes } = get();
         if (!activeEntry) return;
 
+        const stoppedEntryId = activeEntry.id;
         const endTime = new Date().toISOString();
         const rawDuration = Math.floor(
           (new Date(endTime).getTime() - new Date(activeEntry.startTime).getTime()) / 1000
@@ -470,16 +508,17 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
         // Save to IndexedDB
         await timeTrackingDb.addEntry(completedEntry);
 
-        // Update state
-        set({
-          activeEntry: null,
-          entries: [completedEntry, ...entries]
-        });
+        // Update state — only clear the session that was actually stopped so
+        // a newer session started while this one persisted is never clobbered.
+        set((state) => ({
+          activeEntry: state.activeEntry?.id === stoppedEntryId ? null : state.activeEntry,
+          entries: [completedEntry, ...state.entries.filter((entry) => entry.id !== completedEntry.id)]
+        }));
         useActivityStore.getState().logActivity({
           type: 'completed',
           module: 'time-tracking',
           entityId: completedEntry.id,
-          entityTitle: completedEntry.description || 'Timer',
+          entityTitle: completedEntry.description || '计时器',
         });
 
         // Clear localStorage backup
@@ -530,6 +569,9 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
 
         const entry: TimeEntry = {
           ...entryData,
+          projectIds: entryData.projectId
+            ? Array.from(new Set([entryData.projectId, ...entryData.projectIds]))
+            : entryData.projectIds,
           id: crypto.randomUUID(),
           workspaceId: DEFAULT_WORKSPACE_ID,
           createdAt: new Date().toISOString(),
@@ -723,8 +765,9 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
       },
 
       loadProjects: async () => {
-        const projects = await timeTrackingDb.getProjects();
-        set({ projects });
+        const legacyProjects = await timeTrackingDb.getProjects();
+        const coreProjects = useProjectContextStore.getState().projects ?? [];
+        set({ projects: mergeTimeTrackingProjects(legacyProjects, coreProjects) });
       },
 
       getEntriesByDateRange: (start, end) => {
@@ -970,7 +1013,7 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
             const project = projectId ? projects.find(p => p.id === projectId) : null;
             projectMap.set(projectId, {
               projectId,
-              projectName: project?.name || 'No Project',
+              projectName: project?.name || '无项目',
               projectColor: project?.color || '#94A3B8', // Default gray
               totalDuration: 0,
               entryCount: 0,
@@ -1015,7 +1058,7 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
             const project = projectId ? projects.find(p => p.id === projectId) : null;
             projectMap.set(projectId, {
               projectId,
-              projectName: project?.name || 'No Project',
+              projectName: project?.name || '无项目',
               projectColor: project?.color || '#94A3B8',
               totalDuration: 0,
               entryCount: 0,

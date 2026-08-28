@@ -45,13 +45,13 @@ export const RedditWidget: React.FC = () => {
 
     try {
       const response = await fetch(`https://www.reddit.com/r/${subreddit}/hot.json?limit=5`);
-      if (!response.ok) throw new Error('Failed to fetch Reddit posts');
+      if (!response.ok) throw new Error('无法获取 Reddit 帖子');
 
       const data = await response.json();
       const postsData = data.data.children.map((child: any) => child.data);
       setPosts(postsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load posts');
+      setError(err instanceof Error ? err.message : '无法加载帖子');
     } finally {
       setLoading(false);
     }

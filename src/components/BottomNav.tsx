@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { CORE_FEATURES, getFeature } from '../config/features';
 
 interface BottomNavItem {
   icon: string;
@@ -7,21 +8,38 @@ interface BottomNavItem {
   path: string;
 }
 
-const mainItems: BottomNavItem[] = [
-  { icon: '\u{1F3E0}', label: 'Home', path: '/' },
-  { icon: '\u2713', label: 'Tasks', path: '/tasks' },
-  { icon: '\u{1F4DD}', label: 'Notes', path: '/notes' },
-  { icon: '\u{1F4C5}', label: 'Calendar', path: '/schedule' },
-];
+// AI is a primary way to operate LifeOS, not a secondary utility. Keep it
+// visible on mobile alongside the daily workflow instead of burying it in More.
+const MAIN_FEATURE_IDS = new Set(['ai-assistant', 'today', 'inbox', 'tasks', 'notes']);
+
+const toNavItem = (id: string): BottomNavItem | null => {
+  const feature = getFeature(id);
+  if (!feature?.path) return null;
+  return {
+    icon: feature.icon,
+    label: feature.label,
+    path: feature.path,
+  };
+};
+
+const mainItems: BottomNavItem[] = CORE_FEATURES
+  .filter((feature) => MAIN_FEATURE_IDS.has(feature.id) && feature.path)
+  .map((feature) => ({
+    icon: feature.icon,
+    label: feature.label,
+    path: feature.path!,
+  }));
 
 const moreItems: BottomNavItem[] = [
-  { icon: '\u{1F4CA}', label: 'Activity', path: '/activity' },
-  { icon: '\u{1F517}', label: 'Links', path: '/links' },
-  { icon: '\u2728', label: 'Create', path: '/create' },
-  { icon: '\u{1F3AF}', label: 'Focus', path: '/focus' },
-  { icon: '\u2699\uFE0F', label: 'Settings', path: '/settings' },
-  { icon: '\u{1F4C6}', label: 'Today', path: '/today' },
-];
+  ...CORE_FEATURES
+    .filter((feature) => !MAIN_FEATURE_IDS.has(feature.id) && feature.path)
+    .map((feature) => ({ icon: feature.icon, label: feature.label, path: feature.path! })),
+  toNavItem('docs-center'),
+  toNavItem('focus'),
+  { icon: '\u2699\uFE0F', label: '设置', path: '/settings' },
+].filter((item): item is BottomNavItem => item !== null);
+
+const allItems = [...mainItems, ...moreItems];
 
 export const BottomNav: React.FC = () => {
   const location = useLocation();
@@ -29,21 +47,37 @@ export const BottomNav: React.FC = () => {
 
   const isActive = useCallback(
     (path: string) => {
-      if (path === '/') return location.pathname === '/';
-      return location.pathname.startsWith(path);
+      const [pathname, query] = path.split('?');
+      if (pathname === '/') return location.pathname === '/';
+      if (location.pathname !== pathname && !location.pathname.startsWith(`${pathname}/`)) {
+        return false;
+      }
+
+      if (query) {
+        const expected = new URLSearchParams(query);
+        const current = new URLSearchParams(location.search);
+        return Array.from(expected.entries()).every(([key, value]) => current.get(key) === value);
+      }
+
+      // Query-specific routes take precedence over their parent page so only
+      // one navigation item is highlighted at a time.
+      const hasSpecificMatch = allItems.some((item) => {
+        if (!item.path.startsWith(`${pathname}?`)) return false;
+        const expected = new URLSearchParams(item.path.split('?')[1]);
+        const current = new URLSearchParams(location.search);
+        return Array.from(expected.entries()).every(([key, value]) => current.get(key) === value);
+      });
+      return !hasSpecificMatch;
     },
-    [location.pathname]
+    [location.pathname, location.search]
   );
 
-  // Check if current route is in the "more" section
   const isMoreActive = moreItems.some((item) => isActive(item.path));
 
-  // Close "more" sheet on route change
   useEffect(() => {
     setShowMore(false);
   }, [location.pathname]);
 
-  // Close "more" sheet on Escape key
   useEffect(() => {
     if (!showMore) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -55,7 +89,6 @@ export const BottomNav: React.FC = () => {
 
   return (
     <>
-      {/* More sheet backdrop */}
       {showMore && (
         <div
           className="md:hidden fixed inset-0 bg-black/40 z-[49] backdrop-blur-sm"
@@ -64,22 +97,21 @@ export const BottomNav: React.FC = () => {
         />
       )}
 
-      {/* More sheet - slides up from bottom */}
       <div
         className={`
           md:hidden fixed bottom-[60px] left-0 right-0 z-50
           bg-surface-light dark:bg-surface-dark
           border-t border-border-light dark:border-border-dark
+          max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain
           rounded-t-2xl shadow-2xl
           transition-transform duration-200 ease-out
           ${showMore ? 'translate-y-0' : 'translate-y-full'}
         `}
         role="dialog"
-        aria-label="More navigation options"
+        aria-label="更多导航选项"
         aria-hidden={!showMore}
       >
         <div className="p-4 pb-2">
-          {/* Handle indicator */}
           <div className="w-8 h-1 bg-border-light dark:bg-border-dark rounded-full mx-auto mb-4" />
 
           <div className="grid grid-cols-3 gap-2">
@@ -99,9 +131,7 @@ export const BottomNav: React.FC = () => {
                 `}
                 onClick={() => setShowMore(false)}
               >
-                <span className="text-xl" aria-hidden="true">
-                  {item.icon}
-                </span>
+                <span className="text-xl" aria-hidden="true">{item.icon}</span>
                 <span className="text-xs font-medium">{item.label}</span>
               </Link>
             ))}
@@ -109,10 +139,9 @@ export const BottomNav: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom navigation bar */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark"
-        aria-label="Mobile navigation"
+        aria-label="移动端导航"
       >
         <div className="flex items-stretch justify-around h-[60px]">
           {mainItems.map((item) => {
@@ -123,50 +152,34 @@ export const BottomNav: React.FC = () => {
                 to={item.path}
                 className={`
                   flex flex-col items-center justify-center gap-0.5
-                  min-w-[56px] min-h-[44px] flex-1
+                  min-w-[52px] min-h-[44px] flex-1
                   transition-colors duration-150
-                  ${
-                    active
-                      ? 'text-accent-primary'
-                      : 'text-text-light-secondary dark:text-text-dark-secondary'
-                  }
+                  ${active ? 'text-accent-primary' : 'text-text-light-secondary dark:text-text-dark-secondary'}
                 `}
                 aria-current={active ? 'page' : undefined}
               >
-                <span className="text-lg" aria-hidden="true">
-                  {item.icon}
-                </span>
-                <span className="text-[10px] font-medium leading-tight">
-                  {item.label}
-                </span>
+                <span className="text-base" aria-hidden="true">{item.icon}</span>
+                <span className="text-[11px] font-medium leading-tight">{item.label}</span>
               </Link>
             );
           })}
 
-          {/* More button */}
           <button
             onClick={() => setShowMore((prev) => !prev)}
             className={`
               flex flex-col items-center justify-center gap-0.5
-              min-w-[56px] min-h-[44px] flex-1
+              min-w-[52px] min-h-[44px] flex-1
               transition-colors duration-150
-              ${
-                showMore || isMoreActive
-                  ? 'text-accent-primary'
-                  : 'text-text-light-secondary dark:text-text-dark-secondary'
-              }
+              ${showMore || isMoreActive ? 'text-accent-primary' : 'text-text-light-secondary dark:text-text-dark-secondary'}
             `}
             aria-expanded={showMore}
-            aria-label="More navigation options"
+            aria-label="更多导航选项"
           >
-            <span className="text-lg" aria-hidden="true">
-              {showMore ? '\u2715' : '\u2022\u2022\u2022'}
-            </span>
-            <span className="text-[10px] font-medium leading-tight">More</span>
+            <span className="text-base" aria-hidden="true">{showMore ? '\u2715' : '\u2022\u2022\u2022'}</span>
+            <span className="text-[11px] font-medium leading-tight">更多</span>
           </button>
         </div>
 
-        {/* Safe area padding for devices with home indicator */}
         <div className="h-[env(safe-area-inset-bottom,0px)] bg-surface-light dark:bg-surface-dark" />
       </nav>
     </>

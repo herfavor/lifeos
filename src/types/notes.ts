@@ -50,6 +50,9 @@ export interface Note {
   /** Archive note (hide from main view) */
   isArchived: boolean;
 
+  /** Recycle-bin timestamp. Deleted notes remain recoverable until permanently removed. */
+  deletedAt?: Date;
+
   /** Optional color for note card */
   color?: string;
 
@@ -169,7 +172,7 @@ export interface NoteSortConfig {
 /**
  * Note Filter Options
  */
-export type NoteFilter = 'all' | 'favorites' | 'pinned' | 'archived' | 'unarchived';
+export type NoteFilter = 'all' | 'favorites' | 'pinned' | 'archived' | 'unarchived' | 'trash';
 
 /**
  * Note Tree Node (for rendering hierarchical notes)
@@ -365,7 +368,7 @@ export interface NotePreview {
  */
 export const NOTE_CONSTANTS = {
   /** Default new note title */
-  DEFAULT_TITLE: 'Untitled Note',
+  DEFAULT_TITLE: '未命名笔记',
 
   /** Max title length */
   MAX_TITLE_LENGTH: 200,
@@ -406,7 +409,7 @@ export const NOTE_CONSTANTS = {
 
 export const FOLDER_CONSTANTS = {
   /** Default new folder name */
-  DEFAULT_NAME: 'New Folder',
+  DEFAULT_NAME: '新建文件夹',
 
   /** Max folder name length */
   MAX_NAME_LENGTH: 100,

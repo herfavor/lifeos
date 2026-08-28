@@ -9,7 +9,7 @@ import type { ThemeDefinition } from './types';
 export const heritageTheme: ThemeDefinition = {
   id: 'heritage',
   name: 'Heritage',
-  description: 'Deep earth tones with heather purple accents',
+  description: '深厚大地色调搭配石楠紫点缀',
   category: 'professional',
   preview: {
     primary: '#6B4C8A',

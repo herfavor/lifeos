@@ -41,7 +41,7 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
         aria-live="polite"
       >
         <Wifi className="w-4 h-4" />
-        <span className="text-sm font-medium">Back online</span>
+        <span className="text-sm font-medium">已恢复连接</span>
       </div>
     );
   }
@@ -56,7 +56,7 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
         aria-live="polite"
       >
         <WifiOff className="w-4 h-4" />
-        <span className="text-sm font-medium">Offline</span>
+        <span className="text-sm font-medium">离线</span>
       </div>
     );
   }
@@ -77,7 +77,7 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
       aria-live="polite"
     >
       <WifiOff className="w-4 h-4" />
-      <span className="text-sm font-medium">You're offline</span>
+      <span className="text-sm font-medium">你处于离线状态</span>
     </div>
   );
 };

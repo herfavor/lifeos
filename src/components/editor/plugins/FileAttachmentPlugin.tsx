@@ -34,17 +34,17 @@ export default function FileAttachmentPlugin({ noteId }: FileAttachmentPluginPro
       for (const file of nonImageFiles) {
         if (file.size > MAX_FILE_SIZE_BYTES) {
           toast.error(
-            'File too large',
-            `"${file.name}" exceeds the 10MB limit.`,
+            '文件过大',
+            `"${file.name}" 超过 10MB 限制。`,
           );
           continue;
         }
 
         const attachment = await addAttachment(noteId, file);
         if (attachment) {
-          toast.success('File attached', `"${file.name}" has been attached to this note.`);
+          toast.success('文件已附加', `"${file.name}" 已附加到此笔记。`);
         } else {
-          toast.error('Attachment failed', `Could not attach "${file.name}".`);
+          toast.error('附加失败', `无法附加 "${file.name}"。`);
         }
       }
     },

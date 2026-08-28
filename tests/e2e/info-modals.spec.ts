@@ -15,7 +15,7 @@ test.describe('Info Modals', () => {
   });
 
   test('has About link or button', async ({ page }) => {
-    const aboutBtn = page.getByRole('button', { name: /about/i }).or(page.getByRole('link', { name: /about/i }));
+    const aboutBtn = page.getByRole('button', { name: /关于/i }).or(page.getByRole('link', { name: /关于/i }));
     if (await aboutBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(aboutBtn).toBeVisible();
     }
@@ -23,12 +23,12 @@ test.describe('Info Modals', () => {
   });
 
   test('can open About modal', async ({ page }) => {
-    const aboutBtn = page.getByRole('button', { name: /about/i }).or(page.getByRole('link', { name: /about/i }));
+    const aboutBtn = page.getByRole('button', { name: /关于/i }).or(page.getByRole('link', { name: /关于/i }));
     if (await aboutBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await aboutBtn.click();
       await page.waitForTimeout(300);
 
-      const aboutText = page.getByText(/NeumanOS|version|about/i).first();
+      const aboutText = page.getByText(/LifeOS|版本|关于/i).first();
       if (await aboutText.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(aboutText).toBeVisible();
       }
@@ -37,7 +37,7 @@ test.describe('Info Modals', () => {
   });
 
   test('has Privacy link or button', async ({ page }) => {
-    const privacyBtn = page.getByRole('button', { name: /privacy/i }).or(page.getByRole('link', { name: /privacy/i }));
+    const privacyBtn = page.getByRole('button', { name: /隐私/i }).or(page.getByRole('link', { name: /隐私/i }));
     if (await privacyBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(privacyBtn).toBeVisible();
     }
@@ -45,7 +45,7 @@ test.describe('Info Modals', () => {
   });
 
   test('has Support or Help link', async ({ page }) => {
-    const supportBtn = page.getByRole('button', { name: /support|help/i }).or(page.getByRole('link', { name: /support|help/i }));
+    const supportBtn = page.getByRole('button', { name: /帮助|支持/i }).or(page.getByRole('link', { name: /帮助|支持/i }));
     if (await supportBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(supportBtn).toBeVisible();
     }
@@ -53,7 +53,7 @@ test.describe('Info Modals', () => {
   });
 
   test('has version info somewhere on settings page', async ({ page }) => {
-    const version = page.getByText(/v\d+\.\d+|version/i).first();
+    const version = page.getByText(/v\d+\.\d+|版本/i).first();
     if (await version.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(version).toBeVisible();
     }

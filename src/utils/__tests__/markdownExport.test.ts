@@ -317,9 +317,9 @@ title: "Test"
 
       expect(markdown).toContain('# Tasks Export');
       expect(markdown).toContain('## Table of Contents');
-      expect(markdown).toContain('## Backlog');
-      expect(markdown).toContain('## To Do');
-      expect(markdown).toContain('## Done');
+      expect(markdown).toContain('## 待处理');
+      expect(markdown).toContain('## 待办');
+      expect(markdown).toContain('## 已完成');
       expect(markdown).toContain('### Backlog Task');
       expect(markdown).toContain('### Todo Task');
       expect(markdown).toContain('### Done Task');
@@ -417,7 +417,7 @@ title: "Test"
     it('should generate filename with date and time', () => {
       const filename = getExportFilename();
 
-      expect(filename).toMatch(/^neumanos-export-\d{4}-\d{2}-\d{2}-\d{6}\.zip$/);
+      expect(filename).toMatch(/^lifeos-export-\d{4}-\d{2}-\d{2}-\d{6}\.zip$/);
       expect(filename).toContain('.zip');
     });
   });

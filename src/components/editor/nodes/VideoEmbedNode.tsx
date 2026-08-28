@@ -126,7 +126,7 @@ function VideoEmbedComponent({
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
         title="Remove video embed"
       >
         x
@@ -192,7 +192,7 @@ function VideoEmbedComponent({
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
             {url.trim()
               ? 'Unsupported video URL. Click to change.'
-              : 'Click to add a video URL'}
+              : '点击添加视频 URL'}
           </p>
         </div>
       )}

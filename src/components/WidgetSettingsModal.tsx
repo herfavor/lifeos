@@ -13,16 +13,16 @@ import { WidgetConfigPanel } from './WidgetConfigPanel';
 
 /** Preset accent colors for widget theming */
 const ACCENT_COLORS = [
-  { label: 'Default', value: '' },
-  { label: 'Blue', value: '#3b82f6' },
-  { label: 'Purple', value: '#8b5cf6' },
-  { label: 'Pink', value: '#ec4899' },
-  { label: 'Red', value: '#ef4444' },
-  { label: 'Orange', value: '#f97316' },
-  { label: 'Yellow', value: '#eab308' },
-  { label: 'Green', value: '#22c55e' },
-  { label: 'Teal', value: '#14b8a6' },
-  { label: 'Cyan', value: '#06b6d4' },
+  { label: '默认', value: '' },
+  { label: '蓝色', value: '#3b82f6' },
+  { label: '紫色', value: '#8b5cf6' },
+  { label: '粉色', value: '#ec4899' },
+  { label: '红色', value: '#ef4444' },
+  { label: '橙色', value: '#f97316' },
+  { label: '黄色', value: '#eab308' },
+  { label: '绿色', value: '#22c55e' },
+  { label: '蓝绿色', value: '#14b8a6' },
+  { label: '青色', value: '#06b6d4' },
 ];
 
 interface WidgetSettingsModalProps {
@@ -72,12 +72,12 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
             <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Widget Settings
+              组件设置
             </h2>
             <button
               onClick={onClose}
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-all duration-standard ease-smooth"
-              aria-label="Close"
+              aria-label="关闭"
             >
               <svg
                 className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary"
@@ -103,7 +103,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
                 {widgetMeta?.name || widgetId}
               </h3>
               <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-                {widgetMeta?.description || 'Configure widget settings'}
+                {widgetMeta?.description || '配置组件设置'}
               </p>
             </div>
 
@@ -111,7 +111,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
             {!isWeatherMap && (
               <div>
                 <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                  Widget Size
+                  组件大小
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {([1, 2, 3] as const).map((size) => (
@@ -131,7 +131,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
                           {size}x
                         </div>
                         <div className="text-[9px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-                          {size === 1 ? 'Compact' : size === 2 ? 'Medium' : 'Wide'}
+                          {size === 1 ? '紧凑' : size === 2 ? '中等' : '宽屏'}
                         </div>
                       </div>
                       {selectedSize === size && (
@@ -157,14 +157,14 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
 
             {isWeatherMap && (
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Weather Map size is locked to ensure optimal display of the interactive map.
+                天气地图的大小已锁定，以确保交互式地图的最佳显示。
               </div>
             )}
 
             {/* Widget-Specific Configuration */}
             <div>
               <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Widget Configuration
+                组件配置
               </label>
               <div className="p-3 bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark">
                 <WidgetConfigPanel widgetId={widgetId} />
@@ -174,7 +174,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
             {/* Accent Color Picker */}
             <div>
               <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Accent Color
+                强调色
               </label>
               <div className="flex flex-wrap gap-2">
                 {ACCENT_COLORS.map((color) => (
@@ -188,7 +188,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
                     }`}
                     style={color.value ? { backgroundColor: color.value } : undefined}
                     title={color.label}
-                    aria-label={`Set accent color to ${color.label}`}
+                    aria-label={`将强调色设置为 ${color.label}`}
                   >
                     {!color.value && (
                       <svg className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +204,7 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
                 ))}
               </div>
               <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-1.5">
-                Adds a colored top border to the widget
+                为组件添加彩色顶部边框
               </p>
             </div>
           </div>
@@ -215,13 +215,13 @@ export const WidgetSettingsModal: React.FC<WidgetSettingsModalProps> = ({
               onClick={onClose}
               className="px-3 py-1.5 text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-all duration-standard ease-smooth"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleApply}
               className="px-3 py-1.5 text-xs font-medium bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
             >
-              Apply
+              应用
             </button>
           </div>
         </div>

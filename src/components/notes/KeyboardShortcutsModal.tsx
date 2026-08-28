@@ -18,40 +18,40 @@ interface ShortcutGroup {
 
 const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
-    title: 'Folder Navigation',
+    title: '文件夹导航',
     shortcuts: [
-      { keys: ['↓', 'J'], description: 'Next folder' },
-      { keys: ['↑', 'K'], description: 'Previous folder' },
-      { keys: ['→', 'L'], description: 'Expand or enter folder' },
-      { keys: ['←', 'H'], description: 'Collapse or go to parent' },
-      { keys: ['Enter'], description: 'Toggle expand/collapse' },
-      { keys: ['Home'], description: 'Go to All Notes' },
-      { keys: ['End'], description: 'Go to last folder' },
+      { keys: ['↓', 'J'], description: '下一个文件夹' },
+      { keys: ['↑', 'K'], description: '上一个文件夹' },
+      { keys: ['→', 'L'], description: '展开或进入文件夹' },
+      { keys: ['←', 'H'], description: '折叠或返回上级' },
+      { keys: ['Enter'], description: '切换展开/折叠' },
+      { keys: ['Home'], description: '前往全部笔记' },
+      { keys: ['End'], description: '前往最后一个文件夹' },
     ],
   },
   {
-    title: 'Notes List Navigation',
+    title: '笔记列表导航',
     shortcuts: [
-      { keys: ['↓', 'J'], description: 'Next note' },
-      { keys: ['↑', 'K'], description: 'Previous note' },
-      { keys: ['Enter'], description: 'Open note in editor' },
-      { keys: ['F'], description: 'Toggle favorite' },
-      { keys: ['P'], description: 'Toggle pin' },
-      { keys: ['D'], description: 'Delete note (confirm)' },
-      { keys: ['Space'], description: 'Toggle selection (bulk mode)' },
-      { keys: ['Home'], description: 'First note' },
-      { keys: ['End'], description: 'Last note' },
+      { keys: ['↓', 'J'], description: '下一条笔记' },
+      { keys: ['↑', 'K'], description: '上一条笔记' },
+      { keys: ['Enter'], description: '在编辑器中打开笔记' },
+      { keys: ['F'], description: '切换收藏' },
+      { keys: ['P'], description: '切换置顶' },
+      { keys: ['D'], description: '删除笔记（需确认）' },
+      { keys: ['Space'], description: '切换选择（批量模式）' },
+      { keys: ['Home'], description: '第一条笔记' },
+      { keys: ['End'], description: '最后一条笔记' },
     ],
   },
   {
-    title: 'Global Shortcuts',
+    title: '全局快捷键',
     shortcuts: [
-      { keys: ['Cmd', 'K'], description: 'Focus search' },
-      { keys: ['Cmd', 'N'], description: 'New note' },
-      { keys: ['Cmd', '\\'], description: 'Toggle sidebar' },
-      { keys: ['Cmd', 'Shift', 'E'], description: 'Export notes' },
-      { keys: ['?'], description: 'Show this help' },
-      { keys: ['Escape'], description: 'Close dialogs/help' },
+      { keys: ['Cmd', 'K'], description: '聚焦搜索' },
+      { keys: ['Cmd', 'N'], description: '新建笔记' },
+      { keys: ['Cmd', '\\'], description: '切换侧边栏' },
+      { keys: ['Cmd', 'Shift', 'E'], description: '导出笔记' },
+      { keys: ['?'], description: '显示此帮助' },
+      { keys: ['Escape'], description: '关闭对话框/帮助' },
     ],
   },
 ];
@@ -66,7 +66,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   onClose,
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Keyboard Shortcuts" maxWidth="xl">
+    <Modal isOpen={isOpen} onClose={onClose} title="键盘快捷键" maxWidth="xl">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
@@ -75,10 +75,10 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           </div>
           <div>
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Keyboard Shortcuts
+              键盘快捷键
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Navigate and manage notes efficiently with keyboard
+              使用键盘高效地导航和管理笔记
             </p>
           </div>
         </div>
@@ -123,7 +123,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         {/* Footer */}
         <div className="mt-6 pt-4 border-t border-border-light dark:border-border-dark">
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-            Press <kbd className="px-1.5 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded">?</kbd> anytime to show this help
+            随时按 <kbd className="px-1.5 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded">?</kbd> 显示此帮助
           </p>
         </div>
       </div>

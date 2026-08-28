@@ -98,12 +98,12 @@ export const NoteOutlinePanel: React.FC<NoteOutlinePanelProps> = ({ headings, is
     >
       <div className="px-3 py-3">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary mb-3">
-          Outline
+          大纲
         </div>
 
         {headings.length === 0 ? (
           <div className="text-[11px] text-text-light-secondary dark:text-text-dark-secondary italic">
-            Add headings to see an outline
+            添加标题以查看大纲
           </div>
         ) : (
           <nav>

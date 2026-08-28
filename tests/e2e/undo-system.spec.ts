@@ -26,7 +26,7 @@ test.describe('Undo System', () => {
       await page.waitForTimeout(500);
 
       // Look for undo toast
-      const undoToast = page.getByText(/undo/i).first();
+      const undoToast = page.getByText(/撤销/i).first();
       if (await undoToast.isVisible({ timeout: 3000 }).catch(() => false)) {
         await expect(undoToast).toBeVisible();
       }
@@ -43,7 +43,7 @@ test.describe('Undo System', () => {
       await taskCheckbox.click();
       await page.waitForTimeout(500);
 
-      const undoToast = page.getByText(/undo/i).first();
+      const undoToast = page.getByText(/撤销/i).first();
       if (await undoToast.isVisible({ timeout: 3000 }).catch(() => false)) {
         // Wait for toast to auto-dismiss (usually 5-10 seconds)
         await page.waitForTimeout(6000);

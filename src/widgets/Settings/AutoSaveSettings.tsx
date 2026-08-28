@@ -48,7 +48,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
     setPreferences(prefs);
 
     // Initialize customization state
-    const filename = prefs.customFilename || 'NeumanOS';
+    const filename = prefs.customFilename || 'LifeOS';
     const nameWithoutExt = filename.replace(/\.brain$/i, '');
     setCustomFilename(nameWithoutExt);
     setVersionCount(prefs.versionCount || 7);
@@ -95,7 +95,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
       await loadData();
       onRefresh();
-      onMessage({ type: 'success', text: 'Auto-save enabled! Your data will be automatically saved to the selected folder.' });
+      onMessage({ type: 'success', text: '已启用自动保存！你的数据将自动保存到所选文件夹。' });
     } catch (error) {
       onMessage({ type: 'error', text: `${error}` });
     }
@@ -103,12 +103,12 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
   const handleAutoSaveNow = async () => {
     if (!autoSaveDirectory) {
-      onMessage({ type: 'error', text: 'Please configure auto-save directory first' });
+      onMessage({ type: 'error', text: '请先配置自动保存目录' });
       return;
     }
 
     try {
-      onMessage({ type: 'info', text: 'Saving...' });
+      onMessage({ type: 'info', text: '正在保存...' });
       const result = await autoSave(autoSaveDirectory);
 
       await addHistoryEntry({
@@ -122,9 +122,9 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
       await loadData();
       onRefresh();
-      onMessage({ type: 'success', text: `Auto-saved: ${result.filename} (${formatFileSize(result.size)})` });
+      onMessage({ type: 'success', text: `已自动保存：${result.filename}（${formatFileSize(result.size)}）` });
     } catch (error) {
-      onMessage({ type: 'error', text: `Auto-save failed: ${error}` });
+      onMessage({ type: 'error', text: `自动保存失败：${error}` });
     }
   };
 
@@ -137,7 +137,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
       setAutoSaveDirectory(null);
       await loadData();
       onRefresh();
-      onMessage({ type: 'info', text: 'Auto-save disabled' });
+      onMessage({ type: 'info', text: '已禁用自动保存' });
 
       setRecentlySaved('autoSave');
       setTimeout(() => setRecentlySaved(null), 2000);
@@ -151,12 +151,12 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
     if (!preferences) return;
 
     if (!customFilename.trim()) {
-      onMessage({ type: 'error', text: 'Filename cannot be empty' });
+      onMessage({ type: 'error', text: '文件名不能为空' });
       return;
     }
 
     if (versionCount < 1 || versionCount > 100) {
-      onMessage({ type: 'error', text: 'Version count must be between 1 and 100' });
+      onMessage({ type: 'error', text: '版本数量必须在 1 到 100 之间' });
       return;
     }
 
@@ -170,9 +170,9 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
       await loadData();
       onRefresh();
-      onMessage({ type: 'success', text: 'Auto-save preferences updated!' });
+      onMessage({ type: 'success', text: '自动保存偏好已更新！' });
     } catch (error) {
-      onMessage({ type: 'error', text: `Failed to save preferences: ${error}` });
+      onMessage({ type: 'error', text: `保存偏好失败：${error}` });
     }
   };
 
@@ -186,10 +186,10 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
       {isFileSystemAccessSupported() && (
         <div className="bento-card p-6">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Auto-Save
+            自动保存
           </h2>
           <p className="text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            Automatically save backups to a folder on your computer
+            自动将备份保存到你电脑上的文件夹中
           </p>
 
           {!autoSaveDirectory ? (
@@ -199,13 +199,13 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
               onClick={handleSetupAutoSave}
               className="w-full p-4 rounded-lg bg-surface-dark dark:bg-surface-dark-elevated text-white hover:bg-border-dark dark:hover:bg-border-dark transition-colors"
             >
-              📁 Choose Auto-Save Folder
+              📁 选择自动保存文件夹
             </motion.button>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-accent-green">
                 <span>✅</span>
-                <span>Auto-save folder configured</span>
+                <span>已配置自动保存文件夹</span>
               </div>
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -213,7 +213,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                 onClick={handleAutoSaveNow}
                 className="w-full p-4 rounded-lg bg-accent-green text-white hover:bg-accent-green-hover transition-colors"
               >
-                💾 Save Now
+                💾 立即保存
               </motion.button>
             </div>
           )}
@@ -223,17 +223,17 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
       {/* Detailed Auto-Save Configuration */}
       <div className="bento-card p-6">
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-          Auto-Save to File
+          自动保存到文件
         </h2>
 
         {!isFileSystemAccessSupported() ? (
           <div className="p-4 bg-accent-yellow/10 border border-accent-yellow/30 rounded-lg">
             <p className="text-sm text-accent-yellow">
-              <strong>⚠️ Not Supported in {navigator.userAgent.includes('Firefox') ? 'Firefox' : navigator.userAgent.includes('Safari') ? 'Safari' : 'this browser'}</strong>
+              <strong>⚠️ 不支持 {navigator.userAgent.includes('Firefox') ? 'Firefox' : navigator.userAgent.includes('Safari') ? 'Safari' : '此浏览器'}</strong>
               <br />
-              Auto-save to file requires a Chromium-based browser (Chrome, Edge, Brave, Arc, Opera, etc.).
+              自动保存到文件需要使用基于 Chromium 的浏览器（Chrome、Edge、Brave、Arc、Opera 等）。
               <br />
-              Your data is still automatically saved to IndexedDB. You can manually export backups anytime.
+              你的数据仍会自动保存到 IndexedDB。你可以随时手动导出备份。
             </p>
           </div>
         ) : (
@@ -241,17 +241,17 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
             {/* Enable/Disable Toggle */}
             <label className="flex items-center justify-between p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg cursor-pointer hover:bg-border-light dark:hover:bg-border-dark transition-colors">
               <div>
-                <p className="font-medium text-text-light-primary dark:text-text-dark-primary">Enable Auto-Save</p>
+                <p className="font-medium text-text-light-primary dark:text-text-dark-primary">启用自动保存</p>
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
                   {preferences.autoSaveEnabled
-                    ? 'Your data is automatically saved to the selected folder'
-                    : 'Automatically save your data to a local file'}
+                    ? '你的数据会自动保存到所选文件夹'
+                    : '自动将你的数据保存到本地文件'}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 {recentlySaved === 'autoSave' && (
                   <span className="text-sm font-medium text-accent-green animate-fade-in">
-                    ✓ Saved
+                    ✓ 已保存
                   </span>
                 )}
                 <input
@@ -270,22 +270,22 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                   <span className="text-2xl">✅</span>
                   <div className="flex-1">
                     <p className="font-semibold text-accent-green mb-1">
-                      Auto-Save Enabled
+                      已启用自动保存
                     </p>
                     <p className="text-sm text-accent-green">
-                      Your data is automatically backed up to your selected folder whenever changes are made.
+                      每当发生更改时，你的数据都会自动备份到你选择的文件夹。
                       {preferences.lastAutoSave && (
                         <>
                           <br />
-                          <strong>Last auto-save:</strong> {new Date(preferences.lastAutoSave).toLocaleString()}
+                          <strong>上次自动保存：</strong> {new Date(preferences.lastAutoSave).toLocaleString()}
                         </>
                       )}
                     </p>
                     {preferences.customFilename && (
                       <p className="text-sm text-accent-green mt-2">
-                        <strong>Filename:</strong> {preferences.customFilename}
+                        <strong>文件名：</strong> {preferences.customFilename}
                         <br />
-                        <strong>Versions kept:</strong> {preferences.versionCount || 7}
+                        <strong>保留版本数：</strong> {preferences.versionCount || 7}
                       </p>
                     )}
                   </div>
@@ -296,33 +296,33 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
             {/* Customization Settings */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                Customize Auto-Save
+                自定义自动保存
               </h3>
 
               {/* Filename Input */}
               <div>
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                  Backup Filename
+                  备份文件名
                 </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={customFilename}
                     onChange={(e) => setCustomFilename(e.target.value)}
-                    placeholder="MyBackup"
+                    placeholder="我的备份"
                     className="flex-1 px-4 py-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all"
                   />
                   <span className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">.brain</span>
                 </div>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  Enter the filename (e.g., "Neuman", "MyBackup"). The .brain extension is automatically added.
+                  输入文件名（例如："LifeOS"、"我的备份"）。.brain 扩展名会自动添加。
                 </p>
               </div>
 
               {/* Version Count Input */}
               <div>
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                  Versions to Keep
+                  保留版本数
                 </label>
                 <input
                   type="number"
@@ -333,7 +333,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                   className="w-full px-4 py-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all"
                 />
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  Number of timestamped backups to keep in the hidden .neuman-backups folder (1-100)
+                  在隐藏的 .neuman-backups 文件夹中保留的带时间戳备份数量（1-100）
                 </p>
               </div>
 
@@ -342,7 +342,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                 onClick={handleSaveCustomization}
                 className="w-full px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
               >
-                💾 Save Preferences
+                💾 保存偏好
               </button>
             </div>
 
@@ -352,7 +352,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                 onClick={handleAutoSaveNow}
                 className="w-full px-4 py-3 bg-accent-secondary hover:bg-accent-secondary-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
               >
-                💾 Save Now (Manual Trigger)
+                💾 立即保存（手动触发）
               </button>
             )}
           </div>

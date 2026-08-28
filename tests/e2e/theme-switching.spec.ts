@@ -15,7 +15,7 @@ test.describe('Theme Switching', () => {
   });
 
   test('has theme toggle', async ({ page }) => {
-    const themeBtn = page.locator('[aria-label*="theme"], [aria-label*="Theme"], [title*="theme"], [title*="Theme"]').first();
+    const themeBtn = page.locator('[aria-label*="模式"], [aria-label*="主题"], [title*="模式"], [title*="主题"]').first();
     if (await themeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(themeBtn).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Theme Switching', () => {
   });
 
   test('can toggle theme', async ({ page }) => {
-    const themeBtn = page.locator('[aria-label*="theme"], [aria-label*="Theme"], [title*="theme"], [title*="Theme"]').first();
+    const themeBtn = page.locator('[aria-label*="模式"], [aria-label*="主题"], [title*="模式"], [title*="主题"]').first();
     if (await themeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       const wasDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
       await themeBtn.click();
@@ -37,7 +37,7 @@ test.describe('Theme Switching', () => {
   test('dark mode applies dark class to html', async ({ page }) => {
     // Navigate to settings to use the explicit dark mode button
     await navigateTo(page, '/settings');
-    const darkBtn = page.getByRole('button', { name: 'Dark', exact: true });
+    const darkBtn = page.getByRole('button', { name: '深色', exact: true });
     if (await darkBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await darkBtn.click();
       await page.waitForTimeout(300);
@@ -49,7 +49,7 @@ test.describe('Theme Switching', () => {
 
   test('light mode removes dark class from html', async ({ page }) => {
     await navigateTo(page, '/settings');
-    const lightBtn = page.getByRole('button', { name: 'Light', exact: true });
+    const lightBtn = page.getByRole('button', { name: '浅色', exact: true });
     if (await lightBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await lightBtn.click();
       await page.waitForTimeout(300);
@@ -61,7 +61,7 @@ test.describe('Theme Switching', () => {
 
   test('theme persists across page navigation', async ({ page }) => {
     await navigateTo(page, '/settings');
-    const darkBtn = page.getByRole('button', { name: 'Dark', exact: true });
+    const darkBtn = page.getByRole('button', { name: '深色', exact: true });
     if (await darkBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await darkBtn.click();
       await page.waitForTimeout(300);

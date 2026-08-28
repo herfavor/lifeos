@@ -1,7 +1,7 @@
 /**
  * Cross-Module AI Context Builder
  *
- * Aggregates state from all NeumanOS modules to provide
+ * Aggregates state from all LifeOS modules to provide
  * contextual awareness to AI conversations.
  */
 
@@ -47,6 +47,8 @@ export interface CrossModuleContext {
 export function buildCrossModuleContext(): CrossModuleContext {
   const today = new Date();
   const todayKey = formatDateKey(today);
+  /** Calendar store keys are NON-padded YYYY-M-D; normalize before indexing. */
+  const storeTodayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
   // --- Notes ---
   const notesState = useNotesStore.getState();
@@ -89,7 +91,7 @@ export function buildCrossModuleContext(): CrossModuleContext {
   // --- Calendar ---
   const calendarState = useCalendarStore.getState();
   const allEvents = calendarState.events ?? {};
-  const todayEvents = (allEvents[todayKey] ?? []).map((e) => ({
+  const todayEvents = (allEvents[storeTodayKey] ?? []).map((e) => ({
     title: e.title,
     startTime: e.startTime,
     endTime: e.endTime,
@@ -100,7 +102,7 @@ export function buildCrossModuleContext(): CrossModuleContext {
   for (let i = 1; i <= 3; i++) {
     const futureDate = new Date(today);
     futureDate.setDate(futureDate.getDate() + i);
-    const futureKey = formatDateKey(futureDate);
+    const futureKey = `${futureDate.getFullYear()}-${futureDate.getMonth() + 1}-${futureDate.getDate()}`;
     const dayEvents = allEvents[futureKey] ?? [];
     for (const evt of dayEvents) {
       upcomingEvents.push({
@@ -196,90 +198,90 @@ export function contextToSystemPrompt(context: CrossModuleContext): string {
   const sections: string[] = [];
 
   sections.push(
-    'You are an AI assistant for NeumanOS, a personal productivity operating system. ' +
-    'Here is the user\'s current state:'
+    '你是 LifeOS（本地优先的个人管理平台）的 AI 助手。' +
+    '以下是用户的当前状态：'
   );
 
   // Notes
   if (context.notes.totalCount > 0) {
     const recentTitles = context.notes.recentNotes.map((n) => `"${n.title}"`).join(', ');
-    let noteSection = `**Notes:** The user has ${context.notes.totalCount} notes.`;
+    let noteSection = `**笔记：** 用户共有 ${context.notes.totalCount} 条笔记。`;
     if (context.notes.recentNotes.length > 0) {
-      noteSection += ` Recently worked on: ${recentTitles}.`;
+      noteSection += ` 最近处理：${recentTitles}。`;
     }
     if (context.notes.pinnedNotes.length > 0) {
       const pinned = context.notes.pinnedNotes.map((n) => `"${n.title}"`).join(', ');
-      noteSection += ` Pinned: ${pinned}.`;
+      noteSection += ` 已置顶：${pinned}。`;
     }
     sections.push(noteSection);
   }
 
   // Tasks
   if (context.tasks.totalActive > 0) {
-    let taskSection = `**Tasks:** ${context.tasks.totalActive} active tasks.`;
+    let taskSection = `**任务：** ${context.tasks.totalActive} 个活跃任务。`;
     if (context.tasks.inProgress.length > 0) {
       const inProg = context.tasks.inProgress
         .map((t) => `"${t.title}" (${t.priority})`)
         .join(', ');
-      taskSection += ` In progress: ${inProg}.`;
+      taskSection += ` 进行中：${inProg}。`;
     }
     if (context.tasks.overdueCount > 0) {
-      taskSection += ` ${context.tasks.overdueCount} overdue.`;
+      taskSection += ` ${context.tasks.overdueCount} 项已逾期。`;
     }
     if (context.tasks.dueTodayCount > 0) {
-      taskSection += ` ${context.tasks.dueTodayCount} due today.`;
+      taskSection += ` ${context.tasks.dueTodayCount} 项今日到期。`;
     }
     sections.push(taskSection);
   }
 
   // Calendar
   if (context.calendar.todayEvents.length > 0 || context.calendar.upcomingEvents.length > 0) {
-    let calSection = '**Calendar:**';
+    let calSection = '**日历：**';
     if (context.calendar.todayEvents.length > 0) {
       const todayList = context.calendar.todayEvents
         .map((e) => {
           let s = `"${e.title}"`;
-          if (e.startTime) s += ` at ${e.startTime}`;
+          if (e.startTime) s += ` 于 ${e.startTime}`;
           return s;
         })
         .join(', ');
-      calSection += ` Today: ${todayList}.`;
+      calSection += ` 今日：${todayList}。`;
     }
     if (context.calendar.upcomingEvents.length > 0) {
       const upcoming = context.calendar.upcomingEvents
-        .map((e) => `"${e.title}" on ${e.date}`)
+        .map((e) => `"${e.title}" 于 ${e.date}`)
         .join(', ');
-      calSection += ` Upcoming: ${upcoming}.`;
+      calSection += ` 即将到来：${upcoming}。`;
     }
     sections.push(calSection);
   }
 
   // Time Tracking
   if (context.timeTracking.activeTimer || context.timeTracking.todayHours > 0) {
-    let timeSection = '**Time Tracking:**';
+    let timeSection = '**时间追踪：**';
     if (context.timeTracking.activeTimer) {
-      timeSection += ` Currently tracking: "${context.timeTracking.activeTimer.description}".`;
+      timeSection += ` 正在追踪："${context.timeTracking.activeTimer.description}"。`;
     }
     if (context.timeTracking.todayHours > 0) {
-      timeSection += ` ${context.timeTracking.todayHours}h logged today.`;
+      timeSection += ` 今日已记录 ${context.timeTracking.todayHours} 小时。`;
     }
     sections.push(timeSection);
   }
 
   // Habits
   if (context.habits.todayCompleted.length > 0 || context.habits.todayPending.length > 0) {
-    let habitSection = '**Habits:**';
+    let habitSection = '**习惯：**';
     if (context.habits.todayCompleted.length > 0) {
-      habitSection += ` Completed today: ${context.habits.todayCompleted.join(', ')}.`;
+      habitSection += ` 今日已完成：${context.habits.todayCompleted.join(', ')}。`;
     }
     if (context.habits.todayPending.length > 0) {
-      habitSection += ` Still pending: ${context.habits.todayPending.join(', ')}.`;
+      habitSection += ` 待完成：${context.habits.todayPending.join(', ')}。`;
     }
     if (context.habits.topStreaks.length > 0) {
       const streaks = context.habits.topStreaks
-        .map((s) => `${s.title} (${s.streak}-day streak)`)
+        .map((s) => `${s.title}（连续 ${s.streak} 天）`)
         .join(', ');
-      habitSection += ` Top streaks: ${streaks}.`;
+      habitSection += ` 最长连续：${streaks}。`;
     }
     sections.push(habitSection);
   }

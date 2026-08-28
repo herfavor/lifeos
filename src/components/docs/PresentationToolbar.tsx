@@ -132,7 +132,7 @@ export function PresentationToolbar({
             <button
               onClick={onTheme}
               className="p-1.5 rounded transition-colors text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated hover:text-accent-purple"
-              title="Theme"
+              title="主题"
             >
               <Palette className="w-4 h-4" />
             </button>

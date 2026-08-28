@@ -55,7 +55,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
     setRefreshKey((k) => k + 1);
   }, []);
 
-  const todayDate = new Date().toLocaleDateString('en-US', {
+  const todayDate = new Date().toLocaleDateString('zh-CN', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -69,7 +69,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
 
   return (
     <BaseWidget
-      title="Daily Briefing"
+      title="每日简报"
       icon="🌅"
       subtitle={todayDate}
       onRefresh={handleRefresh}
@@ -78,7 +78,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
         {totalItems === 0 ? (
           <div className="flex flex-col items-center justify-center py-4 text-text-light-secondary dark:text-text-dark-secondary">
             <Sparkles size={24} className="mb-2 text-accent-primary" />
-            <p className="text-xs">No items for today. Enjoy your free day!</p>
+            <p className="text-xs">今天暂无事项，尽情享受自由的一天吧！</p>
           </div>
         ) : (
           <>
@@ -88,7 +88,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="text-xs">📅</span>
                   <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Events ({context.calendar.todayEvents.length})
+                    事件 ({context.calendar.todayEvents.length})
                   </span>
                 </div>
                 <div className="space-y-1">
@@ -111,7 +111,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
               <div className="flex items-center gap-2">
                 <span className="text-xs">🔴</span>
                 <span className="text-xs text-accent-red font-medium">
-                  {context.tasks.overdueCount} overdue task{context.tasks.overdueCount !== 1 ? 's' : ''}
+                  {context.tasks.overdueCount} 项逾期任务
                 </span>
               </div>
             )}
@@ -121,7 +121,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
               <div className="flex items-center gap-2">
                 <span className="text-xs">📋</span>
                 <span className="text-xs text-text-light-primary dark:text-text-dark-primary">
-                  {context.tasks.dueTodayCount} task{context.tasks.dueTodayCount !== 1 ? 's' : ''} due today
+                  {context.tasks.dueTodayCount} 项任务今日到期
                 </span>
               </div>
             )}
@@ -132,7 +132,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="text-xs">🔨</span>
                   <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                    In Progress ({context.tasks.inProgress.length})
+                    进行中 ({context.tasks.inProgress.length})
                   </span>
                 </div>
                 <div className="space-y-0.5 pl-5">
@@ -154,7 +154,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="text-xs">🎯</span>
                   <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Habits ({context.habits.todayCompleted.length}/{context.habits.todayCompleted.length + context.habits.todayPending.length})
+                    习惯 ({context.habits.todayCompleted.length}/{context.habits.todayCompleted.length + context.habits.todayPending.length})
                   </span>
                 </div>
                 <div className="flex gap-1 flex-wrap pl-5">
@@ -178,8 +178,8 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
                 <span className="text-xs">⏱️</span>
                 <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
                   {context.timeTracking.activeTimer
-                    ? `Tracking: ${context.timeTracking.activeTimer.description}`
-                    : `${context.timeTracking.todayHours}h logged today`}
+                    ? `正在计时：${context.timeTracking.activeTimer.description}`
+                    : `今日已记录 ${context.timeTracking.todayHours} 小时`}
                 </span>
               </div>
             )}
@@ -189,7 +189,7 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
               <div className="flex items-center gap-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
                 <span>🔥</span>
                 <span>
-                  Top streak: {context.habits.topStreaks[0].title} ({context.habits.topStreaks[0].streak} days)
+                  最长连续：{context.habits.topStreaks[0].title}（{context.habits.topStreaks[0].streak} 天）
                 </span>
               </div>
             )}
@@ -199,8 +199,8 @@ export const AIBriefingWidget: React.FC<WidgetComponentProps> = () => {
         {/* Footer */}
         <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary text-center mt-auto pt-1 border-t border-border-light dark:border-border-dark">
           {cachedBriefing
-            ? `Updated ${new Date(cachedBriefing.generatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
-            : 'Generating...'}
+            ? `更新于 ${new Date(cachedBriefing.generatedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
+            : '生成中…'}
         </div>
       </div>
     </BaseWidget>

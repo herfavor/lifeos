@@ -121,6 +121,8 @@ export interface FormTemplate {
   createdAt: Date;
   updatedAt: Date;
   settings: FormSettings;
+  /** Recycle-bin timestamp. Deleted forms remain recoverable until permanently removed. */
+  deletedAt?: Date;
 }
 
 // P0: File upload answer structure

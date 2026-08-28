@@ -196,7 +196,7 @@ export const useKanbanChecklistStore = create<KanbanChecklistState>()(
       // Log the activity
       store.logActivity(taskId, {
         action: 'checklist_updated',
-        newValue: `Added: ${text}`,
+        newValue: `已添加：${text}`,
       });
 
       log.info('Checklist item added', { taskId, itemId: newItem.id });
@@ -248,7 +248,7 @@ export const useKanbanChecklistStore = create<KanbanChecklistState>()(
       // Log the deletion
       store.logActivity(taskId, {
         action: 'checklist_updated',
-        oldValue: `Removed: ${item.text}`,
+        oldValue: `已移除：${item.text}`,
       });
 
       log.info('Checklist item deleted', { taskId, itemId });
@@ -280,7 +280,7 @@ export const useKanbanChecklistStore = create<KanbanChecklistState>()(
       // Log the toggle
       store.logActivity(taskId, {
         action: 'checklist_updated',
-        newValue: `${newCompleted ? 'Completed' : 'Unchecked'}: ${item.text}`,
+        newValue: `${newCompleted ? '已完成' : '已取消勾选'}: ${item.text}`,
       });
 
       log.info('Checklist item toggled', { taskId, itemId, completed: newCompleted });

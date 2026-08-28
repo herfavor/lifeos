@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const dualContrastTheme: ThemeDefinition = {
   id: 'dual-contrast',
   name: 'Dual Contrast',
-  description: 'Bold crimson and royal blue in high contrast',
+  description: '高对比度的醒目绯红与皇家蓝',
   category: 'vibrant',
   preview: {
     primary: '#DC2626',

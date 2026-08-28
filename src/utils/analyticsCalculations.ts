@@ -242,7 +242,7 @@ export function calculateAvgNoteLength(notes: Record<string, Note>, dateRange: D
 
   if (notesInRange.length === 0) return 0;
 
-  const totalLength = notesInRange.reduce((sum, note) => sum + note.content.length, 0);
+  const totalLength = notesInRange.reduce((sum, note) => sum + note.contentText.length, 0);
   return Math.round(totalLength / notesInRange.length);
 }
 

@@ -178,6 +178,8 @@ export interface SettingsState {
 
   // Notes layout actions
   setNotesLayout: (settings: Partial<NotesLayoutSettings>) => void;
+  resetGeneralPreferences: () => void;
+  resetWorkspacePreferences: (section: 'editor' | 'tasks' | 'time') => void;
 }
 
 /**
@@ -442,6 +444,40 @@ export const useSettingsStore = create<SettingsState>()(
         set((state) => ({
           notesLayout: { ...state.notesLayout, ...settings },
         })),
+
+      // Category-level resets deliberately touch preferences only. Templates,
+      // projects, custom fields and other user-created records are content and
+      // must never be erased by a settings reset.
+      resetGeneralPreferences: () => set({
+        displayName: '',
+        email: '',
+        timeFormat: '12h',
+        temperatureUnit: 'fahrenheit',
+        dateFormat: 'MM/DD/YYYY',
+        weekStartDay: 0,
+        defaultViews: { tasks: 'board', calendar: 'month', notes: 'list' },
+        commandPalette: { ...DEFAULT_COMMAND_PALETTE_SETTINGS },
+      }),
+
+      resetWorkspacePreferences: (section) => {
+        if (section === 'editor') {
+          set({
+            dailyNotes: { ...DEFAULT_DAILY_NOTES_SETTINGS },
+            notesLayout: { ...DEFAULT_NOTES_LAYOUT_SETTINGS },
+          });
+        } else if (section === 'tasks') {
+          set({
+            autoShiftDependentTasks: true,
+            enforceWipLimits: false,
+            enableDateShortcuts: true,
+          });
+        } else {
+          set({
+            pomodoroSettings: { ...DEFAULT_POMODORO_SETTINGS },
+            autoTrackingSettings: { ...DEFAULT_AUTO_TRACKING_SETTINGS },
+          });
+        }
+      },
     }),
     {
       name: 'settings-storage',
@@ -473,13 +509,13 @@ export function formatTemperature(
  */
 export function formatTime(date: Date, format: TimeFormat): string {
   if (format === '24h') {
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString('zh-CN', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
     });
   }
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString('zh-CN', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,

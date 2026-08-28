@@ -14,7 +14,10 @@ interface DiagramsState {
   createDiagram: (title: string, initialData?: Partial<Pick<Diagram, 'elements' | 'canvasState'>>) => Diagram;
   getDiagram: (id: string) => Diagram | undefined;
   updateDiagram: (id: string, updates: Partial<Diagram>) => void;
+  /** Recoverable delete: moves the diagram to the recycle bin. */
   deleteDiagram: (id: string) => void;
+  restoreDiagram: (id: string) => void;
+  permanentlyDeleteDiagram: (id: string) => void;
   duplicateDiagram: (id: string) => Diagram | undefined;
 }
 
@@ -67,6 +70,22 @@ export const useDiagramsStore = create<DiagramsState>()(
 
       deleteDiagram: (id: string) => {
         set((state) => ({
+          diagrams: state.diagrams.map((d) =>
+            d.id === id ? { ...d, deletedAt: new Date(), updatedAt: new Date() } : d
+          ),
+        }));
+      },
+
+      restoreDiagram: (id: string) => {
+        set((state) => ({
+          diagrams: state.diagrams.map((d) =>
+            d.id === id ? { ...d, deletedAt: undefined, updatedAt: new Date() } : d
+          ),
+        }));
+      },
+
+      permanentlyDeleteDiagram: (id: string) => {
+        set((state) => ({
           diagrams: state.diagrams.filter((d) => d.id !== id),
         }));
       },
@@ -78,7 +97,7 @@ export const useDiagramsStore = create<DiagramsState>()(
         const duplicate: Diagram = {
           ...original,
           id: crypto.randomUUID(),
-          title: `${original.title} (Copy)`,
+          title: `${original.title}（副本）`,
           createdAt: new Date(),
           updatedAt: new Date(),
           // Deep clone elements to avoid reference issues

@@ -42,13 +42,13 @@ test.describe('Task Detail Panel', () => {
 
   test('can set task priority', async ({ page }) => {
     // Look for priority selector
-    const priorityBtn = page.getByRole('button', { name: /priority|low|medium|high/i }).first();
+    const priorityBtn = page.getByRole('button', { name: /优先级|低|中|高/i }).first();
     if (await priorityBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await priorityBtn.click();
 
       // Select High priority
-      const highOption = page.getByText('High', { exact: true }).or(
-        page.getByRole('option', { name: /high/i })
+      const highOption = page.getByText('高', { exact: true }).or(
+        page.getByRole('option', { name: /高/i })
       );
       if (await highOption.isVisible({ timeout: 1000 }).catch(() => false)) {
         await highOption.click();
@@ -57,7 +57,7 @@ test.describe('Task Detail Panel', () => {
   });
 
   test('can add a description', async ({ page }) => {
-    const descInput = page.getByPlaceholder(/description|details|add.*description/i);
+    const descInput = page.getByPlaceholder(/描述|详情|添加描述/i);
     if (await descInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await descInput.click();
       await descInput.fill('This is a test description for the task');
@@ -66,8 +66,8 @@ test.describe('Task Detail Panel', () => {
   });
 
   test('has subtasks tab', async ({ page }) => {
-    const subtasksTab = page.getByRole('button', { name: /subtask/i }).or(
-      page.getByText('Subtasks', { exact: false })
+    const subtasksTab = page.getByRole('button', { name: /子任务/i }).or(
+      page.getByText('子任务', { exact: false })
     );
     if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await subtasksTab.click();
@@ -76,19 +76,19 @@ test.describe('Task Detail Panel', () => {
 
   test('can add a subtask', async ({ page }) => {
     // Click subtasks tab
-    const subtasksTab = page.getByRole('button', { name: /subtask/i }).or(
-      page.getByText('Subtasks', { exact: false })
+    const subtasksTab = page.getByRole('button', { name: /子任务/i }).or(
+      page.getByText('子任务', { exact: false })
     );
     if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await subtasksTab.click();
       await page.waitForTimeout(200);
 
       // Add subtask
-      const addSubtaskBtn = page.getByRole('button', { name: /add.*subtask|\+/i });
+      const addSubtaskBtn = page.getByRole('button', { name: /添加子任务|\+/i });
       if (await addSubtaskBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
         await addSubtaskBtn.click();
 
-        const subtaskInput = page.getByPlaceholder(/subtask|title/i);
+        const subtaskInput = page.getByPlaceholder(/子任务|标题/i);
         if (await subtaskInput.isVisible({ timeout: 1000 }).catch(() => false)) {
           await subtaskInput.fill('Test Subtask');
           await page.keyboard.press('Enter');
@@ -99,8 +99,8 @@ test.describe('Task Detail Panel', () => {
   });
 
   test('has checklist tab', async ({ page }) => {
-    const checklistTab = page.getByRole('button', { name: /checklist/i }).or(
-      page.getByText('Checklist', { exact: false })
+    const checklistTab = page.getByRole('button', { name: /清单/i }).or(
+      page.getByText('清单', { exact: false })
     );
     if (await checklistTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await checklistTab.click();
@@ -108,8 +108,8 @@ test.describe('Task Detail Panel', () => {
   });
 
   test('has comments tab', async ({ page }) => {
-    const commentsTab = page.getByRole('button', { name: /comment/i }).or(
-      page.getByText('Comments', { exact: false })
+    const commentsTab = page.getByRole('button', { name: /评论/i }).or(
+      page.getByText('评论', { exact: false })
     );
     if (await commentsTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await commentsTab.click();
@@ -117,8 +117,8 @@ test.describe('Task Detail Panel', () => {
   });
 
   test('has activity tab', async ({ page }) => {
-    const activityTab = page.getByRole('button', { name: /activity/i }).or(
-      page.getByText('Activity', { exact: false })
+    const activityTab = page.getByRole('button', { name: /动态/i }).or(
+      page.getByText('动态', { exact: false })
     );
     if (await activityTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await activityTab.click();

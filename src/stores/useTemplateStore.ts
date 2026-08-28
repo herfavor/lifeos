@@ -37,7 +37,7 @@ export const useTemplateStore = create<TemplateState>()(
         const now = new Date().toISOString();
         const template: TaskTemplate = {
           id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          name: task.title || 'Untitled Template',
+          name: task.title || '未命名模板',
           description: task.description || '',
           checklist: task.checklist?.map(item => ({
             ...item,

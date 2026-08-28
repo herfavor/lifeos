@@ -56,7 +56,7 @@ export const migrateToIndexedDB = async (): Promise<{
 
   // Check if IndexedDB is supported
   if (!indexedDBService.isSupported()) {
-    errors.push('IndexedDB not supported in this browser');
+    errors.push('此浏览器不支持 IndexedDB');
     return { success: false, migratedKeys, errors };
   }
 
@@ -74,7 +74,7 @@ export const migrateToIndexedDB = async (): Promise<{
           log.debug('Migrated key', { key });
         }
       } catch (error) {
-        const errorMsg = `Failed to migrate ${key}: ${error}`;
+        const errorMsg = `迁移 ${key} 失败：${error}`;
         errors.push(errorMsg);
         log.error('Migration failed for key', { key, error });
       }
@@ -86,7 +86,7 @@ export const migrateToIndexedDB = async (): Promise<{
     log.info('Migration complete', { migratedCount: migratedKeys.length });
     return { success: true, migratedKeys, errors };
   } catch (error) {
-    const errorMsg = `Migration failed: ${error}`;
+    const errorMsg = `迁移失败：${error}`;
     errors.push(errorMsg);
     log.error('Migration failed', { error });
     return { success: false, migratedKeys, errors };

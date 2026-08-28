@@ -14,10 +14,10 @@ interface TimeboxSummaryProps {
 
 /** Format minutes to readable string */
 const formatMinutes = (mins: number): string => {
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return `${mins}分钟`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  return m > 0 ? `${h}小时 ${m}分钟` : `${h}小时`;
 };
 
 export const TimeboxSummary: React.FC<TimeboxSummaryProps> = ({ dateKey }) => {
@@ -34,7 +34,7 @@ export const TimeboxSummary: React.FC<TimeboxSummaryProps> = ({ dateKey }) => {
     <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark">
       <div className="flex items-center gap-2 text-accent-secondary mb-1">
         <Timer className="w-4 h-4" />
-        <span className="text-xs font-medium uppercase tracking-wide">Planned</span>
+        <span className="text-xs font-medium uppercase tracking-wide">已计划</span>
       </div>
       <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
         {formatMinutes(totalPlanned)}
@@ -43,7 +43,7 @@ export const TimeboxSummary: React.FC<TimeboxSummaryProps> = ({ dateKey }) => {
             ? 'text-accent-red'
             : 'text-text-light-secondary dark:text-text-dark-secondary'
         }`}>
-          / {plan.availableHours}h
+          / {plan.availableHours} 小时
         </span>
       </div>
       {/* Usage bar */}

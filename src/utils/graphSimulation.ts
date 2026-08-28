@@ -21,7 +21,13 @@ export interface SimulationLink {
 }
 
 /**
- * Create and configure D3 force simulation
+ * Create and configure D3 force simulation.
+ *
+ * The graph is deliberately a little more spacious than a generic force
+ * graph: note titles sit under nodes, so circle-only collision radii make a
+ * small knowledge graph look like a pile of labels. The extra collision
+ * room keeps the first render readable without forcing the user to drag
+ * every node apart.
  */
 export function createForceSimulation(
   nodes: GraphNode[],
@@ -29,11 +35,9 @@ export function createForceSimulation(
   width: number,
   height: number
 ): d3.Simulation<SimulationNode, SimulationLink> {
-  // Convert nodes and edges to simulation format
   const simNodes: SimulationNode[] = nodes.map((node) => ({ ...node }));
   const simLinks: SimulationLink[] = edges.map((edge) => ({ ...edge }));
 
-  // Create simulation
   const simulation = d3
     .forceSimulation<SimulationNode, SimulationLink>(simNodes)
     .force(
@@ -41,20 +45,23 @@ export function createForceSimulation(
       d3
         .forceLink<SimulationNode, SimulationLink>(simLinks)
         .id((d) => d.id)
-        .distance((d) => {
-          // Shorter distance for backlinks, longer for tag connections
-          return d.type === 'backlink' ? 100 : 150;
-        })
-        .strength((d) => d.strength)
+        .distance((d) => (d.type === 'backlink' ? 132 : 176))
+        .strength((d) => Math.min(0.75, Math.max(0.16, d.strength)))
     )
-    .force('charge', d3.forceManyBody().strength(-300)) // Repulsion between nodes
-    .force('center', d3.forceCenter(width / 2, height / 2)) // Center the graph
+    .force('charge', d3.forceManyBody().strength(-320))
+    .force('center', d3.forceCenter(width / 2, height / 2))
     .force(
       'collision',
-      d3.forceCollide().radius((d: any) => d.size + 5)
-    ) // Prevent overlap
-    .force('x', d3.forceX(width / 2).strength(0.05)) // Weak pull toward center X
-    .force('y', d3.forceY(height / 2).strength(0.05)); // Weak pull toward center Y
+      d3
+        .forceCollide<SimulationNode>()
+        .radius((d) => Math.max(40, d.size + 34))
+        .strength(0.9)
+        .iterations(2)
+    )
+    .force('x', d3.forceX(width / 2).strength(0.035))
+    .force('y', d3.forceY(height / 2).strength(0.035))
+    .alphaDecay(0.035)
+    .velocityDecay(0.34);
 
   return simulation;
 }

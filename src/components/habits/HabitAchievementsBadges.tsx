@@ -19,31 +19,31 @@ interface AchievementDef {
 
 const ACHIEVEMENT_DEFS: AchievementDef[] = [
   // Streak milestones (per-habit)
-  { type: 'streak', value: 3, label: '3-Day Streak', description: 'Maintain a 3-day streak', icon: Flame, color: '#f97316', isGlobal: false },
-  { type: 'streak', value: 7, label: 'Weekly Warrior', description: 'Maintain a 7-day streak', icon: Flame, color: '#f97316', isGlobal: false },
-  { type: 'streak', value: 14, label: 'Fortnight Fighter', description: 'Maintain a 14-day streak', icon: Zap, color: '#eab308', isGlobal: false },
-  { type: 'streak', value: 30, label: 'Monthly Master', description: 'Maintain a 30-day streak', icon: Trophy, color: '#eab308', isGlobal: false },
-  { type: 'streak', value: 60, label: 'Bimonthly Boss', description: 'Maintain a 60-day streak', icon: Shield, color: '#3b82f6', isGlobal: false },
-  { type: 'streak', value: 90, label: 'Quarter Champion', description: 'Maintain a 90-day streak', icon: Crown, color: '#8b5cf6', isGlobal: false },
-  { type: 'streak', value: 180, label: 'Half-Year Hero', description: 'Maintain a 180-day streak', icon: Gem, color: '#ec4899', isGlobal: false },
-  { type: 'streak', value: 365, label: 'Year-Long Legend', description: 'Maintain a 365-day streak', icon: Star, color: '#ef4444', isGlobal: false },
+  { type: 'streak', value: 3, label: '3 天连续', description: '保持 3 天连续', icon: Flame, color: '#f97316', isGlobal: false },
+  { type: 'streak', value: 7, label: '周度勇士', description: '保持 7 天连续', icon: Flame, color: '#f97316', isGlobal: false },
+  { type: 'streak', value: 14, label: '半月斗士', description: '保持 14 天连续', icon: Zap, color: '#eab308', isGlobal: false },
+  { type: 'streak', value: 30, label: '月度大师', description: '保持 30 天连续', icon: Trophy, color: '#eab308', isGlobal: false },
+  { type: 'streak', value: 60, label: '双月霸主', description: '保持 60 天连续', icon: Shield, color: '#3b82f6', isGlobal: false },
+  { type: 'streak', value: 90, label: '季度冠军', description: '保持 90 天连续', icon: Crown, color: '#8b5cf6', isGlobal: false },
+  { type: 'streak', value: 180, label: '半年英雄', description: '保持 180 天连续', icon: Gem, color: '#ec4899', isGlobal: false },
+  { type: 'streak', value: 365, label: '年度传奇', description: '保持 365 天连续', icon: Star, color: '#ef4444', isGlobal: false },
 
   // Total completion milestones (per-habit)
-  { type: 'total', value: 10, label: 'Getting Going', description: 'Complete a habit 10 times', icon: Target, color: '#22c55e', isGlobal: false },
-  { type: 'total', value: 50, label: 'Half Century', description: 'Complete a habit 50 times', icon: Award, color: '#06b6d4', isGlobal: false },
-  { type: 'total', value: 100, label: 'Centurion', description: 'Complete a habit 100 times', icon: Medal, color: '#3b82f6', isGlobal: false },
-  { type: 'total', value: 500, label: 'Committed', description: 'Complete a habit 500 times', icon: Heart, color: '#8b5cf6', isGlobal: false },
-  { type: 'total', value: 1000, label: 'Legendary', description: 'Complete a habit 1000 times', icon: Crown, color: '#eab308', isGlobal: false },
+  { type: 'total', value: 10, label: '初露锋芒', description: '完成习惯 10 次', icon: Target, color: '#22c55e', isGlobal: false },
+  { type: 'total', value: 50, label: '半百成就', description: '完成习惯 50 次', icon: Award, color: '#06b6d4', isGlobal: false },
+  { type: 'total', value: 100, label: '百次成就', description: '完成习惯 100 次', icon: Medal, color: '#3b82f6', isGlobal: false },
+  { type: 'total', value: 500, label: '坚持不懈', description: '完成习惯 500 次', icon: Heart, color: '#8b5cf6', isGlobal: false },
+  { type: 'total', value: 1000, label: '传奇', description: '完成习惯 1000 次', icon: Crown, color: '#eab308', isGlobal: false },
 
   // Global achievements
-  { type: 'consistency', value: 3, label: '3-Day Perfect', description: 'All habits completed for 3 days', icon: CheckCircle, color: '#22c55e', isGlobal: true },
-  { type: 'consistency', value: 7, label: 'Perfect Week', description: 'All habits completed for 7 days', icon: CheckCircle, color: '#3b82f6', isGlobal: true },
-  { type: 'consistency', value: 14, label: 'Perfect Fortnight', description: 'All habits completed for 14 days', icon: CheckCircle, color: '#8b5cf6', isGlobal: true },
-  { type: 'consistency', value: 30, label: 'Perfect Month', description: 'All habits completed for 30 days', icon: CheckCircle, color: '#eab308', isGlobal: true },
-  { type: 'category-mastery', value: 7, label: 'Category Master', description: 'All habits in a category for 7 days', icon: Crown, color: '#ec4899', isGlobal: true },
-  { type: 'explorer', value: 5, label: 'Explorer', description: 'Use 5+ different categories', icon: Compass, color: '#14b8a6', isGlobal: true },
-  { type: 'early-bird', value: 10, label: 'Early Bird', description: '10 completions before 9am', icon: Sunrise, color: '#f97316', isGlobal: true },
-  { type: 'night-owl', value: 10, label: 'Night Owl', description: '10 completions after 9pm', icon: Moon, color: '#6366f1', isGlobal: true },
+  { type: 'consistency', value: 3, label: '3 天完美', description: '连续 3 天完成所有习惯', icon: CheckCircle, color: '#22c55e', isGlobal: true },
+  { type: 'consistency', value: 7, label: '完美一周', description: '连续 7 天完成所有习惯', icon: CheckCircle, color: '#3b82f6', isGlobal: true },
+  { type: 'consistency', value: 14, label: '完美半月', description: '连续 14 天完成所有习惯', icon: CheckCircle, color: '#8b5cf6', isGlobal: true },
+  { type: 'consistency', value: 30, label: '完美一月', description: '连续 30 天完成所有习惯', icon: CheckCircle, color: '#eab308', isGlobal: true },
+  { type: 'category-mastery', value: 7, label: '分类大师', description: '某个分类下所有习惯连续 7 天完成', icon: Crown, color: '#ec4899', isGlobal: true },
+  { type: 'explorer', value: 5, label: '探索者', description: '使用 5 个以上不同分类', icon: Compass, color: '#14b8a6', isGlobal: true },
+  { type: 'early-bird', value: 10, label: '早起鸟', description: '上午 9 点前完成 10 次', icon: Sunrise, color: '#f97316', isGlobal: true },
+  { type: 'night-owl', value: 10, label: '夜猫子', description: '晚上 9 点后完成 10 次', icon: Moon, color: '#6366f1', isGlobal: true },
 ];
 
 function getDefForAchievement(a: HabitAchievement): AchievementDef | undefined {
@@ -169,7 +169,7 @@ export function HabitAchievementsBadges() {
     const nextStreakMilestone = [7, 14, 30, 60, 90, 180, 365].find((m) => m > bestStreak);
     if (nextStreakMilestone) {
       progress.push({
-        label: `${nextStreakMilestone}-Day Streak`,
+        label: `${nextStreakMilestone} 天连续`,
         current: bestStreak,
         target: nextStreakMilestone,
         color: '#f97316',
@@ -182,7 +182,7 @@ export function HabitAchievementsBadges() {
     const nextTotalMilestone = [10, 50, 100, 500, 1000].find((m) => m > bestTotal);
     if (nextTotalMilestone) {
       progress.push({
-        label: `${nextTotalMilestone} Completions`,
+        label: `${nextTotalMilestone} 次完成`,
         current: bestTotal,
         target: nextTotalMilestone,
         color: '#22c55e',
@@ -194,7 +194,7 @@ export function HabitAchievementsBadges() {
     const catCount = new Set(activeHabits.map((h) => h.category)).size;
     if (catCount < 5) {
       progress.push({
-        label: 'Explorer (5 categories)',
+        label: '探索者（5 个分类）',
         current: catCount,
         target: 5,
         color: '#14b8a6',
@@ -208,7 +208,7 @@ export function HabitAchievementsBadges() {
       const nextConsistency = [3, 7, 14, 30].find((m) => m > minStreak);
       if (nextConsistency) {
         progress.push({
-          label: `${nextConsistency}-Day Perfect (all habits)`,
+          label: `${nextConsistency} 天完美（所有习惯）`,
           current: minStreak,
           target: nextConsistency,
           color: '#3b82f6',
@@ -246,7 +246,7 @@ export function HabitAchievementsBadges() {
       {nextAchievements.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-            Next Achievements
+            下一个成就
           </h4>
           <div className="space-y-3">
             {nextAchievements.map((p, i) => (
@@ -260,7 +260,7 @@ export function HabitAchievementsBadges() {
       {unlockedBadges.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-            Unlocked ({unlockedBadges.length})
+            已解锁（{unlockedBadges.length}）
           </h4>
           <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
             {unlockedBadges.map(({ achievement, def }) => (
@@ -279,7 +279,7 @@ export function HabitAchievementsBadges() {
       {lockedGlobalDefs.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-3">
-            Locked
+            未解锁
           </h4>
           <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
             {lockedGlobalDefs.map((def) => (

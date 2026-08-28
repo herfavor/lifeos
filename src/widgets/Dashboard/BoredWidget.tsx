@@ -59,14 +59,14 @@ export const BoredWidget: React.FC = () => {
   }, [fetchActivity]);
 
   const getPriceLabel = (price: number) => {
-    if (price === 0) return 'Free';
+    if (price === 0) return '免费';
     if (price < 0.3) return '$';
     if (price < 0.6) return '$$';
     return '$$$';
   };
 
   return (
-    <BaseWidget title="Bored?" icon="🎲" loading={loading} error={error} onRefresh={fetchActivity}>
+    <BaseWidget title="无聊吗？" icon="🎲" loading={loading} error={error} onRefresh={fetchActivity}>
       {activity && (
         <div className="space-y-4">
           <p className="text-base font-medium text-text-light-primary dark:text-text-dark-primary">
@@ -75,28 +75,28 @@ export const BoredWidget: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button transition-all duration-standard ease-smooth p-2">
-              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">Type</div>
+              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">类型</div>
               <div className="text-text-light-primary dark:text-text-dark-primary capitalize">
                 {activity.type}
               </div>
             </div>
 
             <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button transition-all duration-standard ease-smooth p-2">
-              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">Cost</div>
+              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">费用</div>
               <div className="text-text-light-primary dark:text-text-dark-primary">
                 {getPriceLabel(activity.price)}
               </div>
             </div>
 
             <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button transition-all duration-standard ease-smooth p-2">
-              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">Participants</div>
+              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">参与人数</div>
               <div className="text-text-light-primary dark:text-text-dark-primary">
                 {activity.participants}
               </div>
             </div>
 
             <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button transition-all duration-standard ease-smooth p-2">
-              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">Accessibility</div>
+              <div className="text-text-light-secondary dark:text-text-dark-secondary text-xs">可及性</div>
               <div className="text-text-light-primary dark:text-text-dark-primary">
                 {Math.round(activity.accessibility * 100)}%
               </div>
@@ -110,7 +110,7 @@ export const BoredWidget: React.FC = () => {
               rel="noopener noreferrer"
               className="inline-block text-sm text-accent-blue hover:underline"
             >
-              Learn more →
+              了解更多 →
             </a>
           )}
         </div>

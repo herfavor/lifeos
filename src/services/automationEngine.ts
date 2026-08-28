@@ -75,6 +75,24 @@ export function evaluateConditions(
 }
 
 /**
+ * Produce a mutation-free preview for the rule builder.  This intentionally
+ * performs only condition evaluation and returns cloned action descriptors;
+ * callers can show the exact plan without invoking any store action.
+ */
+export function previewRule(rule: AutomationRule, task: Task): {
+  conditionsMatch: boolean;
+  plannedActions: AutomationAction[];
+} {
+  const conditionsMatch = evaluateConditions(task, rule.conditions);
+  return {
+    conditionsMatch,
+    plannedActions: conditionsMatch
+      ? rule.actions.map((action) => ({ ...action, config: { ...action.config } }))
+      : [],
+  };
+}
+
+/**
  * Get field value from task
  */
 function getFieldValue(task: Task, field: string): TaskFieldValue {
@@ -118,7 +136,10 @@ export async function executeAction(
     switch (action.type) {
       case 'move_task':
         if (action.config.status) {
-          storeActions.moveTask(task.id, action.config.status);
+          // Apply the status as a direct rule result. Calling moveTask here
+          // would emit a fresh task.moved trigger after the current rule has
+          // unwound, allowing two opposing rules to ping-pong indefinitely.
+          storeActions.updateTask(task.id, { status: action.config.status });
         }
         break;
 
@@ -148,7 +169,7 @@ export async function executeAction(
 
       case 'set_status':
         if (action.config.status) {
-          storeActions.moveTask(task.id, action.config.status);
+          storeActions.updateTask(task.id, { status: action.config.status });
         }
         break;
 
@@ -182,15 +203,15 @@ export async function executeAction(
         const { id: _id, created: _c, ...taskData } = task;
         storeActions.addTask({
           ...taskData,
-          title: `${task.title} (copy)`,
+          title: `${task.title}（副本）`,
         });
         break;
       }
 
       case 'notify':
         storeActions.notify(
-          'Automation',
-          (action.config.message as string) || (action.config.text as string) || `Task "${task.title}" triggered a notification.`
+          '自动化',
+          (action.config.message as string) || (action.config.text as string) || `任务「${task.title}」触发了通知。`
         );
         break;
 
@@ -240,7 +261,7 @@ export async function executeRule(
         ruleId: rule.id,
         depth: currentDepth,
       });
-      executionLog.error = 'Max depth reached (possible infinite loop)';
+      executionLog.error = '已达最大自动化深度（可能存在无限循环）';
       return executionLog;
     }
 
@@ -318,7 +339,7 @@ export async function evaluateRules(
 
   // Filter rules by trigger type
   const matchingRules = rules.filter(
-    (rule) => rule.enabled && rule.trigger.type === triggerType
+    (rule) => rule.enabled && !rule.archivedAt && !rule.deletedAt && rule.trigger.type === triggerType
   );
 
   if (matchingRules.length === 0) {

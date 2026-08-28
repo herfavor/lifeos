@@ -61,25 +61,25 @@ export default function FormFiller() {
                 <Check className="w-8 h-8 text-accent-green" />
               </div>
               <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">
-                Response Submitted!
+                回复已提交！
               </h2>
               <p className="text-text-light-secondary dark:text-text-dark-secondary mb-6">
-                Thank you for completing the form.
+                感谢你完成此表单。
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 {form.settings.allowMultipleSubmissions && (
                   <button
                     onClick={handleFillAnother}
-                    className="px-6 py-3 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+                    className="px-6 py-3 bg-accent-primary text-white rounded-lg hover:opacity-90"
                   >
-                    Fill Another Response
+                    再填写一份回复
                   </button>
                 )}
                 <button
                   onClick={() => navigate('/forms')}
-                  className="px-6 py-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark"
+                  className="px-6 py-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
                 >
-                  Back to Forms
+                  返回表单
                 </button>
               </div>
             </div>
@@ -97,8 +97,8 @@ export default function FormFiller() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/forms')}
-              className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded-lg transition-colors"
-              aria-label="Back to forms"
+              className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
+              aria-label="返回表单"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -121,13 +121,13 @@ export default function FormFiller() {
             {form.fields.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-text-light-secondary dark:text-text-dark-secondary">
-                  This form has no fields yet.
+                  此表单还没有字段。
                 </p>
                 <button
                   onClick={() => navigate(`/forms/${id}/edit`)}
-                  className="mt-4 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+                  className="mt-4 px-4 py-2 bg-accent-primary text-white rounded-lg hover:opacity-90"
                 >
-                  Edit Form
+                  编辑表单
                 </button>
               </div>
             ) : (

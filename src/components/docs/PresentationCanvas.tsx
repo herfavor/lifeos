@@ -199,7 +199,7 @@ export function PresentationCanvas({
             width: 300,
             height: 50,
             text: {
-              content: 'Text',
+              content: '文本',
               fontFamily: 'Inter',
               fontSize: 32,
               fontWeight: 'normal',
@@ -228,7 +228,7 @@ export function PresentationCanvas({
             width: Math.max(width, 100),
             height: Math.max(height, 40),
             text: {
-              content: 'Text',
+              content: '文本',
               fontFamily: 'Inter',
               fontSize: 32,
               fontWeight: 'normal',
@@ -418,7 +418,7 @@ export function PresentationCanvas({
             {...commonProps}
             width={element.width}
             height={element.height}
-            text={element.text?.content || 'Text'}
+            text={element.text?.content || '文本'}
             fontSize={element.text?.fontSize || 32}
             fontFamily={element.text?.fontFamily || 'Inter'}
             fontStyle={

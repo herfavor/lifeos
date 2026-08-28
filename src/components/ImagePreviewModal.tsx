@@ -57,7 +57,7 @@ export default function ImagePreviewModal({ attachment, onClose }: ImagePreviewM
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Image preview"
+      aria-label="图片预览"
     >
       {/* Modal Content */}
       <div
@@ -74,8 +74,8 @@ export default function ImagePreviewModal({ attachment, onClose }: ImagePreviewM
             <button
               onClick={handleDownload}
               className="p-2 rounded hover:bg-surface-dark-elevated transition-colors text-text-dark-secondary hover:text-accent-blue"
-              title="Download"
-              aria-label="Download"
+              title="下载"
+              aria-label="下载"
             >
               <Download className="w-4 h-4" />
             </button>
@@ -84,8 +84,8 @@ export default function ImagePreviewModal({ attachment, onClose }: ImagePreviewM
             <button
               onClick={onClose}
               className="p-2 rounded hover:bg-surface-dark-elevated transition-colors text-text-dark-secondary hover:text-text-dark-primary"
-              title="Close (Esc)"
-              aria-label="Close"
+              title="关闭 (Esc)"
+              aria-label="关闭"
             >
               <X className="w-4 h-4" />
             </button>

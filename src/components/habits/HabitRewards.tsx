@@ -5,11 +5,11 @@ import { getLevelFromXp } from '../../stores/useHabitStore';
 
 // Level tier configuration
 const LEVEL_TIERS = [
-  { minLevel: 1, label: 'Novice', icon: Star, color: '#9ca3af' },
-  { minLevel: 5, label: 'Apprentice', icon: Zap, color: '#22c55e' },
-  { minLevel: 10, label: 'Adept', icon: Shield, color: '#3b82f6' },
-  { minLevel: 20, label: 'Expert', icon: Sword, color: '#8b5cf6' },
-  { minLevel: 30, label: 'Master', icon: Crown, color: '#eab308' },
+  { minLevel: 1, label: '新手', icon: Star, color: '#9ca3af' },
+  { minLevel: 5, label: '学徒', icon: Zap, color: '#22c55e' },
+  { minLevel: 10, label: '熟练', icon: Shield, color: '#3b82f6' },
+  { minLevel: 20, label: '专家', icon: Sword, color: '#8b5cf6' },
+  { minLevel: 30, label: '大师', icon: Crown, color: '#eab308' },
 ];
 
 function getTier(level: number) {
@@ -56,14 +56,14 @@ export function HabitRewardsPanel() {
         <div className="flex-1">
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-              Level {level}
+              等级 {level}
             </span>
             <span className="text-sm font-medium" style={{ color: tier.color }}>
               {tier.label}
             </span>
           </div>
           <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            {totalXp.toLocaleString()} total XP
+            总计 {totalXp.toLocaleString()} XP
           </div>
         </div>
       </div>
@@ -88,10 +88,10 @@ export function HabitRewardsPanel() {
       {/* Difficulty XP reference */}
       <div className="grid grid-cols-4 gap-2 mb-4">
         {[
-          { label: 'Trivial', xp: 5, color: '#9ca3af' },
-          { label: 'Easy', xp: 10, color: '#22c55e' },
-          { label: 'Medium', xp: 20, color: '#f97316' },
-          { label: 'Hard', xp: 40, color: '#ef4444' },
+          { label: '轻松', xp: 5, color: '#9ca3af' },
+          { label: '简单', xp: 10, color: '#22c55e' },
+          { label: '中等', xp: 20, color: '#f97316' },
+          { label: '困难', xp: 40, color: '#ef4444' },
         ].map((d) => (
           <div
             key={d.label}
@@ -111,7 +111,7 @@ export function HabitRewardsPanel() {
       {topHabits.length > 0 && (
         <div>
           <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Top Habits by XP
+            XP 最高的习惯
           </h4>
           <div className="space-y-1.5">
             {topHabits.map((habit) => (

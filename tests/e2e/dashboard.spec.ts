@@ -14,12 +14,12 @@ test.describe('Dashboard', () => {
   });
 
   test('loads the dashboard page', async ({ page }) => {
-    await expect(page).toHaveTitle(/NeumanOS/i);
+    await expect(page).toHaveTitle(/LifeOS/i);
     await expect(page.getByRole('navigation')).toBeVisible();
   });
 
   test('has the main navigation sidebar', async ({ page }) => {
-    const sidebar = page.locator('aside[aria-label="Main navigation sidebar"]');
+    const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
     await expect(sidebar).toBeVisible();
   });
 
@@ -35,7 +35,7 @@ test.describe('Dashboard', () => {
   });
 
   test('page settings gear is accessible from sidebar', async ({ page }) => {
-    const gearBtn = page.locator('button[aria-label="Dashboard page settings"]');
+    const gearBtn = page.locator('button[aria-label="仪表盘的页面设置"]');
     if (await gearBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await gearBtn.click();
       await page.waitForTimeout(300);
@@ -53,7 +53,7 @@ test.describe('Dashboard - Widget Manager', () => {
       await customizeBtn.click();
 
       // Widget manager modal should appear
-      await expect(page.getByText('Customize Dashboard Widgets')).toBeVisible();
+      await expect(page.getByText('自定义仪表盘组件')).toBeVisible();
     }
   });
 
@@ -65,14 +65,14 @@ test.describe('Dashboard - Widget Manager', () => {
     await page.goto('/#customize-widgets');
     await page.waitForTimeout(500);
 
-    const widgetModal = page.getByText('Customize Dashboard Widgets');
+    const widgetModal = page.getByText('自定义仪表盘组件');
     if (await widgetModal.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Search input
-      const searchInput = page.getByPlaceholder(/Search widgets/);
+      const searchInput = page.getByPlaceholder(/搜索组件/);
       await expect(searchInput).toBeVisible();
 
       // Done button
-      await expect(page.getByRole('button', { name: 'Done' })).toBeVisible();
+      await expect(page.getByRole('button', { name: '完成' })).toBeVisible();
     }
   });
 });

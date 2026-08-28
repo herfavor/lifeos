@@ -130,7 +130,7 @@ export const Modal: React.FC<ModalProps> = ({
             <button
               onClick={onClose}
               className="p-0.5 text-text-light-secondary hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary transition-all duration-standard ease-smooth"
-              aria-label="Close modal"
+              aria-label="关闭弹窗"
             >
               <span className="text-lg">×</span>
             </button>

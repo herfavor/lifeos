@@ -14,32 +14,32 @@ test.describe('Notes Page - Tab Navigation', () => {
   });
 
   test('shows all notes tabs', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: 'Notes' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Daily Notes' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Graph' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '笔记' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '每日笔记' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '图谱' })).toBeVisible();
   });
 
   test('notes tab is selected by default', async ({ page }) => {
-    const notesTab = page.getByRole('tab', { name: 'Notes' });
+    const notesTab = page.getByRole('tab', { name: '笔记' });
     await expect(notesTab).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Daily Notes tab', async ({ page }) => {
-    await switchTab(page, 'Daily Notes');
-    await expect(page.getByRole('tab', { name: 'Daily Notes' })).toHaveAttribute('aria-selected', 'true');
+    await switchTab(page, '每日笔记');
+    await expect(page.getByRole('tab', { name: '每日笔记' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Graph tab', async ({ page }) => {
-    await switchTab(page, 'Graph');
-    await expect(page.getByRole('tab', { name: 'Graph' })).toHaveAttribute('aria-selected', 'true');
+    await switchTab(page, '图谱');
+    await expect(page.getByRole('tab', { name: '图谱' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('tabs accessible via URL params', async ({ page }) => {
     await page.goto('/notes?tab=daily');
-    await expect(page.getByRole('tab', { name: 'Daily Notes' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: '每日笔记' })).toHaveAttribute('aria-selected', 'true');
 
     await page.goto('/notes?tab=graph');
-    await expect(page.getByRole('tab', { name: 'Graph' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: '图谱' })).toHaveAttribute('aria-selected', 'true');
   });
 });
 
@@ -49,21 +49,21 @@ test.describe('Notes Page - Folder Sidebar', () => {
   });
 
   test('displays folder sidebar elements', async ({ page }) => {
-    await expect(page.getByText('Folders')).toBeVisible();
-    await expect(page.getByPlaceholder(/Search notes/)).toBeVisible();
+    await expect(page.getByText('文件夹')).toBeVisible();
+    await expect(page.getByPlaceholder(/搜索笔记/)).toBeVisible();
   });
 
   test('has All Notes button', async ({ page }) => {
-    const allNotes = page.getByRole('button', { name: /All Notes/i });
+    const allNotes = page.getByRole('button', { name: /全部笔记/i });
     await expect(allNotes).toBeVisible();
   });
 
   test('can create a new folder', async ({ page }) => {
-    const newFolderBtn = page.locator('button[title="New Folder"]');
+    const newFolderBtn = page.locator('button[title="新建文件夹"]');
     await newFolderBtn.click();
 
     // Folder name input should appear
-    const folderInput = page.getByPlaceholder(/folder.*name|name/i);
+    const folderInput = page.getByPlaceholder(/文件夹.*名称|名称/i);
     await expect(folderInput).toBeVisible();
     await folderInput.fill('E2E Folder');
     await page.keyboard.press('Enter');
@@ -73,12 +73,12 @@ test.describe('Notes Page - Folder Sidebar', () => {
   });
 
   test('has Manage Tags button', async ({ page }) => {
-    const manageTagsBtn = page.getByRole('button', { name: /Manage Tags/i });
+    const manageTagsBtn = page.getByRole('button', { name: /管理标签/i });
     await expect(manageTagsBtn).toBeVisible();
   });
 
   test('search filters notes', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/Search notes/);
+    const searchInput = page.getByPlaceholder(/搜索笔记/);
     await searchInput.fill('nonexistent note xyz123');
     await page.waitForTimeout(300);
 
@@ -93,7 +93,7 @@ test.describe('Notes Page - CRUD', () => {
 
   test('can create a new note', async ({ page }) => {
     // Find the create note button
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
     await createButton.click();
 
     // Editor should appear
@@ -110,7 +110,7 @@ test.describe('Notes Page - CRUD', () => {
 
   test('notes auto-save', async ({ page }) => {
     // Create a note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -130,7 +130,7 @@ test.describe('Notes Page - CRUD', () => {
 
   test('can edit note content', async ({ page }) => {
     // Create a note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -151,7 +151,7 @@ test.describe('Notes Page - Editor Features', () => {
     await navigateTo(page, '/notes');
 
     // Create a note to work with
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
     await createButton.click();
     await page.waitForTimeout(300);
   });

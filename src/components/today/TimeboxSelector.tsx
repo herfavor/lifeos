@@ -16,18 +16,18 @@ interface TimeboxSelectorProps {
 }
 
 const PRESETS: Array<{ label: string; minutes: TimeboxPreset }> = [
-  { label: '15m', minutes: 15 },
-  { label: '30m', minutes: 30 },
-  { label: '1h', minutes: 60 },
-  { label: '2h', minutes: 120 },
+  { label: '15分钟', minutes: 15 },
+  { label: '30分钟', minutes: 30 },
+  { label: '1小时', minutes: 60 },
+  { label: '2小时', minutes: 120 },
 ];
 
 /** Format minutes to a short display string */
 const formatDuration = (minutes: number): string => {
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 60) return `${minutes}分钟`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  return m > 0 ? `${h}小时 ${m}分钟` : `${h}小时`;
 };
 
 export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskId }) => {
@@ -92,8 +92,8 @@ export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskI
             ? 'bg-accent-primary/10 text-accent-primary hover:bg-accent-primary/20'
             : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
         }`}
-        title={timebox ? `Estimated: ${formatDuration(timebox.durationMinutes)}` : 'Set time estimate'}
-        aria-label="Set time estimate"
+        title={timebox ? `预计：${formatDuration(timebox.durationMinutes)}` : '设置时间估算'}
+        aria-label="设置时间估算"
       >
         <Clock className="w-3 h-3" />
         {timebox ? (
@@ -127,7 +127,7 @@ export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskI
                 onClick={() => setIsCustom(true)}
                 className="w-full text-left px-3 py-1.5 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
               >
-                Custom...
+                自定义…
               </button>
               {timebox && (
                 <>
@@ -136,7 +136,7 @@ export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskI
                     onClick={handleRemove}
                     className="w-full text-left px-3 py-1.5 text-sm text-accent-red hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
                   >
-                    Remove
+                    移除
                   </button>
                 </>
               )}
@@ -144,7 +144,7 @@ export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskI
           ) : (
             <div className="px-3 py-2">
               <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1 block">
-                Minutes
+                分钟
               </label>
               <input
                 type="number"
@@ -159,7 +159,7 @@ export const TimeboxSelector: React.FC<TimeboxSelectorProps> = ({ dateKey, taskI
                     setCustomValue('');
                   }
                 }}
-                placeholder="e.g. 45"
+                placeholder="例如 45"
                 className="w-full px-2 py-1 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded text-text-light-primary dark:text-text-dark-primary outline-none focus:border-accent-primary"
                 autoFocus
               />

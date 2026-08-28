@@ -9,6 +9,7 @@ import {
   executeAction,
   executeRule,
   evaluateRules,
+  previewRule,
   resetAutomationDepth,
 } from '../automationEngine';
 import type { Task, TaskStatus, TaskPriority } from '../../types';
@@ -334,6 +335,35 @@ describe('automationEngine', () => {
     });
   });
 
+  describe('previewRule', () => {
+    it('returns the planned actions without calling store mutations', () => {
+      const task = createTestTask({ priority: 'high' });
+      const rule = createTestRule({
+        conditions: [{ field: 'priority', operator: 'equals', value: 'high' }],
+        actions: [{ type: 'add_tag', config: { tag: 'review' } }],
+      });
+      const original = structuredClone(rule);
+
+      expect(previewRule(rule, task)).toEqual({
+        conditionsMatch: true,
+        plannedActions: [{ type: 'add_tag', config: { tag: 'review' } }],
+      });
+      expect(rule).toEqual(original);
+    });
+
+    it('returns no plan when conditions do not match', () => {
+      const result = previewRule(
+        createTestRule({
+          conditions: [{ field: 'priority', operator: 'equals', value: 'high' }],
+          actions: [{ type: 'archive', config: {} }],
+        }),
+        createTestTask({ priority: 'low' }),
+      );
+
+      expect(result).toEqual({ conditionsMatch: false, plannedActions: [] });
+    });
+  });
+
   describe('executeAction', () => {
     let mockActions: AutomationStoreActions;
     let task: Task;
@@ -344,14 +374,15 @@ describe('automationEngine', () => {
     });
 
     describe('move_task action', () => {
-      it('should call moveTask with correct status', async () => {
+      it('should update status without emitting a recursive move trigger', async () => {
         const action: AutomationAction = {
           type: 'move_task',
           config: { status: 'done' as TaskStatus },
         };
         const result = await executeAction(action, task, mockActions);
         expect(result).toBe(true);
-        expect(mockActions.moveTask).toHaveBeenCalledWith('task-1', 'done');
+        expect(mockActions.updateTask).toHaveBeenCalledWith('task-1', { status: 'done' });
+        expect(mockActions.moveTask).not.toHaveBeenCalled();
       });
 
       it('should not call moveTask when status is missing', async () => {
@@ -360,7 +391,7 @@ describe('automationEngine', () => {
           config: {},
         };
         await executeAction(action, task, mockActions);
-        expect(mockActions.moveTask).not.toHaveBeenCalled();
+        expect(mockActions.updateTask).not.toHaveBeenCalled();
       });
     });
 
@@ -428,13 +459,14 @@ describe('automationEngine', () => {
     });
 
     describe('set_status action', () => {
-      it('should call moveTask with correct status', async () => {
+      it('should update status without emitting a recursive move trigger', async () => {
         const action: AutomationAction = {
           type: 'set_status',
           config: { status: 'inprogress' as TaskStatus },
         };
         await executeAction(action, task, mockActions);
-        expect(mockActions.moveTask).toHaveBeenCalledWith('task-1', 'inprogress');
+        expect(mockActions.updateTask).toHaveBeenCalledWith('task-1', { status: 'inprogress' });
+        expect(mockActions.moveTask).not.toHaveBeenCalled();
       });
     });
 
@@ -511,7 +543,7 @@ describe('automationEngine', () => {
         const result = await executeAction(action, task, mockActions);
         expect(result).toBe(true);
         expect(mockActions.addTask).toHaveBeenCalledWith(
-          expect.objectContaining({ title: 'Test Task (copy)' })
+          expect.objectContaining({ title: 'Test Task（副本）' })
         );
       });
     });
@@ -524,7 +556,7 @@ describe('automationEngine', () => {
         };
         const result = await executeAction(action, task, mockActions);
         expect(result).toBe(true);
-        expect(mockActions.notify).toHaveBeenCalledWith('Automation', 'Test notification');
+        expect(mockActions.notify).toHaveBeenCalledWith('自动化', 'Test notification');
       });
     });
 
@@ -541,7 +573,7 @@ describe('automationEngine', () => {
 
     describe('error handling', () => {
       it('should return false when store action throws', async () => {
-        mockActions.moveTask = vi.fn().mockImplementation(() => {
+        mockActions.updateTask = vi.fn().mockImplementation(() => {
           throw new Error('Store error');
         });
         const action: AutomationAction = {

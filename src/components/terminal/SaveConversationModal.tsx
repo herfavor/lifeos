@@ -44,7 +44,7 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
   // Handle save to daily notes
   const handleSaveToDailyNote = useCallback(async () => {
     if (messages.length === 0) {
-      toast.error('No messages to save');
+      toast.error('没有可保存的消息');
       return;
     }
 
@@ -56,10 +56,10 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
         targetNoteId: dailyNote.id,
         filter,
       });
-      toast.success(`Saved ${filteredCount} messages to "${dailyNote.title}"`);
+      toast.success(`已将 ${filteredCount} 条消息保存到 "${dailyNote.title}"`);
       onClose();
     } catch (error) {
-      toast.error('Failed to save conversation');
+      toast.error('保存对话失败');
       console.error('Failed to save conversation:', error);
     } finally {
       setIsSaving(false);
@@ -69,12 +69,12 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
   // Handle create new note with conversation
   const handleCreateNewNote = useCallback(async () => {
     if (messages.length === 0) {
-      toast.error('No messages to save');
+      toast.error('没有可保存的消息');
       return;
     }
 
     if (!newNoteTitle.trim()) {
-      toast.error('Please enter a note title');
+      toast.error('请输入笔记标题');
       return;
     }
 
@@ -85,10 +85,10 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
         title: newNoteTitle.trim(),
         filter,
       });
-      toast.success(`Created "${note.title}" with ${filteredCount} messages`);
+      toast.success(`已创建 "${note.title}"，包含 ${filteredCount} 条消息`);
       onClose();
     } catch (error) {
-      toast.error('Failed to create note');
+      toast.error('创建笔记失败');
       console.error('Failed to create note:', error);
     } finally {
       setIsSaving(false);
@@ -128,16 +128,16 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
           <div className="text-center">
             <MessageSquare className="w-12 h-12 mx-auto mb-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <h2 className="text-lg font-semibold mb-2 text-text-light-primary dark:text-text-dark-primary">
-              No Conversation to Save
+              没有可保存的对话
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-              Start a conversation in the AI Terminal first.
+              请先在 AI 助手中开始一段对话。
             </p>
             <button
               onClick={onClose}
               className="px-4 py-2 bg-accent-blue text-white rounded-md hover:bg-accent-blue/90 transition-colors"
             >
-              Close
+              关闭
             </button>
           </div>
         </div>
@@ -158,12 +158,12 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Save Conversation
+            保存对话
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-tertiary dark:text-text-dark-tertiary transition-colors"
-            aria-label="Close"
+            className="p-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-tertiary dark:text-text-dark-tertiary transition-colors"
+            aria-label="关闭"
           >
             <X className="w-5 h-5" />
           </button>
@@ -174,7 +174,7 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
           {/* Message Filter */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Messages to include
+              包含的消息
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -182,11 +182,11 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                 className={`flex flex-col items-center gap-1 p-3 rounded-md border transition-colors ${
                   filter === 'all'
                     ? 'border-accent-blue bg-accent-blue/10 text-accent-blue'
-                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary'
+                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
                 }`}
               >
                 <MessageSquare className="w-5 h-5" />
-                <span className="text-xs font-medium">All</span>
+                <span className="text-xs font-medium">全部</span>
                 <span className="text-xs opacity-70">{messages.length}</span>
               </button>
               <button
@@ -194,11 +194,11 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                 className={`flex flex-col items-center gap-1 p-3 rounded-md border transition-colors ${
                   filter === 'user'
                     ? 'border-accent-blue bg-accent-blue/10 text-accent-blue'
-                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary'
+                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
                 }`}
               >
                 <User className="w-5 h-5" />
-                <span className="text-xs font-medium">Prompts</span>
+                <span className="text-xs font-medium">提示</span>
                 <span className="text-xs opacity-70">{userMessages.length}</span>
               </button>
               <button
@@ -206,11 +206,11 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                 className={`flex flex-col items-center gap-1 p-3 rounded-md border transition-colors ${
                   filter === 'assistant'
                     ? 'border-accent-blue bg-accent-blue/10 text-accent-blue'
-                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary'
+                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
                 }`}
               >
                 <Bot className="w-5 h-5" />
-                <span className="text-xs font-medium">Responses</span>
+                <span className="text-xs font-medium">回复</span>
                 <span className="text-xs opacity-70">{assistantMessages.length}</span>
               </button>
             </div>
@@ -219,7 +219,7 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
           {/* Destination */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Save to
+              保存到
             </label>
             <div className="space-y-2">
               <button
@@ -227,7 +227,7 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                 className={`w-full flex items-center gap-3 p-3 rounded-md border transition-colors text-left ${
                   destination === 'daily'
                     ? 'border-accent-blue bg-accent-blue/10'
-                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover'
+                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                 }`}
               >
                 <Calendar
@@ -241,10 +241,10 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                       destination === 'daily' ? 'text-accent-blue' : 'text-text-light-primary dark:text-text-dark-primary'
                     }`}
                   >
-                    Today's AI Notes
+                    今日 AI 笔记
                   </div>
                   <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                    Append to daily note in AI Terminal folder
+                    追加到 AI 助手文件夹中的每日笔记
                   </div>
                 </div>
               </button>
@@ -253,7 +253,7 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                 className={`w-full flex items-center gap-3 p-3 rounded-md border transition-colors text-left ${
                   destination === 'new'
                     ? 'border-accent-blue bg-accent-blue/10'
-                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover'
+                    : 'border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                 }`}
               >
                 <FolderPlus
@@ -267,10 +267,10 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
                       destination === 'new' ? 'text-accent-blue' : 'text-text-light-primary dark:text-text-dark-primary'
                     }`}
                   >
-                    New Note
+                    新建笔记
                   </div>
                   <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                    Create new note in AI Terminal folder
+                    在 AI 助手文件夹中创建新笔记
                   </div>
                 </div>
               </button>
@@ -281,13 +281,13 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
           {destination === 'new' && (
             <div>
               <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                Note title
+                笔记标题
               </label>
               <input
                 type="text"
                 value={newNoteTitle}
                 onChange={(e) => setNewNoteTitle(e.target.value)}
-                placeholder="Enter a title for your note..."
+                placeholder="为你的笔记输入标题..."
                 className="w-full px-3 py-2 text-sm rounded-md border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
                 autoFocus
               />
@@ -298,15 +298,15 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-border-light dark:border-border-dark bg-surface-light-alt dark:bg-surface-dark-alt">
           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {filteredCount} message{filteredCount !== 1 ? 's' : ''} will be saved
+            将保存 {filteredCount} 条消息
           </span>
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded-md bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary transition-colors"
+              className="px-4 py-2 text-sm rounded-md bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary transition-colors"
               disabled={isSaving}
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleSave}
@@ -316,10 +316,10 @@ export const SaveConversationModal: React.FC<SaveConversationModalProps> = ({
               {isSaving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving...
+                  保存中...
                 </>
               ) : (
-                'Save Conversation'
+                '保存对话'
               )}
             </button>
           </div>

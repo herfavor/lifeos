@@ -56,7 +56,7 @@ export default function FileUpload({
     // Validate file size
     if (file.size > maxSizeBytes) {
       setError(
-        `File size (${(file.size / 1024 / 1024).toFixed(1)}MB) exceeds ${maxSizeMB}MB limit. Please compress or choose a smaller file.`
+        `文件大小（${(file.size / 1024 / 1024).toFixed(1)}MB）超过 ${maxSizeMB}MB 限制。请压缩或选择更小的文件。`
       );
       return;
     }
@@ -83,7 +83,7 @@ export default function FileUpload({
         fileInputRef.current.value = '';
       }
     } catch (err) {
-      setError('Failed to upload file. Please try again.');
+      setError('文件上传失败，请重试。');
       console.error('File upload error:', err);
     } finally {
       setIsUploading(false);
@@ -158,7 +158,7 @@ export default function FileUpload({
             handleClick();
           }
         }}
-        aria-label="Upload file"
+        aria-label="上传文件"
       >
         {/* Icon */}
         <div className="flex justify-center mb-3">
@@ -174,13 +174,13 @@ export default function FileUpload({
         {/* Text */}
         <div className="space-y-1">
           <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            {isUploading ? 'Uploading...' : isDragging ? 'Drop file here' : 'Drag & drop file here'}
+            {isUploading ? '上传中…' : isDragging ? '将文件拖放到此处' : '拖放文件到此处'}
           </p>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            or click to browse
+            或点击浏览
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            Max {maxSizeMB}MB
+            最大 {maxSizeMB}MB
           </p>
         </div>
 

@@ -14,11 +14,11 @@ interface TimeZoneData {
 }
 
 const TIMEZONES: TimeZoneData[] = [
-  { name: 'New York', timezone: 'America/New_York', emoji: '🗽' },
-  { name: 'London', timezone: 'Europe/London', emoji: '🇬🇧' },
-  { name: 'Tokyo', timezone: 'Asia/Tokyo', emoji: '🗼' },
-  { name: 'Sydney', timezone: 'Australia/Sydney', emoji: '🦘' },
-  { name: 'Dubai', timezone: 'Asia/Dubai', emoji: '🏜️' },
+  { name: '纽约', timezone: 'America/New_York', emoji: '🗽' },
+  { name: '伦敦', timezone: 'Europe/London', emoji: '🇬🇧' },
+  { name: '东京', timezone: 'Asia/Tokyo', emoji: '🗼' },
+  { name: '悉尼', timezone: 'Australia/Sydney', emoji: '🦘' },
+  { name: '迪拜', timezone: 'Asia/Dubai', emoji: '🏜️' },
 ];
 
 export const WorldClockWidget: React.FC = () => {
@@ -33,7 +33,7 @@ export const WorldClockWidget: React.FC = () => {
   }, []);
 
   const formatTime = (timezone: string) => {
-    return currentTime.toLocaleTimeString('en-US', {
+    return currentTime.toLocaleTimeString('zh-CN', {
       timeZone: timezone,
       hour: '2-digit',
       minute: '2-digit',
@@ -42,7 +42,7 @@ export const WorldClockWidget: React.FC = () => {
   };
 
   const formatDate = (timezone: string) => {
-    return currentTime.toLocaleDateString('en-US', {
+    return currentTime.toLocaleDateString('zh-CN', {
       timeZone: timezone,
       month: 'short',
       day: 'numeric',
@@ -50,7 +50,7 @@ export const WorldClockWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="World Clock" icon="🌍">
+    <BaseWidget title="世界时钟" icon="🌍">
       <div className="space-y-2">
         {TIMEZONES.map((tz) => (
           <div

@@ -1,411 +1,140 @@
 import { test, expect } from '../fixtures/test-utils';
 import {
-  createMockTask,
-  createMockAutomationRule,
   clearAllStores,
-  waitForIndexedDB,
+  createMockAutomationRule,
   getStoreData,
+  resetTestCounters,
   setStoreData,
   waitForAppLoaded,
-  resetTestCounters,
+  waitForIndexedDB,
 } from '../fixtures/test-data';
 
-/**
- * Automation Engine E2E Tests
- *
- * Tests automation rule execution, loop prevention, and service worker integration.
- * Covers task triggers, action execution, and engine stability.
- *
- * Pareto Priority: #4 (10% of bugs, 10/10 impact × 8/10 frequency)
- */
+type PersistedTask = {
+  title: string;
+  status: string;
+  priority: string;
+  tags?: string[];
+  dueDate?: string | null;
+};
 
 test.describe('Automation Engine', () => {
   test.beforeEach(async ({ page }) => {
     resetTestCounters();
-    await clearAllStores(page);
     await page.goto('/');
     await waitForAppLoaded(page);
+    await clearAllStores(page);
   });
 
-  // ==================== TEST 1: SIMPLE RULE EXECUTION ====================
+  async function seedRules(page: Parameters<typeof setStoreData>[0], rules: ReturnType<typeof createMockAutomationRule>[]) {
+    await setStoreData(page, 'automation-store', { state: { rules }, version: 1 });
+    await page.reload();
+    await waitForAppLoaded(page);
+  }
 
-  // SKIP: Automation engine not triggering on task completion - task.completed event not fired
-  test.skip('executes simple "task complete → create task" rule', async ({ page }) => {
-    // Step 1: Create an automation rule
-    const ruleName = 'Create follow-up on completion';
-
-    await setStoreData(page, 'automation-store', {
-      state: {
-        rules: [
-          createMockAutomationRule({
-            name: ruleName,
-            enabled: true,
-            trigger: 'task.completed',
-            conditions: [],
-            action: 'createTask',
-            actionConfig: {
-              title: 'Follow-up: {{task.title}}',
-              description: 'Follow up from completed task',
-              status: 'todo',
-              priority: 'medium',
-            },
-          }),
-        ],
-        history: [],
-      },
-      version: 0,
-    });
-
-    await waitForIndexedDB(page);
-
-    // Step 2: Create a task
+  async function createTaskFromBoard(page: Parameters<typeof setStoreData>[0], title: string) {
     await page.goto('/tasks');
     await waitForAppLoaded(page);
-
-    const taskTitle = 'Trigger Test Task';
-
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
-    await addButton.click();
-
-    // Use Enter key to submit - button clicks timeout due to UI reactivity issue
-    const titleInput = page.getByPlaceholder('Task title...');
-    await titleInput.fill(taskTitle);
+    await page.getByRole('button', { name: /添加任务/ }).first().click();
+    const titleInput = page.getByPlaceholder('任务标题…').first();
+    await titleInput.fill(title);
     await titleInput.press('Enter');
-    await expect(titleInput).not.toBeVisible({ timeout: 2000 });
-    await expect(page.getByText(taskTitle)).toBeVisible();
-    await waitForIndexedDB(page);
+    await expect(page.getByText(title, { exact: true }).first()).toBeVisible();
+    await waitForIndexedDB(page, 800);
+  }
 
-    // Get initial task count
-    const kanbanDataBefore = await getStoreData(page, 'kanban-store');
-    const initialTaskCount = kanbanDataBefore.state.tasks.length;
-    expect(initialTaskCount).toBe(1);
-
-    // Step 3: Complete the task
-    // Click on task card to open detail modal
-    await page.getByText(taskTitle).click();
-
-    // Look for complete/done button
-    const completeButton = page.getByRole('button', {
-      name: /complete|done|mark.*done/i,
-    });
-
-    if (await completeButton.isVisible()) {
-      await completeButton.click();
-      await waitForIndexedDB(page, 2000); // Wait for automation to execute
-    } else {
-      // Try dragging to Done column
-      const closeButton = page.getByRole('button', { name: /close|cancel/i }).first();
-      if (await closeButton.isVisible()) {
-        await closeButton.click();
-      }
-
-      const taskCard = page.getByText(taskTitle).locator('..');
-      const doneColumn = page.locator('[data-column="done"]');
-      if (await doneColumn.isVisible()) {
-        await taskCard.dragTo(doneColumn);
-        await waitForIndexedDB(page, 2000);
-      }
-    }
-
-    // Step 4: Verify automation created a new task
-    const kanbanDataAfter = await getStoreData(page, 'kanban-store');
-    expect(kanbanDataAfter.state.tasks.length).toBeGreaterThan(initialTaskCount);
-
-    // Verify the new task has the expected title
-    const followUpTask = kanbanDataAfter.state.tasks.find(
-      (t: { title: string }) => t.title === `Follow-up: ${taskTitle}`
-    );
-    expect(followUpTask).toBeDefined();
-    expect(followUpTask.description).toBe('Follow up from completed task');
-    expect(followUpTask.priority).toBe('medium');
-
-    // Verify automation history
-    const automationData = await getStoreData(page, 'automation-store');
-    expect(automationData.state.history.length).toBeGreaterThan(0);
-
-    const lastExecution = automationData.state.history[0];
-    expect(lastExecution.ruleName).toBe(ruleName);
-    expect(lastExecution.success).toBe(true);
-  });
-
-  // ==================== TEST 2: LOOP PREVENTION ====================
-
-  test('prevents infinite loops from circular automation rules', async ({ page }) => {
-    // Step 1: Create two rules that could create an infinite loop
-    // Rule 1: When task moved to "todo" → move to "inprogress"
-    // Rule 2: When task moved to "inprogress" → move to "todo"
-
-    await setStoreData(page, 'automation-store', {
-      state: {
-        rules: [
-          createMockAutomationRule({
-            name: 'Todo → In Progress Loop',
-            enabled: true,
-            trigger: 'task.moved',
-            conditions: [
-              {
-                field: 'status',
-                operator: 'equals',
-                value: 'todo',
-              },
-            ],
-            action: 'updateTask',
-            actionConfig: {
-              status: 'inprogress',
-            },
-          }),
-          createMockAutomationRule({
-            name: 'In Progress → Todo Loop',
-            enabled: true,
-            trigger: 'task.moved',
-            conditions: [
-              {
-                field: 'status',
-                operator: 'equals',
-                value: 'inprogress',
-              },
-            ],
-            action: 'updateTask',
-            actionConfig: {
-              status: 'todo',
-            },
-          }),
-        ],
-        history: [],
-      },
-      version: 0,
-    });
-
-    await waitForIndexedDB(page);
-
-    // Step 2: Create a task
-    await page.goto('/tasks');
-    await waitForAppLoaded(page);
-
-    const taskTitle = 'Loop Prevention Test';
-
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
-    await addButton.click();
-
-    // Use Enter key to submit - button clicks timeout due to UI reactivity issue
-    const titleInput = page.getByPlaceholder('Task title...');
-    await titleInput.fill(taskTitle);
-    await titleInput.press('Enter');
-    await expect(titleInput).not.toBeVisible({ timeout: 2000 });
-    await expect(page.getByText(taskTitle)).toBeVisible();
-    await waitForIndexedDB(page, 2000); // Wait for potential loop execution
-
-    // Step 3: Verify automation history shows loop prevention
-    const automationData = await getStoreData(page, 'automation-store');
-
-    // Should have history entries but NOT infinite entries
-    // Max recursion depth is 10, so history length should be <= 10
-    expect(automationData.state.history.length).toBeLessThanOrEqual(10);
-
-    // Check if any history entry indicates loop prevention
-    const hasLoopPrevention = automationData.state.history.some(
-      (entry: { error?: string }) => entry.error?.includes('recursion') || entry.error?.includes('loop')
-    );
-
-    if (hasLoopPrevention) {
-      expect(hasLoopPrevention).toBe(true);
-    }
-
-    // Verify task still exists (not corrupted)
-    const kanbanData = await getStoreData(page, 'kanban-store');
-    expect(kanbanData.state.tasks.length).toBe(1);
-  });
-
-  // ==================== TEST 3: MULTIPLE RULES ON SAME TRIGGER ====================
-
-  // SKIP: Automation engine not triggering on inline task creation - task.created event not fired
-  test.skip('executes multiple rules on same trigger in order', async ({ page }) => {
-    // Step 1: Create multiple rules for the same trigger
-    await setStoreData(page, 'automation-store', {
-      state: {
-        rules: [
-          createMockAutomationRule({
-            name: 'Rule 1: Add high priority tag',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [],
-            action: 'updateTask',
-            actionConfig: {
-              tags: ['automated', 'priority:high'],
-            },
-          }),
-          createMockAutomationRule({
-            name: 'Rule 2: Set due date',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [],
-            action: 'updateTask',
-            actionConfig: {
-              dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            },
-          }),
-          createMockAutomationRule({
-            name: 'Rule 3: Create notification',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [],
-            action: 'sendNotification',
-            actionConfig: {
-              title: 'New task created',
-              message: 'Task {{task.title}} has been created',
-            },
-          }),
-        ],
-        history: [],
-      },
-      version: 0,
-    });
-
-    await waitForIndexedDB(page);
-
-    // Step 2: Create a task
-    await page.goto('/tasks');
-    await waitForAppLoaded(page);
-
-    const taskTitle = 'Multi-Rule Test Task';
-
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
-    await addButton.click();
-
-    // Use Enter key to submit - button clicks timeout due to UI reactivity issue
-    const titleInput = page.getByPlaceholder('Task title...');
-    await titleInput.fill(taskTitle);
-    await titleInput.press('Enter');
-    await expect(titleInput).not.toBeVisible({ timeout: 2000 });
-    await expect(page.getByText(taskTitle)).toBeVisible();
-    await waitForIndexedDB(page, 2000); // Wait for all rules to execute
-
-    // Step 3: Verify all rules executed
-    const automationData = await getStoreData(page, 'automation-store');
-
-    // Should have 3 history entries (one per rule)
-    expect(automationData.state.history.length).toBeGreaterThanOrEqual(3);
-
-    // Verify each rule executed
-    const ruleNames = automationData.state.history.map((entry: { ruleName: string }) => entry.ruleName);
-    expect(ruleNames).toContain('Rule 1: Add high priority tag');
-    expect(ruleNames).toContain('Rule 2: Set due date');
-    expect(ruleNames).toContain('Rule 3: Create notification');
-
-    // Step 4: Verify task was updated by rules
-    const kanbanData = await getStoreData(page, 'kanban-store');
-    const task = kanbanData.state.tasks.find((t: { title: string }) => t.title === taskTitle);
-
+  async function findTask(page: Parameters<typeof setStoreData>[0], title: string): Promise<PersistedTask> {
+    const kanban = await getStoreData<{ state: { tasks: PersistedTask[] } }>(page, 'kanban-store');
+    const task = kanban?.state.tasks.find((item) => item.title === title);
     expect(task).toBeDefined();
+    return task!;
+  }
 
-    // Rule 1 should have added tags
-    if (task.tags) {
-      expect(task.tags).toContain('automated');
-      expect(task.tags).toContain('priority:high');
-    }
+  test('executes a task-created rule and exposes its exact result', async ({ page }) => {
+    const rule = createMockAutomationRule({
+      name: '新任务标记待跟进',
+      trigger: 'task.created',
+      action: 'add_tag',
+      actionConfig: { tags: ['待跟进'] },
+    });
+    await seedRules(page, [rule]);
 
-    // Rule 2 should have set due date
-    if (task.dueDate) {
-      expect(task.dueDate).toBeTruthy();
-    }
+    await createTaskFromBoard(page, '自动化触发任务');
+    const task = await findTask(page, '自动化触发任务');
+    expect(task.tags).toContain('待跟进');
+
+    await page.goto('/automations');
+    await page.getByRole('button', { name: /执行历史/ }).click();
+    await expect(page.getByText('新任务标记待跟进', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /任务：自动化触发任务/ })).toBeVisible();
   });
 
-  // ==================== TEST 4: CONDITIONAL RULE EXECUTION ====================
-
-  // SKIP: Automation engine not triggering on inline task creation - task.created event not fired
-  test.skip('only executes rules when conditions match', async ({ page }) => {
-    // Step 1: Create rules with different conditions
-    await setStoreData(page, 'automation-store', {
-      state: {
-        rules: [
-          createMockAutomationRule({
-            name: 'High Priority Rule',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [
-              {
-                field: 'priority',
-                operator: 'equals',
-                value: 'high',
-              },
-            ],
-            action: 'updateTask',
-            actionConfig: {
-              tags: ['urgent'],
-            },
-          }),
-          createMockAutomationRule({
-            name: 'Low Priority Rule',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [
-              {
-                field: 'priority',
-                operator: 'equals',
-                value: 'low',
-              },
-            ],
-            action: 'updateTask',
-            actionConfig: {
-              tags: ['backlog'],
-            },
-          }),
-          createMockAutomationRule({
-            name: 'Always Execute Rule',
-            enabled: true,
-            trigger: 'task.created',
-            conditions: [],
-            action: 'updateTask',
-            actionConfig: {
-              tags: ['tracked'],
-            },
-          }),
-        ],
-        history: [],
-      },
-      version: 0,
+  test('status actions do not recursively emit task-moved rules', async ({ page }) => {
+    const createdRule = createMockAutomationRule({
+      name: '创建后进入进行中',
+      trigger: 'task.created',
+      action: 'set_status',
+      actionConfig: { status: 'inprogress' },
     });
+    const opposingMoveRule = createMockAutomationRule({
+      name: '移动后退回待办',
+      trigger: 'task.moved',
+      action: 'set_status',
+      actionConfig: { status: 'todo' },
+    });
+    await seedRules(page, [createdRule, opposingMoveRule]);
 
-    await waitForIndexedDB(page);
+    await createTaskFromBoard(page, '循环保护任务');
+    const task = await findTask(page, '循环保护任务');
+    expect(task.status).toBe('inprogress');
 
-    // Step 2: Create a HIGH priority task
-    await page.goto('/tasks');
-    await waitForAppLoaded(page);
+    await page.goto('/automations');
+    await page.getByRole('button', { name: /执行历史/ }).click();
+    await expect(page.getByText('创建后进入进行中', { exact: true })).toHaveCount(2);
+    await expect(page.getByText('移动后退回待办', { exact: true })).toHaveCount(1);
+  });
 
-    const taskTitle = 'Conditional Test Task';
+  test('executes multiple safe actions for the same trigger', async ({ page }) => {
+    const dueDate = '2026-09-03';
+    const rules = [
+      createMockAutomationRule({ name: '设为高优先级', trigger: 'task.created', action: 'set_priority', actionConfig: { priority: 'high' } }),
+      createMockAutomationRule({ name: '设置一周截止', trigger: 'task.created', action: 'set_due_date', actionConfig: { dueDate } }),
+      createMockAutomationRule({ name: '添加自动化标签', trigger: 'task.created', action: 'add_tag', actionConfig: { tags: ['自动化'] } }),
+    ];
+    await seedRules(page, rules);
 
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
-    await addButton.click();
+    await createTaskFromBoard(page, '多规则任务');
+    const task = await findTask(page, '多规则任务');
+    expect(task.priority).toBe('high');
+    expect(task.dueDate).toBe(dueDate);
+    expect(task.tags).toContain('自动化');
 
-    // Note: Inline form doesn't support priority selection - this test will use default priority
-    // Use Enter key to submit - button clicks timeout due to UI reactivity issue
-    const titleInput = page.getByPlaceholder('Task title...');
-    await titleInput.fill(taskTitle);
-    await titleInput.press('Enter');
-    await expect(titleInput).not.toBeVisible({ timeout: 2000 });
-    await expect(page.getByText(taskTitle)).toBeVisible();
-    await waitForIndexedDB(page, 2000);
+    await page.goto('/automations');
+    await page.getByRole('button', { name: /执行历史/ }).click();
+    for (const rule of rules) await expect(page.getByText(rule.name, { exact: true })).toBeVisible();
+  });
 
-    // Step 3: Verify only matching rules executed
-    const automationData = await getStoreData(page, 'automation-store');
+  test('applies only actions whose conditions match', async ({ page }) => {
+    const rules = [
+      createMockAutomationRule({
+        name: '中优先级命中',
+        trigger: 'task.created',
+        conditions: [{ field: 'priority', operator: 'equals', value: 'medium' }],
+        action: 'add_tag',
+        actionConfig: { tags: ['中优先级'] },
+      }),
+      createMockAutomationRule({
+        name: '低优先级不命中',
+        trigger: 'task.created',
+        conditions: [{ field: 'priority', operator: 'equals', value: 'low' }],
+        action: 'add_tag',
+        actionConfig: { tags: ['低优先级'] },
+      }),
+    ];
+    await seedRules(page, rules);
 
-    // Should have executed "High Priority Rule" and "Always Execute Rule"
-    // Should NOT have executed "Low Priority Rule"
-    const executedRules = automationData.state.history.map((entry: { ruleName: string }) => entry.ruleName);
-
-    expect(executedRules).toContain('High Priority Rule');
-    expect(executedRules).toContain('Always Execute Rule');
-    expect(executedRules).not.toContain('Low Priority Rule');
-
-    // Step 4: Verify task has correct tags
-    const kanbanData = await getStoreData(page, 'kanban-store');
-    const task = kanbanData.state.tasks.find((t: { title: string }) => t.title === taskTitle);
-
-    expect(task).toBeDefined();
-    if (task.tags) {
-      expect(task.tags).toContain('urgent'); // From High Priority Rule
-      expect(task.tags).toContain('tracked'); // From Always Execute Rule
-      expect(task.tags).not.toContain('backlog'); // From Low Priority Rule (should NOT execute)
-    }
+    await createTaskFromBoard(page, '条件规则任务');
+    const task = await findTask(page, '条件规则任务');
+    expect(task.tags).toContain('中优先级');
+    expect(task.tags).not.toContain('低优先级');
   });
 });

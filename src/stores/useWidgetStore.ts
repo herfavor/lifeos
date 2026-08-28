@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { isWidgetExposed } from '../config/features';
 
 // === Custom Widget Types ===
 
@@ -113,25 +114,50 @@ export interface WidgetState {
   deleteLayout: (id: string) => void;
 }
 
+const LEGACY_LIFEOS_DEFAULT = [
+  'myday',
+  'quickadd',
+  'upcomingevents',
+  'portfolio',
+  'recentnotes',
+  'aibriefing',
+];
+
+const REMOVED_AI_WIDGETS = new Set(['aibriefing', 'ainews']);
+const isDefaultUiWidget = (id: string): boolean =>
+  !REMOVED_AI_WIDGETS.has(id) && isWidgetExposed(id);
+const EMPTY_WIDGET_SETTINGS: WidgetSettings = {};
+
+/**
+ * Strip widgets backed by hidden product features (and removed AI surfaces)
+ * from a persisted widget state. Used by layout restore and store migrations
+ * so old layouts can never re-surface sealed capabilities.
+ */
+export function sanitizeHiddenFeatureWidgets(state: WidgetState): WidgetState {
+  return {
+    ...state,
+    enabledWidgets: (state.enabledWidgets ?? []).filter(isDefaultUiWidget),
+    widgetSizes: Object.fromEntries(
+      Object.entries(state.widgetSizes ?? {}).filter(([id]) => isDefaultUiWidget(id))
+    ) as Record<string, 1 | 2 | 3>,
+    savedLayouts: (state.savedLayouts ?? []).map((layout) => ({
+      ...layout,
+      enabledWidgets: layout.enabledWidgets.filter(isDefaultUiWidget),
+      widgetSizes: Object.fromEntries(
+        Object.entries(layout.widgetSizes).filter(([id]) => isDefaultUiWidget(id))
+      ) as Record<string, 1 | 2 | 3>,
+    })),
+  };
+}
+
 export const useWidgetStore = create<WidgetState>()(
   persist(
     (set, get) => ({
-      // Default enabled widgets (core widgets + weathermap only)
-      // API widgets (quote, crypto, hackernews, etc.) available in Widget Manager but disabled by default
-      // Phase 5: Removed 'myday' - users should use the dedicated Today page instead
-      enabledWidgets: ['weathermap', 'taskssummary', 'tasksquickadd', 'upcomingevents', 'recentnotes'],
+      // The fixed Home overview now provides the daily workflow. Widgets are
+      // an opt-in advanced layer so a new user never lands on six empty cards.
+      enabledWidgets: [],
 
-      // Default widget sizes (2-column grid)
-      // WeatherMap: 3x (renders as 2 columns = full row width, locked)
-      // Tasks widgets: 1x each (side-by-side in 2 columns)
-      // Other core widgets: 1x (1 column = 50% = 2 widgets per row side-by-side)
-      widgetSizes: {
-        weathermap: 3,
-        taskssummary: 1,
-        tasksquickadd: 1,
-        upcomingevents: 1,
-        recentnotes: 1,
-      },
+      widgetSizes: {},
 
       // Custom widgets
       customWidgets: [],
@@ -162,6 +188,7 @@ export const useWidgetStore = create<WidgetState>()(
       },
 
       enableWidget: (widgetId) => {
+        if (!isDefaultUiWidget(widgetId)) return;
         set((state) => {
           if (!state.enabledWidgets.includes(widgetId)) {
             return {
@@ -184,7 +211,7 @@ export const useWidgetStore = create<WidgetState>()(
       },
 
       reorderWidgets: (newOrder) => {
-        set({ enabledWidgets: newOrder });
+        set({ enabledWidgets: newOrder.filter(isDefaultUiWidget) });
       },
 
       updateWidgetSettings: (widgetId, settings) => {
@@ -213,7 +240,7 @@ export const useWidgetStore = create<WidgetState>()(
       },
 
       getWidgetSettings: (widgetId) => {
-        return get().widgetSettings[widgetId] || {};
+        return get().widgetSettings[widgetId] || EMPTY_WIDGET_SETTINGS;
       },
 
       createCustomWidget: (config) => {
@@ -266,9 +293,14 @@ export const useWidgetStore = create<WidgetState>()(
         const { savedLayouts } = get();
         const layout = savedLayouts.find((l) => l.id === id);
         if (layout) {
+          const sanitized = sanitizeHiddenFeatureWidgets({
+            ...get(),
+            enabledWidgets: layout.enabledWidgets,
+            widgetSizes: layout.widgetSizes,
+          });
           set({
-            enabledWidgets: [...layout.enabledWidgets],
-            widgetSizes: { ...layout.widgetSizes },
+            enabledWidgets: sanitized.enabledWidgets,
+            widgetSizes: sanitized.widgetSizes,
           });
         }
       },
@@ -281,7 +313,7 @@ export const useWidgetStore = create<WidgetState>()(
     }),
     {
       name: 'dashboard-widgets',
-      version: 7, // Increment this when you need to trigger migrations
+      version: 11, // Increment this when you need to trigger migrations
       migrate: (persistedState: any, version: number) => {
         const state = persistedState as WidgetState;
 
@@ -372,6 +404,53 @@ export const useWidgetStore = create<WidgetState>()(
           if (!state.savedLayouts) {
             state.savedLayouts = [];
           }
+        }
+
+        // LifeOS migration (version 7 -> 8): the large weather map leaves
+        // the default dashboard. The widget itself is still registered and
+        // can be re-enabled manually in the Widget Manager; this one-time
+        // migration only removes it from the current layout.
+        if (version < 8) {
+          state.enabledWidgets = state.enabledWidgets.filter((id) => id !== 'weathermap');
+          delete state.widgetSizes.weathermap;
+        }
+
+        // Version 9: move the former six-card default into the integrated
+        // Home overview. Preserve genuinely customized widget selections, but
+        // remove the two secondary AI surfaces so `/ai` remains the only AI
+        // destination.
+        if (version < 9) {
+          const wasLegacyDefault =
+            state.enabledWidgets.length === LEGACY_LIFEOS_DEFAULT.length &&
+            state.enabledWidgets.every((id, index) => id === LEGACY_LIFEOS_DEFAULT[index]);
+
+          state.enabledWidgets = wasLegacyDefault
+            ? []
+            : state.enabledWidgets.filter((id) => !REMOVED_AI_WIDGETS.has(id));
+
+          for (const id of REMOVED_AI_WIDGETS) delete state.widgetSizes[id];
+
+          state.savedLayouts = (state.savedLayouts ?? []).map((layout) => ({
+            ...layout,
+            enabledWidgets: layout.enabledWidgets.filter((id) => !REMOVED_AI_WIDGETS.has(id)),
+            widgetSizes: Object.fromEntries(
+              Object.entries(layout.widgetSizes).filter(([id]) => !REMOVED_AI_WIDGETS.has(id))
+            ) as Record<string, 1 | 2 | 3>,
+          }));
+        }
+
+        // Version 10: hidden product capabilities must not leak back into the
+        // default dashboard through old layouts or the widget manager.  Their
+        // source stores and user content remain untouched.
+        if (version < 10) {
+          Object.assign(state, sanitizeHiddenFeatureWidgets(state));
+        }
+
+        // Version 11: the gamification widget is backed by the hidden
+        // 'gamification' feature; re-run the exposure filter so any layout
+        // saved between v10 and v11 cannot keep it.
+        if (version < 11) {
+          Object.assign(state, sanitizeHiddenFeatureWidgets(state));
         }
 
         return persistedState;

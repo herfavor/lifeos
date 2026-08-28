@@ -62,7 +62,7 @@ export const TypingTestWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Typing Test" icon="⌨️">
+    <BaseWidget title="打字测试" icon="⌨️">
       <div className="space-y-3">
         {wpm === null ? (
           <>
@@ -79,7 +79,7 @@ export const TypingTestWidget: React.FC = () => {
               type="text"
               value={input}
               onChange={handleInputChange}
-              placeholder="Start typing..."
+              placeholder="开始打字…"
               className="w-full px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue font-mono transition-all duration-standard ease-smooth"
               autoFocus
             />
@@ -93,7 +93,7 @@ export const TypingTestWidget: React.FC = () => {
               </div>
               <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-3 text-center transition-all duration-standard ease-smooth">
                 <div className="text-3xl font-bold text-accent-primary">{accuracy}%</div>
-                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Accuracy</div>
+                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">准确率</div>
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export const TypingTestWidget: React.FC = () => {
               onClick={reset}
               className="w-full px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
             >
-              Try Again
+              重试
             </button>
           </div>
         )}

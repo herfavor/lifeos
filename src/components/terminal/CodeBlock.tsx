@@ -226,17 +226,17 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ children, language: rawLan
         <button
           onClick={handleCopy}
           className="flex items-center gap-1 px-2 py-0.5 text-[10px] rounded transition-all text-text-dark-secondary hover:text-white hover:bg-surface-dark"
-          title={copied ? 'Copied!' : 'Copy code'}
+          title={copied ? '已复制！' : '复制代码'}
         >
           {copied ? (
             <>
               <Check size={12} className="text-accent-green" />
-              <span className="text-accent-green">Copied</span>
+              <span className="text-accent-green">已复制</span>
             </>
           ) : (
             <>
               <Copy size={12} />
-              <span>Copy</span>
+              <span>复制</span>
             </>
           )}
         </button>

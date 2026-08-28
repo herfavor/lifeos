@@ -62,18 +62,18 @@ export function executeTemplateAction(
     case 'create-note': {
       const notesStore = useNotesStore.getState();
       const note = notesStore.createNote({
-        title: (data.title as string) || 'Untitled',
+        title: (data.title as string) || '未命名',
         contentText: (data.content as string) || '',
         tags: (data.tags as string[]) || [],
         isPinned: false,
       });
-      return `Note: ${note.title}`;
+      return `笔记：${note.title}`;
     }
 
     case 'create-task': {
       const kanbanStore = useKanbanStore.getState();
       kanbanStore.addTask({
-        title: (data.title as string) || 'Untitled Task',
+        title: (data.title as string) || '未命名任务',
         description: (data.description as string) || '',
         status: 'todo',
         priority: (data.priority as 'low' | 'medium' | 'high') || 'medium',
@@ -82,7 +82,7 @@ export function executeTemplateAction(
         dueDate: null,
         projectIds: [],
       });
-      return `Task: ${data.title}`;
+      return `任务：${data.title}`;
     }
 
     case 'create-event': {
@@ -99,11 +99,11 @@ export function executeTemplateAction(
       const endMin = endMinutes % 60;
       const endTime = `${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`;
 
-      calendarStore.addEvent(dateKey, (data.title as string) || 'Event', undefined, {
+      calendarStore.addEvent(dateKey, (data.title as string) || '事件', undefined, {
         startTime,
         endTime,
       });
-      return `Event: ${data.title}`;
+      return `事件：${data.title}`;
     }
 
     case 'create-doc': {
@@ -111,21 +111,21 @@ export function executeTemplateAction(
       const docType = (data.type as 'doc' | 'sheet') || 'doc';
       const docId = docsStore.createDoc(
         docType,
-        (data.title as string) || 'Untitled Document'
+        (data.title as string) || '未命名文档'
       );
-      return `Doc: ${data.title} (${docId})`;
+      return `文档：${data.title}（${docId}）`;
     }
 
     case 'start-timer': {
       const timeStore = useTimeTrackingStore.getState();
       timeStore.startTimer({
-        description: (data.description as string) || 'Timer',
+        description: (data.description as string) || '计时器',
       });
-      return `Timer: ${data.description}`;
+      return `计时器：${data.description}`;
     }
 
     default:
-      return `Unknown action type: ${action.type}`;
+      return `未知操作类型：${action.type}`;
   }
 }
 

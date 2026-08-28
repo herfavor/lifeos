@@ -180,13 +180,13 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                   id="tag-manager-title"
                   className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary"
                 >
-                  Manage Tags
+                  管理标签
                 </h2>
               </div>
               <button
                 onClick={onClose}
                 className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-                aria-label="Close tag manager"
+                aria-label="关闭标签管理器"
               >
                 <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
               </button>
@@ -203,7 +203,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 }`}
               >
                 <GitMerge className="w-4 h-4" />
-                {mergeMode ? 'Cancel Merge' : 'Merge Tags'}
+                {mergeMode ? '取消合并' : '合并标签'}
               </button>
               {mergeMode && selectedTags.size > 0 && (
                 <button
@@ -211,7 +211,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                   disabled={selectedTags.size < 1}
                   className="flex items-center gap-2 px-3 py-1.5 text-sm rounded bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Merge {selectedTags.size} tag{selectedTags.size !== 1 ? 's' : ''}
+                  合并 {selectedTags.size} 个标签
                 </button>
               )}
             </div>
@@ -224,7 +224,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 {totalTags}
               </div>
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Total Tags
+                标签总数
               </div>
             </div>
             <div className="text-center">
@@ -232,7 +232,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 {totalTaggedNotes}
               </div>
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Tagged Notes
+                已标记笔记
               </div>
             </div>
             <div className="text-center">
@@ -243,7 +243,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                   </div>
                   <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex items-center justify-center gap-1">
                     <TrendingUp className="w-3 h-3" />
-                    Most Used ({mostUsedTag.count})
+                    最常用 ({mostUsedTag.count})
                   </div>
                 </>
               ) : (
@@ -252,7 +252,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                     —
                   </div>
                   <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    Most Used
+                    最常用
                   </div>
                 </>
               )}
@@ -264,8 +264,8 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
             {tagCounts.length === 0 ? (
               <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
                 <TagIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="text-sm">No tags yet</p>
-                <p className="text-xs mt-1">Tags will appear here once you add them to notes</p>
+                <p className="text-sm">还没有标签</p>
+                <p className="text-xs mt-1">将标签添加到笔记后，它们会显示在这里</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -289,13 +289,13 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                           onClick={handleSaveEdit}
                           className="px-3 py-1 text-xs font-medium rounded bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 transition-colors"
                         >
-                          Save
+                          保存
                         </button>
                         <button
                           onClick={handleCancelEdit}
                           className="px-3 py-1 text-xs font-medium rounded border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                         >
-                          Cancel
+                          取消
                         </button>
                       </div>
                     ) : (
@@ -308,7 +308,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                               checked={selectedTags.has(tag)}
                               onChange={() => handleToggleTagSelection(tag)}
                               className="flex-shrink-0 w-4 h-4 rounded border-border-light dark:border-border-dark"
-                              aria-label={`Select ${tag} for merging`}
+                              aria-label={`选择 ${tag} 以进行合并`}
                             />
                           )}
                           <div
@@ -322,7 +322,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                             {tag}
                           </span>
                           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                            {count} {count === 1 ? 'note' : 'notes'}
+                            {count} 篇笔记
                           </span>
                         </div>
                         {!mergeMode && (
@@ -330,21 +330,21 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                             <button
                               onClick={() => handleOpenColorPicker(tag)}
                               className="p-1.5 hover:bg-surface-light dark:hover:bg-surface-dark rounded transition-colors"
-                              aria-label={`Set color for tag ${tag}`}
+                              aria-label={`为标签 ${tag} 设置颜色`}
                             >
                               <Palette className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary" />
                             </button>
                             <button
                               onClick={() => handleStartEdit(tag)}
                               className="p-1.5 hover:bg-surface-light dark:hover:bg-surface-dark rounded transition-colors"
-                              aria-label={`Rename tag ${tag}`}
+                              aria-label={`重命名标签 ${tag}`}
                             >
                               <Edit2 className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary" />
                             </button>
                             <button
                               onClick={() => handleConfirmDelete(tag)}
                               className="p-1.5 hover:bg-surface-light dark:hover:bg-surface-dark rounded transition-colors"
-                              aria-label={`Delete tag ${tag}`}
+                              aria-label={`删除标签 ${tag}`}
                             >
                               <Trash2 className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red" />
                             </button>
@@ -364,7 +364,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
               onClick={onClose}
               className="w-full px-4 py-2 text-sm font-medium rounded bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 transition-colors"
             >
-              Done
+              完成
             </button>
           </div>
         </div>
@@ -385,24 +385,24 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 id="delete-tag-title"
                 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2"
               >
-                Delete Tag?
+                删除标签？
               </h3>
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-                Are you sure you want to delete the tag <span className="font-medium text-text-light-primary dark:text-text-dark-primary">"{deletingTag}"</span>?
-                This will remove it from all notes.
+                确定要删除标签 <span className="font-medium text-text-light-primary dark:text-text-dark-primary">“{deletingTag}”</span> 吗？
+                这将从所有笔记中移除该标签。
               </p>
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={handleCancelDelete}
                   className="px-4 py-2 text-sm font-medium rounded border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 >
-                  Cancel
+                  取消
                 </button>
                 <button
                   onClick={handleDelete}
                   className="px-4 py-2 text-sm font-medium rounded bg-accent-red/20 text-accent-red hover:bg-accent-red/30 transition-colors"
                 >
-                  Delete
+                  删除
                 </button>
               </div>
             </div>
@@ -425,7 +425,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 id="color-picker-title"
                 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4"
               >
-                Set Tag Color
+                设置标签颜色
               </h3>
               <TagColorPicker
                 selectedColor={tagColors[colorPickerTag]}
@@ -437,7 +437,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                   onClick={handleCloseColorPicker}
                   className="px-4 py-2 text-sm font-medium rounded border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </div>
@@ -460,12 +460,12 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                 id="merge-tags-title"
                 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2"
               >
-                Merge Tags
+                合并标签
               </h3>
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Selected tags will be replaced with:
+                    所选标签将替换为：
                   </p>
                   <div className="flex flex-wrap gap-2 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">
                     {Array.from(selectedTags).map((tag) => (
@@ -481,7 +481,7 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                    Target Tag Name
+                    目标标签名称
                   </label>
                   <input
                     type="text"
@@ -491,12 +491,12 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                       if (e.key === 'Enter') handleConfirmMerge();
                       else if (e.key === 'Escape') handleCancelMerge();
                     }}
-                    placeholder="Enter target tag name"
+                    placeholder="输入目标标签名称"
                     className="w-full px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary"
                     autoFocus
                   />
                   <p className="mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    All notes with selected tags will be updated to use this tag
+                    所有包含所选标签的笔记都将更新为使用此标签
                   </p>
                 </div>
               </div>
@@ -506,14 +506,14 @@ export function TagManager({ isOpen, onClose }: TagManagerProps) {
                   onClick={handleCancelMerge}
                   className="px-4 py-2 text-sm font-medium rounded border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 >
-                  Cancel
+                  取消
                 </button>
                 <button
                   onClick={handleConfirmMerge}
                   disabled={!targetTagName.trim()}
                   className="px-4 py-2 text-sm font-medium rounded bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Merge Tags
+                  合并标签
                 </button>
               </div>
             </div>

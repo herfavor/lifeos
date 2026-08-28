@@ -59,7 +59,7 @@ export function FormWidget() {
 
   return (
     <BaseWidget
-      title="Forms"
+      title="表单"
       icon="📋"
     >
       <div className="h-full flex flex-col">
@@ -67,9 +67,9 @@ export function FormWidget() {
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
-              <FileText className="w-4 h-4 text-primary-light dark:text-primary-dark" />
+              <FileText className="w-4 h-4 text-accent-primary" />
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Total Forms
+                表单总数
               </span>
             </div>
             <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
@@ -79,9 +79,9 @@ export function FormWidget() {
 
           <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
-              <BarChart3 className="w-4 h-4 text-primary-light dark:text-primary-dark" />
+              <BarChart3 className="w-4 h-4 text-accent-primary" />
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Responses
+                回复数
               </span>
             </div>
             <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
@@ -93,7 +93,7 @@ export function FormWidget() {
             <div className="flex items-center gap-2 mb-1">
               <FileText className="w-4 h-4 text-accent-green" />
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Active
+                活跃
               </span>
             </div>
             <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
@@ -105,7 +105,7 @@ export function FormWidget() {
             <div className="flex items-center gap-2 mb-1">
               <Clock className="w-4 h-4 text-accent-blue" />
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Recent
+                最近
               </span>
             </div>
             <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
@@ -119,9 +119,9 @@ export function FormWidget() {
           {topForms.length === 0 ? (
             <WidgetEmptyState
               icon="📋"
-              message="No forms yet"
-              hint="Create surveys, quizzes, and feedback forms"
-              action={{ label: 'Create Form', onClick: handleCreateForm }}
+              message="暂无表单"
+              hint="创建调查问卷、测验和反馈表单"
+              action={{ label: '创建表单', onClick: handleCreateForm }}
             />
           ) : (
             <div className="space-y-2">
@@ -129,7 +129,7 @@ export function FormWidget() {
                 <button
                   key={form.id}
                   onClick={() => handleFormClick(form.id)}
-                  className="w-full text-left p-3 bg-surface-light dark:bg-surface-dark rounded-lg hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark transition-colors"
+                  className="w-full text-left p-3 bg-surface-light dark:bg-surface-dark rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -142,7 +142,7 @@ export function FormWidget() {
                         </div>
                       )}
                       <div className="flex items-center gap-3 mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                        <span>{form.fields.length} fields</span>
+                        <span>{form.fields.length} 个字段</span>
                         <span className="flex items-center gap-1">
                           <BarChart3 className="w-3 h-3" />
                           {form.responseCount}
@@ -150,7 +150,7 @@ export function FormWidget() {
                       </div>
                     </div>
                     {form.responseCount > 0 && (
-                      <div className="flex-shrink-0 px-2 py-1 bg-primary-light/10 dark:bg-primary-dark/10 rounded text-xs font-medium text-primary-light dark:text-primary-dark">
+                      <div className="flex-shrink-0 px-2 py-1 bg-accent-primary/10 rounded text-xs font-medium text-accent-primary">
                         {form.responseCount}
                       </div>
                     )}
@@ -162,9 +162,9 @@ export function FormWidget() {
               {forms.length > 5 && (
                 <button
                   onClick={handleViewAll}
-                  className="w-full mt-2 py-2 text-sm text-primary-light dark:text-primary-dark hover:underline"
+                  className="w-full mt-2 py-2 text-sm text-accent-primary hover:underline"
                 >
-                  View all {forms.length} forms →
+                  查看全部 {forms.length} 个表单 →
                 </button>
               )}
             </div>
@@ -176,10 +176,10 @@ export function FormWidget() {
           <div className="mt-4 pt-3 border-t border-border-light dark:border-border-dark">
             <button
               onClick={handleCreateForm}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-surface-light dark:bg-surface-dark rounded-lg hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark transition-colors text-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-surface-light dark:bg-surface-dark rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors text-sm"
             >
               <Plus className="w-4 h-4" />
-              New Form
+              新建表单
             </button>
           </div>
         )}

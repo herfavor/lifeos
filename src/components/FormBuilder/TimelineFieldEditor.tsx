@@ -40,13 +40,13 @@ export function TimelineFieldEditor({
     setStartDate(newStartDate);
 
     if (!newStartDate) {
-      setError('Start date is required');
+      setError('请填写开始日期');
       return;
     }
 
     // Validate against end date
     if (endDate && new Date(newStartDate) > new Date(endDate)) {
-      setError('Start date must be before or equal to end date');
+      setError('开始日期必须早于或等于结束日期');
       return;
     }
 
@@ -65,13 +65,13 @@ export function TimelineFieldEditor({
     setEndDate(newEndDate);
 
     if (!newEndDate) {
-      setError('End date is required');
+      setError('请填写结束日期');
       return;
     }
 
     // Validate against start date
     if (startDate && new Date(newEndDate) < new Date(startDate)) {
-      setError('End date must be after or equal to start date');
+      setError('结束日期必须晚于或等于开始日期');
       return;
     }
 
@@ -101,7 +101,7 @@ export function TimelineFieldEditor({
         {/* Start Date */}
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Start Date
+            开始日期
           </label>
           <div className="relative">
             <input
@@ -115,7 +115,7 @@ export function TimelineFieldEditor({
               } rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 ${
                 error ? 'focus:ring-status-error' : 'focus:ring-accent-blue'
               }`}
-              aria-label="Timeline start date"
+              aria-label="时间线开始日期"
               aria-invalid={error ? 'true' : 'false'}
             />
             <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary pointer-events-none" />
@@ -125,7 +125,7 @@ export function TimelineFieldEditor({
         {/* End Date */}
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            End Date
+            结束日期
           </label>
           <div className="relative">
             <input
@@ -140,7 +140,7 @@ export function TimelineFieldEditor({
               } rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 ${
                 error ? 'focus:ring-status-error' : 'focus:ring-accent-blue'
               }`}
-              aria-label="Timeline end date"
+              aria-label="时间线结束日期"
               aria-invalid={error ? 'true' : 'false'}
             />
             <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary pointer-events-none" />
@@ -151,7 +151,7 @@ export function TimelineFieldEditor({
       {/* Duration Display */}
       {duration !== null && !error && (
         <div className="mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Duration: {duration} {duration === 1 ? 'day' : 'days'}
+          时长：{duration} 天
         </div>
       )}
 
@@ -174,13 +174,13 @@ export function formatTimelineValue(value: TimelineValue | null): string {
   const start = new Date(value.startDate);
   const end = new Date(value.endDate);
 
-  const startStr = start.toLocaleDateString('en-US', {
+  const startStr = start.toLocaleDateString('zh-CN', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
 
-  const endStr = end.toLocaleDateString('en-US', {
+  const endStr = end.toLocaleDateString('zh-CN', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -190,7 +190,7 @@ export function formatTimelineValue(value: TimelineValue | null): string {
   const durationDays =
     Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
-  return `${startStr} - ${endStr} (${durationDays} ${durationDays === 1 ? 'day' : 'days'})`;
+  return `${startStr} - ${endStr}（${durationDays} 天）`;
 }
 
 /**
@@ -202,12 +202,12 @@ export function formatTimelineValueCompact(value: TimelineValue | null): string 
   const start = new Date(value.startDate);
   const end = new Date(value.endDate);
 
-  const startStr = start.toLocaleDateString('en-US', {
+  const startStr = start.toLocaleDateString('zh-CN', {
     month: 'numeric',
     day: 'numeric',
   });
 
-  const endStr = end.toLocaleDateString('en-US', {
+  const endStr = end.toLocaleDateString('zh-CN', {
     month: 'numeric',
     day: 'numeric',
   });

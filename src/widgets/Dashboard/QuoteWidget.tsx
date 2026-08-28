@@ -50,7 +50,7 @@ export const QuoteWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Daily Quote"
+      title="每日名言"
       icon="💭"
       loading={loading}
       error={error}

@@ -186,7 +186,7 @@ export async function categorizeLinks(
       success: false,
       suggestions: [],
       error:
-        'No AI provider configured. Please add an API key in Settings > AI Terminal.',
+        '未配置 AI 提供商。请在“设置 > AI 提供商”中添加 API 密钥。',
     };
   }
 
@@ -209,7 +209,7 @@ export async function categorizeLinks(
     return {
       success: false,
       suggestions: [],
-      error: error instanceof Error ? error.message : 'Failed to categorize links',
+      error: error instanceof Error ? error.message : '链接分类失败',
     };
   }
 }

@@ -77,7 +77,7 @@ function MermaidRenderer({ source }: { source: string }) {
       } catch (err) {
         if (cancelled) return;
         setError(
-          err instanceof Error ? err.message : 'Failed to render diagram'
+          err instanceof Error ? err.message : '图表渲染失败'
         );
         setSvg('');
       }
@@ -187,7 +187,7 @@ function MermaidBlockComponent({
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
         title="Remove diagram block"
       >
         ✕

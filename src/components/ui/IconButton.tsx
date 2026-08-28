@@ -26,9 +26,9 @@ const variantStyles: Record<IconButtonVariant, string> = {
   primary:
     'bg-accent-primary text-white dark:text-text-dark-primary hover:opacity-90',
   secondary:
-    'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark hover:text-text-light-primary dark:hover:text-text-dark-primary',
+    'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated hover:text-text-light-primary dark:hover:text-text-dark-primary',
   ghost:
-    'bg-transparent text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark hover:text-text-light-primary dark:hover:text-text-dark-primary',
+    'bg-transparent text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated hover:text-text-light-primary dark:hover:text-text-dark-primary',
   danger:
     'bg-transparent text-text-light-secondary dark:text-text-dark-secondary hover:bg-accent-red/10 hover:text-accent-red',
 };

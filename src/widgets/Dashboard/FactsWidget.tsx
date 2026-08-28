@@ -27,12 +27,12 @@ export const FactsWidget: React.FC = () => {
 
     try {
       const response = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
-      if (!response.ok) throw new Error('Failed to fetch fact');
+      if (!response.ok) throw new Error('获取冷知识失败');
 
       const data = await response.json();
       setFact(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load fact');
+      setError(err instanceof Error ? err.message : '加载冷知识失败');
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ export const FactsWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Random Facts"
+      title="随机冷知识"
       icon="🧠"
       loading={loading}
       error={error}
@@ -75,7 +75,7 @@ export const FactsWidget: React.FC = () => {
               rel="noopener noreferrer"
               className="text-sm text-accent-blue hover:underline"
             >
-              Source: {fact.source}
+              来源：{fact.source}
             </a>
           )}
         </div>

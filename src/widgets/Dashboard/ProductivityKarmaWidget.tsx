@@ -88,7 +88,7 @@ export function ProductivityKarmaWidget() {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Productivity Karma
+          生产力 Karma
         </h3>
         <div className="flex items-center gap-1.5">
           {/* Level badge */}
@@ -97,7 +97,7 @@ export function ProductivityKarmaWidget() {
             style={{ backgroundColor: `${scoreColor}20`, color: scoreColor }}
           >
             <Award className="w-3 h-3" />
-            Lv {level}
+            等级 {level}
           </span>
         </div>
       </div>
@@ -149,7 +149,7 @@ export function ProductivityKarmaWidget() {
               {streak}
             </span>
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              day streak
+              天连续
             </span>
           </div>
 
@@ -166,7 +166,7 @@ export function ProductivityKarmaWidget() {
               {trend.delta >= 0 ? '+' : ''}{trend.percentage}%
             </span>
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              vs last week
+              较上周
             </span>
           </div>
 
@@ -180,10 +180,10 @@ export function ProductivityKarmaWidget() {
       {/* Breakdown footer */}
       <div className="grid grid-cols-4 gap-1 mt-3 pt-2 border-t border-border-light dark:border-border-dark">
         {[
-          { label: 'Tasks', value: todayKarma.breakdown.tasks, weight: '35%' },
-          { label: 'Habits', value: todayKarma.breakdown.habits, weight: '35%' },
-          { label: 'Time', value: todayKarma.breakdown.timeTracked, weight: '20%' },
-          { label: 'Energy', value: todayKarma.breakdown.energy, weight: '10%' },
+          { label: '任务', value: todayKarma.breakdown.tasks, weight: '35%' },
+          { label: '习惯', value: todayKarma.breakdown.habits, weight: '35%' },
+          { label: '时间', value: todayKarma.breakdown.timeTracked, weight: '20%' },
+          { label: '精力', value: todayKarma.breakdown.energy, weight: '10%' },
         ].map((item) => (
           <div key={item.label} className="text-center">
             <div className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">

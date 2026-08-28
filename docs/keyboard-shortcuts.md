@@ -1,304 +1,75 @@
-# Keyboard Shortcuts
-
-NeumanOS supports extensive keyboard shortcuts across all modules. This guide lists every shortcut available, sourced directly from the in-app help.
-
-**Platform note:** On Mac, use Cmd instead of Ctrl for all shortcuts listed below.
-
----
-
-## Table of Contents
-
-- [Global Shortcuts](#global-shortcuts)
-- [Page Navigation (Ctrl+Number)](#page-navigation-ctrlnumber)
-- [Go To (G then key)](#go-to-g-then-key)
-- [Quick Create](#quick-create)
-- [Synapse (Command Palette)](#synapse-command-palette)
-- [Notes Editor](#notes-editor)
-- [Kanban Board](#kanban-board)
-- [Calendar](#calendar)
-- [Accessibility](#accessibility)
-- [Tips for Mastering Shortcuts](#tips-for-mastering-shortcuts)
-- [Quick Reference Card](#quick-reference-card)
-- [Related Guides](#related-guides)
-
----
-
-## Global Shortcuts
-
-These shortcuts work on any page in NeumanOS:
-
-| Shortcut | Action |
-|----------|--------|
-| **Ctrl+K** | Open Synapse (command palette) |
-| **F1** | Open help & support |
-| **Ctrl+/** | Open help |
-| **Ctrl+B** | Toggle sidebar |
-| **Ctrl+Shift+A** | Toggle AI Terminal |
-| **Ctrl+Shift+P** | Toggle project context |
-| **Esc** | Close modal / clear selection |
-
----
-
-## Page Navigation (Ctrl+Number)
-
-Jump directly to any page using Ctrl and a number key:
-
-| Shortcut | Page |
-|----------|------|
-| **Ctrl+1** | Dashboard |
-| **Ctrl+2** | Today |
-| **Ctrl+3** | Notes |
-| **Ctrl+4** | Tasks |
-| **Ctrl+5** | Schedule |
-| **Ctrl+6** | Create (Docs) |
-| **Ctrl+7** | Link Library |
-| **Ctrl+8** | Settings |
-
----
-
-## Go To (G then key)
-
-Press G followed by another key to navigate. These are two-key sequences, not simultaneous presses.
-
-| Shortcut | Destination |
-|----------|-------------|
-| **G then D** | Go to Dashboard |
-| **G then T** | Go to Tasks |
-| **G then N** | Go to Notes |
-| **G then H** | Go to Habits |
-| **G then C** | Go to Calendar |
-| **G then S** | Go to Settings |
-| **G then O** | Go to Today |
-| **G then L** | Go to Links |
-| **G then F** | Go to Focus |
-
----
-
-## Quick Create
-
-Shortcuts for creating new items from anywhere:
-
-| Shortcut | Action |
-|----------|--------|
-| **C** | Quick add task (single key, only when not in a text field) |
-| **Ctrl+N** | New note |
-| **Ctrl+T** | New task |
-| **Ctrl+E** | New event (go to calendar) |
-| **Ctrl+Shift+T** | Smart Templates |
-| **Ctrl+D** | Create daily note |
-
----
-
-## Synapse (Command Palette)
-
-Open Synapse with **Ctrl+K**, then use these prefixes to filter:
-
-| Prefix | Mode | Example |
-|--------|------|---------|
-| (none) | Search all | "project plan" |
-| **>** | Enter command mode | ">create note" |
-| **?** | Enter help mode | "?shortcuts" |
-| **/** | Enter navigation mode | "/tasks" |
-| **tag:name** | Filter by tag | "tag:work" |
-| **date:today** | Filter by date | "date:today" |
-
-### Synapse Navigation
-
-| Shortcut | Action |
-|----------|--------|
-| **Up/Down** | Navigate results |
-| **Enter** | Execute selected result |
-| **Esc** | Close Synapse |
-| **Tab** | Cycle through result categories |
-
----
-
-## Notes Editor
-
-### Editor Formatting
-
-| Shortcut | Action |
-|----------|--------|
-| **Ctrl+D** | Create daily note |
-| **Ctrl+Shift+E** | Export notes |
-| **Ctrl+B** | Bold text |
-| **Ctrl+I** | Italic text |
-| **Ctrl+U** | Underline text |
-| **/** | Open slash commands |
-| **[[** | Insert wiki link |
-
-### Slash Commands
-
-Type `/` in the editor to access:
-
-| Command | Result |
-|---------|--------|
-| `/heading` | H1, H2, H3 |
-| `/list` | Bullet or numbered list |
-| `/code` | Code block |
-| `/quote` | Blockquote |
-| `/table` | Insert table |
-
----
-
-## Kanban Board
-
-These shortcuts work when the Kanban board is focused (not when typing in an input field).
-
-### Navigation
-
-| Shortcut | Action |
-|----------|--------|
-| **J** | Move down to next task |
-| **K** | Move up to previous task |
-| **H** | Move left to previous column |
-| **L** | Move right to next column |
-
-### Actions
-
-| Shortcut | Action |
-|----------|--------|
-| **N** | Create new task in current column |
-| **E** | Edit selected task |
-| **D** | Delete selected task |
-
----
-
-## Calendar
-
-### View Navigation
-
-| Shortcut | Action |
-|----------|--------|
-| **T** | Jump to today |
-| **Left/Right** | Previous/Next period |
-| **M** | Month view |
-| **W** | Week view |
-| **D** | Day view |
-| **A** | Agenda view |
-
-### Event Actions
-
-| Shortcut | Action |
-|----------|--------|
-| **N** | New event on selected date |
-| **E** | Edit selected event |
-| **Delete** | Delete selected event |
-| **Enter** | Open event detail |
-| **Esc** | Close modal |
-
----
-
-## Accessibility
-
-### Keyboard-Only Navigation
-
-NeumanOS is fully navigable with keyboard only:
-- **Tab** to move between interactive elements
-- **Enter** to activate buttons/links
-- **Space** to toggle checkboxes
-- **Arrow keys** for dropdowns and lists
-- **Esc** to cancel/close
-
-### Screen Reader Support
-
-All shortcuts work with screen readers (NVDA, JAWS, VoiceOver). The interface uses ARIA labels, focus ring indicators, role attributes, and live region announcements.
-
----
-
-## Tips for Mastering Shortcuts
-
-### Start with These 5 Essentials
-
-1. **Ctrl+K** -- Open Synapse (most powerful shortcut)
-2. **Ctrl+N** -- Quick note creation
-3. **Ctrl+1 to Ctrl+8** -- Direct page navigation
-4. **Esc** -- Close anything
-5. **C** -- Quick add task from anywhere
-
-Master these first, then gradually add the G-key navigation and editor shortcuts.
-
-### Single-Key vs. Modified Shortcuts
-
-Single-key shortcuts (C, G, J, K, H, L, N, E, D) only work when you are **not** typing in an input field. If a shortcut isn't working, click outside any text input and try again.
-
-Modified shortcuts (Ctrl+K, Ctrl+N, etc.) work everywhere, including while typing.
-
-### Context Matters
-
-Many shortcuts are context-sensitive:
-- **J/K** navigate tasks in Kanban, notes in Notes page
-- **N** creates task in Kanban, note in Notes page, event in Calendar
-- **E** edits selected item (task, note, event)
-- **D** deletes in Kanban, switches to Day view in Calendar
-
-Same keys, different context, logical behavior.
-
-### Discoverability
-
-Press **Ctrl+/** or **F1** anywhere to see available shortcuts. Or open Synapse with **Ctrl+K** and type `?shortcuts`.
-
----
-
-## Quick Reference Card
-
-```
-GLOBAL
-  Ctrl+K           Open Synapse (command palette)
-  Ctrl+B           Toggle sidebar
-  Ctrl+Shift+A     Toggle AI Terminal
-  F1 / Ctrl+/      Help
-  Esc              Close modal
-
-PAGE NAVIGATION
-  Ctrl+1           Dashboard
-  Ctrl+2           Today
-  Ctrl+3           Notes
-  Ctrl+4           Tasks
-  Ctrl+5           Schedule
-  Ctrl+6           Create (Docs)
-  Ctrl+7           Link Library
-  Ctrl+8           Settings
-
-QUICK CREATE
-  C                Quick add task
-  Ctrl+N           New note
-  Ctrl+T           New task
-  Ctrl+E           New event
-  Ctrl+D           Daily note
-  Ctrl+Shift+T     Smart Templates
-
-GO TO
-  G then D/T/N/H/C/S/O/L/F
-  Dashboard/Tasks/Notes/Habits/Calendar/Settings/Today/Links/Focus
-
-NOTES EDITOR
-  Ctrl+B/I/U       Bold / Italic / Underline
-  /                Slash commands
-  [[               Wiki link
-
-KANBAN
-  J / K            Navigate tasks (down/up)
-  H / L            Switch columns (left/right)
-  N                New task
-  E                Edit task
-  D                Delete task
-
-CALENDAR
-  T                Today
-  Left/Right       Previous/Next
-  M / W / D / A    Month/Week/Day/Agenda view
-  N                New event
-```
-
-> **Tip:** On Mac, use Cmd instead of Ctrl for all shortcuts above.
-
----
-
-## Related Guides
-
-- **[Getting Started](./getting-started.md)** -- Basic concepts and first steps
-- **[Notes Editor](./notes-editor.md)** -- Note-specific shortcuts and slash commands
-- **[Task Management](./tasks-kanban.md)** -- Kanban keyboard navigation
-- **[Calendar & Events](./calendar-events.md)** -- Calendar view shortcuts
-- **[AI Terminal](./ai-terminal.md)** -- Terminal shortcuts
+# 键盘快捷键
+
+Mac 上的 `Mod` 对应 Cmd；Windows / Linux 对应 Ctrl。
+
+## 全局快捷键
+
+| 快捷键 | 作用 |
+| --- | --- |
+| Mod + K | 打开 Synapse 命令面板 |
+| F1 | 打开帮助 |
+| Mod + / | 打开帮助 |
+| Mod + B | 切换侧边栏 |
+| Mod + Shift + A | 前往 AI |
+| Mod + Shift + P | 打开 / 切换项目上下文 |
+| Mod + N | 新建笔记 |
+| Mod + T | 新建任务 |
+| Mod + E | 新建事件 |
+
+## 页面数字导航
+
+当前应用帮助中保留：
+
+| 快捷键 | 页面 |
+| --- | --- |
+| Ctrl/Cmd + 1 | 首页 |
+| Ctrl/Cmd + 2 | 今天 |
+| Ctrl/Cmd + 3 | 笔记 |
+| Ctrl/Cmd + 4 | 任务 |
+| Ctrl/Cmd + 5 | 日程 |
+| Ctrl/Cmd + 6 | 文档 |
+| Ctrl/Cmd + 7 | 收藏 |
+| Ctrl/Cmd + 8 | 设置 |
+
+## G 序列
+
+先按 `G` 再按：
+
+- `D` 首页
+- `T` 任务
+- `N` 笔记
+- `H` 习惯
+- `C` 日程
+- `S` 设置
+- `O` 今天
+- `L` 收藏
+- `F` 专注
+
+## 看板
+
+在输入框外：
+
+- `J / K`：上下任务
+- `H / L`：左右列
+- `N`：新建任务
+- `E`：编辑
+- `D`：删除 / 归档动作
+
+## 笔记编辑器
+
+- Mod + D：每日笔记
+- Mod + Shift + E：导出笔记
+- Mod + B / I / U：加粗 / 斜体 / 下划线
+- `/`：斜杠命令
+- `[[`：Wiki Link
+
+## 输入框保护
+
+单键快捷键在 input、textarea、select、contenteditable、Lexical / ProseMirror / Tiptap 编辑器内会被全局快捷键系统拦截，避免打字时误触。
+
+## 相关指南
+
+- [快速入门](./getting-started.md)
+- [任务与看板](./tasks-kanban.md)
+- [笔记](./notes-editor.md)
+- [AI 管理](./ai-management.md)

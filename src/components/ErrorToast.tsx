@@ -58,7 +58,7 @@ export const ErrorToastContainer: React.FC = () => {
     <div
       className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm"
       role="region"
-      aria-label="Notifications"
+      aria-label="通知"
       aria-live="polite"
     >
       {notifications.map((notification) => (
@@ -92,7 +92,7 @@ export const ErrorToastContainer: React.FC = () => {
             <button
               onClick={() => dismissNotification(notification.id)}
               className="flex-shrink-0 p-1 rounded-button hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue"
-              aria-label="Dismiss notification"
+              aria-label="关闭通知"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

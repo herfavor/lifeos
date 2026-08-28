@@ -31,7 +31,7 @@ function getNthDayOfWeekInMonth(monthStart: Date, dayOfWeek: number, n: number):
 
   // Verify still in same month
   if (targetDate.getMonth() !== monthStart.getMonth()) {
-    throw new Error(`No ${n}th occurrence of day ${dayOfWeek} in month ${monthStart.getMonth() + 1}`);
+    throw new Error(`第 ${n} 个星期 ${dayOfWeek} 在 ${monthStart.getMonth() + 1} 月中不存在`);
   }
 
   return targetDate;

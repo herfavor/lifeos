@@ -41,7 +41,7 @@ export function CustomFieldDisplay({
     switch (field.type) {
       case 'date':
         const date = new Date(value);
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('zh-CN', {
           month: 'short',
           day: 'numeric',
           year: variant === 'list' ? 'numeric' : undefined
@@ -120,7 +120,7 @@ export function CustomFieldDisplay({
           title={`${field.name}: ${value.join(', ')}`}
           aria-label={`${field.name}: ${value.join(', ')}`}
         >
-          {value.length === 1 ? value[0] : `${value.length} people`}
+          {value.length === 1 ? value[0] : `${value.length} 人`}
         </span>
       );
     }

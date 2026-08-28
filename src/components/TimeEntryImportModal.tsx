@@ -67,7 +67,7 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
       if (!result.success || !result.entries) {
         setImportResult({
           type: 'error',
-          message: result.error || 'Failed to parse CSV file',
+          message: result.error || 'CSV 文件解析失败',
         });
         return;
       }
@@ -144,7 +144,7 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
 
       setImportResult({
         type: 'success',
-        message: `Imported ${importedCount} time ${importedCount === 1 ? 'entry' : 'entries'} and created ${togglProjects.length} ${togglProjects.length === 1 ? 'project' : 'projects'} from Toggl`,
+        message: `已从 Toggl 导入 ${importedCount} 条时间记录，并创建了 ${togglProjects.length} 个项目`,
         count: importedCount,
       });
 
@@ -155,7 +155,7 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
     } catch (error) {
       setImportResult({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Import failed',
+        message: error instanceof Error ? error.message : '导入失败',
       });
     }
   };
@@ -174,7 +174,7 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Import Time Entries from Toggl" maxWidth="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="从 Toggl 导入时间记录" maxWidth="md">
       <div className="space-y-4">
         {/* File Upload */}
         {!importResult && (
@@ -185,10 +185,10 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
               </div>
               <div className="flex-1">
                 <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-                  Toggl Track CSV Import
+                  Toggl Track CSV 导入
                 </h3>
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  Import time entries and projects from your Toggl export
+                  从您的 Toggl 导出中导入时间记录和项目
                 </p>
               </div>
             </div>
@@ -200,10 +200,10 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
               <Upload className="w-10 h-10 text-text-light-secondary dark:text-text-dark-secondary group-hover:text-accent-primary transition-colors" />
               <div className="text-center">
                 <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                  {isProcessing ? 'Processing...' : 'Click to upload CSV file'}
+                  {isProcessing ? '处理中…' : '点击上传 CSV 文件'}
                 </p>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  CSV file from Toggl Track export
+                  来自 Toggl Track 导出的 CSV 文件
                 </p>
               </div>
               <input
@@ -218,15 +218,15 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
 
             <div className="bg-accent-blue/10 dark:bg-accent-blue/20 border border-accent-blue/20 dark:border-accent-blue/30 rounded-lg p-3">
               <p className="text-xs text-text-light-primary dark:text-text-dark-primary font-medium mb-1">
-                How to export from Toggl:
+                如何从 Toggl 导出：
               </p>
               <ol className="text-xs text-text-light-secondary dark:text-text-dark-secondary space-y-1 list-decimal list-inside">
-                <li>Go to Toggl Track: Settings → Data Export</li>
-                <li>Select date range and click "Download CSV"</li>
-                <li>Upload the CSV file here</li>
+                <li>前往 Toggl Track：设置 → 数据导出</li>
+                <li>选择日期范围并点击「下载 CSV」</li>
+                <li>在此上传 CSV 文件</li>
               </ol>
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-2">
-                Projects will be automatically created if they don't exist.
+                不存在的项目将自动创建。
               </p>
             </div>
           </div>
@@ -262,13 +262,13 @@ export const TimeEntryImportModal: React.FC<TimeEntryImportModalProps> = ({
               onClick={handleReset}
               className="flex-1 px-4 py-2 rounded-button bg-gradient-button-primary hover:shadow-glow-magenta text-white font-medium transition-all duration-standard ease-smooth"
             >
-              Try Again
+              重试
             </button>
             <button
               onClick={onClose}
               className="px-4 py-2 rounded-button border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth"
             >
-              Close
+              关闭
             </button>
           </div>
         )}

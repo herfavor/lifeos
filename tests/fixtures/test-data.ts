@@ -5,6 +5,7 @@ import type {
   TaskPriority,
   CalendarEvent,
   Subtask,
+  Note,
 } from '../../src/types';
 
 /**
@@ -24,9 +25,14 @@ export interface TaskFactoryOptions {
   status?: TaskStatus;
   priority?: TaskPriority;
   dueDate?: string; // YYYY-M-D format
+  startDate?: string;
   tags?: string[];
   subtasks?: Partial<Subtask>[];
   recurrence?: Task['recurrence'];
+  recurrenceId?: string;
+  customFields?: Task['customFields'];
+  dependencies?: Task['dependencies'];
+  projectIds?: string[];
 }
 
 /**
@@ -43,9 +49,10 @@ export function createMockTask(options: TaskFactoryOptions = {}): Task {
     status: options.status || 'todo',
     priority: options.priority || 'medium',
     created: now,
-    startDate: null,
+    startDate: options.startDate || null,
     dueDate: options.dueDate || null,
     tags: options.tags || [],
+    projectIds: [],
     order: taskIdCounter,
     subtasks: options.subtasks?.map((subtask, index) => ({
       id: subtask.id || `${id}-subtask-${index}`,
@@ -60,6 +67,10 @@ export function createMockTask(options: TaskFactoryOptions = {}): Task {
       completedAt: subtask.completedAt,
     })),
     recurrence: options.recurrence,
+    recurrenceId: options.recurrenceId,
+    customFields: options.customFields,
+    dependencies: options.dependencies,
+    projectIds: options.projectIds || [],
   };
 }
 
@@ -145,16 +156,7 @@ export interface NoteFactoryOptions {
   tags?: string[];
 }
 
-export interface MockNote {
-  id: string;
-  title: string;
-  content: string;
-  folderId: string | null;
-  tags: string[];
-  linkedNotes: string[];
-  created: string;
-  updated: string;
-}
+export type MockNote = Note;
 
 /**
  * Create a mock note
@@ -166,12 +168,32 @@ export function createMockNote(options: NoteFactoryOptions = {}): MockNote {
   return {
     id,
     title: options.title || `Test Note ${id}`,
-    content: options.content || `Content for note ${id}`,
+    content: JSON.stringify({
+      root: {
+        children: [{
+          children: [{ detail: 0, format: 0, mode: 'normal', style: '', text: options.content || `Content for note ${id}`, type: 'text', version: 1 }],
+          direction: null,
+          format: '',
+          indent: 0,
+          type: 'paragraph',
+          version: 1,
+        }],
+        direction: null,
+        format: '',
+        indent: 0,
+        type: 'root',
+        version: 1,
+      },
+    }),
+    contentText: options.content || `Content for note ${id}`,
     folderId: options.folderId || null,
     tags: options.tags || [],
     linkedNotes: [],
-    created: now,
-    updated: now,
+    isPinned: false,
+    isArchived: false,
+    isFavorite: false,
+    createdAt: new Date(now),
+    updatedAt: new Date(now),
   };
 }
 
@@ -184,9 +206,9 @@ export function createNoteWithLinks(
 ): MockNote {
   const note = createMockNote(options);
   note.linkedNotes = linkedNoteIds;
-  note.content = linkedNoteIds
+  note.contentText = linkedNoteIds
     .map((id) => `[[${id}]]`)
-    .join(' ') + ` ${note.content}`;
+    .join(' ') + ` ${note.contentText}`;
   return note;
 }
 
@@ -244,23 +266,20 @@ export interface AutomationRuleFactoryOptions {
   trigger?: string;
   condition?: string;
   action?: string;
+  conditions?: Array<{ field: string; operator: string; value: unknown }>;
+  actionConfig?: Record<string, unknown>;
   enabled?: boolean;
 }
 
 export interface MockAutomationRule {
   id: string;
   name: string;
-  trigger: {
-    event: string;
-    entityType: string;
-  };
-  condition: string;
-  action: {
-    type: string;
-    params: Record<string, unknown>;
-  };
+  trigger: { type: string };
+  conditions: Array<{ field: string; operator: string; value: unknown }>;
+  actions: Array<{ type: string; config: Record<string, unknown> }>;
   enabled: boolean;
-  createdAt: string;
+  created: string;
+  runCount: number;
 }
 
 /**
@@ -272,23 +291,29 @@ export function createMockAutomationRule(
   const id = `test-rule-${ruleIdCounter++}`;
   const now = new Date().toISOString();
 
+  const legacyAction = options.action || 'add_tag';
+  const actionType = legacyAction === 'updateTask'
+    ? options.actionConfig?.status ? 'set_status' : 'add_tag'
+    : legacyAction === 'createTask'
+      ? 'duplicate'
+      : legacyAction === 'sendNotification'
+        ? 'notify'
+        : legacyAction;
+  const actionConfig = actionType === 'add_tag'
+    ? { tag: Array.isArray(options.actionConfig?.tags) ? options.actionConfig?.tags[0] : 'automated' }
+    : actionType === 'notify'
+      ? { message: options.actionConfig?.message || '自动化测试通知' }
+      : { ...(options.actionConfig || {}) };
+
   return {
     id,
     name: options.name || `Test Rule ${id}`,
-    trigger: {
-      event: options.trigger || 'task.completed',
-      entityType: 'task',
-    },
-    condition: options.condition || 'true',
-    action: {
-      type: options.action || 'createTask',
-      params: {
-        title: 'Auto-created task',
-        status: 'todo',
-      },
-    },
+    trigger: { type: options.trigger || 'task.completed' },
+    conditions: options.conditions || [],
+    actions: [{ type: actionType, config: actionConfig }],
     enabled: options.enabled ?? true,
-    createdAt: now,
+    created: now,
+    runCount: 0,
   };
 }
 
@@ -300,15 +325,36 @@ export function createMockAutomationRule(
 export async function clearAllStores(page: Page): Promise<void> {
   await page.evaluate(async () => {
     const databases = await indexedDB.databases();
-    for (const db of databases) {
-      if (db.name) {
-        indexedDB.deleteDatabase(db.name);
+    await Promise.all(databases.map((database) => new Promise<void>((resolve, reject) => {
+      if (!database.name) {
+        resolve();
+        return;
       }
-    }
+      const request = indexedDB.open(database.name);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const connection = request.result;
+        const storeNames = Array.from(connection.objectStoreNames);
+        if (storeNames.length === 0) {
+          connection.close();
+          resolve();
+          return;
+        }
+        const transaction = connection.transaction(storeNames, 'readwrite');
+        storeNames.forEach((storeName) => transaction.objectStore(storeName).clear());
+        transaction.oncomplete = () => {
+          connection.close();
+          resolve();
+        };
+        transaction.onerror = () => {
+          connection.close();
+          reject(transaction.error);
+        };
+      };
+    })));
+    localStorage.clear();
+    sessionStorage.clear();
   });
-
-  // Wait for deletion to complete
-  await page.waitForTimeout(100);
 }
 
 /**
@@ -443,7 +489,7 @@ export function resetTestCounters(): void {
 // ==================== DATE HELPERS ====================
 
 /**
- * Format date to YYYY-M-D (NeumanOS's canonical format)
+ * Format date to YYYY-M-D (the app's canonical format)
  */
 export function formatDateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;

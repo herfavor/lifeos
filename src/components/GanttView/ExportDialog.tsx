@@ -38,7 +38,7 @@ export function ExportDialog({
 
   const handleExport = async () => {
     if (!timelineElement) {
-      setError('Timeline element not found. Please try again.');
+      setError('未找到时间线元素，请重试。');
       return;
     }
 
@@ -73,7 +73,7 @@ export function ExportDialog({
         onClose();
       }, 500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Export failed. Please try again.');
+      setError(err instanceof Error ? err.message : '导出失败，请重试。');
     } finally {
       setIsExporting(false);
     }
@@ -85,12 +85,12 @@ export function ExportDialog({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Export Timeline
+            导出时间线
           </h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover rounded transition-colors"
-            aria-label="Close dialog"
+            className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
+            aria-label="关闭对话框"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -101,7 +101,7 @@ export function ExportDialog({
           {/* Format Selection */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Export Format
+              导出格式
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -147,7 +147,7 @@ export function ExportDialog({
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                  Orientation
+                  方向
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -158,7 +158,7 @@ export function ExportDialog({
                         : 'border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:border-accent-primary/50'
                     }`}
                   >
-                    Portrait
+                    纵向
                   </button>
                   <button
                     onClick={() => setOrientation('landscape')}
@@ -168,7 +168,7 @@ export function ExportDialog({
                         : 'border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:border-accent-primary/50'
                     }`}
                   >
-                    Landscape
+                    横向
                   </button>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export function ExportDialog({
                   className="w-4 h-4 rounded border-border-light dark:border-border-dark accent-accent-primary"
                 />
                 <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                  Include task summary page
+                  包含任务摘要页
                 </span>
               </label>
             </div>
@@ -198,7 +198,7 @@ export function ExportDialog({
                   className="w-4 h-4 rounded border-border-light dark:border-border-dark accent-accent-primary"
                 />
                 <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                  Include subtasks (indented)
+                  包含子任务（缩进显示）
                 </span>
               </label>
             </div>
@@ -212,14 +212,14 @@ export function ExportDialog({
           )}
 
           {/* Format Description */}
-          <div className="p-3 bg-surface-light-hover dark:bg-surface-dark-hover rounded-lg">
+          <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
               {selectedFormat === 'png' &&
-                'Export as high-resolution image (2x DPI) of the current timeline view.'}
+                '将当前时间线视图导出为高清图片（2 倍 DPI）。'}
               {selectedFormat === 'pdf' &&
-                'Export as multi-page PDF document with project metadata and optional task summary.'}
+                '导出为包含项目元数据及可选任务摘要的多页 PDF 文档。'}
               {selectedFormat === 'excel' &&
-                'Export task data as Excel spreadsheet with all fields. Can be imported into MS Project.'}
+                '将任务数据（含所有字段）导出为 Excel 电子表格，可导入 MS Project。'}
             </p>
           </div>
         </div>
@@ -229,24 +229,24 @@ export function ExportDialog({
           <button
             onClick={onClose}
             disabled={isExporting}
-            className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors disabled:opacity-50"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-accent-primary text-white dark:text-dark-background rounded-lg hover:bg-accent-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:bg-accent-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isExporting ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Exporting...
+                正在导出…
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                Export {selectedFormat.toUpperCase()}
+                导出 {selectedFormat.toUpperCase()}
               </>
             )}
           </button>

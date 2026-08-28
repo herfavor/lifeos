@@ -112,7 +112,7 @@ const EventEmbedComponent = React.memo(function EventEmbedComponent({
         const targetDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
         useCalendarStore.getState().setCurrentDate(targetDate);
       }
-      navigate('/calendar');
+      navigate('/schedule');
     },
     [navigate, dateKey]
   );

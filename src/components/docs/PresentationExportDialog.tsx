@@ -38,17 +38,17 @@ export function PresentationExportDialog({
         await exportToPDF(slides, title, (current, total) => {
           setProgress({ current, total });
         });
-        toast.success('PDF exported successfully');
+        toast.success('PDF 导出成功');
       } else {
         await exportToPPTX(slides, title, theme, (current, total) => {
           setProgress({ current, total });
         });
-        toast.success('PPTX exported successfully');
+        toast.success('PPTX 导出成功');
       }
       onClose();
     } catch (error) {
       console.error('Export failed:', error);
-      toast.error(`Failed to export ${format.toUpperCase()}`);
+      toast.error(`导出 ${format.toUpperCase()} 失败`);
     } finally {
       setIsExporting(false);
     }
@@ -60,7 +60,7 @@ export function PresentationExportDialog({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Export Presentation
+            导出演示文稿
           </h2>
           <button
             onClick={onClose}
@@ -74,7 +74,7 @@ export function PresentationExportDialog({
         {/* Content */}
         <div className="p-4 space-y-4">
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Choose a format to export your presentation:
+            选择格式以导出您的演示文稿：
           </p>
 
           {/* Format selection */}
@@ -93,7 +93,7 @@ export function PresentationExportDialog({
                 PDF
               </span>
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Best for viewing
+                适合查看
               </span>
             </button>
 
@@ -111,7 +111,7 @@ export function PresentationExportDialog({
                 PPTX
               </span>
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Editable in PowerPoint
+                可在 PowerPoint 中编辑
               </span>
             </button>
           </div>
@@ -121,10 +121,10 @@ export function PresentationExportDialog({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                  Exporting...
+                  正在导出…
                 </span>
                 <span className="text-text-light-tertiary dark:text-text-dark-tertiary">
-                  {progress.current} / {progress.total} slides
+                  {progress.current} / {progress.total} 张幻灯片
                 </span>
               </div>
               <div className="w-full h-2 bg-surface-light-alt dark:bg-surface-dark rounded-full overflow-hidden">
@@ -140,8 +140,8 @@ export function PresentationExportDialog({
           <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
             <p>
               {format === 'pdf'
-                ? 'PDF files preserve the visual layout but cannot be edited.'
-                : 'PPTX files can be opened and edited in Microsoft PowerPoint or compatible software.'}
+                ? 'PDF 文件保留视觉布局，但无法编辑。'
+                : 'PPTX 文件可在 Microsoft PowerPoint 或兼容软件中打开和编辑。'}
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export function PresentationExportDialog({
             disabled={isExporting}
             className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary disabled:opacity-50"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleExport}
@@ -163,11 +163,11 @@ export function PresentationExportDialog({
             {isExporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Exporting...
+                正在导出…
               </>
             ) : (
               <>
-                Export {format.toUpperCase()}
+                导出 {format.toUpperCase()}
               </>
             )}
           </button>

@@ -86,7 +86,7 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
         <div className="flex items-center gap-2">
           <ArrowRight className="w-4 h-4 text-accent-blue" />
           <span className="font-semibold text-text-light-primary dark:text-text-dark-primary text-sm">
-            Plan Tomorrow
+            规划明天
           </span>
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
             {format(tomorrow, 'EEE, MMM d')}
@@ -95,7 +95,7 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
         <div className="flex items-center gap-2">
           {tomorrowTasks.length > 0 && (
             <span className="text-xs bg-accent-blue/10 text-accent-blue px-2 py-0.5 rounded">
-              {tomorrowTasks.length} tasks
+              {tomorrowTasks.length} 个任务
             </span>
           )}
           {isExpanded ? (
@@ -113,7 +113,7 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
             <div>
               <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1.5 flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                Events
+                日程
               </div>
               <div className="space-y-1">
                 {tomorrowEvents.map((event) => (
@@ -138,11 +138,11 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
           {/* Tomorrow's tasks */}
           <div>
             <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1.5">
-              Planned Tasks
+              已计划任务
             </div>
             {tomorrowTasks.length === 0 ? (
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary py-2">
-                No tasks planned yet. Add from your backlog below.
+                还没有计划任务。从下方 backlog 中添加。
               </p>
             ) : (
               <div className="space-y-1">
@@ -165,10 +165,10 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
                     </span>
                     <button
                       onClick={() => handleRemoveFromTomorrow(task.id)}
-                      className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 hover:text-accent-red transition-all"
-                      title="Remove from tomorrow"
+                      className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 hover:text-accent-red transition-all"
+                      title="从明天移除"
                     >
-                      Remove
+                      移除
                     </button>
                   </div>
                 ))}
@@ -183,7 +183,7 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
               className="flex items-center gap-1.5 text-xs text-accent-primary hover:text-accent-primary-hover transition-colors"
             >
               <Plus className="w-3 h-3" />
-              Add from backlog
+              从 backlog 添加
               {showBacklog ? (
                 <ChevronUp className="w-3 h-3" />
               ) : (
@@ -195,7 +195,7 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
               <div className="mt-2 max-h-48 overflow-y-auto space-y-1 border-t border-border-light dark:border-border-dark pt-2">
                 {backlogTasks.length === 0 ? (
                   <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary py-1">
-                    No backlog tasks available
+                    没有可用的 backlog 任务
                   </p>
                 ) : (
                   backlogTasks.map((task) => (
@@ -220,9 +220,9 @@ export const TomorrowPlanning: React.FC<TomorrowPlanningProps> = ({ today }) => 
                       )}
                       <button
                         onClick={() => handleMoveTomorrow(task.id)}
-                        className="flex-shrink-0 text-xs text-accent-primary opacity-0 group-hover:opacity-100 hover:text-accent-primary-hover transition-all px-1.5 py-0.5 rounded bg-accent-primary/10"
+                        className="flex-shrink-0 text-xs text-accent-primary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 hover:text-accent-primary-hover transition-all px-1.5 py-0.5 rounded bg-accent-primary/10"
                       >
-                        Add
+                        添加
                       </button>
                     </div>
                   ))

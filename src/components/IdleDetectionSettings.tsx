@@ -24,11 +24,11 @@ export function IdleDetectionSettings() {
   };
 
   const THRESHOLD_OPTIONS = [
-    { value: 3, label: '3 minutes' },
-    { value: 5, label: '5 minutes' },
-    { value: 10, label: '10 minutes' },
-    { value: 15, label: '15 minutes' },
-    { value: 30, label: '30 minutes' },
+    { value: 3, label: '3 分钟' },
+    { value: 5, label: '5 分钟' },
+    { value: 10, label: '10 分钟' },
+    { value: 15, label: '15 分钟' },
+    { value: 30, label: '30 分钟' },
   ];
 
   return (
@@ -38,10 +38,10 @@ export function IdleDetectionSettings() {
         <Eye className="w-6 h-6 text-accent-primary" />
         <div>
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Idle Detection
+            空闲检测
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Detect when you step away and handle idle time in running timers
+            检测您离开电脑的时间，并处理运行中计时器的空闲时间
           </p>
         </div>
       </div>
@@ -51,9 +51,8 @@ export function IdleDetectionSettings() {
         <Info className="w-5 h-5 text-accent-blue flex-shrink-0 mt-0.5" />
         <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
           <p>
-            When enabled and a timer is running, NeumanOS will track mouse and
-            keyboard activity. After the configured idle period, you will see a
-            prompt asking whether to keep or discard the idle time.
+            启用后，当计时器运行时，LifeOS 会跟踪鼠标和键盘活动。
+            超过设定的空闲时长后，您将看到提示，询问是保留还是丢弃空闲时间。
           </p>
         </div>
       </div>
@@ -62,10 +61,10 @@ export function IdleDetectionSettings() {
       <div className="flex items-center justify-between p-4 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg border border-border-light dark:border-border-dark">
         <div>
           <p className="font-medium text-text-light-primary dark:text-text-dark-primary">
-            Enable Idle Detection
+            启用空闲检测
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Monitor activity when a timer is running
+            计时器运行时监控活动
           </p>
         </div>
         <button
@@ -73,7 +72,7 @@ export function IdleDetectionSettings() {
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
             settings.enabled
               ? 'bg-accent-primary'
-              : 'bg-surface-light-tertiary dark:bg-surface-dark-tertiary'
+              : 'bg-surface-light-elevated dark:bg-surface-dark-elevated'
           }`}
         >
           <span
@@ -89,11 +88,11 @@ export function IdleDetectionSettings() {
         <div className="flex items-center gap-2 mb-3">
           <Clock className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           <p className="font-medium text-text-light-primary dark:text-text-dark-primary">
-            Idle Threshold
+            空闲阈值
           </p>
         </div>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          How long without activity before showing the idle prompt
+          多久无活动后显示空闲提示
         </p>
         <div className="space-y-2">
           {THRESHOLD_OPTIONS.map((option) => (
@@ -132,12 +131,10 @@ export function IdleDetectionSettings() {
       {settings.enabled && (
         <div className="p-4 bg-accent-green/10 border border-accent-green/20 rounded-lg">
           <p className="text-sm font-medium text-accent-green mb-1">
-            Idle detection is active
+            空闲检测已启用
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            When a timer is running and no activity is detected for{' '}
-            {settings.thresholdMinutes} minutes, you will be prompted to handle
-            the idle time.
+            当计时器运行且 {settings.thresholdMinutes} 分钟内未检测到活动时，系统将提示您处理空闲时间。
           </p>
         </div>
       )}

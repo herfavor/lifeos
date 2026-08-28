@@ -24,40 +24,40 @@ type TransitionType = 'none' | 'fade' | 'slide' | 'zoom' | 'flip';
 type TransitionDirection = 'left' | 'right' | 'up' | 'down';
 
 const ANIMATION_EFFECTS: { value: AnimationEffect; label: string }[] = [
-  { value: 'fade', label: 'Fade' },
-  { value: 'slide', label: 'Slide' },
-  { value: 'zoom', label: 'Zoom' },
-  { value: 'bounce', label: 'Bounce' },
+  { value: 'fade', label: '淡入淡出' },
+  { value: 'slide', label: '滑入' },
+  { value: 'zoom', label: '缩放' },
+  { value: 'bounce', label: '弹跳' },
 ];
 
 const ANIMATION_DIRECTIONS: { value: AnimationDirection; label: string }[] = [
-  { value: 'in', label: 'In' },
-  { value: 'out', label: 'Out' },
-  { value: 'left', label: 'From Left' },
-  { value: 'right', label: 'From Right' },
-  { value: 'up', label: 'From Top' },
-  { value: 'down', label: 'From Bottom' },
+  { value: 'in', label: '进入' },
+  { value: 'out', label: '退出' },
+  { value: 'left', label: '从左' },
+  { value: 'right', label: '从右' },
+  { value: 'up', label: '从上' },
+  { value: 'down', label: '从下' },
 ];
 
 const ANIMATION_TRIGGERS: { value: AnimationTrigger; label: string }[] = [
-  { value: 'on-click', label: 'On Click' },
-  { value: 'with-previous', label: 'With Previous' },
-  { value: 'after-previous', label: 'After Previous' },
+  { value: 'on-click', label: '点击时' },
+  { value: 'with-previous', label: '与上一个同时' },
+  { value: 'after-previous', label: '在上一个之后' },
 ];
 
 const TRANSITION_TYPES: { value: TransitionType; label: string }[] = [
-  { value: 'none', label: 'None' },
-  { value: 'fade', label: 'Fade' },
-  { value: 'slide', label: 'Slide' },
-  { value: 'zoom', label: 'Zoom' },
-  { value: 'flip', label: 'Flip' },
+  { value: 'none', label: '无' },
+  { value: 'fade', label: '淡入淡出' },
+  { value: 'slide', label: '滑动' },
+  { value: 'zoom', label: '缩放' },
+  { value: 'flip', label: '翻转' },
 ];
 
 const TRANSITION_DIRECTIONS: { value: TransitionDirection; label: string }[] = [
-  { value: 'left', label: 'Left' },
-  { value: 'right', label: 'Right' },
-  { value: 'up', label: 'Up' },
-  { value: 'down', label: 'Down' },
+  { value: 'left', label: '左' },
+  { value: 'right', label: '右' },
+  { value: 'up', label: '上' },
+  { value: 'down', label: '下' },
 ];
 
 export function PresentationAnimationPanel({
@@ -119,7 +119,7 @@ export function PresentationAnimationPanel({
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark">
         <h3 className="font-medium text-text-light-primary dark:text-text-dark-primary">
-          Animations
+          动画
         </h3>
         <button
           onClick={onClose}
@@ -141,7 +141,7 @@ export function PresentationAnimationPanel({
         >
           <div className="flex items-center justify-center gap-1">
             <ArrowRight className="w-3 h-3" />
-            Transition
+            过渡
           </div>
         </button>
         <button
@@ -155,7 +155,7 @@ export function PresentationAnimationPanel({
         >
           <div className="flex items-center justify-center gap-1">
             <Sparkles className="w-3 h-3" />
-            Element
+            元素
           </div>
         </button>
       </div>
@@ -167,7 +167,7 @@ export function PresentationAnimationPanel({
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                Transition Type
+                过渡类型
               </label>
               <div className="grid grid-cols-2 gap-1">
                 {TRANSITION_TYPES.map((t) => (
@@ -192,7 +192,7 @@ export function PresentationAnimationPanel({
                 {(slideTransition.type === 'slide' || slideTransition.type === 'flip') && (
                   <div>
                     <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                      Direction
+                      方向
                     </label>
                     <div className="grid grid-cols-2 gap-1">
                       {TRANSITION_DIRECTIONS.map((d) => (
@@ -215,7 +215,7 @@ export function PresentationAnimationPanel({
                 {/* Duration */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Duration: {slideTransition.duration}ms
+                    时长：{slideTransition.duration}ms
                   </label>
                   <input
                     type="range"
@@ -236,7 +236,7 @@ export function PresentationAnimationPanel({
               className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
             >
               <Play className="w-4 h-4" />
-              Preview Transition
+              预览过渡
             </button>
           </div>
         ) : (
@@ -244,12 +244,12 @@ export function PresentationAnimationPanel({
           <div className="space-y-4">
             {!element ? (
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center py-4">
-                Select an element to add animations
+                选择一个元素以添加动画
               </p>
             ) : !animation ? (
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                  Add Animation
+                  添加动画
                 </label>
                 <div className="grid grid-cols-2 gap-1">
                   {ANIMATION_EFFECTS.map((effect) => (
@@ -268,20 +268,20 @@ export function PresentationAnimationPanel({
                 {/* Current animation */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                    {ANIMATION_EFFECTS.find((e) => e.value === animation.effect)?.label} Animation
+                    {ANIMATION_EFFECTS.find((e) => e.value === animation.effect)?.label} 动画
                   </span>
                   <button
                     onClick={handleRemoveAnimation}
                     className="text-xs text-status-error hover:text-status-error/80"
                   >
-                    Remove
+                    移除
                   </button>
                 </div>
 
                 {/* Effect */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Effect
+                    效果
                   </label>
                   <div className="grid grid-cols-2 gap-1">
                     {ANIMATION_EFFECTS.map((effect) => (
@@ -303,7 +303,7 @@ export function PresentationAnimationPanel({
                 {/* Direction */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Direction
+                    方向
                   </label>
                   <div className="grid grid-cols-3 gap-1">
                     {ANIMATION_DIRECTIONS.map((dir) => (
@@ -325,7 +325,7 @@ export function PresentationAnimationPanel({
                 {/* Trigger */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Trigger
+                    触发方式
                   </label>
                   <select
                     value={animation.trigger}
@@ -343,7 +343,7 @@ export function PresentationAnimationPanel({
                 {/* Duration */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Duration: {animation.duration}ms
+                    时长：{animation.duration}ms
                   </label>
                   <input
                     type="range"
@@ -359,7 +359,7 @@ export function PresentationAnimationPanel({
                 {/* Delay */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    Delay: {animation.delay ?? 0}ms
+                    延迟：{animation.delay ?? 0}ms
                   </label>
                   <input
                     type="range"
@@ -378,7 +378,7 @@ export function PresentationAnimationPanel({
                   className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
                 >
                   <Play className="w-4 h-4" />
-                  Preview Animation
+                  预览动画
                 </button>
               </>
             )}

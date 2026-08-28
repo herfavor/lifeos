@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Calendar, Tag } from 'lucide-react';
 import type { NotePreview } from '../types/notes';
 import { formatDistanceToNow } from 'date-fns';
+import { zhCN } from 'date-fns/locale';
 
 interface NotePreviewPopoverProps {
   preview: NotePreview | null;
@@ -86,7 +87,7 @@ export function NotePreviewPopover({
         <div className="p-4 flex items-center justify-center">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
           <span className="ml-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Loading preview...
+            正在加载预览…
           </span>
         </div>
       ) : preview ? (
@@ -128,7 +129,7 @@ export function NotePreviewPopover({
           <div className="flex items-center gap-1.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
             <Calendar className="w-3.5 h-3.5" />
             <span>
-              Updated {formatDistanceToNow(new Date(preview.updatedAt), { addSuffix: true })}
+              更新于 {formatDistanceToNow(new Date(preview.updatedAt), { addSuffix: true, locale: zhCN })}
             </span>
           </div>
         </div>

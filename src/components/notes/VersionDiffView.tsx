@@ -106,7 +106,7 @@ export const VersionDiffView: React.FC<VersionDiffViewProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border-b border-border-light dark:border-border-dark">
         <div className="flex items-center gap-3 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          <span>Comparing versions</span>
+          <span>比较版本</span>
           <span className="text-green-500">+{stats.added}</span>
           <span className="text-red-500">-{stats.removed}</span>
         </div>

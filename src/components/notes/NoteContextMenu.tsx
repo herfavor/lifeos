@@ -21,6 +21,7 @@ import {
   FileDown,
   Pin,
   Star,
+  Archive,
   Trash2,
   Sparkles,
 } from 'lucide-react';
@@ -38,6 +39,7 @@ export interface NoteContextMenuProps {
   onTogglePin: (noteId: string) => void;
   onToggleFavorite: (noteId: string) => void;
   onDelete: (noteId: string) => void;
+  onArchive: (noteId: string) => void;
   onSaveAsTemplate?: (note: Note) => void;
 }
 
@@ -53,6 +55,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
   onTogglePin,
   onToggleFavorite,
   onDelete,
+  onArchive,
   onSaveAsTemplate,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -104,7 +107,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
 
   const menuItems = [
     {
-      label: 'Move to Folder...',
+      label: '移动到文件夹…',
       icon: FolderInput,
       onClick: () => {
         onMoveTo(note.id);
@@ -112,7 +115,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
       },
     },
     {
-      label: 'Duplicate',
+      label: '创建副本',
       icon: Copy,
       onClick: () => {
         onDuplicate(note.id);
@@ -121,7 +124,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
     },
     { divider: true },
     {
-      label: 'Export to Markdown',
+      label: '导出为 Markdown',
       icon: Download,
       onClick: () => {
         onExportMarkdown(note);
@@ -129,7 +132,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
       },
     },
     {
-      label: 'Export to PDF',
+      label: '导出为 PDF',
       icon: FileDown,
       onClick: () => {
         onExportPDF(note);
@@ -138,7 +141,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
     },
     { divider: true },
     {
-      label: note.isPinned ? 'Unpin' : 'Pin',
+      label: note.isPinned ? '取消置顶' : '置顶',
       icon: Pin,
       onClick: () => {
         onTogglePin(note.id);
@@ -147,7 +150,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
       active: note.isPinned,
     },
     {
-      label: note.isFavorite ? 'Unfavorite' : 'Favorite',
+      label: note.isFavorite ? '取消收藏' : '收藏',
       icon: Star,
       onClick: () => {
         onToggleFavorite(note.id);
@@ -159,7 +162,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
       ? [
           { divider: true } as const,
           {
-            label: 'Save as Template',
+            label: '另存为模板',
             icon: Sparkles,
             onClick: () => {
               onSaveAsTemplate(note);
@@ -170,7 +173,15 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
       : []),
     { divider: true },
     {
-      label: 'Delete',
+      label: note.isArchived ? '取消归档' : '归档',
+      icon: Archive,
+      onClick: () => {
+        onArchive(note.id);
+        onClose();
+      },
+    },
+    {
+      label: '删除',
       icon: Trash2,
       onClick: () => {
         onDelete(note.id);
@@ -189,7 +200,7 @@ export const NoteContextMenu: React.FC<NoteContextMenuProps> = ({
         top: adjustedPosition.y,
       }}
       role="menu"
-      aria-label="Note context menu"
+      aria-label="笔记右键菜单"
     >
       {menuItems.map((item, index) => {
         if ('divider' in item && item.divider) {

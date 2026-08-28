@@ -40,7 +40,7 @@ export const DictionaryWidget: React.FC = () => {
       const data = await response.json();
       setDefinition(data[0]);
     } catch (err) {
-      setError('Word not found. Try another.');
+      setError('未找到该单词，请尝试其他单词。');
     } finally {
       setLoading(false);
     }
@@ -52,21 +52,21 @@ export const DictionaryWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Dictionary" icon="📖" loading={loading} error={error}>
+    <BaseWidget title="词典" icon="📖" loading={loading} error={error}>
       <div className="space-y-3">
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
             value={word}
             onChange={(e) => setWord(e.target.value)}
-            placeholder="Enter a word..."
+            placeholder="输入单词…"
             className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
           />
           <button
             type="submit"
             className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
           >
-            Search
+            搜索
           </button>
         </form>
 
@@ -100,7 +100,7 @@ export const DictionaryWidget: React.FC = () => {
                     )}
                     {def.synonyms && def.synonyms.length > 0 && (
                       <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                        Synonyms: {def.synonyms.slice(0, 3).join(', ')}
+                        同义词：{def.synonyms.slice(0, 3).join(', ')}
                       </p>
                     )}
                   </div>
@@ -112,7 +112,7 @@ export const DictionaryWidget: React.FC = () => {
 
         {!definition && !loading && !error && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Enter a word to see its definition
+            输入单词查看释义
           </p>
         )}
       </div>

@@ -23,7 +23,7 @@ interface AccentPreset {
 const ACCENT_PRESETS: AccentPreset[] = [
   {
     id: 'default-blue',
-    name: 'Default Blue',
+    name: '默认蓝',
     primary: '#3b82f6',
     primaryHover: '#2563eb',
     secondary: '#8b5cf6',
@@ -31,7 +31,7 @@ const ACCENT_PRESETS: AccentPreset[] = [
   },
   {
     id: 'forest-green',
-    name: 'Forest Green',
+    name: '森林绿',
     primary: '#22c55e',
     primaryHover: '#16a34a',
     secondary: '#14b8a6',
@@ -39,7 +39,7 @@ const ACCENT_PRESETS: AccentPreset[] = [
   },
   {
     id: 'sunset-orange',
-    name: 'Sunset Orange',
+    name: '落日橙',
     primary: '#f97316',
     primaryHover: '#ea580c',
     secondary: '#f59e0b',
@@ -47,7 +47,7 @@ const ACCENT_PRESETS: AccentPreset[] = [
   },
   {
     id: 'royal-purple',
-    name: 'Royal Purple',
+    name: '皇家紫',
     primary: '#a855f7',
     primaryHover: '#9333ea',
     secondary: '#ec4899',
@@ -55,7 +55,7 @@ const ACCENT_PRESETS: AccentPreset[] = [
   },
   {
     id: 'ruby-red',
-    name: 'Ruby Red',
+    name: '宝石红',
     primary: '#ef4444',
     primaryHover: '#dc2626',
     secondary: '#f97316',
@@ -104,9 +104,10 @@ function injectAccentVariables(primary: string, primaryHover: string, secondary:
 /**
  * Remove custom accent overrides
  */
-function clearAccentVariables(): void {
+export function resetAccentColor(): void {
   const style = document.getElementById('neumanos-custom-accent');
   if (style) style.remove();
+  localStorage.removeItem(ACCENT_STORAGE_KEY);
 }
 
 interface StoredAccent {
@@ -174,15 +175,14 @@ export const AccentColorSection: React.FC = () => {
     setActivePresetId(null);
     setIsCustom(false);
     setCustomColor('#3b82f6');
-    clearAccentVariables();
-    localStorage.removeItem(ACCENT_STORAGE_KEY);
+    resetAccentColor();
   }, []);
 
   return (
     <div className="bento-card p-6">
       <div className="flex items-center justify-between mb-1">
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Accent Color
+          强调色
         </h2>
         {(activePresetId || isCustom) && (
           <button
@@ -190,18 +190,18 @@ export const AccentColorSection: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
-            Reset to Theme Default
+            重置为主题默认
           </button>
         )}
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Override the accent color from your current theme
+        覆盖当前主题的强调色
       </p>
 
       {/* Preset Colors */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          Preset Accent Themes
+          预设强调色主题
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {ACCENT_PRESETS.map((preset) => {
@@ -246,7 +246,7 @@ export const AccentColorSection: React.FC = () => {
       {/* Custom Color Picker */}
       <div>
         <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          Custom Color
+          自定义颜色
         </label>
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -255,7 +255,7 @@ export const AccentColorSection: React.FC = () => {
               value={customColor}
               onChange={(e) => applyCustomColor(e.target.value)}
               className="w-12 h-12 rounded-lg cursor-pointer border-2 border-border-light dark:border-border-dark"
-              title="Pick a custom accent color"
+              title="选择自定义强调色"
             />
           </div>
           <div className="flex-1">
@@ -279,12 +279,12 @@ export const AccentColorSection: React.FC = () => {
               className="w-20 h-10 rounded-lg flex items-center justify-center text-white text-xs font-medium"
               style={{ backgroundColor: customColor }}
             >
-              Preview
+              预览
             </div>
           </div>
         </div>
         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-2">
-          Enter a hex color code or use the color picker. Changes apply in real-time.
+          输入十六进制颜色代码或使用取色器。更改将实时生效。
         </p>
       </div>
     </div>

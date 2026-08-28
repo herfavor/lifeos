@@ -13,7 +13,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // Cloud
   {
     id: 'cloud-computing-cloud',
-    name: 'Cloud',
+    name: '云',
     category: 'cloud-computing',
     keywords: ['cloud', 'aws', 'azure', 'gcp', 'infrastructure', 'hosting'],
     thumbnail: 'cloud',
@@ -32,7 +32,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // Server
   {
     id: 'cloud-computing-server',
-    name: 'Server',
+    name: '服务器',
     category: 'cloud-computing',
     keywords: ['server', 'rack', 'compute', 'vm', 'instance'],
     thumbnail: 'rectangle',
@@ -51,7 +51,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // Database
   {
     id: 'cloud-computing-database',
-    name: 'Database',
+    name: '数据库',
     category: 'cloud-computing',
     keywords: ['database', 'db', 'sql', 'nosql', 'storage', 'data'],
     thumbnail: 'cylinder',
@@ -70,7 +70,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // Load Balancer
   {
     id: 'cloud-computing-load-balancer',
-    name: 'Load Balancer',
+    name: '负载均衡',
     category: 'cloud-computing',
     keywords: ['load balancer', 'lb', 'elb', 'alb', 'traffic', 'distribution'],
     thumbnail: 'hexagon',
@@ -89,7 +89,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // Storage Bucket
   {
     id: 'cloud-computing-storage',
-    name: 'Storage',
+    name: '存储',
     category: 'cloud-computing',
     keywords: ['storage', 'bucket', 's3', 'blob', 'object', 'file'],
     thumbnail: 'bucket',
@@ -108,7 +108,7 @@ export const cloudComputingShapes: ShapeDefinition[] = [
   // API Gateway
   {
     id: 'cloud-computing-api-gateway',
-    name: 'API Gateway',
+    name: 'API 网关',
     category: 'cloud-computing',
     keywords: ['api', 'gateway', 'rest', 'graphql', 'endpoint', 'service'],
     thumbnail: 'rounded-rectangle',
@@ -134,7 +134,7 @@ export const peopleShapes: ShapeDefinition[] = [
   // Person
   {
     id: 'people-person',
-    name: 'Person',
+    name: '人物',
     category: 'people',
     keywords: ['person', 'user', 'human', 'individual', 'avatar'],
     thumbnail: 'person',
@@ -153,7 +153,7 @@ export const peopleShapes: ShapeDefinition[] = [
   // Group
   {
     id: 'people-group',
-    name: 'Group',
+    name: '群组',
     category: 'people',
     keywords: ['group', 'team', 'users', 'people', 'organization'],
     thumbnail: 'people-group',
@@ -172,7 +172,7 @@ export const peopleShapes: ShapeDefinition[] = [
   // Profile Card
   {
     id: 'people-profile-card',
-    name: 'Profile Card',
+    name: '资料卡',
     category: 'people',
     keywords: ['profile', 'card', 'user card', 'identity', 'badge'],
     thumbnail: 'rounded-rectangle',
@@ -192,7 +192,7 @@ export const peopleShapes: ShapeDefinition[] = [
   // Avatar
   {
     id: 'people-avatar',
-    name: 'Avatar',
+    name: '头像',
     category: 'people',
     keywords: ['avatar', 'profile picture', 'photo', 'icon'],
     thumbnail: 'circle',
@@ -217,7 +217,7 @@ export const networkShapesExtended: ShapeDefinition[] = [
   // Router
   {
     id: 'network-router',
-    name: 'Router',
+    name: '路由器',
     category: 'network',
     keywords: ['router', 'gateway', 'network', 'routing'],
     thumbnail: 'rectangle',
@@ -236,7 +236,7 @@ export const networkShapesExtended: ShapeDefinition[] = [
   // Switch
   {
     id: 'network-switch',
-    name: 'Switch',
+    name: '交换机',
     category: 'network',
     keywords: ['switch', 'hub', 'ethernet', 'network'],
     thumbnail: 'rectangle',
@@ -255,7 +255,7 @@ export const networkShapesExtended: ShapeDefinition[] = [
   // Firewall
   {
     id: 'network-firewall',
-    name: 'Firewall',
+    name: '防火墙',
     category: 'network',
     keywords: ['firewall', 'security', 'protection', 'network security'],
     thumbnail: 'shield',
@@ -274,7 +274,7 @@ export const networkShapesExtended: ShapeDefinition[] = [
   // Modem
   {
     id: 'network-modem',
-    name: 'Modem',
+    name: '调制解调器',
     category: 'network',
     keywords: ['modem', 'internet', 'connection', 'isp'],
     thumbnail: 'rectangle',
@@ -293,7 +293,7 @@ export const networkShapesExtended: ShapeDefinition[] = [
   // Network Node
   {
     id: 'network-node',
-    name: 'Network Node',
+    name: '网络节点',
     category: 'network',
     keywords: ['node', 'endpoint', 'device', 'network device'],
     thumbnail: 'circle',
@@ -337,7 +337,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // Document
   {
     id: 'dataflow-document',
-    name: 'Document',
+    name: '文档',
     category: 'data-flow',
     keywords: ['document', 'file', 'data', 'record'],
     thumbnail: 'document',
@@ -356,7 +356,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // File
   {
     id: 'dataflow-file',
-    name: 'File',
+    name: '文件',
     category: 'data-flow',
     keywords: ['file', 'data file', 'attachment'],
     thumbnail: 'file',
@@ -375,7 +375,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // Queue
   {
     id: 'dataflow-queue',
-    name: 'Queue',
+    name: '队列',
     category: 'data-flow',
     keywords: ['queue', 'buffer', 'message queue', 'fifo'],
     thumbnail: 'rectangle',
@@ -394,7 +394,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // Stream
   {
     id: 'dataflow-stream',
-    name: 'Stream',
+    name: '流',
     category: 'data-flow',
     keywords: ['stream', 'data stream', 'flow', 'pipe'],
     thumbnail: 'wave',
@@ -413,7 +413,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // Cache
   {
     id: 'dataflow-cache',
-    name: 'Cache',
+    name: '缓存',
     category: 'data-flow',
     keywords: ['cache', 'memory', 'temporary storage', 'redis'],
     thumbnail: 'hexagon',
@@ -432,7 +432,7 @@ export const dataFlowShapes: ShapeDefinition[] = [
   // Message
   {
     id: 'dataflow-message',
-    name: 'Message',
+    name: '消息',
     category: 'data-flow',
     keywords: ['message', 'event', 'notification', 'email'],
     thumbnail: 'envelope',
@@ -457,7 +457,7 @@ export const chartShapes: ShapeDefinition[] = [
   // Bar Chart
   {
     id: 'chart-bar',
-    name: 'Bar Chart',
+    name: '柱状图',
     category: 'charts',
     keywords: ['bar', 'chart', 'graph', 'analytics', 'data visualization'],
     thumbnail: 'bar-chart',
@@ -476,7 +476,7 @@ export const chartShapes: ShapeDefinition[] = [
   // Line Chart
   {
     id: 'chart-line',
-    name: 'Line Chart',
+    name: '折线图',
     category: 'charts',
     keywords: ['line', 'chart', 'graph', 'trend', 'analytics'],
     thumbnail: 'line-chart',
@@ -495,7 +495,7 @@ export const chartShapes: ShapeDefinition[] = [
   // Pie Chart
   {
     id: 'chart-pie',
-    name: 'Pie Chart',
+    name: '饼图',
     category: 'charts',
     keywords: ['pie', 'chart', 'donut', 'circle', 'distribution'],
     thumbnail: 'pie-chart',
@@ -514,7 +514,7 @@ export const chartShapes: ShapeDefinition[] = [
   // Gauge/Meter
   {
     id: 'chart-gauge',
-    name: 'Gauge',
+    name: '仪表盘',
     category: 'charts',
     keywords: ['gauge', 'meter', 'speedometer', 'kpi', 'metric'],
     thumbnail: 'gauge',
@@ -533,7 +533,7 @@ export const chartShapes: ShapeDefinition[] = [
   // Timeline Marker
   {
     id: 'chart-timeline',
-    name: 'Timeline',
+    name: '时间线',
     category: 'charts',
     keywords: ['timeline', 'gantt', 'schedule', 'milestone', 'roadmap'],
     thumbnail: 'timeline',

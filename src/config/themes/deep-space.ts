@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const deepSpaceTheme: ThemeDefinition = {
   id: 'deep-space',
   name: 'Deep Space',
-  description: 'Cosmic purples and stellar blues from the void',
+  description: '来自深空的宇宙紫与星蓝',
   category: 'tech',
   preview: {
     primary: '#6366F1',

@@ -71,7 +71,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -98,7 +98,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -125,7 +125,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -152,7 +152,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -191,6 +191,28 @@ class IndexedDBService {
   }
 
   /**
+   * Read every value using IndexedDB structured-clone semantics.
+   *
+   * Most LifeOS stores contain JSON strings, but note images are native Blobs.
+   * Backup code must use this method so binary values are not coerced to `{}`.
+   */
+  async getAllObjects(): Promise<Record<string, unknown>> {
+    await this.init();
+
+    const keys = await this.getAllKeys();
+    const data: Record<string, unknown> = {};
+
+    for (const key of keys) {
+      const value = await this.getObject(key);
+      if (value !== null) {
+        data[key] = value;
+      }
+    }
+
+    return data;
+  }
+
+  /**
    * Clear all data from IndexedDB
    */
   async clear(): Promise<void> {
@@ -198,7 +220,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -242,6 +264,32 @@ class IndexedDBService {
 
       transaction.onerror = () => {
         log.error('Failed to batch write items', { error: transaction.error });
+        reject(transaction.error);
+      };
+    });
+  }
+
+  /** Batch-write strings, Blobs, and other structured-clone-compatible values. */
+  async setObjectsBatch(items: Record<string, unknown>): Promise<void> {
+    await this.init();
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.connection.db!.transaction(STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+
+      Object.entries(items).forEach(([key, value]) => {
+        store.put(value, key);
+      });
+
+      transaction.oncomplete = () => {
+        log.debug('Batch wrote structured values to IndexedDB', {
+          count: Object.keys(items).length,
+        });
+        resolve();
+      };
+
+      transaction.onerror = () => {
+        log.error('Failed to batch write structured values', { error: transaction.error });
         reject(transaction.error);
       };
     });
@@ -332,9 +380,9 @@ class IndexedDBService {
    * Format bytes to human-readable string
    */
   formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return '0 字节';
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const sizes = ['字节', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
   }
@@ -363,7 +411,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -390,7 +438,7 @@ class IndexedDBService {
 
     return new Promise((resolve, reject) => {
       if (!this.connection.db) {
-        reject(new Error('IndexedDB not initialized'));
+        reject(new Error('IndexedDB 尚未初始化'));
         return;
       }
 
@@ -421,7 +469,7 @@ class IndexedDBService {
     const MIN_AVAILABLE = 10 * 1024 * 1024; // 10MB minimum
 
     if (quota.available < MIN_AVAILABLE) {
-      throw new Error(`Insufficient storage: ${quota.availableFormatted} remaining. Need at least 10MB.`);
+      throw new Error(`存储空间不足：剩余 ${quota.availableFormatted}，至少需要 10MB。`);
     }
 
     // Compress image
@@ -505,7 +553,7 @@ class IndexedDBService {
         const ctx = canvas.getContext('2d');
         if (!ctx) {
           URL.revokeObjectURL(objectUrl);
-          reject(new Error('Failed to get canvas context'));
+          reject(new Error('无法获取画布上下文'));
           return;
         }
 
@@ -518,7 +566,7 @@ class IndexedDBService {
             URL.revokeObjectURL(objectUrl);
 
             if (!blob) {
-              reject(new Error('Failed to compress image'));
+              reject(new Error('图片压缩失败'));
               return;
             }
 
@@ -531,7 +579,7 @@ class IndexedDBService {
 
       img.onerror = () => {
         URL.revokeObjectURL(objectUrl);
-        reject(new Error('Failed to load image'));
+        reject(new Error('图片加载失败'));
       };
 
       img.src = objectUrl;

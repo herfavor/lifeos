@@ -40,14 +40,14 @@ const CALLOUT_CONFIG: Record<
 > = {
   info: {
     icon: 'ℹ️',
-    label: 'Info',
+    label: '信息',
     borderColor: 'border-blue-400 dark:border-blue-500',
     bgColor: 'bg-blue-50 dark:bg-blue-950/30',
     textColor: 'text-blue-700 dark:text-blue-300',
   },
   warning: {
     icon: '⚠️',
-    label: 'Warning',
+    label: '警告',
     borderColor: 'border-yellow-400 dark:border-yellow-500',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/30',
     textColor: 'text-yellow-700 dark:text-yellow-300',
@@ -61,7 +61,7 @@ const CALLOUT_CONFIG: Record<
   },
   danger: {
     icon: '🚨',
-    label: 'Danger',
+    label: '危险',
     borderColor: 'border-red-400 dark:border-red-500',
     bgColor: 'bg-red-50 dark:bg-red-950/30',
     textColor: 'text-red-700 dark:text-red-300',
@@ -135,7 +135,7 @@ function CalloutComponent({
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs"
         title="Remove callout"
       >
         ✕

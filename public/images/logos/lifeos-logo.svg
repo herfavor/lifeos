@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" role="img" aria-label="LifeOS">
+  <defs>
+    <linearGradient id="lifeos-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+  <rect width="220" height="56" fill="transparent"/>
+  <rect x="2" y="4" width="48" height="48" rx="11" fill="url(#lifeos-g)"/>
+  <rect x="12.5" y="33.2" width="6.2" height="14" rx="3.1" fill="#FFFFFF"/>
+  <rect x="22.9" y="27" width="6.2" height="20.2" rx="3.1" fill="#FFFFFF"/>
+  <rect x="33.3" y="20.4" width="6.2" height="26.8" rx="3.1" fill="#FFFFFF"/>
+  <text x="62" y="39" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="30" font-weight="700" letter-spacing="0.5" fill="#0F172A">LifeOS</text>
+</svg>

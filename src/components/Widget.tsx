@@ -56,7 +56,7 @@ export const Widget: React.FC<WidgetProps> = ({
   // Render loading state
   const renderLoading = () => (
     <div className="flex-1 flex items-center justify-center">
-      <LoadingSpinner size="md" message="Loading..." />
+      <LoadingSpinner size="md" message="加载中…" />
     </div>
   );
 
@@ -74,9 +74,9 @@ export const Widget: React.FC<WidgetProps> = ({
             size="sm"
             onClick={handleRefresh}
             loading={isRefreshing}
-            loadingText="Retrying..."
+            loadingText="重试中…"
           >
-            Try Again
+            重试
           </Button>
         )}
       </div>
@@ -123,8 +123,8 @@ export const Widget: React.FC<WidgetProps> = ({
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="flex-shrink-0 p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all disabled:opacity-50"
-            title="Refresh"
-            aria-label="Refresh widget"
+            title="刷新"
+            aria-label="刷新组件"
           >
             <span className={`text-lg ${isRefreshing ? 'animate-spin inline-block' : ''}`}>
               🔄

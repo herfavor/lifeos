@@ -53,8 +53,8 @@ export interface SmartTemplate {
 const BUILT_IN_TEMPLATES: SmartTemplate[] = [
   {
     id: 'weekly-review',
-    name: 'Weekly Review',
-    description: 'Create a weekly review note and planning tasks',
+    name: '每周回顾',
+    description: '创建每周回顾笔记和规划任务',
     icon: '📅',
     category: 'planning',
     actions: [
@@ -62,9 +62,9 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-note',
         type: 'create-note',
         data: {
-          title: 'Weekly Review — {{date}}',
+          title: '每周回顾 — {{date}}',
           content:
-            '## Weekly Review\n\n**Week of:** {{date}}\n\n### Accomplishments\n- \n\n### Challenges\n- \n\n### Lessons Learned\n- \n\n### Next Week Goals\n- [ ] \n\n### Notes\n',
+            '## 每周回顾\n\n**所属周：** {{date}}\n\n### 本周成就\n- \n\n### 遇到的挑战\n- \n\n### 经验教训\n- \n\n### 下周目标\n- [ ] \n\n### 备注\n',
           tags: ['review', 'weekly'],
         },
       },
@@ -72,8 +72,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-task-1',
         type: 'create-task',
         data: {
-          title: 'Review goals and OKRs',
-          description: 'Part of weekly review for {{date}}',
+          title: '回顾目标与 OKR',
+          description: '每周回顾的一部分（{{date}}）',
           priority: 'high',
           tags: ['weekly-review'],
         },
@@ -82,8 +82,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-task-2',
         type: 'create-task',
         data: {
-          title: 'Clear inbox to zero',
-          description: 'Part of weekly review for {{date}}',
+          title: '将收件箱清空',
+          description: '每周回顾的一部分（{{date}}）',
           priority: 'medium',
           tags: ['weekly-review'],
         },
@@ -92,8 +92,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-task-3',
         type: 'create-task',
         data: {
-          title: 'Plan next week priorities',
-          description: 'Part of weekly review for {{date}}',
+          title: '规划下周优先级',
+          description: '每周回顾的一部分（{{date}}）',
           priority: 'high',
           tags: ['weekly-review'],
         },
@@ -102,8 +102,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-task-4',
         type: 'create-task',
         data: {
-          title: 'Review and update project status',
-          description: 'Part of weekly review for {{date}}',
+          title: '回顾并更新项目状态',
+          description: '每周回顾的一部分（{{date}}）',
           priority: 'medium',
           tags: ['weekly-review'],
         },
@@ -112,8 +112,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'wr-task-5',
         type: 'create-task',
         data: {
-          title: 'Archive completed tasks',
-          description: 'Part of weekly review for {{date}}',
+          title: '归档已完成任务',
+          description: '每周回顾的一部分（{{date}}）',
           priority: 'low',
           tags: ['weekly-review'],
         },
@@ -122,7 +122,7 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
     variables: [
       {
         key: 'date',
-        label: 'Week of',
+        label: '所属周',
         type: 'date',
         defaultValue: new Date().toISOString().split('T')[0],
       },
@@ -134,8 +134,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
   },
   {
     id: 'sprint-planning',
-    name: 'Sprint Planning',
-    description: 'Set up tasks for a new sprint cycle',
+    name: '迭代规划',
+    description: '为新迭代周期创建任务',
     icon: '🏃',
     category: 'planning',
     actions: [
@@ -143,8 +143,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'sp-task-1',
         type: 'create-task',
         data: {
-          title: 'Review backlog and prioritize items',
-          description: 'Sprint: {{sprintName}}',
+          title: '审查待办事项并确定优先级',
+          description: '迭代：{{sprintName}}',
           priority: 'high',
           tags: ['sprint', '{{sprintName}}'],
         },
@@ -153,8 +153,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'sp-task-2',
         type: 'create-task',
         data: {
-          title: 'Estimate story points for selected items',
-          description: 'Sprint: {{sprintName}}',
+          title: '为选中的事项估算故事点',
+          description: '迭代：{{sprintName}}',
           priority: 'high',
           tags: ['sprint', '{{sprintName}}'],
         },
@@ -163,8 +163,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'sp-task-3',
         type: 'create-task',
         data: {
-          title: 'Define acceptance criteria',
-          description: 'Sprint: {{sprintName}}',
+          title: '定义验收标准',
+          description: '迭代：{{sprintName}}',
           priority: 'medium',
           tags: ['sprint', '{{sprintName}}'],
         },
@@ -173,8 +173,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'sp-task-4',
         type: 'create-task',
         data: {
-          title: 'Assign tasks to team members',
-          description: 'Sprint: {{sprintName}}',
+          title: '将任务分配给团队成员',
+          description: '迭代：{{sprintName}}',
           priority: 'medium',
           tags: ['sprint', '{{sprintName}}'],
         },
@@ -183,8 +183,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'sp-task-5',
         type: 'create-task',
         data: {
-          title: 'Set up sprint board and tracking',
-          description: 'Sprint: {{sprintName}}',
+          title: '设置迭代看板与跟踪',
+          description: '迭代：{{sprintName}}',
           priority: 'low',
           tags: ['sprint', '{{sprintName}}'],
         },
@@ -193,9 +193,9 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
     variables: [
       {
         key: 'sprintName',
-        label: 'Sprint Name',
+        label: '迭代名称',
         type: 'text',
-        defaultValue: 'Sprint 1',
+        defaultValue: '迭代 1',
       },
     ],
     usageCount: 0,
@@ -205,8 +205,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
   },
   {
     id: 'meeting-notes',
-    name: 'Meeting Notes',
-    description: 'Create a meeting note and calendar event',
+    name: '会议记录',
+    description: '创建会议笔记和日历事件',
     icon: '📋',
     category: 'meeting',
     actions: [
@@ -214,9 +214,9 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'mn-note',
         type: 'create-note',
         data: {
-          title: '{{meetingTitle}} — Meeting Notes',
+          title: '{{meetingTitle}} — 会议记录',
           content:
-            '## {{meetingTitle}}\n\n**Date:** {{date}}\n**Attendees:** {{attendees}}\n\n### Agenda\n1. \n\n### Discussion Points\n- \n\n### Action Items\n- [ ] \n\n### Next Steps\n',
+            '## {{meetingTitle}}\n\n**日期：** {{date}}\n**参会人员：** {{attendees}}\n\n### 议程\n1. \n\n### 讨论要点\n- \n\n### 行动事项\n- [ ] \n\n### 后续步骤\n',
           tags: ['meeting'],
         },
       },
@@ -232,19 +232,19 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
     variables: [
       {
         key: 'meetingTitle',
-        label: 'Meeting Title',
+        label: '会议标题',
         type: 'text',
-        defaultValue: 'Team Sync',
+        defaultValue: '团队同步会',
       },
       {
         key: 'date',
-        label: 'Date',
+        label: '日期',
         type: 'date',
         defaultValue: new Date().toISOString().split('T')[0],
       },
       {
         key: 'attendees',
-        label: 'Attendees',
+        label: '参会人员',
         type: 'text',
         defaultValue: '',
       },
@@ -256,8 +256,8 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
   },
   {
     id: 'daily-standup',
-    name: 'Daily Standup',
-    description: 'Create a standup note with standard format',
+    name: '每日站会',
+    description: '创建标准格式的站会笔记',
     icon: '☀️',
     category: 'workflow',
     actions: [
@@ -265,9 +265,9 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
         id: 'ds-note',
         type: 'create-note',
         data: {
-          title: 'Standup — {{date}}',
+          title: '站会 — {{date}}',
           content:
-            '## Daily Standup — {{date}}\n\n### Yesterday\n- \n\n### Today\n- \n\n### Blockers\n- \n',
+            '## 每日站会 — {{date}}\n\n### 昨天\n- \n\n### 今天\n- \n\n### 阻塞事项\n- \n',
           tags: ['standup', 'daily'],
         },
       },
@@ -275,7 +275,7 @@ const BUILT_IN_TEMPLATES: SmartTemplate[] = [
     variables: [
       {
         key: 'date',
-        label: 'Date',
+        label: '日期',
         type: 'date',
         defaultValue: new Date().toISOString().split('T')[0],
       },

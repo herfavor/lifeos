@@ -13,8 +13,8 @@ async function requestNotificationPermission(): Promise<boolean> {
 /** Show a browser notification for a habit reminder */
 function showHabitNotification(title: string, icon?: string) {
   if (Notification.permission !== 'granted') return;
-  const body = `Time to complete: ${title}`;
-  const notification = new Notification(icon ? `${icon} Habit Reminder` : 'Habit Reminder', {
+  const body = `完成时间到：${title}`;
+  const notification = new Notification(icon ? `${icon} 习惯提醒` : '习惯提醒', {
     body,
     icon: '/icons/icon-192x192.png',
     tag: `habit-reminder-${title}`,

@@ -7,6 +7,9 @@ npm test -- --run
 echo "=== Type Check ==="
 npm run type-check
 
+echo "=== Design Tokens ==="
+npm run lint:design-tokens
+
 echo "=== Build ==="
 npm run build
 

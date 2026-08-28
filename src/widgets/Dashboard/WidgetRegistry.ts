@@ -70,7 +70,6 @@ const WIDGET_FILE_NAMES: Record<string, string> = {
   wikipedia: 'WikipediaWidget',
   bored: 'BoredWidget',
   dictionary: 'DictionaryWidget',
-  ainews: 'AINewsWidget',
   airquality: 'AirQualityWidget',
   packagestats: 'PackageStatsWidget',
   pixelart: 'PixelArtWidget',
@@ -91,7 +90,6 @@ const WIDGET_FILE_NAMES: Record<string, string> = {
   habitsummary: 'HabitSummaryWidget',
   bookmarks: 'BookmarksWidget',
   activityfeed: 'ActivityFeedWidget',
-  aibriefing: 'AIBriefingWidget',
   flashcard: 'FlashcardWidget',
   dailyquests: 'DailyQuestsWidget',
   energytracker: 'EnergyTrackerWidget',
@@ -113,9 +111,11 @@ const WIDGET_FILE_NAMES: Record<string, string> = {
 
 // Pre-discover all widget modules using Vite's glob import
 // This creates a map of module path -> lazy import function
-const widgetModules = import.meta.glob<{ [key: string]: FC<WidgetComponentProps> }>(
-  './*Widget.tsx'
-);
+const widgetModules = import.meta.glob<{ [key: string]: FC<WidgetComponentProps> }>([
+  './*Widget.tsx',
+  '!./AIBriefingWidget.tsx',
+  '!./AINewsWidget.tsx',
+]);
 
 function createLazyWidget(widgetId: string): LazyExoticComponent<FC<WidgetComponentProps>> | undefined {
   const fileName = WIDGET_FILE_NAMES[widgetId];
@@ -153,7 +153,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Task counts and overview',
     icon: '📊',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   tasksquickadd: {
@@ -162,7 +162,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Quickly add tasks to Kanban',
     icon: '➕',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   upcomingevents: {
@@ -189,7 +189,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Track daily habits and streaks',
     icon: '🎯',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   quote: {
@@ -199,7 +199,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     icon: '💭',
     category: 'productivity',
     apiUrl: 'https://api.quotable.io/random',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
 
@@ -210,7 +210,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     icon: '₿',
     category: 'finance',
     apiUrl: 'https://api.coingecko.com/api/v3/simple/price',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   hackernews: {
@@ -220,7 +220,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     icon: '📰',
     category: 'news',
     apiUrl: 'https://hacker-news.firebaseio.com/v0',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   facts: {
@@ -361,7 +361,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     icon: '🗺️',
     category: 'visual',
     apiUrl: 'https://api.open-meteo.com/v1/forecast',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   // Utility Widgets (New)
@@ -444,16 +444,6 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
 
   // REMOVED: Product Hunt (CORS issues with RSS feed, GraphQL API requires authentication)
   // Alternative: dev.to and Hacker News widgets provide similar tech/product content
-
-  ainews: {
-    id: 'ainews',
-    name: 'AI Research',
-    description: 'Latest AI research papers from arXiv',
-    icon: '🤖',
-    category: 'news',
-    apiUrl: 'https://export.arxiv.org/api/query',
-    defaultEnabled: false,
-  },
 
   airquality: {
     id: 'airquality',
@@ -620,7 +610,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Quick access to forms and responses',
     icon: '📋',
     category: 'core',
-    defaultEnabled: true,
+    defaultEnabled: false,
   },
 
   bookmarks: {
@@ -638,15 +628,6 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Recent activity across all modules',
     icon: '📊',
     category: 'core',
-    defaultEnabled: false,
-  },
-
-  aibriefing: {
-    id: 'aibriefing',
-    name: 'AI Daily Briefing',
-    description: 'AI-generated morning summary with events, tasks, and habits',
-    icon: '🌅',
-    category: 'productivity',
     defaultEnabled: false,
   },
 
@@ -683,7 +664,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Cross-project health overview with task counts',
     icon: '📂',
     category: 'productivity',
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
 
   weeklyinsights: {
@@ -711,7 +692,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     description: 'Quickly create notes, tasks, and events from a single widget',
     icon: '⚡',
     category: 'core',
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
 
 

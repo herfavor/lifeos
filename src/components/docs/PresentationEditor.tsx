@@ -181,12 +181,12 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
     saveSlides(newSlides);
     setActiveSlideIndex(newSlides.length - 1);
     setSelectedElementId(null);
-    toast.success('Slide added');
+    toast.success('幻灯片已添加');
   }, [slides, saveSlides]);
 
   const handleDeleteSlide = useCallback(() => {
     if (slides.length <= 1) {
-      toast.error('Cannot delete the only slide');
+      toast.error('无法删除唯一的一张幻灯片');
       return;
     }
 
@@ -196,7 +196,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
     saveSlides(reorderedSlides);
     setActiveSlideIndex(Math.min(activeSlideIndex, reorderedSlides.length - 1));
     setSelectedElementId(null);
-    toast.success('Slide deleted');
+    toast.success('幻灯片已删除');
   }, [slides, activeSlideIndex, saveSlides]);
 
   const handleDuplicateSlide = useCallback(() => {
@@ -222,7 +222,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
     saveSlides(newSlides);
     setActiveSlideIndex(activeSlideIndex + 1);
     setSelectedElementId(null);
-    toast.success('Slide duplicated');
+    toast.success('幻灯片已复制');
   }, [activeSlide, activeSlideIndex, slides, saveSlides]);
 
   // Element operations
@@ -316,7 +316,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
             : s
         );
         saveSlides(newSlides);
-        toast.success('Background image set');
+        toast.success('背景图片已设置');
       };
       reader.readAsDataURL(file);
     };
@@ -328,7 +328,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
   const handlePresent = useCallback(() => {
     setIsPresenting(true);
     setSelectedElementId(null);
-    toast.info('Press Escape to exit presentation');
+    toast.info('按 Escape 键退出演示');
   }, []);
 
   // Export dialog
@@ -372,7 +372,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
 
       saveSlides(newSlides);
       onSave({ theme });
-      toast.success(applyToAll ? 'Theme applied to all slides' : 'Theme applied to current slide');
+      toast.success(applyToAll ? '主题已应用到所有幻灯片' : '主题已应用到当前幻灯片');
     },
     [slides, activeSlideIndex, saveSlides, onSave]
   );
@@ -389,7 +389,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
 
       saveSlides(newSlides);
       setSelectedElementId(null);
-      toast.success(`Applied ${layout} layout`);
+      toast.success(`已应用 ${layout} 布局`);
     },
     [activeSlide, activeSlideIndex, slides, doc.theme, saveSlides]
   );
@@ -404,7 +404,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
       );
 
       saveSlides(newSlides);
-      toast.success(transition ? `Applied ${transition.type} transition` : 'Transition removed');
+      toast.success(transition ? `已应用 ${transition.type} 转场` : '已移除转场');
     },
     [activeSlide, activeSlideIndex, slides, saveSlides]
   );
@@ -430,14 +430,14 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
 
   // Preview animation
   const handlePreviewAnimation = useCallback(() => {
-    toast.info('Animation preview - enter presenter mode to see full animation');
+    toast.info('动画预览 - 进入演示模式可查看完整动画');
   }, []);
 
   if (!activeSlide) {
     return (
       <div className="h-full flex items-center justify-center">
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary">
-          No slides found
+          未找到幻灯片
         </p>
       </div>
     );
@@ -546,7 +546,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
         >
           <div className="flex items-center gap-2">
             <StickyNote className="w-4 h-4" />
-            <span>Speaker Notes</span>
+            <span>演讲者备注</span>
             {activeSlide?.speakerNotes && (
               <span className="w-2 h-2 bg-accent-primary rounded-full" />
             )}
@@ -562,7 +562,7 @@ export function PresentationEditor({ doc, onSave }: PresentationEditorProps) {
             <textarea
               value={activeSlide?.speakerNotes || ''}
               onChange={(e) => handleUpdateSpeakerNotes(e.target.value)}
-              placeholder="Add speaker notes for this slide..."
+              placeholder="为这张幻灯片添加演讲者备注…"
               className="w-full h-24 px-3 py-2 text-sm bg-surface-light-alt dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg resize-y text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             />
           </div>

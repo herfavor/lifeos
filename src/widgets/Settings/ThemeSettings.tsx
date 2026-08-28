@@ -6,17 +6,17 @@
  * - Brand Theme: Named palettes organized by category
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Moon, Monitor } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sun, Moon, Monitor } from 'lucide-react';
 import { useThemeStore } from '../../stores/useThemeStore';
 import { getThemesByCategory, THEME_REGISTRY } from '../../config/themes/registry';
 import type { ColorMode } from '../../config/themes/types';
 
 const COLOR_MODES: { id: ColorMode; label: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'light', label: 'Light', icon: Sun },
-  { id: 'dark', label: 'Dark', icon: Moon },
-  { id: 'system', label: 'System', icon: Monitor },
+  { id: 'light', label: '浅色', icon: Sun },
+  { id: 'dark', label: '深色', icon: Moon },
+  { id: 'system', label: '跟随系统', icon: Monitor },
 ];
 
 export const ThemeSettings: React.FC = () => {
@@ -24,23 +24,29 @@ export const ThemeSettings: React.FC = () => {
   const brandTheme = useThemeStore((s) => s.brandTheme);
   const setColorMode = useThemeStore((s) => s.setColorMode);
   const setBrandTheme = useThemeStore((s) => s.setBrandTheme);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const categorizedThemes = getThemesByCategory();
-  const defaultTheme = THEME_REGISTRY['default'];
+  const curatedThemes = [
+    { ...THEME_REGISTRY['ink-wash'], name: '静谧', description: '低刺激藏蓝与柔和灰，适合长时间使用' },
+    { ...THEME_REGISTRY['evergreen'], name: '自然', description: '克制的森林色，适合生活与工作混合场景' },
+    { ...THEME_REGISTRY['monochrome'], name: '单色', description: '尽量减少颜色干扰，专注内容本身' },
+  ];
+  const curatedIds = new Set(curatedThemes.map((theme) => theme.id));
 
   return (
     <div className="bento-card p-6">
       <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-        Appearance
+        外观
       </h2>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Choose your color mode and brand theme
+        先选择明暗模式，再从三套耐看的主色板中选择一套
       </p>
 
       {/* Color Mode Selector */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          Color Mode
+          颜色模式
         </label>
         <div className="grid grid-cols-3 gap-2">
           {COLOR_MODES.map(({ id, label, icon: Icon }) => {
@@ -64,42 +70,75 @@ export const ThemeSettings: React.FC = () => {
         </div>
       </div>
 
-      {/* Default Theme */}
-      <div className="mb-4">
+      {/* Curated palettes keep the primary choice calm and understandable. */}
+      <div className="mb-5">
         <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          Theme
+          推荐色板
         </label>
-        <ThemeCard
-          themeId="default"
-          name={defaultTheme.name}
-          description={defaultTheme.description}
-          preview={defaultTheme.preview}
-          isActive={brandTheme === 'default'}
-          onSelect={() => setBrandTheme('default')}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          {curatedThemes.map((theme) => (
+            <ThemeCard
+              key={theme.id}
+              themeId={theme.id}
+              name={theme.name}
+              description={theme.description}
+              preview={theme.preview}
+              isActive={brandTheme === theme.id}
+              onSelect={() => setBrandTheme(theme.id)}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Categorized Themes */}
-      {categorizedThemes.map(({ category, themes }) => (
-        <div key={category.id} className="mb-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary mb-2">
-            {category.label}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {themes.map((theme) => (
-              <ThemeCard
-                key={theme.id}
-                themeId={theme.id}
-                name={theme.name}
-                description={theme.description}
-                preview={theme.preview}
-                isActive={brandTheme === theme.id}
-                onSelect={() => setBrandTheme(theme.id)}
-              />
-            ))}
-          </div>
+      <button
+        type="button"
+        onClick={() => setShowAdvanced((value) => !value)}
+        className="flex w-full items-center justify-between rounded-lg border border-border-light px-4 py-3 text-left text-sm font-medium text-text-light-primary hover:border-accent-primary dark:border-border-dark dark:text-text-dark-primary"
+        aria-expanded={showAdvanced}
+      >
+        <span>
+          更多色板
+          <span className="ml-2 font-normal text-text-light-tertiary dark:text-text-dark-tertiary">仅在你明确需要时展开</span>
+        </span>
+        {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
+
+      {showAdvanced && (
+        <div className="mt-4 rounded-xl bg-surface-light-elevated p-4 dark:bg-surface-dark">
+          <ThemeCard
+            themeId="default"
+            name={THEME_REGISTRY.default.name}
+            description={THEME_REGISTRY.default.description}
+            preview={THEME_REGISTRY.default.preview}
+            isActive={brandTheme === 'default'}
+            onSelect={() => setBrandTheme('default')}
+          />
+          {categorizedThemes.map(({ category, themes }) => {
+            const advancedThemes = themes.filter((theme) => !curatedIds.has(theme.id));
+            if (advancedThemes.length === 0) return null;
+            return (
+              <div key={category.id} className="mt-4">
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary">
+                  {category.label}
+                </h3>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {advancedThemes.map((theme) => (
+                    <ThemeCard
+                      key={theme.id}
+                      themeId={theme.id}
+                      name={theme.name}
+                      description={theme.description}
+                      preview={theme.preview}
+                      isActive={brandTheme === theme.id}
+                      onSelect={() => setBrandTheme(theme.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      ))}
+      )}
     </div>
   );
 };

@@ -65,9 +65,9 @@ function CodeBlock({
       </pre>
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 p-1.5 rounded bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark opacity-0 group-hover:opacity-100 transition-opacity"
-        title={copied ? 'Copied!' : 'Copy code'}
-        aria-label={copied ? 'Copied!' : 'Copy code'}
+        className="absolute top-2 right-2 p-1.5 rounded bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity"
+        title={copied ? '已复制！' : '复制代码'}
+        aria-label={copied ? '已复制！' : '复制代码'}
       >
         {copied ? (
           <Check className="w-4 h-4 text-status-success" />

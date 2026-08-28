@@ -48,15 +48,15 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
   }, [habit.id, getCompletionHistory]);
 
   const statCards = [
-    { label: 'Current Streak', value: `${habit.currentStreak}`, icon: Flame, accent: 'text-accent-orange' },
-    { label: 'Longest Streak', value: `${habit.longestStreak}`, icon: Trophy, accent: 'text-accent-yellow' },
-    { label: 'Total Completions', value: `${habit.totalCompletions}`, icon: BarChart3, accent: 'text-accent-primary' },
+    { label: '当前连续', value: `${habit.currentStreak}`, icon: Flame, accent: 'text-accent-orange' },
+    { label: '最长连续', value: `${habit.longestStreak}`, icon: Trophy, accent: 'text-accent-yellow' },
+    { label: '总完成次数', value: `${habit.totalCompletions}`, icon: BarChart3, accent: 'text-accent-primary' },
   ];
 
   const rateCards = [
-    { label: 'Last 7 days', value: rate7 },
-    { label: 'Last 30 days', value: rate30 },
-    { label: 'Last 90 days', value: rate90 },
+    { label: '最近 7 天', value: rate7 },
+    { label: '最近 30 天', value: rate30 },
+    { label: '最近 90 天', value: rate90 },
   ];
 
   return (
@@ -71,7 +71,7 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
                 {habit.title}
               </h2>
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                Statistics & Trends
+                统计与趋势
               </p>
             </div>
           </div>
@@ -98,7 +98,7 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
           <div className="mb-6">
             <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              Completion Rate
+              完成率
             </h3>
             <div className="grid grid-cols-3 gap-3">
               {rateCards.map((rate) => (
@@ -134,7 +134,7 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
             <div className="mb-4">
               <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
-                90-Day Trend (7-day rolling average)
+                90 天趋势（7 天滚动平均）
               </h3>
               <div className="h-40 -ml-2">
                 <ResponsiveContainer width="100%" height="100%">
@@ -151,7 +151,7 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
                       width={40}
                     />
                     <Tooltip
-                      formatter={(value: number | undefined) => [`${value ?? 0}%`, 'Completion Rate']}
+                      formatter={(value: number | undefined) => [`${value ?? 0}%`, '完成率']}
                       contentStyle={{
                         backgroundColor: 'var(--color-surface-dark, #1f2937)',
                         border: '1px solid var(--color-border-dark, #374151)',
@@ -179,7 +179,7 @@ export function HabitStats({ habit, onClose }: HabitStatsProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>

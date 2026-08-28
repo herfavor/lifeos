@@ -14,7 +14,7 @@ test.describe('Tasks Kanban Board', () => {
     await navigateTo(page, '/tasks');
 
     // Ensure we're on Kanban view
-    const kanbanButton = page.getByRole('button', { name: /kanban/i });
+    const kanbanButton = page.getByRole('button', { name: /看板/i });
     if (await kanbanButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await kanbanButton.click();
       await page.waitForTimeout(500);
@@ -23,18 +23,18 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can create a new task', async ({ page }) => {
     // Find the add task button (might be in "To Do" column or a general add button)
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
 
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
 
       // Fill in task details
-      const titleInput = page.getByPlaceholder(/title|task.*name|what.*task/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称|什么任务/i);
       if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await titleInput.fill('E2E Kanban Test Task');
 
         // Submit the form (might be Enter key or Save button)
-        const saveButton = page.getByRole('button', { name: /save|create|add/i });
+        const saveButton = page.getByRole('button', { name: /保存|创建|添加/i });
         if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveButton.click();
         } else {
@@ -52,10 +52,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can move task between columns using drag and drop', async ({ page }) => {
     // Create a task first
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Draggable Task');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -66,7 +66,7 @@ test.describe('Tasks Kanban Board', () => {
 
     if (await taskCard.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Find the "In Progress" column
-      const inProgressColumn = page.getByText(/in.*progress/i).locator('..');
+      const inProgressColumn = page.getByText(/进行中/i).locator('..');
 
       if (await inProgressColumn.isVisible({ timeout: 1000 }).catch(() => false)) {
         // Drag the task to In Progress column
@@ -84,10 +84,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can add subtasks to a task', async ({ page }) => {
     // Create a parent task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Parent Task with Subtasks');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -99,13 +99,13 @@ test.describe('Tasks Kanban Board', () => {
     await page.waitForTimeout(500);
 
     // Look for subtask creation UI (might be in a modal or detail panel)
-    const addSubtaskButton = page.getByRole('button', { name: /add.*subtask|new.*subtask|\+.*subtask/i });
+    const addSubtaskButton = page.getByRole('button', { name: /添加子任务|新建子任务|\+.*子任务/i });
 
     if (await addSubtaskButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addSubtaskButton.click();
 
       // Fill in subtask details
-      const subtaskInput = page.getByPlaceholder(/subtask|title/i);
+      const subtaskInput = page.getByPlaceholder(/子任务|标题/i);
       if (await subtaskInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await subtaskInput.fill('First Subtask');
         await page.keyboard.press('Enter');
@@ -119,10 +119,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can edit task details', async ({ page }) => {
     // Create a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Task to Edit');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -134,20 +134,20 @@ test.describe('Tasks Kanban Board', () => {
     await page.waitForTimeout(500);
 
     // Look for edit button or editable fields
-    const editButton = page.getByRole('button', { name: /edit/i });
+    const editButton = page.getByRole('button', { name: /编辑/i });
     if (await editButton.isVisible({ timeout: 1000 }).catch(() => false)) {
       await editButton.click();
     }
 
     // Update the title
-    const titleField = page.getByPlaceholder(/title|task.*name/i).or(page.getByDisplayValue('Task to Edit'));
+    const titleField = page.getByPlaceholder(/标题|任务名称/i).or(page.getByDisplayValue('Task to Edit'));
     if (await titleField.isVisible({ timeout: 1000 }).catch(() => false)) {
       await titleField.click();
       await page.keyboard.press('Control+A');
       await page.keyboard.type('Updated Task Title');
 
       // Save changes
-      const saveButton = page.getByRole('button', { name: /save|update/i });
+      const saveButton = page.getByRole('button', { name: /保存|更新/i });
       if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await saveButton.click();
       } else {
@@ -164,10 +164,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can complete a task', async ({ page }) => {
     // Create a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Task to Complete');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -186,7 +186,7 @@ test.describe('Tasks Kanban Board', () => {
 
       // Task should move to "Done" column or be marked as complete
       // Verify completion (implementation-specific)
-      const doneColumn = page.getByText(/^done$|completed/i).locator('..');
+      const doneColumn = page.getByText(/已完成/i).locator('..');
       if (await doneColumn.isVisible({ timeout: 1000 }).catch(() => false)) {
         // Check if task moved to Done column
         await expect(page.getByText('Task to Complete')).toBeVisible();
@@ -200,10 +200,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('completion celebration appears when task is completed', async ({ page }) => {
     // Create and complete a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Celebration Task');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -225,7 +225,7 @@ test.describe('Tasks Kanban Board', () => {
       }
 
       // Or look for a toast/notification
-      const toastMessage = page.getByText(/completed|done|nice.*work|great.*job/i);
+      const toastMessage = page.getByText(/已完成|干得漂亮/i);
       if (await toastMessage.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(toastMessage).toBeVisible();
       }
@@ -234,10 +234,10 @@ test.describe('Tasks Kanban Board', () => {
 
   test('can delete a task', async ({ page }) => {
     // Create a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task|\+/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务|\+/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务名称/i);
       await titleInput.fill('Task to Delete');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -249,12 +249,12 @@ test.describe('Tasks Kanban Board', () => {
     await page.waitForTimeout(500);
 
     // Find delete button
-    const deleteButton = page.getByRole('button', { name: /delete|remove/i });
+    const deleteButton = page.getByRole('button', { name: /删除|移除/i });
     if (await deleteButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await deleteButton.click();
 
       // Confirm deletion if there's a dialog
-      const confirmButton = page.getByRole('button', { name: /confirm|yes|delete/i });
+      const confirmButton = page.getByRole('button', { name: /确认|是|删除/i });
       if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await confirmButton.click();
       }

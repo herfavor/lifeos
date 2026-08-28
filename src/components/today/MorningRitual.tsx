@@ -28,6 +28,7 @@ import { useCalendarStore } from '../../stores/useCalendarStore';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useDailyPlanningStore } from '../../stores/useDailyPlanningStore';
 import type { MorningRitualRecord } from '../../stores/useDailyPlanningStore';
+import { getTodayTasks } from '../../utils/todayTasks';
 
 interface MorningRitualProps {
   dateKey: string;
@@ -36,10 +37,10 @@ interface MorningRitualProps {
 }
 
 const STEPS = [
-  { id: 'calendar', label: 'Review Calendar', icon: Calendar },
-  { id: 'tasks', label: 'Pick Tasks', icon: ListChecks },
-  { id: 'capacity', label: 'Set Capacity', icon: Clock },
-  { id: 'review', label: 'Review & Go', icon: Rocket },
+  { id: 'calendar', label: '查看日历', icon: Calendar },
+  { id: 'tasks', label: '挑选任务', icon: ListChecks },
+  { id: 'capacity', label: '设置可用时间', icon: Clock },
+  { id: 'review', label: '确认开始', icon: Rocket },
 ] as const;
 
 const slideVariants = {
@@ -82,12 +83,8 @@ export const MorningRitual: React.FC<MorningRitualProps> = ({
 
   // Tasks already planned for today
   const todayTasks = useMemo(() => {
-    return tasks.filter((t) => {
-      if (!t.dueDate || t.status === 'done') return false;
-      const dueKey = format(new Date(t.dueDate), 'yyyy-M-d');
-      return dueKey === dateKey;
-    });
-  }, [tasks, dateKey]);
+    return getTodayTasks(tasks, today);
+  }, [tasks, today]);
 
   const toggleTask = useCallback((taskId: string) => {
     setSelectedTaskIds((prev) => {
@@ -140,13 +137,13 @@ export const MorningRitual: React.FC<MorningRitualProps> = ({
           <div className="flex items-center gap-2">
             <Sun className="w-5 h-5 text-accent-yellow" />
             <h2 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Morning Ritual
+              晨间仪式
             </h2>
           </div>
           <button
             onClick={onDismiss}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            aria-label="Dismiss"
+            aria-label="关闭"
           >
             <X className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -224,14 +221,14 @@ export const MorningRitual: React.FC<MorningRitualProps> = ({
             className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            返回
           </button>
           {currentStep < STEPS.length - 1 ? (
             <button
               onClick={goNext}
               className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium rounded-lg bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
             >
-              Next
+              下一步
               <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
@@ -240,7 +237,7 @@ export const MorningRitual: React.FC<MorningRitualProps> = ({
               className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium rounded-lg bg-accent-green text-white hover:opacity-90 transition-colors"
             >
               <Rocket className="w-4 h-4" />
-              Start Your Day
+              开始新的一天
             </button>
           )}
         </div>
@@ -262,16 +259,16 @@ interface CalendarEvent {
 const StepCalendar: React.FC<{ events: CalendarEvent[]; today: Date }> = ({ events, today }) => (
   <div>
     <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-      Today's Calendar
+      今日日历
     </h3>
     <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-      {format(today, 'EEEE, MMMM d')} — review what's on your schedule.
+      {format(today, 'EEEE, MMMM d')} — 查看你的日程安排。
     </p>
     {events.length === 0 ? (
       <div className="text-center py-8 text-text-light-tertiary dark:text-text-dark-tertiary">
         <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No events scheduled today</p>
-        <p className="text-xs mt-1">Your calendar is clear — more time for deep work.</p>
+        <p className="text-sm">今天没有安排日程</p>
+        <p className="text-xs mt-1">你的日历一片空白——有更多时间进行深度工作。</p>
       </div>
     ) : (
       <div className="space-y-2 max-h-[220px] overflow-y-auto">
@@ -286,7 +283,7 @@ const StepCalendar: React.FC<{ events: CalendarEvent[]; today: Date }> = ({ even
               </span>
             ) : (
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary w-12 flex-shrink-0">
-                All day
+                全天
               </span>
             )}
             <span className="text-sm text-text-light-primary dark:text-text-dark-primary truncate">
@@ -314,16 +311,16 @@ const StepPickTasks: React.FC<{
 }> = ({ backlogTasks, todayTasks, selectedIds, onToggle }) => (
   <div>
     <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-      Pick Your Tasks
+      挑选你的任务
     </h3>
     <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-      Select tasks from your backlog to work on today.
+      从 backlog 中选择今天要处理的任务。
     </p>
 
     {todayTasks.length > 0 && (
       <div className="mb-3">
         <div className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1.5">
-          Already planned ({todayTasks.length})
+          已计划 ({todayTasks.length})
         </div>
         <div className="space-y-1 max-h-[80px] overflow-y-auto">
           {todayTasks.map((task) => (
@@ -341,7 +338,7 @@ const StepPickTasks: React.FC<{
     </div>
     {backlogTasks.length === 0 ? (
       <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary py-4 text-center">
-        No backlog tasks available
+        没有可用的 backlog 任务
       </p>
     ) : (
       <div className="space-y-1 max-h-[160px] overflow-y-auto">
@@ -379,7 +376,7 @@ const StepPickTasks: React.FC<{
     {selectedIds.size > 0 && (
       <div className="mt-2 text-xs text-accent-primary font-medium">
         <Plus className="w-3 h-3 inline mr-1" />
-        {selectedIds.size} task{selectedIds.size !== 1 ? 's' : ''} selected
+        已选择 {selectedIds.size} 个任务
       </div>
     )}
   </div>
@@ -391,17 +388,17 @@ const StepCapacity: React.FC<{
 }> = ({ capacity, setCapacity }) => (
   <div>
     <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-      Set Your Capacity
+      设置你的可用时间
     </h3>
     <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-      How many hours are you available to work today?
+      今天你有多少小时可用于工作？
     </p>
 
     <div className="flex items-center justify-center gap-4 mb-6">
       <button
         onClick={() => setCapacity(Math.max(0.5, capacity - 0.5))}
         className="p-2 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark transition-colors"
-        aria-label="Decrease capacity"
+        aria-label="减少可用时间"
       >
         <Minus className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
       </button>
@@ -409,12 +406,12 @@ const StepCapacity: React.FC<{
         <div className="text-4xl font-bold text-text-light-primary dark:text-text-dark-primary">
           {capacity}
         </div>
-        <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">hours</div>
+        <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">小时</div>
       </div>
       <button
         onClick={() => setCapacity(Math.min(16, capacity + 0.5))}
         className="p-2 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark transition-colors"
-        aria-label="Increase capacity"
+        aria-label="增加可用时间"
       >
         <Plus className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
       </button>
@@ -432,7 +429,7 @@ const StepCapacity: React.FC<{
               : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-border-light dark:hover:bg-border-dark'
           }`}
         >
-          {h}h
+          {h}小时
         </button>
       ))}
     </div>
@@ -447,36 +444,36 @@ const StepReview: React.FC<{
 }> = ({ eventsCount, existingTasks, newTasks, capacity }) => (
   <div>
     <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-      Your Day at a Glance
+      你的一天一览
     </h3>
     <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-      Ready to start? Here's your plan.
+      准备好开始了吗？这是你的计划。
     </p>
 
     <div className="space-y-3">
       <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated">
         <div className="flex items-center gap-2 text-sm text-text-light-primary dark:text-text-dark-primary">
           <Calendar className="w-4 h-4 text-accent-blue" />
-          Events
+          日程
         </div>
         <span className="font-semibold text-text-light-primary dark:text-text-dark-primary">{eventsCount}</span>
       </div>
       <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated">
         <div className="flex items-center gap-2 text-sm text-text-light-primary dark:text-text-dark-primary">
           <ListChecks className="w-4 h-4 text-accent-purple" />
-          Tasks
+          任务
         </div>
         <span className="font-semibold text-text-light-primary dark:text-text-dark-primary">
           {existingTasks + newTasks}
           {newTasks > 0 && (
-            <span className="text-xs font-normal text-accent-green ml-1">+{newTasks} new</span>
+            <span className="text-xs font-normal text-accent-green ml-1">+{newTasks} 个新任务</span>
           )}
         </span>
       </div>
       <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated">
         <div className="flex items-center gap-2 text-sm text-text-light-primary dark:text-text-dark-primary">
           <Clock className="w-4 h-4 text-accent-yellow" />
-          Capacity
+          可用时间
         </div>
         <span className="font-semibold text-text-light-primary dark:text-text-dark-primary">{capacity}h</span>
       </div>

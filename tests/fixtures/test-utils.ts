@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 
 /**
- * Custom test fixtures for NeumanOS E2E tests
+ * Custom test fixtures for LifeOS E2E tests
  *
  * Extend base test with common setup/teardown patterns.
  */

@@ -91,16 +91,16 @@ export function MonthlyTimeReport() {
 
   // Get project name and color by ID
   const getProject = (projectId: string | null | undefined) => {
-    if (!projectId) return { name: 'No Project', color: '#9CA3AF' };
+    if (!projectId) return { name: '无项目', color: '#9CA3AF' };
     const project = projects.find(p => p.id === projectId);
-    return project ? { name: project.name, color: project.color } : { name: 'Unknown', color: '#9CA3AF' };
+    return project ? { name: project.name, color: project.color } : { name: '未知', color: '#9CA3AF' };
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading monthly report...
+          正在加载月度报告…
         </div>
       </div>
     );
@@ -110,13 +110,13 @@ export function MonthlyTimeReport() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          No data available
+          暂无数据
         </div>
       </div>
     );
   }
 
-  const monthName = new Date(year, month, 1).toLocaleDateString('en-US', {
+  const monthName = new Date(year, month, 1).toLocaleDateString('zh-CN', {
     month: 'long',
     year: 'numeric'
   });
@@ -135,7 +135,7 @@ export function MonthlyTimeReport() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Total Time
+            总时长
           </div>
           <div className="text-3xl font-bold text-accent-primary">
             {formatDuration(report.totalDuration, { showSeconds: false })}
@@ -144,7 +144,7 @@ export function MonthlyTimeReport() {
 
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Total Entries
+            记录总数
           </div>
           <div className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {report.entryCount}
@@ -153,7 +153,7 @@ export function MonthlyTimeReport() {
 
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Avg Time/Day
+            日均时长
           </div>
           <div className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {formatDuration(
@@ -167,7 +167,7 @@ export function MonthlyTimeReport() {
       {/* Calendar Grid - Using shared MonthlyCalendarGrid for consistent styling */}
       <div>
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-          Daily Breakdown
+          每日明细
         </h3>
         <MonthlyCalendarGrid
           year={year}
@@ -179,8 +179,8 @@ export function MonthlyTimeReport() {
 
             if (!hasEntries) {
               return (
-                <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100">
-                  No entries
+                <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100">
+                  无记录
                 </div>
               );
             }
@@ -192,7 +192,7 @@ export function MonthlyTimeReport() {
                   {formatDuration(daySummary.totalDuration, { showSeconds: false })}
                 </div>
                 <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">
-                  {daySummary.entryCount} {daySummary.entryCount === 1 ? 'entry' : 'entries'}
+                  {daySummary.entryCount} 条记录
                 </div>
               </div>
             );
@@ -212,7 +212,7 @@ export function MonthlyTimeReport() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark">
               <div>
                 <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                  {new Date(selectedDay.date + 'T00:00:00').toLocaleDateString('en-US', {
+                  {new Date(selectedDay.date + 'T00:00:00').toLocaleDateString('zh-CN', {
                     weekday: 'long',
                     month: 'long',
                     day: 'numeric',
@@ -220,13 +220,13 @@ export function MonthlyTimeReport() {
                   })}
                 </h2>
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  {selectedDay.entries.length} {selectedDay.entries.length === 1 ? 'entry' : 'entries'} • {formatDuration(selectedDay.totalDuration, { showSeconds: false })}
+                  {selectedDay.entries.length} 条记录 • {formatDuration(selectedDay.totalDuration, { showSeconds: false })}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedDay(null)}
                 className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-all"
-                aria-label="Close"
+                aria-label="关闭"
               >
                 <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
               </button>
@@ -249,15 +249,15 @@ export function MonthlyTimeReport() {
                         />
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                            {entry.description || 'No description'}
+                            {entry.description || '无描述'}
                           </div>
                           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
                             {project.name}
                           </div>
                           <div className="flex items-center gap-4 mt-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
                             <span>
-                              {new Date(entry.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                              {entry.endTime && ` - ${new Date(entry.endTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`}
+                              {new Date(entry.startTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                              {entry.endTime && ` - ${new Date(entry.endTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`}
                             </span>
                             <span className="font-mono text-accent-primary">
                               {formatDuration(entry.duration, { showSeconds: false })}
@@ -270,7 +270,7 @@ export function MonthlyTimeReport() {
                 })
               ) : (
                 <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
-                  No time entries for this day
+                  当天暂无时间记录
                 </div>
               )}
             </div>
@@ -286,7 +286,7 @@ export function MonthlyTimeReport() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium transition-all"
               >
                 <Plus className="w-4 h-4" />
-                Add Time Entry
+                添加时间记录
               </button>
             </div>
           </div>
@@ -297,7 +297,7 @@ export function MonthlyTimeReport() {
       {report.projectBreakdown.length > 0 && (
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
           <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Time by Project
+            各项目用时
           </h3>
 
           <div className="space-y-3">
@@ -315,7 +315,7 @@ export function MonthlyTimeReport() {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                      {project.entryCount} {project.entryCount === 1 ? 'entry' : 'entries'}
+                      {project.entryCount} 条记录
                     </span>
                     <span className="text-sm font-mono font-semibold text-accent-primary min-w-[80px] text-right">
                       {formatDuration(project.totalDuration, { showSeconds: false })}

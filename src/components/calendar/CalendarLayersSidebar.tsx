@@ -52,13 +52,12 @@ export function CalendarLayersSidebar() {
       <div className="flex items-center justify-between px-2 py-2 border-b border-border-light dark:border-border-dark">
         {!collapsed && (
           <span className="text-xs font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Calendars
-          </span>
-        )}
+            日历
+          </span>        )}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed ? '展开侧边栏' : '折叠侧边栏'}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -80,7 +79,7 @@ export function CalendarLayersSidebar() {
                   borderColor: cal.color,
                   backgroundColor: cal.visible ? cal.color : 'transparent',
                 }}
-                title={cal.visible ? `Hide ${cal.name}` : `Show ${cal.name}`}
+                title={cal.visible ? `隐藏 ${cal.name}` : `显示 ${cal.name}`}
               >
                 {cal.visible && <Check className="w-2.5 h-2.5 text-white" />}
               </button>
@@ -115,11 +114,11 @@ export function CalendarLayersSidebar() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
                   <button
                     onClick={() => setEditingId(cal.id)}
                     className="p-0.5 rounded hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-tertiary dark:text-text-dark-tertiary"
-                    title="Change color"
+                    title="更改颜色"
                   >
                     <Palette className="w-3 h-3" />
                   </button>
@@ -130,7 +129,7 @@ export function CalendarLayersSidebar() {
                       <button
                         onClick={() => { deleteCalendar(cal.id); setConfirmDeleteId(null); }}
                         className="p-0.5 rounded bg-status-error/10 text-status-error"
-                        title="Confirm delete"
+                        title="确认删除"
                       >
                         <Check className="w-3 h-3" />
                       </button>
@@ -145,7 +144,7 @@ export function CalendarLayersSidebar() {
                     <button
                       onClick={() => setConfirmDeleteId(cal.id)}
                       className="p-0.5 rounded hover:bg-status-error/10 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error"
-                      title="Delete calendar"
+                      title="删除日历"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -162,7 +161,7 @@ export function CalendarLayersSidebar() {
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="Calendar name"
+                placeholder="日历名称"
                 className="w-full px-2 py-1 text-xs bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary mb-2"
                 autoFocus
                 onKeyDown={(e) => {
@@ -188,13 +187,13 @@ export function CalendarLayersSidebar() {
                   disabled={!newName.trim()}
                   className="flex-1 px-2 py-1 text-xs font-medium text-white bg-accent-primary rounded-button hover:opacity-90 disabled:opacity-50"
                 >
-                  Add
+                  添加
                 </button>
                 <button
                   onClick={() => { setShowAddForm(false); setNewName(''); }}
                   className="px-2 py-1 text-xs text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </div>
@@ -204,7 +203,7 @@ export function CalendarLayersSidebar() {
               className="w-full flex items-center gap-1.5 px-2 py-1.5 text-xs text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
-              Add Calendar
+              添加日历
             </button>
           )}
         </div>

@@ -36,6 +36,12 @@ const unitLabels: Record<UnitCategory, { [key: string]: string }> = {
   weight: { kilograms: 'kg', pounds: 'lb', ounces: 'oz', grams: 'g' },
 };
 
+const categoryLabels: Record<UnitCategory, string> = {
+  temperature: '温度',
+  length: '长度',
+  weight: '重量',
+};
+
 export const UnitConverterWidget: React.FC = () => {
   const [category, setCategory] = useState<UnitCategory>('temperature');
   const [fromUnit, setFromUnit] = useState('celsius');
@@ -63,7 +69,7 @@ export const UnitConverterWidget: React.FC = () => {
   const units = Object.keys(conversionRules[category]);
 
   return (
-    <BaseWidget title="Unit Converter" icon="📏">
+    <BaseWidget title="单位换算" icon="📏">
       <div className="space-y-3">
         {/* Category Selector */}
         <div className="flex gap-2">
@@ -79,7 +85,7 @@ export const UnitConverterWidget: React.FC = () => {
                 }
               `}
             >
-              {cat}
+              {categoryLabels[cat]}
             </button>
           ))}
         </div>
@@ -87,7 +93,7 @@ export const UnitConverterWidget: React.FC = () => {
         {/* From Unit */}
         <div>
           <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1 block">
-            From
+            从
           </label>
           <div className="flex gap-2">
             <input
@@ -120,7 +126,7 @@ export const UnitConverterWidget: React.FC = () => {
               setToUnit(temp);
             }}
             className="p-2 rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
-            title="Swap units"
+            title="交换单位"
           >
             ⇅
           </button>
@@ -129,7 +135,7 @@ export const UnitConverterWidget: React.FC = () => {
         {/* To Unit */}
         <div>
           <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1 block">
-            To
+            到
           </label>
           <div className="flex gap-2">
             <input

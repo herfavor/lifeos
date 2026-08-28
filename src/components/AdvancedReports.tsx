@@ -28,12 +28,12 @@ import {
  */
 
 const REPORT_TYPES: { value: ReportType; label: string }[] = [
-  { value: 'time-by-project', label: 'Time by Project' },
-  { value: 'time-by-date', label: 'Time by Date' },
-  { value: 'time-by-tag', label: 'Time by Tag' },
-  { value: 'billable-vs-nonbillable', label: 'Billable vs Non-Billable' },
-  { value: 'rate-analysis', label: 'Rate Analysis' },
-  { value: 'trends', label: 'Trends' }
+  { value: 'time-by-project', label: '按项目统计' },
+  { value: 'time-by-date', label: '按日期统计' },
+  { value: 'time-by-tag', label: '按标签统计' },
+  { value: 'billable-vs-nonbillable', label: '可计费 vs 非计费' },
+  { value: 'rate-analysis', label: '费率分析' },
+  { value: 'trends', label: '趋势' }
 ];
 
 const COLORS = ['#E879F9', '#06B6D4', '#8B5CF6', '#F59E0B', '#10B981', '#EF4444'];
@@ -106,34 +106,34 @@ export function AdvancedReports() {
     let csv = '';
 
     if (reportType === 'time-by-project') {
-      csv = 'Project,Hours,Amount,Entries,Percentage\n';
+      csv = '项目,小时,金额,条目数,百分比\n';
       (reportData as ReturnType<typeof calculateTimeByProject>).forEach(item => {
         csv += `"${item.projectName}",${item.totalHours},${item.totalAmount},${item.entryCount},${item.percentage.toFixed(2)}%\n`;
       });
     } else if (reportType === 'time-by-date') {
-      csv = 'Date,Hours,Amount,Entries\n';
+      csv = '日期,小时,金额,条目数\n';
       (reportData as ReturnType<typeof calculateTimeByDate>).forEach(item => {
         csv += `${item.date},${item.totalHours},${item.totalAmount},${item.entryCount}\n`;
       });
     } else if (reportType === 'time-by-tag') {
-      csv = 'Tag,Hours,Entries,Percentage\n';
+      csv = '标签,小时,条目数,百分比\n';
       (reportData as ReturnType<typeof calculateTimeByTag>).forEach(item => {
         csv += `"${item.tag}",${item.totalHours},${item.entryCount},${item.percentage.toFixed(2)}%\n`;
       });
     } else if (reportType === 'billable-vs-nonbillable') {
       const data = reportData as ReturnType<typeof calculateBillableVsNonBillable>;
-      csv = 'Type,Hours,Amount,Entries,Percentage\n';
-      csv += `Billable,${data.billable.hours},${data.billable.amount},${data.billable.entryCount},${data.billable.percentage.toFixed(2)}%\n`;
-      csv += `Non-Billable,${data.nonBillable.hours},N/A,${data.nonBillable.entryCount},${data.nonBillable.percentage.toFixed(2)}%\n`;
+      csv = '类型,小时,金额,条目数,百分比\n';
+      csv += `可计费,${data.billable.hours},${data.billable.amount},${data.billable.entryCount},${data.billable.percentage.toFixed(2)}%\n`;
+      csv += `非计费,${data.nonBillable.hours},N/A,${data.nonBillable.entryCount},${data.nonBillable.percentage.toFixed(2)}%\n`;
     } else if (reportType === 'rate-analysis') {
       const data = reportData as ReturnType<typeof calculateRateAnalysis>;
-      csv = 'Metric,Value\n';
-      csv += `Average Rate,${data.averageRate}\n`;
-      csv += `Median Rate,${data.medianRate}\n`;
-      csv += `Min Rate,${data.minRate}\n`;
-      csv += `Max Rate,${data.maxRate}\n`;
+      csv = '指标,数值\n';
+      csv += `平均费率,${data.averageRate}\n`;
+      csv += `中位费率,${data.medianRate}\n`;
+      csv += `最低费率,${data.minRate}\n`;
+      csv += `最高费率,${data.maxRate}\n`;
     } else if (reportType === 'trends') {
-      csv = 'Period,Hours,Amount,Entries,Growth Rate\n';
+      csv = '周期,小时,金额,条目数,增长率\n';
       (reportData as ReturnType<typeof calculateTrends>).forEach(item => {
         csv += `${item.period},${item.hours},${item.amount},${item.entryCount},${item.growthRate.toFixed(2)}%\n`;
       });
@@ -166,8 +166,8 @@ export function AdvancedReports() {
                 labelStyle={{ color: '#F3F4F6' }}
               />
               <Legend />
-              <Bar dataKey="totalHours" fill="#E879F9" name="Hours" />
-              <Bar dataKey="totalAmount" fill="#06B6D4" name="Amount ($)" />
+              <Bar dataKey="totalHours" fill="#E879F9" name="小时" />
+              <Bar dataKey="totalAmount" fill="#06B6D4" name="金额（$）" />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -186,8 +186,8 @@ export function AdvancedReports() {
                 labelStyle={{ color: '#F3F4F6' }}
               />
               <Legend />
-              <Line type="monotone" dataKey="totalHours" stroke="#E879F9" name="Hours" />
-              <Line type="monotone" dataKey="totalAmount" stroke="#06B6D4" name="Amount ($)" />
+              <Line type="monotone" dataKey="totalHours" stroke="#E879F9" name="小时" />
+              <Line type="monotone" dataKey="totalAmount" stroke="#06B6D4" name="金额（$）" />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -227,7 +227,7 @@ export function AdvancedReports() {
                   contentStyle={{ backgroundColor: 'var(--color-surface-dark, #1f2937)', border: '1px solid var(--color-border-dark, #374151)', borderRadius: '8px' }}
                   labelStyle={{ color: '#F3F4F6' }}
                 />
-                <Bar dataKey="totalHours" name="Hours">
+                <Bar dataKey="totalHours" name="小时">
                   {data.map((item, index) => (
                     <Cell key={`cell-${index}`} fill={item.color} />
                   ))}
@@ -241,8 +241,8 @@ export function AdvancedReports() {
       case 'billable-vs-nonbillable': {
         const data = reportData as ReturnType<typeof calculateBillableVsNonBillable>;
         const pieData = [
-          { name: 'Billable', value: data.billable.hours },
-          { name: 'Non-Billable', value: data.nonBillable.hours }
+          { name: '可计费', value: data.billable.hours },
+          { name: '非计费', value: data.nonBillable.hours }
         ];
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -267,18 +267,18 @@ export function AdvancedReports() {
             </ResponsiveContainer>
 
             <div className="space-y-4">
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-sm font-medium text-text-tertiary mb-2">Billable</h4>
-                <p className="text-2xl font-bold text-text-primary">{formatHours(data.billable.hours)}</p>
-                <p className="text-sm text-text-secondary">${data.billable.amount.toFixed(2)} revenue</p>
-                <p className="text-xs text-text-tertiary">{data.billable.percentage.toFixed(1)}% of total time</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-2">可计费</h4>
+                <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">{formatHours(data.billable.hours)}</p>
+                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">${data.billable.amount.toFixed(2)} 收入</p>
+                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">占总时间的 {data.billable.percentage.toFixed(1)}%</p>
               </div>
 
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-sm font-medium text-text-tertiary mb-2">Non-Billable</h4>
-                <p className="text-2xl font-bold text-text-primary">{formatHours(data.nonBillable.hours)}</p>
-                <p className="text-sm text-text-secondary">{data.nonBillable.entryCount} entries</p>
-                <p className="text-xs text-text-tertiary">{data.nonBillable.percentage.toFixed(1)}% of total time</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-2">非计费</h4>
+                <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">{formatHours(data.nonBillable.hours)}</p>
+                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{data.nonBillable.entryCount} 个条目</p>
+                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">占总时间的 {data.nonBillable.percentage.toFixed(1)}%</p>
               </div>
             </div>
           </div>
@@ -290,34 +290,34 @@ export function AdvancedReports() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-xs font-medium text-text-tertiary mb-1">Average Rate</h4>
-                <p className="text-xl font-bold text-text-primary">${data.averageRate.toFixed(2)}</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">平均费率</h4>
+                <p className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">${data.averageRate.toFixed(2)}</p>
               </div>
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-xs font-medium text-text-tertiary mb-1">Median Rate</h4>
-                <p className="text-xl font-bold text-text-primary">${data.medianRate.toFixed(2)}</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">中位费率</h4>
+                <p className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">${data.medianRate.toFixed(2)}</p>
               </div>
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-xs font-medium text-text-tertiary mb-1">Min Rate</h4>
-                <p className="text-xl font-bold text-text-primary">${data.minRate.toFixed(2)}</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">最低费率</h4>
+                <p className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">${data.minRate.toFixed(2)}</p>
               </div>
-              <div className="rounded-lg bg-surface-elevated p-4">
-                <h4 className="text-xs font-medium text-text-tertiary mb-1">Max Rate</h4>
-                <p className="text-xl font-bold text-text-primary">${data.maxRate.toFixed(2)}</p>
+              <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+                <h4 className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">最高费率</h4>
+                <p className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">${data.maxRate.toFixed(2)}</p>
               </div>
             </div>
 
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.rateDistribution}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="rate" stroke="#9CA3AF" label={{ value: 'Rate ($/hr)', position: 'insideBottom', offset: -5 }} />
-                <YAxis stroke="#9CA3AF" label={{ value: 'Hours', angle: -90, position: 'insideLeft' }} />
+                <XAxis dataKey="rate" stroke="#9CA3AF" label={{ value: '费率（$/小时）', position: 'insideBottom', offset: -5 }} />
+                <YAxis stroke="#9CA3AF" label={{ value: '小时', angle: -90, position: 'insideLeft' }} />
                 <Tooltip
                   contentStyle={{ backgroundColor: 'var(--color-surface-dark, #1f2937)', border: '1px solid var(--color-border-dark, #374151)', borderRadius: '8px' }}
                   labelStyle={{ color: '#F3F4F6' }}
                 />
-                <Bar dataKey="hours" fill="#8B5CF6" name="Hours" />
+                <Bar dataKey="hours" fill="#8B5CF6" name="小时" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -338,8 +338,8 @@ export function AdvancedReports() {
                 labelStyle={{ color: '#F3F4F6' }}
               />
               <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="hours" stroke="#E879F9" name="Hours" />
-              <Line yAxisId="right" type="monotone" dataKey="growthRate" stroke="#10B981" name="Growth %" />
+              <Line yAxisId="left" type="monotone" dataKey="hours" stroke="#E879F9" name="小时" />
+              <Line yAxisId="right" type="monotone" dataKey="growthRate" stroke="#10B981" name="增长率 %" />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -354,8 +354,8 @@ export function AdvancedReports() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-text-primary">Advanced Reports</h2>
-          <p className="text-sm text-text-secondary">Analyze your time tracking data with interactive charts</p>
+          <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">高级报表</h2>
+          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">通过交互式图表分析你的时间记录数据</p>
         </div>
 
         <button
@@ -364,17 +364,17 @@ export function AdvancedReports() {
           className="flex items-center gap-2 rounded-md bg-accent-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4" />
-          Export CSV
+          导出 CSV
         </button>
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg bg-surface-elevated p-4">
+      <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Report Type */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Report Type
+              报表类型
             </label>
             <select
               value={reportType}
@@ -392,7 +392,7 @@ export function AdvancedReports() {
           {/* Start Date */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Start Date
+              开始日期
             </label>
             <input
               type="date"
@@ -405,7 +405,7 @@ export function AdvancedReports() {
           {/* End Date */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              End Date
+              结束日期
             </label>
             <input
               type="date"
@@ -419,16 +419,16 @@ export function AdvancedReports() {
           {(reportType === 'time-by-date' || reportType === 'trends') && (
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Group By
+                分组方式
               </label>
               <select
                 value={filters.groupBy}
                 onChange={(e) => setFilters({ ...filters, groupBy: e.target.value as GroupByPeriod })}
                 className="w-full rounded-md border border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated px-3 py-2 text-sm text-text-light-primary dark:text-text-dark-primary focus:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
+                <option value="day">天</option>
+                <option value="week">周</option>
+                <option value="month">月</option>
               </select>
             </div>
           )}
@@ -437,7 +437,7 @@ export function AdvancedReports() {
           {availableTags.length > 0 && (
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Tags
+                标签
               </label>
               <select
                 value=""
@@ -449,7 +449,7 @@ export function AdvancedReports() {
                 }}
                 className="w-full rounded-md border border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated px-3 py-2 text-sm text-text-light-primary dark:text-text-dark-primary focus:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="">All tags</option>
+                <option value="">全部标签</option>
                 {availableTags.map(tag => (
                   <option key={tag} value={tag}>{tag}</option>
                 ))}
@@ -485,19 +485,19 @@ export function AdvancedReports() {
               className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-2 focus:ring-accent-primary"
             />
             <label htmlFor="advancedBillableOnly" className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              Billable only
+              仅计费
             </label>
           </div>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="rounded-lg bg-surface-elevated p-6">
+      <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-6">
         {reportData ? renderChart() : (
-          <div className="flex h-64 items-center justify-center text-text-tertiary">
+          <div className="flex h-64 items-center justify-center text-text-light-tertiary dark:text-text-dark-tertiary">
             <div className="text-center">
               <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Select filters to generate report</p>
+              <p>请选择筛选条件以生成报表</p>
             </div>
           </div>
         )}
@@ -506,22 +506,22 @@ export function AdvancedReports() {
       {/* Summary Stats */}
       {filteredEntries.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-lg bg-surface-elevated p-4">
-            <h4 className="text-sm font-medium text-text-tertiary mb-1">Total Entries</h4>
-            <p className="text-2xl font-bold text-text-primary">{filteredEntries.length}</p>
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+            <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">总条目数</h4>
+            <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">{filteredEntries.length}</p>
           </div>
-          <div className="rounded-lg bg-surface-elevated p-4">
-            <h4 className="text-sm font-medium text-text-tertiary mb-1">Total Time</h4>
-            <p className="text-2xl font-bold text-text-primary">
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+            <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">总时长</h4>
+            <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
               {formatHours(filteredEntries.reduce((sum, e) => sum + e.duration, 0) / 3600)}
             </p>
           </div>
-          <div className="rounded-lg bg-surface-elevated p-4">
-            <h4 className="text-sm font-medium text-text-tertiary mb-1">Date Range</h4>
-            <p className="text-sm text-text-primary">
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4">
+            <h4 className="text-sm font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">日期范围</h4>
+            <p className="text-sm text-text-light-primary dark:text-text-dark-primary">
               {filters.startDate && filters.endDate
                 ? `${new Date(filters.startDate).toLocaleDateString()} - ${new Date(filters.endDate).toLocaleDateString()}`
-                : 'All Time'}
+                : '全部时间'}
             </p>
           </div>
         </div>

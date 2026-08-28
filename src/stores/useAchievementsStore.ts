@@ -51,8 +51,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Task Achievements
   {
     id: 'first-steps',
-    name: 'First Steps',
-    description: 'Complete your first task',
+    name: '第一步',
+    description: '完成你的第一个任务',
     icon: '🎯',
     category: 'tasks',
     threshold: 1,
@@ -60,8 +60,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'getting-started',
-    name: 'Getting Started',
-    description: 'Complete 10 tasks',
+    name: '开始上手',
+    description: '完成 10 个任务',
     icon: '🏁',
     category: 'tasks',
     threshold: 10,
@@ -69,8 +69,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'task-master',
-    name: 'Task Master',
-    description: 'Complete 50 tasks',
+    name: '任务大师',
+    description: '完成 50 个任务',
     icon: '🏆',
     category: 'tasks',
     threshold: 50,
@@ -78,8 +78,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'productivity-pro',
-    name: 'Productivity Pro',
-    description: 'Complete 100 tasks',
+    name: '效率高手',
+    description: '完成 100 个任务',
     icon: '💪',
     category: 'tasks',
     threshold: 100,
@@ -87,8 +87,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'unstoppable',
-    name: 'Unstoppable',
-    description: 'Complete 500 tasks',
+    name: '势不可挡',
+    description: '完成 500 个任务',
     icon: '🚀',
     category: 'tasks',
     threshold: 500,
@@ -96,8 +96,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'legend',
-    name: 'Legend',
-    description: 'Complete 1000 tasks',
+    name: '传奇',
+    description: '完成 1000 个任务',
     icon: '👑',
     category: 'tasks',
     threshold: 1000,
@@ -107,8 +107,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Note Achievements
   {
     id: 'first-note',
-    name: 'First Note',
-    description: 'Create your first note',
+    name: '第一篇笔记',
+    description: '创建你的第一篇笔记',
     icon: '📝',
     category: 'notes',
     threshold: 1,
@@ -116,8 +116,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'note-enthusiast',
-    name: 'Note Enthusiast',
-    description: 'Create 50 notes',
+    name: '笔记达人',
+    description: '创建 50 篇笔记',
     icon: '📚',
     category: 'notes',
     threshold: 50,
@@ -125,8 +125,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'knowledge-base',
-    name: 'Knowledge Base',
-    description: 'Create 200 notes',
+    name: '知识库',
+    description: '创建 200 篇笔记',
     icon: '🧠',
     category: 'notes',
     threshold: 200,
@@ -136,8 +136,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Time Tracking Achievements
   {
     id: 'time-conscious',
-    name: 'Time Conscious',
-    description: 'Track 1 hour of work',
+    name: '时间意识',
+    description: '累计记录 1 小时工作',
     icon: '⏱️',
     category: 'time',
     threshold: 1,
@@ -145,8 +145,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'time-manager',
-    name: 'Time Manager',
-    description: 'Track 10 hours of work',
+    name: '时间管理者',
+    description: '累计记录 10 小时工作',
     icon: '⏰',
     category: 'time',
     threshold: 10,
@@ -154,8 +154,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'time-master',
-    name: 'Time Master',
-    description: 'Track 100 hours of work',
+    name: '时间大师',
+    description: '累计记录 100 小时工作',
     icon: '🕐',
     category: 'time',
     threshold: 100,
@@ -165,8 +165,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Streak Achievements
   {
     id: 'daily-habit',
-    name: 'Daily Habit',
-    description: 'Maintain a 7-day streak',
+    name: '每日习惯',
+    description: '保持 7 天连续记录',
     icon: '🔥',
     category: 'streaks',
     threshold: 7,
@@ -174,8 +174,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'consistency-king',
-    name: 'Consistency King',
-    description: 'Maintain a 30-day streak',
+    name: '坚持之王',
+    description: '保持 30 天连续记录',
     icon: '👑',
     category: 'streaks',
     threshold: 30,
@@ -183,8 +183,8 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'dedicated',
-    name: 'Dedicated',
-    description: 'Maintain a 100-day streak',
+    name: '持之以恒',
+    description: '保持 100 天连续记录',
     icon: '💎',
     category: 'streaks',
     threshold: 100,

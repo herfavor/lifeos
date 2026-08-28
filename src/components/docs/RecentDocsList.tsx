@@ -17,9 +17,9 @@ const DOC_TYPE_ICONS: Record<DocType, React.ComponentType<{ className?: string }
 };
 
 const DOC_TYPE_LABELS: Record<DocType, string> = {
-  doc: 'Document',
-  sheet: 'Spreadsheet',
-  slides: 'Presentation',
+  doc: '文档',
+  sheet: '电子表格',
+  slides: '演示文稿',
 };
 
 const DOC_TYPE_COLORS: Record<DocType, string> = {
@@ -41,18 +41,18 @@ function formatRelativeTime(dateStr: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (diffMins < 1) return '刚刚';
+  if (diffMins < 60) return `${diffMins} 分钟前`;
+  if (diffHours < 24) return `${diffHours} 小时前`;
+  if (diffDays < 7) return `${diffDays} 天前`;
+  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
 }
 
 /** Generates a simple text preview from TipTap JSON content */
 function getDocPreview(doc: Doc): string {
   if (doc.type !== 'doc') {
-    if (doc.type === 'sheet') return 'Spreadsheet';
-    if (doc.type === 'slides') return 'Presentation';
+    if (doc.type === 'sheet') return '电子表格';
+    if (doc.type === 'slides') return '演示文稿';
     return '';
   }
 
@@ -74,9 +74,9 @@ function getDocPreview(doc: Doc): string {
 
     extractText(content);
     const preview = texts.join(' ').slice(0, 120);
-    return preview || 'Empty document';
+    return preview || '空白文档';
   } catch {
-    return 'Empty document';
+    return '空白文档';
   }
 }
 
@@ -98,7 +98,7 @@ export function RecentDocsList({ onDocClick, limit = 8 }: RecentDocsListProps) {
       <div className="flex items-center gap-2 mb-3 px-1">
         <Clock className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
         <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider">
-          Recent
+          最近
         </h3>
       </div>
 

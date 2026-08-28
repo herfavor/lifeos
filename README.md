@@ -1,174 +1,215 @@
-<div align="center">
+# LifeOS
 
-<img src="public/images/logos/logo_colorful.png" alt="NeumanOS" width="500">
+<p align="center">
+  <img src="public/images/logos/lifeos-logo.svg" alt="LifeOS" width="360">
+</p>
 
-### Your Brain. Your Data. Your Device.
+<p align="center">
+  <strong>本地优先的个人工作与生活中枢</strong><br>
+  收集 → 安排 → 专注 → 沉淀 → 回顾
+</p>
 
-**A privacy-first, local-only platform for organizing your life and work without surrendering your data.**
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Node-22-339933?logo=node.js&logoColor=white" alt="Node 22">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111" alt="React 19">
+  <img src="https://img.shields.io/badge/PWA-installable-5A0FC8" alt="Installable PWA">
+</p>
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Live Site](https://img.shields.io/badge/Live%20Site-os.neuman.dev-brightgreen)](https://os.neuman.dev)
-[![GitHub Stars](https://img.shields.io/github/stars/travisjneuman/neumanos?style=social)](https://github.com/travisjneuman/neumanos/stargazers)
+<p align="center">
+  <img src="public/images/screenshots/home.jpg" alt="LifeOS 当前首页截图" width="1100">
+</p>
 
-**[Live Site](https://os.neuman.dev)** &nbsp;|&nbsp; **[Documentation](https://os.neuman.dev/create/platform/readme)** &nbsp;|&nbsp; **[Report Bug](https://github.com/travisjneuman/neumanos/issues)** &nbsp;|&nbsp; **[Request Feature](https://github.com/travisjneuman/neumanos/discussions)**
+<p align="center"><sub>当前 LifeOS 首页</sub></p>
 
-</div>
+**LifeOS** 是一个 local-first 的个人管理应用。任务、日程、项目、笔记、收藏、回顾和 AI 管理统一围绕一条日常工作流组织，而不是把所有能力同时堆在界面上。
 
----
+核心数据保存在当前浏览器 / PWA 的本地存储中；LifeOS 本身没有账户系统、业务后端或云同步服务。只有当你主动使用 AI、天气、外部链接预览等联网能力时，相关请求才会发往对应第三方服务。
 
-<div align="center">
-
-<img src="public/images/screenshots/welcome_screenshot.png" alt="NeumanOS Welcome Screen" width="48%"> &nbsp; <img src="public/images/screenshots/homepage_screenshot.png" alt="NeumanOS Dashboard" width="48%">
-
-</div>
-
----
-
-## What is NeumanOS?
-
-NeumanOS is an all-in-one productivity platform that lives entirely on your device. Notes, tasks, time tracking, calendar, documents, diagrams, forms, bookmarks, and an AI terminal — unified in a single app, with no account required and no data leaving your machine.
-
-Most productivity tools scatter your work across a stack of subscriptions you don't fully control. NeumanOS puts everything back in one place, under your ownership. Every note, task, and calendar event is stored in your browser's IndexedDB (50GB+ capacity) — readable only by you, exportable at any time, and never touched by a server.
-
-It's free, open source, and built on the principle that software that organizes your life should respect it.
+> 当前产品形态：**Web + 可安装 PWA**。仓库目前没有 Electron / Tauri，因此不会直接生成 `.exe`、`.dmg` 或 `.AppImage`。
 
 ---
 
-## Features
+## 当前体验
 
-### Notes & Knowledge Management
+### 主导航
 
-Rich text editing, full markdown support, and wiki-style `[[links]]` between notes. A D3 force-directed graph view reveals the connections in your knowledge base. Daily notes, nested tags, slash commands, and full-text search keep your writing fast and your ideas linked.
+| 模块 | 当前定位 |
+| --- | --- |
+| 首页 | 看清全局，并决定今天最重要的下一步 |
+| AI | 用自然语言查询、安排和整理 LifeOS 数据 |
+| 今天 | 安排当天真正要完成的事项 |
+| 收件箱 | 处理尚未决定项目 / 日期的输入 |
+| 项目 | 围绕结果、里程碑和下一步推进 |
+| 任务 | 管理已经明确、可执行的工作 |
+| 日程 | 管理有具体时间承诺的事件与时间块 |
+| 笔记 | 记录、整理和关联长期知识 |
+| 收藏 | 保存外部资料，并可转成任务或笔记 |
+| 回顾 | 查看最近的工作记录与变化 |
 
-### Task & Project Management
+### 更多功能
 
-Kanban boards with drag-and-drop columns, custom workflow stages, task dependencies (4 types with lag time), subtasks, priority levels, recurring tasks, and a Gantt timeline view with critical path highlighting. A PM dashboard provides burndown charts, resource utilization, and velocity tracking. Billable time tracking with invoice generation supports freelancers and agencies.
+按需展开：时间统计、番茄钟、专注模式、习惯、甘特图、知识图谱、自动化、每周回顾、项目组合、精力追踪、空闲时间、文档中心。
 
-### Habits & Personal Development
-
-Daily habit tracking with streaks and heatmaps, spaced repetition flashcards using the SM-2 algorithm, daily quests with XP and rewards, a routine builder, and journal integration. Routines and goals live alongside your projects so everything stays in one place.
-
-### Time Tracking
-
-A persistent sidebar timer stays with you across the app. Log hours by project, review daily and weekly summaries, generate monthly reports with heat maps, and export to CSV for invoicing. Manual entry and bulk operations handle the moments when life doesn't run on a stopwatch.
-
-### Calendar & Scheduling
-
-Month, week, day, and agenda views with drag-and-drop rescheduling. Recurring events, browser reminders, conflict detection, and two-way ICS import/export for compatibility with Google Calendar and Apple Calendar. Task due dates appear directly on the calendar.
-
-### Dashboard & Widgets
-
-A fully customizable home screen with 60+ widgets spanning productivity, information, utilities, and finance. Weather, world clocks, calculators, countdown timers, stock tickers, news feeds, Pomodoro timer, and live summaries of your notes, tasks, and events — arranged exactly how you want them.
-
-### Activity Feed & Analytics
-
-A cross-module activity stream that surfaces recent actions across notes, tasks, calendar, and habits. A personal analytics dashboard provides heatmaps and productivity trends so you can see patterns in how you work.
-
-### AI Terminal
-
-Connect to 9 AI providers — OpenAI, Anthropic Claude, Google Gemini, Groq, Mistral, xAI Grok, DeepSeek, HuggingFace, and Ollama (local models) — using your own API keys. Keys are stored with AES-256-GCM encryption and never leave your device. Voice input, cross-module context awareness, and a built-in browser terminal with AI command integration round out the developer experience.
-
-### Office Suite
-
-Create documents, spreadsheets, presentations, diagrams, and forms without leaving the platform. The spreadsheet engine supports 400+ Excel-compatible formulas with sort, filter, conditional formatting, and pivot tables. Presentations include a full canvas editor, 8 slide templates, animations, and presenter mode. Export to PDF, HTML, Markdown, CSV, or PPTX.
-
-### Focus & Daily Planning
-
-The Today page is your daily command center — a Sunsama-inspired planning view that brings today's schedule, tasks, habits, and time tracking into one focused layout. A distraction-free focus mode with a full-screen timer, current task display, and keyboard controls supports deep work sessions.
-
-### Smart Templates
-
-Workflow templates that create notes, tasks, and events in one action (Ctrl+Shift+T). Define reusable templates for recurring workflows like project kickoffs, weekly reviews, or sprint planning.
-
-### Energy Tracking
-
-Daily energy level logging with correlation to productivity metrics. Track how your energy fluctuates throughout the day and week, and see how it relates to your task completion and focus session patterns.
-
-### Automations
-
-Rule-based automation engine for connecting actions across modules. Trigger workflows when tasks change status, events approach, or habits are completed.
-
-### Link Library
-
-A bookmark manager with nested folders, drag-and-drop import from browser bookmark HTML files, duplicate detection, and full-text search. Favicons are cached locally. Export back to standard browser format at any time.
+电子表格、演示文稿、绘图、表单、发票 / 计费报表以及部分游戏化能力仍保留源码、路由或数据兼容，但默认不暴露在普通导航中。可见性由 `src/config/features.ts` 统一管理。
 
 ---
 
-## Your Privacy, Protected
+## 核心工作流
 
-- **100% local storage.** Every note, task, event, and setting is stored in your browser's IndexedDB — up to 50GB, on your device, under your control.
-- **No account required.** Open the app and start working. Nothing to sign up for, nothing to verify.
-- **No cloud dependencies.** No Firebase, no AWS, no third-party database — the app is a static site with nothing to phone home to.
-- **Encrypted API keys.** AI provider keys are stored with AES-256-GCM encryption and a session-based password. They are never logged or transmitted.
-- **Open source.** The code is MIT-licensed and publicly auditable. If you don't trust the hosted version, you can run it yourself.
-- **Anonymous analytics only.** The hosted site uses Cloudflare Web Analytics — no cookies, no fingerprinting, GDPR compliant. Your data is never part of it.
-
----
-
-## Get Started
-
-No installation required. Visit the live app at:
-
-**[https://os.neuman.dev](https://os.neuman.dev)**
-
-NeumanOS is a Progressive Web App. On supported browsers, you can install it to your home screen or desktop for a native-like experience with offline access. Look for the install prompt in your browser's address bar.
-
-In-app documentation is available directly inside NeumanOS. Open the app and navigate to the Docs section for guides on every feature.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | React 19 |
-| Language | TypeScript 5.9 (strict mode) |
-| Build | Vite 7 |
-| Styling | Tailwind CSS 4 |
-| State | Zustand 5 (persisted to IndexedDB via Dexie 4) |
-| Notes Editor | Lexical |
-| Documents | TipTap / ProseMirror |
-| Spreadsheets | HyperFormula (400+ formulas) |
-| Presentations | Konva canvas engine |
-| Charts | Recharts |
-| Knowledge Graph | D3 force-directed |
-| Diagrams | Konva |
-| Testing | Vitest + hosted GitHub Actions browser suite |
-| Linting | ESLint 10 |
-
----
-
-## Self-Hosting
-
-NeumanOS is a static site with no backend. To run it yourself:
-
-```bash
-git clone https://github.com/travisjneuman/neumanos.git
-cd neumanos
-npm install
-npm run dev       # Development server on port 5173
-npm run build     # Production build to dist/
+```text
+收集 → 安排 → 专注 → 沉淀 → 回顾
 ```
 
-Deploy the `dist/` folder to any static host (Cloudflare Pages, Netlify, Vercel, Nginx, etc.). No environment variables or server configuration required.
+- **收集**：首页快速收集或收件箱接住还没想清楚的内容。
+- **安排**：决定项目、截止日期、今天是否要做，或放进具体日程。
+- **专注**：任务、专注模式、番茄钟和时间统计协同完成执行。
+- **沉淀**：把过程、结果、链接和经验放进笔记与收藏。
+- **回顾**：通过活动记录和每周回顾看清完成了什么、还剩什么。
+
+收件箱和任务已经分开：**收件箱 = 未决定；任务 = 已承诺 / 可执行**。任务看板不会再重复展示 backlog 收件箱列。
 
 ---
 
-## Contributing
+## AI：默认少打断，重要操作仍确认
 
-NeumanOS is open source and contributions are welcome. Whether you're fixing a bug, improving documentation, or proposing a new feature, the process starts with a GitHub Issue or Discussion so we can align before code is written.
+LifeOS 当前实现了 **60 个 AI 管理工具**，覆盖任务、日程、笔记、项目、收藏、自动化、习惯、精力、时间统计、专注、每日目标、例行、资源和任务模板。
 
-See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full contributor guide, code standards, and pull request process.
+AI 页面有两种使用方式：
+
+- **工具模式**：允许 AI 查询并操作 LifeOS 数据。
+- **聊天模式**：用于写作、分析、代码等普通对话，不解析 LifeOS 操作。
+
+执行权限有三档：
+
+| 模式 | 行为 |
+| --- | --- |
+| 自动执行 | **新用户默认**。可撤销的本地写操作直接执行，并写入操作记录 |
+| 每次确认 | 写操作先显示确认卡片 |
+| 只读 | 允许查询，阻止所有写操作 |
+
+即使处于自动执行，`delete_task`、`delete_event`、`delete_note`、`delete_time_entry`、`delete_routine` 仍会强制确认。已执行操作会进入 AI 操作记录；支持的操作可查看结果并撤销。
+
+AI 的交互原则是：**优先自行查询消歧；对可合理推断且可撤销的操作直接行动；只有真正高风险或无法消歧时才追问。**
+
+当前内置提供商：OpenRouter、Groq、Hugging Face、Mistral AI、Google Gemini、OpenAI、Anthropic、xAI、DeepSeek。部分提供商受浏览器 CORS 限制，界面会标记是否需要代理。当前代码**没有 Ollama provider**，文档不会把 Ollama 描述成已实现能力。
+
+详见 [AI 管理指南](docs/ai-management.md)。
 
 ---
 
-<div align="center">
+## 本地数据与隐私
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/travisjneuman/neumanos?style=social)](https://github.com/travisjneuman/neumanos/stargazers)
+- 主要业务数据通过 **IndexedDB / Dexie** 保存；部分 UI 偏好使用 localStorage。
+- 数据属于**浏览器 origin**。例如 `http://localhost:5173` 与 `http://localhost:4173` 是两个不同的数据空间。
+- 清除该站点的浏览器数据会删除本地数据，请定期备份。
+- `.brain` 全量备份不包含 AI API key。
+- Chromium 系浏览器可以选择本机文件夹做自动备份；如果该文件夹由 OneDrive / iCloud / Google Drive 等客户端同步，上传行为由云盘客户端完成，不是 LifeOS 上传。
+- AI API key 使用设备管理的本地密钥加密保存；跨模块上下文默认由用户显式开启后才会发送给所选 AI 提供商。
 
-[os.neuman.dev](https://os.neuman.dev) &nbsp;|&nbsp; [GitHub](https://github.com/travisjneuman/neumanos) &nbsp;|&nbsp; [Issues](https://github.com/travisjneuman/neumanos/issues) &nbsp;|&nbsp; [os@neuman.dev](mailto:os@neuman.dev)
+详见 [备份与恢复](docs/backup-sync.md) 和 [隐私与安全](docs/privacy-security.md)。
 
-**Made with care for privacy, productivity, and open source.**
+---
 
-</div>
+## 运行
+
+### 环境
+
+- Node.js **22**（见 `.node-version`）
+- npm
+
+### 开发模式
+
+```bash
+npm ci
+npm run dev
+```
+
+默认访问：`http://localhost:5173`
+
+开发模式下 PWA Service Worker 被关闭，避免缓存干扰开发。
+
+### 生产构建与 PWA
+
+```bash
+npm run build
+npm run preview
+```
+
+默认预览地址：`http://localhost:4173`
+
+`npm run preview` 使用生产构建，因此可以测试 PWA 安装。Chrome / Edge 不一定自动弹窗；通常从地址栏安装图标或浏览器菜单选择“安装 LifeOS”。
+
+> 如果 PWA 安装自 `localhost:4173`，长期可靠使用时仍需要这个本地地址有服务响应。关闭浏览器普通标签页没关系，但停止本地 preview / 静态服务器后，不应假设所有页面都能仅靠缓存长期正常工作。
+
+完整说明见 [PWA 安装与本地使用](docs/install-pwa.md)。
+
+---
+
+## 质量检查
+
+普通 CI 在 Pull Request 和 `main` push 时运行：
+
+```bash
+npm run type-check
+npm test -- --run
+npm run build
+```
+
+开发者还可以执行：
+
+```bash
+npm run lint
+npm run lint:design-tokens
+npm run test:browser:inventory
+```
+
+完整 Playwright 浏览器矩阵由 GitHub Actions 的 **Hosted browser tests** 手动工作流运行。
+
+---
+
+## 技术栈
+
+React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Zustand 5 · Dexie / IndexedDB · Vitest · Playwright · vite-plugin-pwa · Lexical / Tiptap · D3 / Recharts / Konva
+
+关键目录：
+
+- `src/config/features.ts`：功能分层与主导航唯一注册表
+- `src/components/dashboard/`：首页固定工作流
+- `src/widgets/`：可选扩展组件
+- `src/services/ai/agent/`：AI 工具协议、执行器、提示词与撤销
+- `src/stores/`：本地状态与持久化
+- `src/db/`：Dexie 数据层
+- `docs/`：应用内用户文档
+- `docs/technical/`：开发者文档，不打包进普通文档中心
+
+---
+
+## 文档
+
+- [快速入门](docs/getting-started.md)
+- [PWA 安装与本地使用](docs/install-pwa.md)
+- [AI 管理指南](docs/ai-management.md)
+- [收件箱](docs/inbox.md)
+- [任务与看板](docs/tasks-kanban.md)
+- [日程与事件](docs/calendar-events.md)
+- [笔记](docs/notes-editor.md)
+- [收藏](docs/bookmarks.md)
+- [备份与恢复](docs/backup-sync.md)
+- [键盘快捷键](docs/keyboard-shortcuts.md)
+- [故障排除](docs/troubleshooting.md)
+- [AI 架构（开发者）](docs/technical/AI_ARCHITECTURE.md)
+
+---
+
+## Repository workflow
+
+日常开发建议使用短生命周期分支 → PR → CI → merge → 删除分支。当前已完成的 UX / docs 临时分支不再承载未合并工作，合并完成后应删除；详见 [仓库维护说明](docs/technical/REPOSITORY_GOVERNANCE.md)。
+
+---
+
+## License
+
+LifeOS 以 [MIT License](LICENSE) 发布。
+
+LifeOS initially derives from [NeumanOS](https://github.com/travisjneuman/neumanos). Attribution is retained in [NOTICE.md](NOTICE.md).

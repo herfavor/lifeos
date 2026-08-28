@@ -33,21 +33,21 @@ export const GitHubTrendingWidget: React.FC = () => {
       const response = await fetch(
         `https://api.github.com/search/repositories?q=created:>${dateStr}&sort=stars&order=desc&per_page=5`
       );
-      if (!response.ok) throw new Error('Failed to fetch');
+      if (!response.ok) throw new Error('获取失败');
 
       const data = await response.json();
       const repoList: TrendingRepo[] = data.items.map((item: any) => ({
         name: item.name,
         owner: item.owner.login,
-        description: item.description || 'No description',
+        description: item.description || '暂无描述',
         stars: item.stargazers_count,
-        language: item.language || 'Unknown',
+        language: item.language || '未知',
         url: item.html_url,
       }));
 
       setRepos(repoList);
     } catch (err) {
-      setError('Failed to load trending repos');
+      setError('无法加载热门仓库');
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export const GitHubTrendingWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="GitHub Trending"
+      title="GitHub 热门"
       icon="🔥"
       loading={loading}
       error={error}

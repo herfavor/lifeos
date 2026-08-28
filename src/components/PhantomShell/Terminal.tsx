@@ -2,7 +2,7 @@
  * PhantomShell Terminal Component
  *
  * Real terminal emulator using xterm.js with full keyboard support,
- * command history, and visual styling matching the NeumanOS theme.
+ * command history, and visual styling matching the LifeOS theme.
  *
  * Features:
  * - Full ANSI color support
@@ -24,7 +24,7 @@ import { logger } from '../../services/logger';
 
 const log = logger.module('PhantomShell:Terminal');
 
-// NeumanOS theme colors mapped to xterm
+// LifeOS theme colors mapped to xterm
 const THEME = {
   background: '#0a0a0f',           // Dark surface
   foreground: '#e4e4e7',           // Light text
@@ -144,7 +144,7 @@ export const Terminal: React.FC<TerminalProps> = ({ onData, onResize }) => {
     xterm.writeln('\x1b[1;35m║\x1b[0m   \x1b[90mBrowser Native Dev\x1b[0m     \x1b[1;35m║\x1b[0m');
     xterm.writeln('\x1b[1;35m╚════════════════════════════╝\x1b[0m');
     xterm.writeln('');
-    xterm.writeln('\x1b[90mType \x1b[33m/help\x1b[90m for commands\x1b[0m');
+    xterm.writeln('\x1b[90m输入 \x1b[33m/help\x1b[90m 查看命令\x1b[0m');
     xterm.writeln('');
 
     log.info('Terminal initialized successfully');

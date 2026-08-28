@@ -55,6 +55,12 @@ import { useTags, useTagCounts } from '../../hooks/useTags';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useSearchWorker } from '../../hooks/useSearchWorker';
 import type { SearchableItem } from '../../hooks/useSearchWorker';
+import {
+  downloadBlob,
+  exportNoteToMarkdown,
+  getMarkdownFilename,
+} from '../../utils/markdownExport';
+import { exportNoteToPDFWithFeedback } from './notePdfExportHandler';
 
 type SidebarTab = 'folders' | 'tags' | 'all';
 
@@ -164,6 +170,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
   // Delete confirmation state
   const [folderToDelete, setFolderToDelete] = useState<{ id: string; name: string } | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<{ id: string; title: string } | null>(null);
+  const exportingNoteIdsRef = useRef(new Set<string>());
 
   const duplicateNote = useNotesStore((state) => state.duplicateNote);
   const deleteNote = useNotesStore((state) => state.deleteNote);
@@ -345,18 +352,15 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
   );
 
   const handleNoteExportMarkdown = useCallback((note: Note) => {
-    const content = `# ${note.title}\n\n${note.content}`;
-    const blob = new Blob([content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${note.title || 'Untitled'}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
+    const content = exportNoteToMarkdown(note, notesObj, Object.values(foldersObj));
+    downloadBlob(
+      new Blob([content], { type: 'text/markdown;charset=utf-8' }),
+      getMarkdownFilename(note)
+    );
+  }, [foldersObj, notesObj]);
 
-  const handleNoteExportPDF = useCallback((_note: Note) => {
-    toast.info('PDF export coming soon!');
+  const handleNoteExportPDF = useCallback((note: Note) => {
+    void exportNoteToPDFWithFeedback(note, exportingNoteIdsRef.current);
   }, []);
 
   const handleNoteTogglePin = useCallback(
@@ -383,7 +387,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
     (noteId: string) => {
       const note = notesObj[noteId];
       if (note) {
-        setNoteToDelete({ id: noteId, title: note.title || 'Untitled Note' });
+        setNoteToDelete({ id: noteId, title: note.title || '未命名笔记' });
       }
     },
     [notesObj]
@@ -401,12 +405,12 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
   const handleSaveAsTemplate = useCallback(
     (note: Note) => {
       createNoteTemplate({
-        name: note.title || 'Untitled Template',
+        name: note.title || '未命名模板',
         description: note.contentText,
         icon: note.icon,
         defaultTags: note.tags,
       });
-      toast.success('Template created from note');
+      toast.success('已从笔记创建模板');
     },
     [createNoteTemplate]
   );
@@ -433,7 +437,10 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
   }, []);
 
   // Convert objects to arrays
-  const notes = useMemo(() => Object.values(notesObj), [notesObj]);
+  const notes = useMemo(
+    () => Object.values(notesObj).filter((note) => !note.deletedAt),
+    [notesObj]
+  );
   const folders = useMemo(() => Object.values(foldersObj), [foldersObj]);
 
   // Search worker for off-main-thread note search
@@ -490,7 +497,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
         result = result.filter(
           (note) =>
             note.title.toLowerCase().includes(query) ||
-            note.content.toLowerCase().includes(query)
+            note.contentText.toLowerCase().includes(query)
         );
       }
     }
@@ -615,7 +622,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
             {...attributes}
             className="w-5 h-5 flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing"
             role="button"
-            aria-label={`Drag ${folder.name} to reorder`}
+            aria-label={`拖动 ${folder.name} 以重新排序`}
             tabIndex={0}
           >
             {isExpanded ? (
@@ -646,7 +653,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
           {...attributes}
           className="w-5 h-5 flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing"
           role="button"
-          aria-label={`Drag ${note.title || 'Untitled'} to reorder`}
+          aria-label={`拖动 ${note.title || '未命名'} 以重新排序`}
           tabIndex={0}
         >
           <FileText
@@ -785,9 +792,9 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                 e.stopPropagation();
                 handleCreateSubfolder(folder.id);
               }}
-              className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-all"
-              title="New subfolder"
-              aria-label="Create subfolder"
+              className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 p-1 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-all"
+              title="新建子文件夹"
+              aria-label="创建子文件夹"
             >
               <FolderPlus className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
             </button>
@@ -854,7 +861,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                     : 'text-text-light-primary dark:text-text-dark-primary'
                 }`}
               >
-                {note.title || 'Untitled'}
+                {note.title || '未命名'}
               </span>
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary truncate block">
                 {new Date(note.updatedAt).toLocaleDateString()}
@@ -897,7 +904,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       ? 'bg-accent-primary/20 text-accent-primary'
                       : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }`}
-                  title="Browse by folders"
+                  title="按文件夹浏览"
                 >
                   <FolderIcon className="w-3.5 h-3.5" />
                 </button>
@@ -908,7 +915,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       ? 'bg-accent-primary/20 text-accent-primary'
                       : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }`}
-                  title="Browse by tags"
+                  title="按标签浏览"
                 >
                   <Tag className="w-3.5 h-3.5" />
                 </button>
@@ -919,7 +926,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       ? 'bg-accent-primary/20 text-accent-primary'
                       : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }`}
-                  title="All notes"
+                  title="全部笔记"
                 >
                   <FileText className="w-3.5 h-3.5" />
                 </button>
@@ -929,16 +936,16 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                 <button
                   onClick={() => createFolder()}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="New folder"
-                  aria-label="Create new folder"
+                  title="新建文件夹"
+                  aria-label="创建新文件夹"
                 >
                   <FolderPlus className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </button>
                 <button
                   onClick={handleCreateNote}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="New note"
-                  aria-label="Create new note"
+                  title="新建笔记"
+                  aria-label="创建新笔记"
                 >
                   <Plus className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </button>
@@ -946,8 +953,8 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                   <button
                     onClick={onOpenLayoutSettings}
                     className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                    title="Layout settings"
-                    aria-label="Open layout settings"
+                    title="布局设置"
+                    aria-label="打开布局设置"
                   >
                     <Settings2 className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                   </button>
@@ -955,8 +962,8 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                 <button
                   onClick={toggleSidebar}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="Collapse sidebar"
-                  aria-label="Collapse sidebar"
+                  title="折叠侧边栏"
+                  aria-label="折叠侧边栏"
                 >
                   <PanelLeftClose className="w-3.5 h-3.5 text-text-light-primary dark:text-text-dark-primary" />
                 </button>
@@ -969,7 +976,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 <input
                   type="text"
-                  placeholder="Search notes..."
+                  placeholder="搜索笔记…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-8 pr-3 py-1.5 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-md focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary"
@@ -990,7 +997,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       <button
                         onClick={() => onRemoveTag(tag)}
                         className="hover:text-accent-red transition-colors"
-                        aria-label={`Remove ${tag} filter`}
+                        aria-label={`移除 ${tag} 筛选`}
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -1038,7 +1045,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                               : 'text-text-light-primary dark:text-text-dark-primary'
                           }`}
                         >
-                          All Notes
+                          全部笔记
                         </span>
                         <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-auto">
                           {notes.length}
@@ -1054,7 +1061,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                     {/* Notes list for selected folder */}
                     <div className="mt-3 pt-3 border-t border-border-light dark:border-border-dark space-y-0.5">
                       <div className="px-2 py-1 text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary">
-                        {activeFolderId === null ? 'All Notes' : 'Notes in Folder'}
+                        {activeFolderId === null ? '全部笔记' : '文件夹中的笔记'}
                         <span className="ml-1">({filteredNotes.length})</span>
                       </div>
                       {filteredNotes.map((note) => (
@@ -1066,17 +1073,17 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                           <FileText className="w-6 h-6 text-text-light-tertiary dark:text-text-dark-tertiary mx-auto mb-1" />
                           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
                             {searchQuery
-                              ? 'No notes match your search'
+                              ? '没有与搜索匹配的笔记'
                               : activeFolderId === null
-                              ? 'No notes yet'
-                              : 'No notes in this folder'}
+                              ? '暂无笔记'
+                              : '此文件夹中没有笔记'}
                           </p>
                           {!searchQuery && (
                             <button
                               onClick={handleCreateNote}
                               className="mt-1 text-xs text-accent-primary hover:underline"
                             >
-                              Create a note
+                              创建笔记
                             </button>
                           )}
                         </div>
@@ -1130,13 +1137,13 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       <div className="px-2 py-8 text-center">
                         <Tag className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary mx-auto mb-2" />
                         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                          No tags yet
+                          暂无标签
                         </p>
                         <button
                           onClick={onOpenTagManager}
                           className="mt-2 text-sm text-accent-primary hover:underline"
                         >
-                          Manage tags
+                          管理标签
                         </button>
                       </div>
                     )}
@@ -1146,8 +1153,8 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       <div className="mt-3 pt-3 border-t border-border-light dark:border-border-dark space-y-0.5">
                         <div className="px-2 py-1 text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary">
                           {activeTags.length > 0
-                            ? `Notes with ${activeTags.length === 1 ? 'tag' : 'tags'}`
-                            : 'All Notes'}
+                            ? '带标签的笔记'
+                            : '全部笔记'}
                           <span className="ml-1">({filteredNotes.length})</span>
                         </div>
                         {filteredNotes.map((note) => (
@@ -1158,7 +1165,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                           <div className="px-2 py-4 text-center">
                             <FileText className="w-6 h-6 text-text-light-tertiary dark:text-text-dark-tertiary mx-auto mb-1" />
                             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                              No notes with selected tags
+                              没有带所选标签的笔记
                             </p>
                           </div>
                         )}
@@ -1178,14 +1185,14 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
                       <div className="px-2 py-8 text-center">
                         <FileText className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary mx-auto mb-2" />
                         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                          {searchQuery ? 'No notes match your search' : 'No notes yet'}
+                          {searchQuery ? '没有与搜索匹配的笔记' : '暂无笔记'}
                         </p>
                         {!searchQuery && (
                           <button
                             onClick={handleCreateNote}
                             className="mt-2 text-sm text-accent-primary hover:underline"
                           >
-                            Create your first note
+                            创建你的第一篇笔记
                           </button>
                         )}
                       </div>
@@ -1213,8 +1220,8 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
           <button
             onClick={toggleSidebar}
             className="p-2 m-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Expand sidebar"
-            aria-label="Expand sidebar"
+            title="展开侧边栏"
+            aria-label="展开侧边栏"
           >
             <PanelLeftOpen className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -1254,6 +1261,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
           onExportPDF={handleNoteExportPDF}
           onTogglePin={handleNoteTogglePin}
           onToggleFavorite={handleNoteToggleFavorite}
+          onArchive={(noteId) => updateNote(noteId, { isArchived: !noteContextMenu.note.isArchived })}
           onDelete={handleNoteDelete}
           onSaveAsTemplate={handleSaveAsTemplate}
         />
@@ -1265,7 +1273,7 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
           isOpen={folderPickerState.isOpen}
           onClose={handleFolderPickerClose}
           onSelect={handleFolderPickerSelect}
-          title={`Move ${folderPickerState.itemType === 'folder' ? 'Folder' : 'Note'} to...`}
+          title={`将${folderPickerState.itemType === 'folder' ? '文件夹' : '笔记'}移动到…`}
           currentFolderId={folderPickerState.currentFolderId}
           excludeFolderId={folderPickerState.excludeFolderId}
           itemType={folderPickerState.itemType}
@@ -1277,9 +1285,9 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
         isOpen={!!folderToDelete}
         onClose={() => setFolderToDelete(null)}
         onConfirm={confirmFolderDelete}
-        title="Delete Folder"
-        message={`Delete folder "${folderToDelete?.name}" and all its contents? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除文件夹"
+        message={`确定删除文件夹“${folderToDelete?.name}”吗？其中的笔记会移到上级文件夹，不会被删除。`}
+        confirmText="删除"
         variant="danger"
       />
 
@@ -1287,9 +1295,9 @@ export const TabbedSidebarLayout: React.FC<TabbedSidebarLayoutProps> = ({
         isOpen={!!noteToDelete}
         onClose={() => setNoteToDelete(null)}
         onConfirm={confirmNoteDelete}
-        title="Delete Note"
-        message={`Delete "${noteToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除笔记"
+        message={`确定将“${noteToDelete?.title}”移到回收站吗？可在笔记回收站恢复。`}
+        confirmText="移到回收站"
         variant="danger"
       />
     </div>

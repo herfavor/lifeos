@@ -15,7 +15,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('page loads', async ({ page }) => {
-    const heading = page.getByText(/Time Tracking|Time/i).first();
+    const heading = page.getByText(/时间跟踪/).first();
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has start timer button', async ({ page }) => {
-    const startBtn = page.getByRole('button', { name: /start|play/i }).first();
+    const startBtn = page.getByRole('button', { name: /开始计时|启动/ }).first();
     if (await startBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(startBtn).toBeVisible();
     }
@@ -31,7 +31,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has task description input', async ({ page }) => {
-    const input = page.getByPlaceholder(/what.*working|task|description/i).first();
+    const input = page.getByPlaceholder(/正在做什么|你做了什么|任务|描述/).first();
     if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(input).toBeVisible();
     }
@@ -39,7 +39,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has manual entry button', async ({ page }) => {
-    const manualBtn = page.getByRole('button', { name: /manual|add.*entry/i }).first();
+    const manualBtn = page.getByRole('button', { name: /手动|添加.*记录/ }).first();
     if (await manualBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(manualBtn).toBeVisible();
     }
@@ -55,7 +55,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has summary/report view', async ({ page }) => {
-    const summaryBtn = page.getByRole('button', { name: /summary|report/i });
+    const summaryBtn = page.getByRole('button', { name: /汇总|报表/ });
     if (await summaryBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(summaryBtn).toBeVisible();
     }
@@ -63,7 +63,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has project selector', async ({ page }) => {
-    const projectSelect = page.locator('select').filter({ has: page.locator('option', { hasText: /project|all/i }) }).first();
+    const projectSelect = page.locator('select').filter({ has: page.locator('option', { hasText: /项目|全部/ }) }).first();
     if (await projectSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(projectSelect).toBeVisible();
     }
@@ -71,7 +71,7 @@ test.describe('Time Tracking', () => {
   });
 
   test('has total time display', async ({ page }) => {
-    const total = page.getByText(/total|hours|h.*m/i).first();
+    const total = page.getByText(/总时长|总计|时长|小时/).first();
     if (await total.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(total).toBeVisible();
     }

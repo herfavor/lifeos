@@ -14,7 +14,7 @@ test.describe('Time Tracking', () => {
     await navigateTo(page, '/schedule?tab=timer');
 
     // Ensure we're on Timer tab
-    const timerTab = page.getByRole('button', { name: /timer/i });
+    const timerTab = page.getByRole('button', { name: /时间跟踪|计时器/ });
     if (await timerTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await timerTab.click();
       await page.waitForTimeout(500);
@@ -23,7 +23,7 @@ test.describe('Time Tracking', () => {
 
   test('can start a timer', async ({ page }) => {
     // Look for start button
-    const startButton = page.getByRole('button', { name: /start|play|begin/i });
+    const startButton = page.getByRole('button', { name: /开始计时|启动/ });
 
     if (await startButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await startButton.click();
@@ -31,7 +31,7 @@ test.describe('Time Tracking', () => {
 
       // Timer should now be running
       // Look for stop button or running indicator
-      const stopButton = page.getByRole('button', { name: /stop|pause|end/i });
+      const stopButton = page.getByRole('button', { name: /停止|暂停|结束/ });
       if (await stopButton.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(stopButton).toBeVisible();
       }
@@ -46,21 +46,21 @@ test.describe('Time Tracking', () => {
 
   test('can stop a running timer', async ({ page }) => {
     // Start a timer first
-    const startButton = page.getByRole('button', { name: /start|play|begin/i });
+    const startButton = page.getByRole('button', { name: /开始计时|启动/ });
     if (await startButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await startButton.click();
       await page.waitForTimeout(2000); // Let it run for 2 seconds
     }
 
     // Stop the timer
-    const stopButton = page.getByRole('button', { name: /stop|pause|end/i });
+    const stopButton = page.getByRole('button', { name: /停止|暂停|结束/ });
     if (await stopButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await stopButton.click();
       await page.waitForTimeout(500);
 
       // Timer should stop and entry should be created
       // Look for the time entry in the entries list
-      const entriesTab = page.getByRole('button', { name: /entries/i });
+      const entriesTab = page.getByRole('button', { name: /记录/ });
       if (await entriesTab.isVisible({ timeout: 1000 }).catch(() => false)) {
         await entriesTab.click();
         await page.waitForTimeout(500);
@@ -76,32 +76,32 @@ test.describe('Time Tracking', () => {
 
   test('can add manual time entry', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
     }
 
     // Look for add manual entry button
-    const addEntryButton = page.getByRole('button', { name: /add.*entry|manual.*entry|new.*entry|\+/i });
+    const addEntryButton = page.getByRole('button', { name: /添加.*记录|手动.*记录|新建.*记录|\+/i });
 
     if (await addEntryButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEntryButton.click();
       await page.waitForTimeout(300);
 
       // Fill in entry details
-      const descriptionInput = page.getByPlaceholder(/description|what.*work|task/i);
+      const descriptionInput = page.getByPlaceholder(/描述|正在做什么|你做了什么|任务/);
       if (await descriptionInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await descriptionInput.fill('Manual E2E Test Entry');
 
         // Fill in duration or start/end time
-        const durationInput = page.getByPlaceholder(/duration|hours|minutes/i);
+        const durationInput = page.getByPlaceholder(/时长|小时|分钟/);
         if (await durationInput.isVisible({ timeout: 1000 }).catch(() => false)) {
           await durationInput.fill('1.5'); // 1.5 hours
         }
 
         // Save the entry
-        const saveButton = page.getByRole('button', { name: /save|add|create/i });
+        const saveButton = page.getByRole('button', { name: /保存|添加|创建/ });
         if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveButton.click();
           await page.waitForTimeout(500);
@@ -115,7 +115,7 @@ test.describe('Time Tracking', () => {
 
   test('can edit existing time entry', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
@@ -126,7 +126,7 @@ test.describe('Time Tracking', () => {
 
     if (await entry.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Click on entry or edit button
-      const editButton = entry.locator('button').filter({ hasText: /edit/i }).or(
+      const editButton = entry.locator('button').filter({ hasText: /编辑/ }).or(
         entry.locator('[data-edit]')
       );
 
@@ -139,7 +139,7 @@ test.describe('Time Tracking', () => {
       await page.waitForTimeout(300);
 
       // Update description
-      const descriptionInput = page.getByPlaceholder(/description|what.*work/i).or(
+      const descriptionInput = page.getByPlaceholder(/描述|正在做什么|你做了什么/).or(
         page.getByDisplayValue(/.+/)
       );
 
@@ -149,7 +149,7 @@ test.describe('Time Tracking', () => {
         await page.keyboard.type('Updated Entry Description');
 
         // Save changes
-        const saveButton = page.getByRole('button', { name: /save|update/i });
+        const saveButton = page.getByRole('button', { name: /保存|更新/ });
         if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveButton.click();
           await page.waitForTimeout(500);
@@ -163,19 +163,19 @@ test.describe('Time Tracking', () => {
 
   test('can delete time entry', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
     }
 
     // Create an entry first
-    const addEntryButton = page.getByRole('button', { name: /add.*entry|manual.*entry|new.*entry/i });
+    const addEntryButton = page.getByRole('button', { name: /添加.*记录|手动.*记录|新建.*记录/i });
     if (await addEntryButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEntryButton.click();
-      const descriptionInput = page.getByPlaceholder(/description|what.*work/i);
+      const descriptionInput = page.getByPlaceholder(/描述|正在做什么|你做了什么/);
       await descriptionInput.fill('Entry to Delete');
-      const saveButton = page.getByRole('button', { name: /save|add/i });
+      const saveButton = page.getByRole('button', { name: /保存|添加/ });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -185,7 +185,7 @@ test.describe('Time Tracking', () => {
 
     if (await entry.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Find delete button
-      const deleteButton = entry.locator('button').filter({ hasText: /delete|remove/i }).or(
+      const deleteButton = entry.locator('button').filter({ hasText: /删除/ }).or(
         entry.locator('[data-delete]')
       );
 
@@ -193,7 +193,7 @@ test.describe('Time Tracking', () => {
         await deleteButton.click();
 
         // Confirm deletion
-        const confirmButton = page.getByRole('button', { name: /confirm|yes|delete/i });
+        const confirmButton = page.getByRole('button', { name: /确认|是|删除/ });
         if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await confirmButton.click();
         }
@@ -208,7 +208,7 @@ test.describe('Time Tracking', () => {
 
   test('can view monthly time summary', async ({ page }) => {
     // Navigate to summary tab
-    const summaryTab = page.getByRole('button', { name: /summary/i });
+    const summaryTab = page.getByRole('button', { name: /汇总/ });
     if (await summaryTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await summaryTab.click();
       await page.waitForTimeout(500);
@@ -220,7 +220,7 @@ test.describe('Time Tracking', () => {
         await expect(summaryContainer).toBeVisible();
 
         // Should show total hours or time metrics
-        const totalHours = page.getByText(/total.*hours|total.*time|\d+\.?\d*\s*(h|hrs|hours)/i);
+        const totalHours = page.getByText(/总时长|总计|总时间|小时|时长/);
         if (await totalHours.isVisible({ timeout: 1000 }).catch(() => false)) {
           await expect(totalHours).toBeVisible();
         }
@@ -230,39 +230,39 @@ test.describe('Time Tracking', () => {
 
   test('time calculations are accurate', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
     }
 
     // Add a manual entry with known duration
-    const addEntryButton = page.getByRole('button', { name: /add.*entry|manual.*entry|new.*entry/i });
+    const addEntryButton = page.getByRole('button', { name: /添加.*记录|手动.*记录|新建.*记录/i });
     if (await addEntryButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEntryButton.click();
 
-      const descriptionInput = page.getByPlaceholder(/description|what.*work/i);
+      const descriptionInput = page.getByPlaceholder(/描述|正在做什么|你做了什么/);
       await descriptionInput.fill('Calculation Test Entry');
 
-      const durationInput = page.getByPlaceholder(/duration|hours|minutes/i);
+      const durationInput = page.getByPlaceholder(/时长|小时|分钟/);
       if (await durationInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await durationInput.fill('2.5'); // 2.5 hours
       }
 
-      const saveButton = page.getByRole('button', { name: /save|add/i });
+      const saveButton = page.getByRole('button', { name: /保存|添加/ });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
 
     // Navigate to summary to verify calculation
-    const summaryTab = page.getByRole('button', { name: /summary/i });
+    const summaryTab = page.getByRole('button', { name: /汇总/ });
     if (await summaryTab.isVisible({ timeout: 1000 }).catch(() => false)) {
       await summaryTab.click();
       await page.waitForTimeout(500);
 
       // The total should include our 2.5 hours
       // This is a smoke test - we just verify the summary displays
-      const totalDisplay = page.getByText(/total.*hours|total.*time/i);
+      const totalDisplay = page.getByText(/总时长|总计|总时间/);
       if (await totalDisplay.isVisible({ timeout: 1000 }).catch(() => false)) {
         await expect(totalDisplay).toBeVisible();
       }
@@ -271,7 +271,7 @@ test.describe('Time Tracking', () => {
 
   test('can filter time entries by date range', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
@@ -295,22 +295,22 @@ test.describe('Time Tracking', () => {
 
   test('can assign entries to projects/categories', async ({ page }) => {
     // Navigate to entries tab
-    const entriesTab = page.getByRole('button', { name: /entries/i });
+    const entriesTab = page.getByRole('button', { name: /记录/ });
     if (await entriesTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await entriesTab.click();
       await page.waitForTimeout(500);
     }
 
     // Add entry with project assignment
-    const addEntryButton = page.getByRole('button', { name: /add.*entry|manual.*entry|new.*entry/i });
+    const addEntryButton = page.getByRole('button', { name: /添加.*记录|手动.*记录|新建.*记录/i });
     if (await addEntryButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEntryButton.click();
 
-      const descriptionInput = page.getByPlaceholder(/description|what.*work/i);
+      const descriptionInput = page.getByPlaceholder(/描述|正在做什么|你做了什么/);
       await descriptionInput.fill('Project Entry');
 
       // Look for project/category selector
-      const projectSelect = page.getByLabel(/project|category|client/i);
+      const projectSelect = page.getByLabel(/项目|分类|客户/);
       if (await projectSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
         await projectSelect.click();
 
@@ -321,7 +321,7 @@ test.describe('Time Tracking', () => {
         }
       }
 
-      const saveButton = page.getByRole('button', { name: /save|add/i });
+      const saveButton = page.getByRole('button', { name: /保存|添加/ });
       await saveButton.click();
       await page.waitForTimeout(500);
 
@@ -332,7 +332,7 @@ test.describe('Time Tracking', () => {
 
   test('timer displays elapsed time correctly', async ({ page }) => {
     // Start a timer
-    const startButton = page.getByRole('button', { name: /start|play|begin/i });
+    const startButton = page.getByRole('button', { name: /开始计时|启动/ });
     if (await startButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await startButton.click();
 
@@ -350,7 +350,7 @@ test.describe('Time Tracking', () => {
       }
 
       // Stop the timer
-      const stopButton = page.getByRole('button', { name: /stop|pause|end/i });
+      const stopButton = page.getByRole('button', { name: /停止|暂停|结束/ });
       if (await stopButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await stopButton.click();
       }

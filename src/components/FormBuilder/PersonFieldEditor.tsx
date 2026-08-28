@@ -21,7 +21,7 @@ export function PersonFieldEditor({
   value,
   allowMultiple,
   onChange,
-  placeholder = 'Select person...',
+  placeholder = '选择人员…',
   className = '',
 }: PersonFieldEditorProps) {
   const { peopleList, addPerson } = useSettingsStore();
@@ -116,7 +116,7 @@ export function PersonFieldEditor({
               <button
                 onClick={() => handleRemovePerson(person)}
                 className="hover:bg-accent-blue/20 dark:hover:bg-accent-blue/30 rounded p-0.5"
-                aria-label={`Remove ${person}`}
+                aria-label={`移除 ${person}`}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -140,7 +140,7 @@ export function PersonFieldEditor({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
-            aria-label="Person selector"
+            aria-label="人员选择器"
             aria-autocomplete="list"
             aria-expanded={showDropdown}
           />
@@ -157,7 +157,7 @@ export function PersonFieldEditor({
                     <li key={person}>
                       <button
                         onClick={() => handleSelectPerson(person)}
-                        className="w-full px-3 py-2 text-left hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark text-text-light-primary dark:text-text-dark-primary flex items-center gap-2"
+                        className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary flex items-center gap-2"
                       >
                         <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent-blue/20 text-accent-blue text-xs font-medium">
                           {getInitials(person)}
@@ -170,9 +170,9 @@ export function PersonFieldEditor({
               ) : (
                 <div className="px-3 py-4 text-center text-text-light-secondary dark:text-text-dark-secondary text-sm">
                   {peopleList.length === 0 ? (
-                    <>No people added yet</>
+                    <>尚未添加人员</>
                   ) : (
-                    <>No matching people found</>
+                    <>未找到匹配的人员</>
                   )}
                 </div>
               )}
@@ -181,10 +181,10 @@ export function PersonFieldEditor({
               <div className="border-t border-border-light dark:border-border-dark">
                 <button
                   onClick={() => setShowAddDialog(true)}
-                  className="w-full px-3 py-2 text-left hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark text-accent-blue dark:text-accent-blue-hover flex items-center gap-2"
+                  className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-accent-blue dark:text-accent-blue-hover flex items-center gap-2"
                 >
                   <UserPlus className="w-4 h-4" />
-                  <span>Add new person</span>
+                  <span>添加新人员</span>
                 </button>
               </div>
             </div>
@@ -197,7 +197,7 @@ export function PersonFieldEditor({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-              Add New Person
+              添加新人员
             </h3>
 
             <input
@@ -213,7 +213,7 @@ export function PersonFieldEditor({
                   setNewPersonName('');
                 }
               }}
-              placeholder="Enter person's name"
+              placeholder="输入人员姓名"
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue mb-4"
               autoFocus
             />
@@ -224,16 +224,16 @@ export function PersonFieldEditor({
                   setShowAddDialog(false);
                   setNewPersonName('');
                 }}
-                className="px-4 py-2 bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary"
+                className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleAddNewPerson}
                 disabled={!newPersonName.trim()}
                 className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add
+                添加
               </button>
             </div>
           </div>

@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { encrypt, decrypt, type EncryptedData } from '../services/encryption';
+import { getDeviceKey } from '../services/deviceKey';
 import { logger } from '../services/logger';
 import { useActivityStore } from './useActivityStore';
 
@@ -149,12 +150,8 @@ interface TerminalState {
   fallbackOrder: string[]; // Provider priority list
   notifyOnFallback: boolean;
 
-  // Encryption
-  encryptionPassword: string | null; // Session password (not persisted)
-  passwordHash: string | null; // For verification (persisted)
-  passwordExpiry: Date | null; // When to re-prompt
-  passwordExpiryDuration: 'daily' | 'weekly' | 'monthly';
-  exportEncryptedKeys: boolean; // Include keys in .brain export
+  // Key storage: API keys are encrypted at rest with a device-managed
+  // local key (services/deviceKey) — no user password involved.
 
   // Chat State
   messages: Message[];
@@ -199,17 +196,11 @@ interface TerminalState {
   setOpen: (open: boolean) => void;
   toggleTerminal: () => void;
 
-  // Provider Actions (now async for WebCrypto encryption)
-  setProviderApiKey: (providerId: string, apiKey: string, password: string) => Promise<void>;
-  getProviderApiKey: (providerId: string, password: string) => Promise<string | null>;
+  // Provider Actions (async for WebCrypto)
+  setProviderApiKey: (providerId: string, apiKey: string) => Promise<void>;
+  getProviderApiKey: (providerId: string) => Promise<string | null>;
   clearProviderApiKey: (providerId: string) => void;
   setActiveProvider: (providerId: string, modelId: string) => void;
-
-  // Encryption Actions
-  setEncryptionPassword: (password: string, passwordHash: string, duration: 'daily' | 'weekly' | 'monthly') => void;
-  clearEncryptionPassword: () => void;
-  isPasswordExpired: () => boolean;
-  setExportEncryptedKeys: (shouldExport: boolean) => void;
 
   // Fallback Actions
   setFallbackEnabled: (enabled: boolean) => void;
@@ -287,7 +278,7 @@ export const useTerminalStore = create<TerminalState>()(
   persist(
     (set, get) => ({
       // Initial State
-      isOpen: true,
+      isOpen: false,
       hasOpenedTerminal: false, // Defers AITerminal loading until first open
 
       // Multi-Provider State
@@ -299,13 +290,6 @@ export const useTerminalStore = create<TerminalState>()(
       fallbackEnabled: true,
       fallbackOrder: DEFAULT_FALLBACK_ORDER,
       notifyOnFallback: true,
-
-      // Encryption State
-      encryptionPassword: null,
-      passwordHash: null,
-      passwordExpiry: null,
-      passwordExpiryDuration: 'weekly',
-      exportEncryptedKeys: false, // Don't export keys by default for security
 
       // Chat State
       messages: [],
@@ -368,10 +352,10 @@ export const useTerminalStore = create<TerminalState>()(
       })),
 
       // Provider Actions (async for WebCrypto)
-      setProviderApiKey: async (providerId, apiKey, password) => {
+      setProviderApiKey: async (providerId, apiKey) => {
         try {
-          // Encrypt the API key using WebCrypto
-          const encryptedData = await encrypt(apiKey, password);
+          // Encrypt at rest with the device-managed local key (no user password)
+          const encryptedData = await encrypt(apiKey, getDeviceKey());
 
           set((state) => ({
             providers: {
@@ -386,23 +370,38 @@ export const useTerminalStore = create<TerminalState>()(
           }));
         } catch (error) {
           log.error('Failed to encrypt API key', { error });
-          throw new Error('Failed to encrypt API key. Please try again.');
+          throw new Error('API 密钥加密失败，请重试。');
         }
       },
 
-      getProviderApiKey: async (providerId, password) => {
+      getProviderApiKey: async (providerId) => {
         const provider = get().providers[providerId];
         if (!provider || !provider.encryptedApiKey) {
           return null;
         }
 
         try {
-          // Decrypt the API key using WebCrypto (with backward compatibility)
-          const decrypted = await decrypt(provider.encryptedApiKey, password);
+          // Device-managed keys have only ever been written with the
+          // authenticated WebCrypto envelope.  A missing/legacy version
+          // belongs to the former user-password flow and cannot be safely
+          // authenticated with the device key.  Do not pass it through the
+          // unauthenticated CryptoJS compatibility decoder: corrupted CBC
+          // bytes can occasionally produce plausible UTF-8 by chance.
+          if (provider.encryptedApiKey.version !== 'webcrypto') {
+            throw new Error('旧版或无版本的密钥数据需要重新配置');
+          }
+          const decrypted = await decrypt(provider.encryptedApiKey, getDeviceKey());
           return decrypted;
         } catch (error) {
-          log.error('Failed to decrypt API key', { error });
-          throw new Error('Failed to decrypt API key. Incorrect password or corrupted data.');
+          // Undecryptable entry: either legacy data encrypted with the old
+          // user password or corrupted ciphertext. Clear it so the provider
+          // simply shows as unconfigured and the user can re-enter a key.
+          log.warn('API key unreadable with device key — clearing stale entry', {
+            providerId,
+            error,
+          });
+          get().clearProviderApiKey(providerId);
+          return null;
         }
       },
 
@@ -419,49 +418,6 @@ export const useTerminalStore = create<TerminalState>()(
           activeProvider: providerId,
           activeModel: modelId,
         });
-      },
-
-      // Encryption Actions
-      setEncryptionPassword: (password, passwordHash, duration) => {
-        // Calculate expiry
-        const now = new Date();
-        const expiry = new Date(now);
-
-        switch (duration) {
-          case 'daily':
-            expiry.setDate(expiry.getDate() + 1);
-            break;
-          case 'weekly':
-            expiry.setDate(expiry.getDate() + 7);
-            break;
-          case 'monthly':
-            expiry.setMonth(expiry.getMonth() + 1);
-            break;
-        }
-
-        set({
-          encryptionPassword: password,
-          passwordHash: passwordHash,
-          passwordExpiry: expiry,
-          passwordExpiryDuration: duration,
-        });
-      },
-
-      clearEncryptionPassword: () => {
-        set({
-          encryptionPassword: null,
-          passwordExpiry: null,
-        });
-      },
-
-      isPasswordExpired: () => {
-        const { passwordExpiry } = get();
-        if (!passwordExpiry) return true;
-        return new Date() > new Date(passwordExpiry);
-      },
-
-      setExportEncryptedKeys: (shouldExport) => {
-        set({ exportEncryptedKeys: shouldExport });
       },
 
       // Fallback Actions
@@ -494,7 +450,7 @@ export const useTerminalStore = create<TerminalState>()(
 
         const conversation: Conversation = {
           id,
-          title: title || 'New Conversation',
+          title: title || '新对话',
           messages: [],
           systemPrompt: null,
           systemPromptPreset: null,
@@ -583,8 +539,8 @@ export const useTerminalStore = create<TerminalState>()(
         const totalCost = messages.reduce((sum, m) => sum + (m.tokenUsage?.estimatedCost ?? 0), 0);
 
         // Auto-generate title from first user message if still default
-        let title = existing?.title || 'New Conversation';
-        if (title === 'New Conversation' && messages.length > 0) {
+        let title = existing?.title || '新对话';
+        if (title === '新对话' && messages.length > 0) {
           const firstUserMsg = messages.find((m) => m.role === 'user');
           if (firstUserMsg) {
             title = firstUserMsg.content.substring(0, 50).trim();
@@ -852,8 +808,10 @@ export const useTerminalStore = create<TerminalState>()(
     {
       name: 'ai-terminal',
       partialize: (state) => ({
-        // Persist provider configurations (with encrypted keys)
-        providers: state.exportEncryptedKeys ? state.providers : {},
+        // Persist provider configurations. Keys are encrypted at rest with
+        // the device-managed local key, so they are safe to keep locally —
+        // this is what makes "configure once, works forever" possible.
+        providers: state.providers,
 
         // Persist UI state for deferred loading optimization
         hasOpenedTerminal: state.hasOpenedTerminal,
@@ -866,11 +824,6 @@ export const useTerminalStore = create<TerminalState>()(
         fallbackEnabled: state.fallbackEnabled,
         fallbackOrder: state.fallbackOrder,
         notifyOnFallback: state.notifyOnFallback,
-
-        // Persist encryption settings (but NOT the password itself)
-        passwordHash: state.passwordHash,
-        passwordExpiryDuration: state.passwordExpiryDuration,
-        exportEncryptedKeys: state.exportEncryptedKeys,
 
         // Persist chat history
         messages: state.messages,
@@ -911,8 +864,6 @@ export const useTerminalStore = create<TerminalState>()(
         model: state.model,
 
         // Don't persist:
-        // - encryptionPassword (security - always prompt)
-        // - passwordExpiry (recalculated on load)
         // - isOpen (always start closed)
         // - isStreaming (always start false)
       }),

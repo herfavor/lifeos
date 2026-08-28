@@ -3,7 +3,6 @@ import { Modal } from '../../components/Modal';
 import { RecurrencePicker } from '../../components/RecurrencePicker';
 import { CustomFieldEditor } from '../../components/CustomFieldEditor';
 import { DependentShiftConfirmation } from '../../components/DependentShiftConfirmation';
-import { AIQuickActions } from '../../components/AIQuickActions';
 import AssigneePicker from '../../components/AssigneePicker';
 import ImagePreviewModal from '../../components/ImagePreviewModal';
 import { useKanbanStore } from '../../stores/useKanbanStore';
@@ -47,7 +46,7 @@ const TaskCustomFields: React.FC<{
   return (
     <div>
       <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-        Custom Fields
+        自定义字段
       </label>
       <div className="space-y-3">
         {taskFields.map((field: FieldDefinition) => {
@@ -133,8 +132,6 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     getBlocked,
     updateEffort,
     updateCustomStatus,
-    startTimer,
-    stopTimer: stopKanbanTimer,
     updateTimeEstimate,
     setTaskRecurrence,
     applyDependentShifts,
@@ -369,7 +366,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     );
 
     if (!hasContent) {
-      toast.warning('Task must have description, checklist, or custom fields to save as template');
+      toast.warning('要保存为模板，任务必须包含描述、清单或自定义字段');
       return;
     }
 
@@ -377,7 +374,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     const template = createTemplate(task);
 
     // Show success feedback
-    toast.success(`Template "${template.name}" created successfully`);
+    toast.success(`模板"${template.name}"创建成功`);
   };
 
   const availableTasks = tasks.filter(t => t.id !== task?.id);
@@ -391,7 +388,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Title */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Title
+              标题
             </label>
             <input
               type="text"
@@ -406,13 +403,13 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Description */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Description
+              描述
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onBlur={() => handleFieldBlur('description', description)}
-              placeholder="Add a description..."
+              placeholder="添加描述…"
               className="w-full min-h-[48px] p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-xs text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue outline-none resize-y"
               rows={2}
             />
@@ -435,7 +432,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Priority */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Priority
+              优先级
             </label>
             <select
               value={priority}
@@ -446,16 +443,16 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               }}
               className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">低</option>
+              <option value="medium">中</option>
+              <option value="high">高</option>
             </select>
           </div>
 
           {/* When Tag - Wave 4E */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              When
+              何时
             </label>
             <select
               value={task?.whenTag || ''}
@@ -465,12 +462,12 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               }}
               className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
             >
-              <option value="">No when tag</option>
-              <option value="today">☀️ Today</option>
-              <option value="evening">🌙 This Evening</option>
-              <option value="upcoming">📅 Upcoming</option>
-              <option value="anytime">📌 Anytime</option>
-              <option value="someday">💭 Someday</option>
+              <option value="">无时间标签</option>
+              <option value="today">☀️ 今天</option>
+              <option value="evening">🌙 今晚</option>
+              <option value="upcoming">📅 近期</option>
+              <option value="anytime">📌 随时</option>
+              <option value="someday">💭 某天</option>
             </select>
           </div>
 
@@ -496,14 +493,14 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               htmlFor="is-milestone"
               className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer select-none"
             >
-              📍 Mark as Milestone (key deadline/deliverable)
+              📍 标记为里程碑（关键截止日期/交付物）
             </label>
           </div>
 
           {/* Assignees - Phase 3.1 */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Assignees
+              负责人
             </label>
             <AssigneePicker
               selectedIds={assignees}
@@ -517,7 +514,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Effort (Story Points) - Phase B */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Effort (Story Points)
+              工作量（故事点）
             </label>
             <select
               value={effort || ''}
@@ -530,20 +527,20 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               }}
               className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
             >
-              <option value="">None</option>
-              <option value="1">1 - Trivial</option>
-              <option value="2">2 - Minor</option>
-              <option value="3">3 - Medium</option>
-              <option value="5">5 - Major</option>
-              <option value="8">8 - Large</option>
-              <option value="13">13 - Epic</option>
+              <option value="">无</option>
+              <option value="1">1 - 琐碎</option>
+              <option value="2">2 - 轻微</option>
+              <option value="3">3 - 中等</option>
+              <option value="5">5 - 较大</option>
+              <option value="8">8 - 大型</option>
+              <option value="13">13 - 史诗级</option>
             </select>
           </div>
 
           {/* Custom Status - Phase B */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Custom Status
+              自定义状态
             </label>
             <select
               value={customStatus || ''}
@@ -556,18 +553,18 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               }}
               className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
             >
-              <option value="">None</option>
-              <option value="in-review">In Review</option>
-              <option value="testing">Testing</option>
-              <option value="deployed">Deployed</option>
-              <option value="blocked">Blocked</option>
+              <option value="">无</option>
+              <option value="in-review">审核中</option>
+              <option value="testing">测试中</option>
+              <option value="deployed">已部署</option>
+              <option value="blocked">已阻塞</option>
             </select>
           </div>
 
           {/* Time Estimate - Phase B */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Time Estimate (hours)
+              预计时长（小时）
             </label>
             <input
               type="number"
@@ -581,30 +578,30 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                   updateTimeEstimate(task.id, hours);
                 }
               }}
-              placeholder="e.g., 4.5"
+              placeholder="例如：4.5"
               className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
             />
             {task && (
               <div className="mt-2 space-y-2">
                 <div className="flex items-center justify-between text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  <span>Actual: {((task.timeTracking?.actual || 0) / 3600).toFixed(1)}h</span>
-                  {task.timeTracking?.activeTimerStart && (
-                    <span className="animate-pulse text-accent-blue font-semibold">⏱️ Running</span>
+                  <span>实际：{(getTotalTimeForCard(task.id) / 3600).toFixed(1)}h</span>
+                  {activeEntry?.taskId === task.id && (
+                    <span className="animate-pulse text-accent-blue font-semibold">⏱️ 计时中</span>
                   )}
                 </div>
-                {task.timeTracking?.activeTimerStart ? (
+                {activeEntry?.taskId === task.id ? (
                   <button
-                    onClick={() => stopKanbanTimer(task.id)}
+                    onClick={() => stopTimer()}
                     className="w-full px-3 py-1.5 bg-status-error text-white text-xs font-medium rounded hover:bg-status-error/90 transition-colors"
                   >
-                    ⏹️ Stop Timer
+                    ⏹️ 停止计时
                   </button>
                 ) : (
                   <button
-                    onClick={() => startTimer(task.id)}
+                    onClick={() => startTimerForCard(task.id, task.title)}
                     className="w-full px-3 py-1.5 bg-accent-blue text-white text-xs font-medium rounded hover:bg-accent-blue-hover transition-colors"
                   >
-                    ▶️ Start Timer
+                    ▶️ 开始计时
                   </button>
                 )}
               </div>
@@ -614,7 +611,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Progress - Phase 1.5 */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Progress (%)
+              进度（%）
             </label>
 
             {/* Slider */}
@@ -673,7 +670,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Tags */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Tags
+              标签
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
               {tags.map((tag) => (
@@ -685,7 +682,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                   <button
                     onClick={() => handleRemoveTag(tag)}
                     className="hover:text-accent-blue-hover"
-                    aria-label={`Remove tag ${tag}`}
+                    aria-label={`移除标签 ${tag}`}
                   >
                     ✕
                   </button>
@@ -703,14 +700,14 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     handleAddTag();
                   }
                 }}
-                placeholder="Add a tag..."
+                placeholder="添加标签…"
                 className="flex-1 p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue outline-none"
               />
               <button
                 onClick={handleAddTag}
                 className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors"
               >
-                Add
+                添加
               </button>
             </div>
           </div>
@@ -718,7 +715,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* P1: Recurring Tasks */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Recurrence
+              重复
             </label>
 
             {/* Show current recurrence or button to add */}
@@ -733,25 +730,25 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                           <p className="text-xs text-text-light-primary dark:text-text-dark-primary font-medium mb-1">
                             {(() => {
                               const { frequency, interval, daysOfWeek, dayOfMonth } = task.recurrence;
-                              let summary = 'Repeats ';
+                              let summary = '重复：';
 
                               // Frequency and interval
                               if (interval === 1) {
-                                summary += frequency;
+                                summary += frequency === 'daily' ? '每天' : frequency === 'weekly' ? '每周' : frequency === 'monthly' ? '每月' : '每年';
                               } else {
-                                summary += `every ${interval} ${frequency === 'daily' ? 'days' : frequency === 'weekly' ? 'weeks' : frequency === 'monthly' ? 'months' : 'years'}`;
+                                summary += `每 ${interval} ${frequency === 'daily' ? '天' : frequency === 'weekly' ? '周' : frequency === 'monthly' ? '个月' : '年'}`;
                               }
 
                               // Days of week (for weekly)
                               if (frequency === 'weekly' && daysOfWeek && daysOfWeek.length > 0) {
-                                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                                const selectedDays = daysOfWeek.map((d) => dayNames[d]).join(', ');
-                                summary += ` on ${selectedDays}`;
+                                const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                                const selectedDays = daysOfWeek.map((d) => dayNames[d]).join('、');
+                                summary += `（${selectedDays}）`;
                               }
 
                               // Day of month (for monthly)
                               if (frequency === 'monthly' && dayOfMonth) {
-                                summary += ` on day ${dayOfMonth}`;
+                                summary += ` ${dayOfMonth} 日`;
                               }
 
                               return summary;
@@ -760,21 +757,21 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                           {task.recurrence.endType !== 'never' && (
                             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
                               {task.recurrence.endType === 'after' && task.recurrence.endCount &&
-                                `Ends after ${task.recurrence.endCount} occurrences`
+                                `在 ${task.recurrence.endCount} 次后结束`
                               }
                               {task.recurrence.endType === 'until' && task.recurrence.endDate &&
-                                `Ends on ${task.recurrence.endDate}`
+                                `结束于 ${task.recurrence.endDate}`
                               }
                             </p>
                           )}
                           {task.isRecurringParent && task.nextOccurrence && (
                             <p className="text-xs text-accent-blue font-medium mt-1">
-                              Next: {task.nextOccurrence}
+                              下次：{task.nextOccurrence}
                             </p>
                           )}
                           {task.recurrenceId && (
                             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                              Instance of recurring task
+                              重复任务的实例
                             </p>
                           )}
                         </div>
@@ -782,7 +779,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                           onClick={() => setShowRecurrencePicker(true)}
                           className="text-xs text-accent-blue hover:text-accent-blue-hover"
                         >
-                          Edit
+                          编辑
                         </button>
                       </div>
                     </div>
@@ -792,7 +789,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     onClick={() => setShowRecurrencePicker(true)}
                     className="w-full p-2 bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary text-sm rounded-lg hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors"
                   >
-                    + Add Recurrence
+                    + 添加重复
                   </button>
                 )}
               </div>
@@ -821,15 +818,15 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               onClick={handleSaveAsTemplate}
               disabled={!task?.description && (!task?.checklist || task.checklist.length === 0) && (!task?.customFields || Object.keys(task.customFields).length === 0)}
               className="w-full p-2 bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary text-sm rounded-lg hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              title="Save this task as a template for recurring tasks"
+              title="将此任务保存为重复任务模板"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
-              Save as Template
+              另存为模板
             </button>
             <p className="mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Save this task's description, checklist, and custom fields as a template
+              将此任务的描述、清单和自定义字段保存为模板
             </p>
           </div>
 
@@ -847,7 +844,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
           {/* Status */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Status (Column)
+              状态（列）
             </label>
             <select
               value={status}
@@ -883,7 +880,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Subtasks {task.subtasks && task.subtasks.length > 0 && `(${task.subtasks.length})`}
+                子任务 {task.subtasks && task.subtasks.length > 0 && `(${task.subtasks.length})`}
               </button>
               <button
                 onClick={() => setActiveTab('checklist')}
@@ -893,7 +890,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Checklist
+                清单
               </button>
               <button
                 onClick={() => setActiveTab('comments')}
@@ -903,7 +900,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Comments
+                评论
               </button>
               <button
                 onClick={() => setActiveTab('activity')}
@@ -913,7 +910,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Activity
+                动态
               </button>
               <button
                 onClick={() => setActiveTab('timetracking')}
@@ -923,7 +920,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Time
+                时间
               </button>
               <button
                 onClick={() => setActiveTab('attachments')}
@@ -933,7 +930,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
                 }`}
               >
-                Attachments {task.attachments && task.attachments.length > 0 && `(${task.attachments.length})`}
+                附件 {task.attachments && task.attachments.length > 0 && `(${task.attachments.length})`}
               </button>
             </div>
           </div>
@@ -1005,19 +1002,10 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
         </div>
       </div>
 
-      {/* Footer: AI Quick Actions + Keyboard Hints */}
-      <div className="mt-2 pt-2 border-t border-border-light dark:border-border-dark flex items-center justify-between">
-        <AIQuickActions
-          context={{
-            type: 'task',
-            id: task.id,
-            title: task.title,
-            content: `${task.description || ''}\nPriority: ${task.priority || 'medium'}\nStatus: ${task.status || 'backlog'}`,
-          }}
-        />
-        <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary text-center">
-          Press <kbd className="px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded text-[10px]">Esc</kbd> to close
-          or <kbd className="px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded text-[10px]">Cmd+Enter</kbd> to save
+      {/* Footer: keyboard hints */}
+      <div className="mt-2 flex items-center justify-end border-t border-border-light pt-2 dark:border-border-dark">
+        <p className="text-center text-xs text-text-light-secondary dark:text-text-dark-secondary">
+          按 <kbd className="rounded bg-surface-light-elevated px-1 py-0.5 text-xs dark:bg-surface-dark-elevated">Esc</kbd> 关闭，或按 <kbd className="rounded bg-surface-light-elevated px-1 py-0.5 text-xs dark:bg-surface-dark-elevated">Cmd+Enter</kbd> 保存
         </p>
       </div>
     </Modal>

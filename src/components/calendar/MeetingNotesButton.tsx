@@ -34,14 +34,14 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
   const linkedNotes = useMemo(() => {
     return linkedNoteIds
       .map((id) => getNote(id))
-      .filter((note): note is Note => note !== undefined);
+      .filter((note): note is Note => note !== undefined && !note.deletedAt);
   }, [linkedNoteIds, getNote]);
 
   // Search available notes (exclude already linked)
   const searchResults = useMemo(() => {
     if (!showNotePicker) return [];
     const allNotes = Object.values(notes).filter(
-      (note) => !note.isArchived && !linkedNoteIds.includes(note.id)
+      (note) => !note.isArchived && !note.deletedAt && !linkedNoteIds.includes(note.id)
     );
     if (!searchQuery.trim()) {
       return allNotes.slice(0, 10);
@@ -78,8 +78,8 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
 
   const handleCreateMeetingNotes = () => {
     const newNote = createNote({
-      title: `Meeting Notes: ${eventTitle}`,
-      contentText: '## Agenda\n\n## Notes\n\n## Action Items\n\n',
+      title: `会议笔记：${eventTitle}`,
+      contentText: '## 议程\n\n## 笔记\n\n## 行动项\n\n',
       tags: ['meeting'],
     });
 
@@ -103,7 +103,7 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
   return (
     <div className="space-y-2">
       <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-        Linked Notes
+        关联笔记
       </label>
 
       {/* Linked notes chips */}
@@ -123,7 +123,7 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
                   handleUnlinkNote(note.id);
                 }}
                 className="ml-0.5 hover:text-status-error transition-colors"
-                aria-label={`Unlink ${note.title}`}
+                aria-label={`取消关联 ${note.title}`}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -140,7 +140,7 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
           className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:border-accent-primary/50 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-all duration-standard ease-smooth"
         >
           <Plus className="w-3 h-3" />
-          Create Meeting Notes
+          创建会议笔记
         </button>
         <button
           type="button"
@@ -148,7 +148,7 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
           className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:border-accent-primary/50 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-all duration-standard ease-smooth"
         >
           <Link2 className="w-3 h-3" />
-          Link Existing
+          关联现有
         </button>
 
         {/* Note picker dropdown */}
@@ -163,14 +163,14 @@ export function MeetingNotesButton({ eventId, eventTitle }: MeetingNotesButtonPr
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-6 pr-2 py-1 text-[11px] bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                  placeholder="Search notes..."
+                  placeholder="搜索笔记…"
                 />
               </div>
             </div>
             <div className="max-h-48 overflow-y-auto">
               {searchResults.length === 0 ? (
                 <div className="px-3 py-2 text-[11px] text-text-light-secondary dark:text-text-dark-secondary text-center">
-                  No notes found
+                  未找到笔记
                 </div>
               ) : (
                 searchResults.map((note) => (

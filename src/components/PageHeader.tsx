@@ -1,203 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSettingsStore } from '../stores/useSettingsStore';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { getPageMetadata } from '../config/pageMetadata';
-import { ProjectContextDropdown } from './ProjectContextDropdown';
+import { useSettingsStore } from '../stores/useSettingsStore';
 import { Breadcrumbs } from './Breadcrumbs';
 import { NavigationButtons } from './NavigationButtons';
-
-/**
- * PageHeader Component
- *
- * Consistent page header with:
- * - Title and optional subtitle (left) - auto-detected from route or explicit props
- * - Optional action buttons (left, below title)
- * - Date & Time display (right) - full format with seconds, AM/PM, timezone
- *
- * Usage Modes:
- * 1. Auto-detect: <PageHeader /> - automatically uses title/subtitle from pageMetadata registry
- * 2. Explicit: <PageHeader title="Custom" subtitle="Description" /> - overrides auto-detect
- *
- * Responsive: Full format on desktop, compact on mobile.
- * Used across all pages for consistent layout.
- */
+import { ProjectContextDropdown } from './ProjectContextDropdown';
+import { SaveStatusIndicator } from './SaveStatusIndicator';
 
 interface PageHeaderProps {
-  title?: string; // Optional - auto-detected from route if not provided
-  subtitle?: string; // Optional - auto-detected from route if not provided
-  children?: React.ReactNode; // Action buttons or other content
+  title?: string;
+  subtitle?: string;
+  children?: React.ReactNode;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title: titleProp, subtitle: subtitleProp, children }) => {
+const PROJECT_AWARE_ROUTES = new Set(['/today', '/inbox', '/tasks', '/pm', '/schedule', '/notes', '/links']);
+
+/** A compact orientation bar; page workspaces keep the visual priority. */
+export const PageHeader: React.FC<PageHeaderProps> = ({
+  title: titleProp,
+  subtitle: subtitleProp,
+  children,
+}) => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Auto-detect title/subtitle from route if not provided via props
-  const pageMetadata = getPageMetadata(location.pathname);
-  const title = titleProp ?? pageMetadata?.title ?? 'NeumanOS';
-  const subtitle = subtitleProp ?? pageMetadata?.subtitle;
+  const metadata = getPageMetadata(location.pathname);
+  const title = titleProp ?? metadata?.title ?? 'LifeOS';
+  const subtitle = subtitleProp ?? metadata?.subtitle;
   const timeFormat = useSettingsStore((state) => state.timeFormat);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [now, setNow] = useState(() => new Date());
 
-  // Update time every second (for seconds display)
+  const showDate = location.pathname === '/' || location.pathname === '/today';
+  const showProjectContext = PROJECT_AWARE_ROUTES.has(location.pathname);
+
   useEffect(() => {
-    setCurrentTime(new Date());
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!showDate) return;
+    setNow(new Date());
+    const interval = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(interval);
+  }, [showDate]);
 
-  // Get timezone abbreviation
-  const timezone = Intl.DateTimeFormat('en-US', { timeZoneName: 'short' })
-    .formatToParts(currentTime)
-    .find((part) => part.type === 'timeZoneName')?.value || '';
+  useEffect(() => {
+    document.title = title === 'LifeOS' ? 'LifeOS' : `${title} · LifeOS`;
+  }, [title]);
 
-  // Format time with seconds, AM/PM
-  const formatFullTime = () => {
-    if (timeFormat === '24h') {
-      return currentTime.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      });
-    }
-    return currentTime.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-    });
-  };
-
-  // Format compact time (no seconds, for mobile)
-  const formatCompactTime = () => {
-    if (timeFormat === '24h') {
-      return currentTime.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-    }
-    return currentTime.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  // Format full date with year (desktop)
-  const fullDateString = currentTime.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+  const time = now.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: timeFormat !== '24h',
   });
-
-  // Format compact date (mobile)
-  const compactDateString = currentTime.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  // Animation variants for title transitions
-  const titleVariants = {
-    initial: { opacity: 0, x: -12 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 12 },
-  };
-
-  const subtitleVariants = {
-    initial: { opacity: 0, y: 4 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -4 },
-  };
 
   return (
-    <div className="flex items-start justify-between gap-4 mb-4 sm:mb-8">
-      {/* Left: Navigation, Breadcrumbs, Title, Subtitle, Actions */}
-      <div className="flex-1 min-w-0">
-        {/* Navigation bar: back/forward + breadcrumbs */}
-        <div className="flex items-center gap-2 mb-1">
+    <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 flex min-w-0 items-center gap-2">
           <NavigationButtons />
           <Breadcrumbs />
         </div>
-        <AnimatePresence mode="wait">
-          <motion.h1
-            key={`title-${location.pathname}`}
-            variants={titleVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="text-xl sm:text-2xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-1"
-          >
+        <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
+          <h1 className="truncate text-xl font-semibold tracking-tight text-text-light-primary sm:text-2xl dark:text-text-dark-primary">
             {title}
-          </motion.h1>
-        </AnimatePresence>
-        <AnimatePresence mode="wait">
+          </h1>
           {subtitle && (
-            <motion.p
-              key={`subtitle-${location.pathname}`}
-              variants={subtitleVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
-              className="text-sm sm:text-base text-text-light-secondary dark:text-text-dark-secondary mb-2 sm:mb-3"
-            >
+            <p className="hidden truncate pb-0.5 text-sm text-text-light-secondary sm:block dark:text-text-dark-secondary">
               {subtitle}
-            </motion.p>
+            </p>
           )}
-        </AnimatePresence>
-        {children && <div className="flex flex-wrap gap-2">{children}</div>}
+        </div>
+        {children && <div className="mt-2 flex flex-wrap gap-2">{children}</div>}
       </div>
 
-      {/* Right: Project Filter + Date & Time - Responsive */}
-      <div className="flex items-center gap-4 lg:gap-6 flex-shrink-0">
-        {/* Global Project Context Filter */}
-        {/* Desktop: Full dropdown */}
-        <div className="hidden lg:block relative z-50">
-          <ProjectContextDropdown />
-        </div>
-        {/* Mobile/Tablet: Compact dropdown */}
-        <div className="lg:hidden relative z-50">
-          <ProjectContextDropdown className="max-w-[120px]" />
-        </div>
-
-        {/* Date & Time - Click date to go to Today page */}
-        <div className="text-right">
-          {/* Desktop: Full format */}
-          <div className="hidden md:block">
-            <div className="text-2xl lg:text-3xl font-bold text-text-light-primary dark:text-text-dark-primary tabular-nums">
-              {formatFullTime()} <span className="text-lg lg:text-xl font-medium text-text-light-secondary dark:text-text-dark-secondary">{timezone}</span>
-            </div>
-            <button
-              onClick={() => navigate('/today')}
-              className="text-sm lg:text-base text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-colors cursor-pointer"
-              title="Go to Today"
-            >
-              {fullDateString}
-            </button>
+      <div className="flex shrink-0 items-center gap-3">
+        <SaveStatusIndicator />
+        {showProjectContext && (
+          <div className="relative z-50 hidden sm:block">
+            <ProjectContextDropdown className="max-w-[180px]" />
           </div>
-          {/* Mobile: Compact format */}
-          <div className="md:hidden">
-            <div className="text-lg font-bold text-text-light-primary dark:text-text-dark-primary tabular-nums">
-              {formatCompactTime()}
-            </div>
-            <button
-              onClick={() => navigate('/today')}
-              className="text-xs text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-colors cursor-pointer"
-              title="Go to Today"
-            >
-              {compactDateString}
-            </button>
-          </div>
-        </div>
+        )}
+        {showDate && (
+          <Link
+            to="/today"
+            className="rounded-lg px-2 py-1 text-right transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
+            title="打开今日页"
+          >
+            <span className="block text-base font-semibold tabular-nums text-text-light-primary dark:text-text-dark-primary">{time}</span>
+            <span className="block text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+              {now.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short' })}
+            </span>
+          </Link>
+        )}
       </div>
     </div>
   );
 };
+
+export default PageHeader;

@@ -127,7 +127,7 @@ describe('Migration Service', () => {
       const result = await migrateToIndexedDB();
 
       expect(result.success).toBe(false);
-      expect(result.errors).toContain('IndexedDB not supported in this browser');
+      expect(result.errors).toContain('此浏览器不支持 IndexedDB');
       expect(result.migratedKeys).toHaveLength(0);
     });
 
@@ -189,7 +189,7 @@ describe('Migration Service', () => {
 
       expect(result.success).toBe(true); // Overall success
       expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]).toContain('Failed to migrate kanban-tasks');
+      expect(result.errors[0]).toContain('迁移 kanban-tasks 失败');
       expect(result.migratedKeys).toContain('calendar-events');
       expect(result.migratedKeys).not.toContain('kanban-tasks');
     });
@@ -201,7 +201,7 @@ describe('Migration Service', () => {
 
       expect(result.success).toBe(false);
       expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]).toContain('Migration failed');
+      expect(result.errors[0]).toContain('迁移失败');
     });
 
     it('should return empty arrays when no data to migrate', async () => {

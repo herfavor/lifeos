@@ -40,7 +40,7 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
   const bulkAddTag = useNotesStore((s) => s.bulkAddTag);
   const bulkRemoveTag = useNotesStore((s) => s.bulkRemoveTag);
   const archiveNotes = useNotesStore((s) => s.archiveNotes);
-  const deleteNote = useNotesStore((s) => s.deleteNote);
+  const deleteNotes = useNotesStore((s) => s.deleteNotes);
 
   // Dialog states
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
@@ -103,7 +103,7 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
   };
 
   const confirmDelete = () => {
-    selectedIds.forEach((id) => deleteNote(id));
+    deleteNotes(selectedIds);
     setDeleteDialogOpen(false);
     clearSelection();
     log.debug('Bulk deleted notes', { count });
@@ -133,7 +133,7 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
         >
           {/* Selection count */}
           <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary whitespace-nowrap">
-            {count} note{count !== 1 ? 's' : ''} selected
+            已选择 {count} 条笔记
           </span>
 
           {/* Divider */}
@@ -143,60 +143,60 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
           <button
             onClick={handleSelectAll}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark transition-colors text-text-light-secondary dark:text-text-dark-secondary flex items-center gap-1.5"
-            title="Select all visible notes"
+            title="选择所有可见笔记"
           >
             <CheckSquare className="w-3.5 h-3.5" />
-            All
+            全部
           </button>
 
           {/* Add Tag */}
           <button
             onClick={handleAddTag}
             className="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-colors flex items-center gap-1.5"
-            title="Add tag to selected notes"
+            title="为所选笔记添加标签"
           >
             <Tag className="w-3.5 h-3.5" />
-            Add Tag
+            添加标签
           </button>
 
           {/* Remove Tag */}
           <button
             onClick={handleRemoveTag}
             className="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors flex items-center gap-1.5"
-            title="Remove tag from selected notes"
+            title="从所选笔记移除标签"
           >
             <Tag className="w-3.5 h-3.5" />
-            Remove Tag
+            移除标签
           </button>
 
           {/* Archive */}
           <button
             onClick={handleArchive}
             className="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent-purple/10 text-accent-purple hover:bg-accent-purple/20 transition-colors flex items-center gap-1.5"
-            title="Archive selected notes"
+            title="归档所选笔记"
           >
             <Archive className="w-3.5 h-3.5" />
-            Archive
+            归档
           </button>
 
           {/* Export */}
           <button
             onClick={handleExport}
             className="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent-green/10 text-accent-green hover:bg-accent-green/20 transition-colors flex items-center gap-1.5"
-            title="Export selected notes as Markdown"
+            title="将所选笔记导出为 Markdown"
           >
             <Download className="w-3.5 h-3.5" />
-            Export
+            导出
           </button>
 
           {/* Delete */}
           <button
             onClick={handleDelete}
             className="px-3 py-1.5 text-xs font-medium rounded-lg bg-status-error/10 text-status-error hover:bg-status-error/20 transition-colors flex items-center gap-1.5"
-            title="Delete selected notes"
+            title="删除所选笔记"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Delete
+            删除
           </button>
 
           {/* Divider */}
@@ -206,8 +206,8 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
           <button
             onClick={clearSelection}
             className="p-1.5 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark transition-colors text-text-light-tertiary dark:text-text-dark-tertiary"
-            title="Clear selection (Escape)"
-            aria-label="Clear selection"
+            title="清除选择（Esc）"
+            aria-label="清除选择"
           >
             <X className="w-4 h-4" />
           </button>
@@ -220,15 +220,15 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
           isOpen={true}
           onClose={() => setTagDialogOpen(false)}
           onConfirm={confirmTagAction}
-          title={tagAction === 'add' ? 'Add Tag to Selected Notes' : 'Remove Tag from Selected Notes'}
+          title={tagAction === 'add' ? '为所选笔记添加标签' : '从所选笔记移除标签'}
           message={
             tagAction === 'add'
-              ? `Enter tag name to add to ${count} note${count !== 1 ? 's' : ''}:`
-              : `Enter tag name to remove from ${count} note${count !== 1 ? 's' : ''}:`
+              ? `输入要添加到 ${count} 条笔记的标签名称：`
+              : `输入要从 ${count} 条笔记移除的标签名称：`
           }
           defaultValue=""
-          placeholder="Tag name"
-          confirmText={tagAction === 'add' ? 'Add Tag' : 'Remove Tag'}
+          placeholder="标签名称"
+          confirmText={tagAction === 'add' ? '添加标签' : '移除标签'}
         />
       )}
 
@@ -237,9 +237,9 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
         isOpen={archiveDialogOpen}
         onClose={() => setArchiveDialogOpen(false)}
         onConfirm={confirmArchive}
-        title="Archive Selected Notes"
-        message={`Are you sure you want to archive ${count} note${count !== 1 ? 's' : ''}?`}
-        confirmText="Archive"
+        title="归档所选笔记"
+        message={`确定要归档 ${count} 条笔记吗？`}
+        confirmText="归档"
       />
 
       {/* Delete Confirmation */}
@@ -247,9 +247,9 @@ export const BulkNotesActionBar: React.FC<BulkNotesActionBarProps> = ({
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={confirmDelete}
-        title="Delete Selected Notes"
-        message={`Are you sure you want to delete ${count} note${count !== 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除所选笔记"
+        message={`确定将 ${count} 条笔记移到回收站吗？之后仍可恢复。`}
+        confirmText="移到回收站"
         variant="danger"
       />
     </>

@@ -70,20 +70,20 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
 
     // Validation
     if (!description.trim()) {
-      setError('Description is required');
+      setError('请填写描述');
       return;
     }
 
     if (!startTime) {
-      setError('Start time is required');
+      setError('请填写开始时间');
       return;
     }
 
     const duration = calculateDuration();
     if (!duration || duration.seconds <= 0) {
       setError(durationMode === 'endTime'
-        ? 'End time must be after start time'
-        : 'Duration must be greater than 0');
+        ? '结束时间必须晚于开始时间'
+        : '时长必须大于 0');
       return;
     }
 
@@ -110,7 +110,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
       onClose();
     } catch (err) {
       console.error('Failed to create entry:', err);
-      setError('Failed to create entry. Please try again.');
+      setError('创建记录失败，请重试。');
     } finally {
       setSaving(false);
     }
@@ -141,13 +141,13 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-accent-primary" />
             <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Add Manual Time Entry
+              添加手动时间记录
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-1 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
-            aria-label="Close modal"
+            aria-label="关闭弹窗"
           >
             <X className="w-4 h-4" />
           </button>
@@ -167,7 +167,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               htmlFor="description"
               className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
             >
-              Description *
+              描述 *
             </label>
             <input
               id="description"
@@ -176,7 +176,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               onChange={(e) => setDescription(e.target.value)}
               autoFocus
               className="w-full px-2.5 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-              placeholder="What did you work on?"
+              placeholder="你做了什么？"
             />
           </div>
 
@@ -186,12 +186,12 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               htmlFor="project"
               className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
             >
-              Project
+              项目
             </label>
             <ProjectSelector
               value={projectId}
               onChange={setProjectId}
-              placeholder="No Project"
+              placeholder="无项目"
               showNoProject={true}
             />
           </div>
@@ -202,7 +202,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               htmlFor="startTime"
               className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
             >
-              Start Time *
+              开始时间 *
             </label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary pointer-events-none" />
@@ -219,7 +219,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
           {/* Duration Mode Toggle */}
           <div>
             <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-              Duration Mode
+              时长模式
             </label>
             <div className="flex gap-2">
               <button
@@ -231,7 +231,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                Duration
+                时长
               </button>
               <button
                 type="button"
@@ -242,7 +242,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                End Time
+                结束时间
               </button>
             </div>
           </div>
@@ -254,7 +254,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                 htmlFor="endTime"
                 className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
               >
-                End Time *
+                结束时间 *
               </label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary pointer-events-none" />
@@ -274,7 +274,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                   htmlFor="durationHours"
                   className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
                 >
-                  Hours
+                  小时
                 </label>
                 <input
                   id="durationHours"
@@ -291,7 +291,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                   htmlFor="durationMinutes"
                   className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
                 >
-                  Minutes
+                  分钟
                 </label>
                 <input
                   id="durationMinutes"
@@ -310,14 +310,14 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
           {duration && duration.seconds > 0 && (
             <div className="px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-button border border-border-light dark:border-border-dark">
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Total Duration:{' '}
+                总时长：{' '}
                 <span className="font-mono font-semibold text-accent-primary">
                   {duration.hours}h {duration.minutes.toString().padStart(2, '0')}m
                 </span>
               </div>
               {durationMode === 'duration' && startTime && (
                 <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary mt-0.5">
-                  Will end at: {new Date(new Date(startTime).getTime() + duration.seconds * 1000).toLocaleString()}
+                  预计结束时间：{new Date(new Date(startTime).getTime() + duration.seconds * 1000).toLocaleString()}
                 </div>
               )}
             </div>
@@ -329,7 +329,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               htmlFor="notes"
               className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
             >
-              Notes <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">(optional)</span>
+              备注 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
             </label>
             <textarea
               id="notes"
@@ -337,7 +337,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
               className="w-full px-2.5 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary resize-none"
-              placeholder="Additional details about this time entry..."
+              placeholder="关于此时间记录的更多详情…"
             />
           </div>
 
@@ -346,7 +346,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
             <label
               className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
             >
-              Tags
+              标签
             </label>
             <TagInput tags={entryTags} onChange={setEntryTags} compact />
           </div>
@@ -364,7 +364,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               htmlFor="billable"
               className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
             >
-              Billable time
+              可计费时间
             </label>
           </div>
 
@@ -375,7 +375,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
                 htmlFor="hourlyRate"
                 className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5"
               >
-                Hourly Rate <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">(optional)</span>
+                小时费率 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
@@ -395,7 +395,7 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
               {hourlyRate && duration && duration.seconds > 0 && (
                 <div className="mt-1.5 px-2.5 py-1.5 bg-status-success/10 border border-status-success/20 rounded-button">
                   <div className="text-xs text-status-success-text font-medium">
-                    Estimated Revenue: ${((duration.seconds / 3600) * parseFloat(hourlyRate)).toFixed(2)}
+                    预计收入：${((duration.seconds / 3600) * parseFloat(hourlyRate)).toFixed(2)}
                   </div>
                 </div>
               )}
@@ -406,16 +406,16 @@ export function ManualTimeEntryModal({ onClose }: ManualTimeEntryModalProps) {
         {/* Footer */}
         <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border-light dark:border-border-dark sticky bottom-0 bg-surface-light dark:bg-surface-dark">
           <Button variant="outline" size="sm" onClick={onClose} disabled={saving}>
-            Cancel
+            取消
           </Button>
           <Button
             variant="primary"
             size="sm"
             onClick={handleSave}
             loading={saving}
-            loadingText="Creating..."
+            loadingText="创建中…"
           >
-            Create Entry
+            创建记录
           </Button>
         </div>
       </div>

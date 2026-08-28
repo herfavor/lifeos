@@ -45,22 +45,22 @@ test.describe('Data Persistence', () => {
 
     // Find and click add task button (use .first() to avoid strict mode violation)
     const addButton = page.getByRole('button', {
-      name: /add.*task|new.*task|create.*task/i,
+      name: /添加.*任务|新建.*任务|创建.*任务/i,
     }).first();
     await addButton.click();
 
     // Fill in task details (use more specific placeholder to avoid search input)
-    const titleInput = page.getByPlaceholder('Task title...');
+    const titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(taskTitle);
 
     // Set priority (if available)
-    const prioritySelect = page.getByLabel(/priority/i);
+    const prioritySelect = page.getByLabel(/优先级/i);
     if (await prioritySelect.isVisible()) {
       await prioritySelect.selectOption('high');
     }
 
     // Set description (if available)
-    const descriptionInput = page.getByPlaceholder(/description/i);
+    const descriptionInput = page.getByPlaceholder(/添加描述/i);
     if (await descriptionInput.isVisible()) {
       await descriptionInput.fill('This task should persist');
     }
@@ -109,7 +109,7 @@ test.describe('Data Persistence', () => {
     await waitForAppLoaded(page);
 
     // Create a note via UI - click "New Note" or "Create Note" button
-    await page.getByRole('button', { name: /new note|create note/i }).first().click();
+    await page.getByRole('button', { name: /新建笔记|创建.*笔记/i }).first().click();
 
     // Wait for note to be created and editor to appear
     await page.waitForTimeout(500);
@@ -118,8 +118,8 @@ test.describe('Data Persistence', () => {
     const noteTitle = 'Persistent Note Title';
     const noteContent = 'This note should survive tab closure';
 
-    await page.getByPlaceholder('Untitled Note').fill(noteTitle);
-    await page.getByPlaceholder('Untitled Note').press('Enter');
+    await page.getByPlaceholder('无标题笔记').fill(noteTitle);
+    await page.getByPlaceholder('无标题笔记').press('Enter');
 
     // Fill in note content in the Lexical editor
     const contentArea = page.locator('[contenteditable="true"]').last();
@@ -155,11 +155,7 @@ test.describe('Data Persistence', () => {
 
   // ==================== TEST 3: OFFLINE MODE ====================
 
-  // SKIP: Offline mode causes UI freeze - button clicks timeout
-  // TODO: This is a legitimate app limitation - investigate Service Worker + offline UX improvements
-  // Root cause: UI components likely make fetch() calls that hang when offline
-  // Fix required: Proper offline detection + graceful degradation in UI components
-  test.skip('handles 10 changes in offline mode', async ({ page }) => {
+  test('handles 10 changes in offline mode', async ({ page }) => {
     // Navigate to tasks FIRST (before going offline)
     await page.goto('/tasks');
     await waitForAppLoaded(page);
@@ -176,12 +172,12 @@ test.describe('Data Persistence', () => {
 
       // Click add task (use .first() to target first button)
       const addButton = page.getByRole('button', {
-        name: /add.*task|new.*task/i,
+        name: /添加.*任务|新建.*任务/i,
       }).first();
       await addButton.click();
 
       // Fill title and submit with Enter
-      const titleInput = page.getByPlaceholder('Task title...');
+      const titleInput = page.getByPlaceholder('任务标题…');
       await titleInput.fill(title);
       await titleInput.press('Enter');
 
@@ -224,9 +220,9 @@ test.describe('Data Persistence', () => {
     await page.goto('/tasks');
     await waitForAppLoaded(page);
 
-    const addTaskButton = page.getByRole('button', { name: /add.*task/i }).first();
+    const addTaskButton = page.getByRole('button', { name: /添加.*任务/i }).first();
     await addTaskButton.click();
-    const taskInput = page.getByPlaceholder('Task title...');
+    const taskInput = page.getByPlaceholder('任务标题…');
     await taskInput.fill('Multi-Store Test Task');
     await taskInput.press('Enter');
     await expect(taskInput).not.toBeVisible({ timeout: 2000 }); // Wait for form to close
@@ -238,13 +234,13 @@ test.describe('Data Persistence', () => {
 
     // Click on today's date or add event button
     const addEventButton = page.getByRole('button', {
-      name: /add.*event|new.*event/i,
+      name: /创建.*事件|新建.*事件/i,
     });
 
     if (await addEventButton.isVisible()) {
       await addEventButton.click();
-      await page.getByPlaceholder(/title|event/i).fill('Multi-Store Test Event');
-      await page.getByRole('button', { name: /save|create|add/i }).first().click();
+      await page.getByPlaceholder(/标题|事件/i).fill('Multi-Store Test Event');
+      await page.getByRole('button', { name: /保存|创建|添加/i }).first().click();
       await waitForIndexedDB(page);
     }
 
@@ -252,10 +248,10 @@ test.describe('Data Persistence', () => {
     await page.goto('/notes');
     await waitForAppLoaded(page);
 
-    const newNoteButton = page.getByRole('button', { name: /new note/i });
+    const newNoteButton = page.getByRole('button', { name: /新建笔记/i });
     if (await newNoteButton.isVisible()) {
       await newNoteButton.click();
-      const titleInput = page.getByPlaceholder(/title/i);
+      const titleInput = page.getByPlaceholder(/标题/i);
       if (await titleInput.isVisible()) {
         await titleInput.fill('Multi-Store Test Note');
       }
@@ -263,7 +259,7 @@ test.describe('Data Persistence', () => {
     }
 
     // 4. Start a time entry (if timer exists)
-    const timerButton = page.getByRole('button', { name: /start.*timer/i });
+    const timerButton = page.getByRole('button', { name: /启动.*计时器/i });
     if (await timerButton.isVisible()) {
       await timerButton.click();
       await waitForIndexedDB(page);

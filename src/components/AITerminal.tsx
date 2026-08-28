@@ -100,8 +100,6 @@ export const AITerminal: React.FC = () => {
     activeProvider,
     activeModel,
     providers,
-    encryptionPassword,
-    isPasswordExpired,
     fallbackEnabled,
     messages,
     isStreaming,
@@ -305,7 +303,7 @@ export const AITerminal: React.FC = () => {
   // Handle Move to Daily Note action
   const handleMoveToDaily = useCallback(() => {
     if (!selectedText.trim()) {
-      addToast('warning', 'Please select text to move to Daily Note');
+      addToast('warning', '请先选择要移动到每日笔记的文本');
       return;
     }
 
@@ -321,9 +319,9 @@ export const AITerminal: React.FC = () => {
       }
 
       setSelectedText('');
-      addToast('success', `Moved to ${dailyNote.title}`);
+      addToast('success', `已移动到 ${dailyNote.title}`);
     } catch (error) {
-      addToast('error', 'Failed to move content to Daily Note');
+      addToast('error', '无法将内容移动到每日笔记');
     }
   }, [selectedText, noteEditContent, addToast]);
 
@@ -354,7 +352,7 @@ export const AITerminal: React.FC = () => {
   useShortcut({
     id: 'toggle-voice-input',
     keys: ['ctrl', 'shift', 'v'],
-    label: 'Toggle voice input',
+    label: '切换语音输入',
     context: 'global',
     handler: voiceInput.toggleListening,
     enabled: isOpen && voiceInput.isSupported && terminalMode === 'chat',
@@ -368,7 +366,7 @@ export const AITerminal: React.FC = () => {
   const [router] = useState(() => createDefaultRouter((failedProvider, _failedModel, nextProvider, nextModel, reason) => {
     // Fallback notification callback
     setFallbackNotification(
-      `⚠️ ${failedProvider} failed: ${reason}. Switched to ${nextProvider} (${nextModel}).`
+      `⚠️ ${failedProvider} 失败：${reason}。已切换到 ${nextProvider}（${nextModel}）。`
     );
     // Clear any existing timeout to prevent memory leaks
     if (fallbackTimeoutRef.current) {
@@ -412,23 +410,22 @@ export const AITerminal: React.FC = () => {
     });
   }, [activeProvider, activeModel, fallbackEnabled, router]);
 
-  // Initialize provider API keys from encrypted storage
+  // Initialize provider API keys from encrypted storage.
+  // Keys decrypt with the device-managed local key (no password).
   useEffect(() => {
     const initializeApiKeys = async () => {
-      if (encryptionPassword && !isPasswordExpired()) {
-        const allProviderIds = Object.keys(router.getAllProviderMetadata());
-        for (const providerId of allProviderIds) {
-          const providerConfig = providers[providerId];
-          if (providerConfig && providerConfig.encryptedApiKey) {
-            try {
-              const decryptedKey = await useTerminalStore.getState().getProviderApiKey(providerId, encryptionPassword);
-              if (decryptedKey) {
-                // Store key in router - provider SDK will be loaded when needed
-                router.setProviderApiKey(providerId, decryptedKey);
-              }
-            } catch (error) {
-              console.error(`Failed to decrypt ${providerId} API key:`, error);
+      const allProviderIds = Object.keys(router.getAllProviderMetadata());
+      for (const providerId of allProviderIds) {
+        const providerConfig = providers[providerId];
+        if (providerConfig && providerConfig.encryptedApiKey) {
+          try {
+            const decryptedKey = await useTerminalStore.getState().getProviderApiKey(providerId);
+            if (decryptedKey) {
+              // Store key in router - provider SDK will be loaded when needed
+              router.setProviderApiKey(providerId, decryptedKey);
             }
+          } catch (error) {
+            console.error(`Failed to decrypt ${providerId} API key:`, error);
           }
         }
       }
@@ -439,7 +436,7 @@ export const AITerminal: React.FC = () => {
     };
 
     initializeApiKeys();
-  }, [encryptionPassword, isPasswordExpired, providers, router]);
+  }, [providers, router]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -547,7 +544,7 @@ export const AITerminal: React.FC = () => {
     if (configuredProviderCount === 0) {
       addMessage({
         role: 'system',
-        content: '⚠️ No AI providers configured. Click the ⚙️ Settings button to add API keys.',
+        content: '⚠️ 尚未配置任何 AI 提供商。点击 ⚙️ 设置按钮添加 API 密钥。',
       });
       return;
     }
@@ -557,7 +554,7 @@ export const AITerminal: React.FC = () => {
     if (!activeProviderObj || !activeProviderObj.isConfigured()) {
       addMessage({
         role: 'system',
-        content: `⚠️ Provider "${activeProvider}" is not configured. Please add an API key in Settings.`,
+        content: `⚠️ 提供商“${activeProvider}”尚未配置。请在设置中添加 API 密钥。`,
       });
       return;
     }
@@ -631,10 +628,10 @@ export const AITerminal: React.FC = () => {
       // Auto-save conversation
       saveCurrentConversation();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message : '发生未知错误';
       addMessage({
         role: 'system',
-        content: `❌ Error: ${errorMessage}`,
+        content: `❌ 错误：${errorMessage}`,
       });
     } finally{
       setStreaming(false);
@@ -677,9 +674,9 @@ export const AITerminal: React.FC = () => {
                   ? 'text-accent-green border-accent-green bg-accent-green/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-green hover:bg-accent-green/5'
               }`}
-              title="AI Chat Mode"
+              title="AI 聊天模式"
             >
-              💬 Chat
+              💬 聊天
             </button>
             <button
               onClick={() => setTerminalMode('shell')}
@@ -688,7 +685,7 @@ export const AITerminal: React.FC = () => {
                   ? 'text-accent-primary border-accent-primary bg-accent-primary/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-primary hover:bg-accent-primary/5'
               }`}
-              title="Phantom Shell Terminal"
+              title="Phantom Shell 终端"
             >
               ⌨️ Shell
             </button>
@@ -699,17 +696,17 @@ export const AITerminal: React.FC = () => {
                   ? 'text-accent-blue border-accent-blue bg-accent-blue/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-blue hover:bg-accent-blue/5'
               }`}
-              title="View Saved Notes"
+              title="查看已保存的笔记"
             >
-              📝 Notes
+              📝 笔记
             </button>
           </div>
           {/* Close button in tab row */}
           <button
             onClick={() => setOpen(false)}
             className="px-3 py-2.5 text-text-dark-secondary hover:text-white hover:bg-surface-dark-elevated transition-all"
-            title="Close Terminal"
-            aria-label="Close AI terminal"
+            title="关闭终端"
+            aria-label="关闭 AI 助手"
           >
             ✕
           </button>
@@ -724,10 +721,10 @@ export const AITerminal: React.FC = () => {
                 <span className="text-accent-green">
                   {configuredProviderCount > 0
                     ? `${activeProvider}/${activeModel}`
-                    : 'no-provider'}
+                    : '未配置'}
                 </span>
                 {fallbackEnabled && configuredProviderCount > 1 && (
-                  <span className="bg-accent-green/20 px-1.5 py-0.5 rounded text-accent-green" title="Automatic fallback enabled">
+                  <span className="bg-accent-green/20 px-1.5 py-0.5 rounded text-accent-green" title="已启用自动回退">
                     🔄
                   </span>
                 )}
@@ -737,7 +734,7 @@ export const AITerminal: React.FC = () => {
               <span className="text-accent-primary">phantom-shell</span>
             )}
             {terminalMode === 'notes' && (
-              <span className="text-accent-blue">AI Terminal Notes</span>
+              <span className="text-accent-blue">AI 助手笔记</span>
             )}
           </div>
 
@@ -750,8 +747,8 @@ export const AITerminal: React.FC = () => {
                 className={`p-1.5 hover:bg-surface-dark-elevated rounded transition-all ${
                   showConversationSearch ? 'text-accent-yellow bg-accent-yellow/10' : 'text-text-dark-secondary hover:text-accent-yellow'
                 }`}
-                title="Search Conversations"
-                aria-label="Search conversations"
+                title="搜索对话"
+                aria-label="搜索对话"
               >
                 <Search size={14} />
               </button>
@@ -764,8 +761,8 @@ export const AITerminal: React.FC = () => {
                 className={`p-1.5 hover:bg-surface-dark-elevated rounded transition-all ${
                   showConversationPanel ? 'text-accent-green bg-accent-green/10' : 'text-text-dark-secondary hover:text-accent-green'
                 }`}
-                title="Conversation History"
-                aria-label="View conversation history"
+                title="对话历史"
+                aria-label="查看对话历史"
               >
                 <MessageSquare size={14} />
               </button>
@@ -778,8 +775,8 @@ export const AITerminal: React.FC = () => {
                 className={`p-1.5 hover:bg-surface-dark-elevated rounded transition-all ${
                   showSystemPromptPanel ? 'text-accent-blue bg-accent-blue/10' : customSystemPrompt ? 'text-accent-blue' : 'text-text-dark-secondary hover:text-accent-blue'
                 }`}
-                title={customSystemPrompt ? 'System Prompt (active)' : 'System Prompt'}
-                aria-label="Configure system prompt"
+                title={customSystemPrompt ? '系统提示词（已启用）' : '系统提示词'}
+                aria-label="配置系统提示词"
               >
                 <BookOpen size={14} />
               </button>
@@ -795,8 +792,8 @@ export const AITerminal: React.FC = () => {
               <button
                 onClick={() => setShowUsageTracker(!showUsageTracker)}
                 className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-green"
-                title="Usage Statistics"
-                aria-label="View usage statistics"
+                title="用量统计"
+                aria-label="查看用量统计"
               >
                 📊
               </button>
@@ -807,8 +804,8 @@ export const AITerminal: React.FC = () => {
               <button
                 onClick={() => setShowSaveConversation(true)}
                 className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-blue"
-                title="Save Conversation to Notes"
-                aria-label="Save conversation to notes"
+                title="将对话保存到笔记"
+                aria-label="将对话保存到笔记"
               >
                 💾
               </button>
@@ -819,8 +816,8 @@ export const AITerminal: React.FC = () => {
               <button
                 onClick={() => setShowModelSelector(!showModelSelector)}
                 className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-green"
-                title="Select Model"
-                aria-label="Select AI model"
+                title="选择模型"
+                aria-label="选择 AI 模型"
               >
                 🔀
               </button>
@@ -831,8 +828,8 @@ export const AITerminal: React.FC = () => {
               <button
                 onClick={() => setShowProviderSettings(true)}
                 className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-green"
-                title="Provider Settings"
-                aria-label="Open provider settings"
+                title="提供商设置"
+                aria-label="打开提供商设置"
               >
                 <Settings2 size={14} />
               </button>
@@ -842,8 +839,8 @@ export const AITerminal: React.FC = () => {
             <button
               onClick={() => setShowHelpModal(true)}
               className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-white"
-              title="Help & Documentation"
-              aria-label="Open help"
+              title="帮助与文档"
+              aria-label="打开帮助"
             >
               ❓
             </button>
@@ -859,7 +856,7 @@ export const AITerminal: React.FC = () => {
             {/* Preview Toggle Bar */}
             <div className="flex items-center justify-between px-2 py-1 bg-surface-dark-elevated border-b border-border-dark flex-shrink-0">
               <span className="text-xs text-text-dark-secondary">
-                {phantomStore.isDevServerRunning ? '🟢 Server running' : '⚫ No server'}
+                {phantomStore.isDevServerRunning ? '🟢 服务器运行中' : '⚫ 无服务器'}
               </span>
               <button
                 onClick={() => phantomStore.setShowPreview(!phantomStore.showPreview)}
@@ -868,9 +865,9 @@ export const AITerminal: React.FC = () => {
                     ? 'bg-accent-primary/20 text-accent-primary'
                     : 'text-text-dark-secondary hover:text-accent-primary'
                 }`}
-                title="Toggle Preview Pane"
+                title="切换预览面板"
               >
-                {phantomStore.showPreview ? '👁 Hide' : '👁 Show'} Preview
+                {phantomStore.showPreview ? '👁 隐藏' : '👁 显示'} 预览
               </button>
             </div>
 
@@ -907,39 +904,39 @@ export const AITerminal: React.FC = () => {
 
             {messages.length === 0 && configuredProviderCount === 0 && (
               <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
-                <p className="text-lg font-semibold mb-2">Welcome to AI Terminal!</p>
+                <p className="text-lg font-semibold mb-2">欢迎使用 AI 助手！</p>
                 <p className="text-sm mb-4">
-                  Configure AI providers to get started. Choose from 8 providers including free options!
+                  配置 AI 提供商即可开始使用。可从 8 个提供商中选择，包含免费选项！
                 </p>
                 <button
                   onClick={() => setShowProviderSettings(true)}
                   className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
                 >
-                  ⚙️ Configure Providers
+                  ⚙️ 配置提供商
                 </button>
                 <div className="mt-4 text-xs space-y-1">
-                  <p className="font-medium">Free Providers Available:</p>
+                  <p className="font-medium">可用的免费提供商：</p>
                   <p>• OpenRouter (Llama 3.3, Gemini 2.0)</p>
-                  <p>• Groq (Lightning-fast inference)</p>
-                  <p>• HuggingFace (Thousands of models)</p>
-                  <p>• Mistral (European AI)</p>
+                  <p>• Groq（闪电般快速的推理）</p>
+                  <p>• HuggingFace（数千个模型）</p>
+                  <p>• Mistral（欧洲 AI）</p>
                 </div>
               </div>
             )}
 
             {messages.length === 0 && configuredProviderCount > 0 && (
               <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
-                <p className="text-lg font-semibold mb-2">AI Terminal Ready</p>
+                <p className="text-lg font-semibold mb-2">AI 助手就绪</p>
                 <p className="text-sm mb-2">
-                  Active: <span className="font-medium text-accent-blue">{activeProvider}</span> • {activeModel}
+                  当前：<span className="font-medium text-accent-blue">{activeProvider}</span> • {activeModel}
                 </p>
-                <p className="text-sm">Ask me anything! I can help with:</p>
+                <p className="text-sm">有什么想问的都可以！我可以帮你：</p>
                 <ul className="text-sm mt-2 space-y-1">
-                  <li>💬 General questions & conversation</li>
-                  <li>💻 Code generation & explanation</li>
-                  <li>🔧 Debugging & problem solving</li>
-                  <li>📝 Writing & productivity</li>
-                  <li>🔄 Automatic fallback if provider fails</li>
+                  <li>💬 常见问题与对话</li>
+                  <li>💻 代码生成与讲解</li>
+                  <li>🔧 调试与问题排查</li>
+                  <li>📝 写作与效率</li>
+                  <li>🔄 提供商失败时自动回退</li>
                 </ul>
               </div>
             )}
@@ -961,7 +958,7 @@ export const AITerminal: React.FC = () => {
                 <div className="group relative flex items-start gap-1 max-w-[80%]">
                   {/* Save button - left side for user messages */}
                   {message.role === 'user' && (
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0 self-center">
+                    <div className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-200 flex-shrink-0 self-center">
                       <SaveToNotesButton message={message} />
                     </div>
                   )}
@@ -1008,7 +1005,7 @@ export const AITerminal: React.FC = () => {
                       {message.provider && message.model && (
                         <>
                           <span>•</span>
-                          <span className="font-medium" title="Provider and model used">
+                          <span className="font-medium" title="使用的提供商与模型">
                             {message.provider} • {message.model}
                           </span>
                         </>
@@ -1024,7 +1021,7 @@ export const AITerminal: React.FC = () => {
 
                   {/* Save button - right side for assistant messages */}
                   {message.role === 'assistant' && (
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0 self-center">
+                    <div className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-200 flex-shrink-0 self-center">
                       <SaveToNotesButton
                         message={message}
                         promptMessage={
@@ -1048,7 +1045,7 @@ export const AITerminal: React.FC = () => {
 
             {/* Streaming message */}
             {isStreaming && streamingContent && (
-              <div className="flex gap-3 justify-start" role="status" aria-live="polite" aria-label="AI response streaming">
+              <div className="flex gap-3 justify-start" role="status" aria-live="polite" aria-label="AI 回复流式输出中">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent-blue to-accent-primary flex items-center justify-center text-white flex-shrink-0">
                   🤖
                 </div>
@@ -1095,13 +1092,13 @@ export const AITerminal: React.FC = () => {
             <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-primary/10 border-t border-accent-primary/20 flex-shrink-0">
               <Sparkles size={12} className="text-accent-primary flex-shrink-0" />
               <span className="text-xs text-accent-primary truncate flex-1">
-                Context: {activeContext.type === 'note' ? '📝' : '✅'} {activeContext.title}
+                上下文：{activeContext.type === 'note' ? '📝' : '✅'} {activeContext.title}
               </span>
               <button
                 onClick={() => setActiveContext(null)}
                 className="text-accent-primary/60 hover:text-accent-primary transition-colors"
-                title="Clear context"
-                aria-label="Clear active context"
+                title="清除上下文"
+                aria-label="清除当前上下文"
               >
                 <X size={12} />
               </button>
@@ -1118,10 +1115,10 @@ export const AITerminal: React.FC = () => {
                 onKeyDown={handleKeyDown}
                 placeholder={
                   voiceInput.isListening
-                    ? (voiceInput.interimTranscript || 'Listening...')
+                    ? (voiceInput.interimTranscript || '正在聆听…')
                     : configuredProviderCount > 0
-                    ? 'user@neumanos:~$ _'
-                    : 'Configure providers first...'
+                    ? 'user@lifeos:~$ _'
+                    : '请先配置提供商…'
                 }
                 disabled={configuredProviderCount === 0 || isStreaming}
                 className="flex-1 px-3 py-2 rounded-button font-mono text-sm bg-white dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-white placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue dark:focus:ring-accent-green focus:border-transparent resize-none"
@@ -1137,8 +1134,8 @@ export const AITerminal: React.FC = () => {
                       ? 'bg-accent-red text-white voice-pulse'
                       : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red hover:bg-accent-red/10'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  title={voiceInput.isListening ? 'Stop voice input (Ctrl+Shift+V)' : 'Start voice input (Ctrl+Shift+V)'}
-                  aria-label={voiceInput.isListening ? 'Stop voice input' : 'Start voice input'}
+                  title={voiceInput.isListening ? '停止语音输入（Ctrl+Shift+V）' : '开始语音输入（Ctrl+Shift+V）'}
+                  aria-label={voiceInput.isListening ? '停止语音输入' : '开始语音输入'}
                 >
                   <Mic size={16} />
                 </button>
@@ -1147,7 +1144,7 @@ export const AITerminal: React.FC = () => {
                 type="submit"
                 disabled={configuredProviderCount === 0 || !input.trim() || isStreaming}
                 className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover disabled:bg-surface-light-elevated dark:disabled:bg-surface-dark-elevated text-white rounded-button font-medium transition-all duration-standard ease-smooth disabled:cursor-not-allowed"
-                aria-label={isStreaming ? 'Generating response' : 'Send message'}
+                aria-label={isStreaming ? '正在生成回复' : '发送消息'}
               >
                 {isStreaming ? '⋯' : '→'}
               </button>
@@ -1159,8 +1156,8 @@ export const AITerminal: React.FC = () => {
                     createConversation();
                   }}
                   className="px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-button text-sm transition-all duration-standard ease-smooth"
-                  title="New conversation"
-                  aria-label="Start new conversation"
+                  title="新建对话"
+                  aria-label="开始新对话"
                 >
                   +
                 </button>
@@ -1182,8 +1179,8 @@ export const AITerminal: React.FC = () => {
                   <button
                     onClick={handleBackToList}
                     className="p-1.5 hover:bg-surface-dark rounded transition-all text-text-dark-secondary hover:text-white"
-                    title="Back to list"
-                    aria-label="Back to notes list"
+                    title="返回列表"
+                    aria-label="返回笔记列表"
                   >
                     ←
                   </button>
@@ -1203,33 +1200,33 @@ export const AITerminal: React.FC = () => {
                           <button
                             onClick={handleMoveToDaily}
                             className="px-2 py-1 text-xs bg-accent-orange/20 text-accent-orange hover:bg-accent-orange/30 rounded transition-all"
-                            title="Move selected text to Daily Note"
+                            title="将选中文本移动到每日笔记"
                           >
-                            📅 Move to Daily
+                            📅 移至每日笔记
                           </button>
                         )}
                         <button
                           onClick={handleSaveNote}
                           className="px-2 py-1 text-xs bg-accent-green/20 text-accent-green hover:bg-accent-green/30 rounded transition-all"
-                          title="Save changes"
+                          title="保存更改"
                         >
-                          ✓ Save
+                          ✓ 保存
                         </button>
                       </>
                     ) : (
                       <button
                         onClick={handleStartEditing}
                         className="px-2 py-1 text-xs bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 rounded transition-all"
-                        title="Edit note"
+                        title="编辑笔记"
                       >
-                        ✎ Edit
+                        ✎ 编辑
                       </button>
                     )}
                     <button
                       onClick={() => navigate(`/notes?note=${selectedNote.id}`)}
                       className="px-2 py-1 text-xs bg-surface-dark hover:bg-surface-dark-elevated text-text-dark-secondary hover:text-white rounded transition-all"
-                      title="Open in full Notes page"
-                      aria-label="Open note in full Notes page"
+                      title="在完整笔记页面中打开"
+                      aria-label="在完整笔记页面中打开笔记"
                     >
                       ↗
                     </button>
@@ -1248,13 +1245,13 @@ export const AITerminal: React.FC = () => {
                       onMouseUp={handleTextSelection}
                       onKeyUp={handleTextSelection}
                       className="w-full h-full p-4 bg-black text-text-dark-primary text-sm font-mono resize-none focus:outline-none"
-                      placeholder="Start writing..."
+                      placeholder="开始输入…"
                     />
                   ) : (
                     /* View Mode - Rendered Markdown */
                     <div className="p-4 prose prose-sm prose-invert max-w-none">
                       <ReactMarkdown rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}>
-                        {selectedNote.contentText || '*No content yet*'}
+                        {selectedNote.contentText || '*暂无内容*'}
                       </ReactMarkdown>
                     </div>
                   )}
@@ -1264,7 +1261,7 @@ export const AITerminal: React.FC = () => {
                 <div className="px-4 py-2 border-t border-border-dark bg-surface-dark-elevated flex-shrink-0">
                   <div className="flex items-center justify-between text-[10px] text-text-dark-tertiary">
                     <span>
-                      Updated {new Date(selectedNote.updatedAt).toLocaleDateString('en-US', {
+                      更新于 {new Date(selectedNote.updatedAt).toLocaleDateString('zh-CN', {
                         month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
@@ -1290,21 +1287,21 @@ export const AITerminal: React.FC = () => {
                 <div className="flex items-center justify-between px-3 py-2 bg-surface-dark-elevated border-b border-border-dark flex-shrink-0">
                   {/* Sort Dropdown */}
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-text-dark-secondary">Sort:</span>
+                    <span className="text-xs text-text-dark-secondary">排序：</span>
                     <select
                       value={notesSortField}
                       onChange={(e) => handleSortChange(e.target.value as NotesSortField)}
                       className="text-xs bg-surface-dark border border-border-dark rounded px-2 py-1 text-text-dark-primary focus:outline-none focus:ring-1 focus:ring-accent-blue"
                     >
-                      <option value="updatedAt">Updated</option>
-                      <option value="createdAt">Created</option>
-                      <option value="title">Title</option>
+                      <option value="updatedAt">更新时间</option>
+                      <option value="createdAt">创建时间</option>
+                      <option value="title">标题</option>
                     </select>
                     <button
                       onClick={() => setNotesSortOrder(notesSortOrder === 'desc' ? 'asc' : 'desc')}
                       className="text-xs text-text-dark-secondary hover:text-text-dark-primary transition-colors"
-                      title={notesSortOrder === 'desc' ? 'Descending' : 'Ascending'}
-                      aria-label={notesSortOrder === 'desc' ? 'Sort descending' : 'Sort ascending'}
+                      title={notesSortOrder === 'desc' ? '降序' : '升序'}
+                      aria-label={notesSortOrder === 'desc' ? '降序排序' : '升序排序'}
                     >
                       {notesSortOrder === 'desc' ? '↓' : '↑'}
                     </button>
@@ -1312,9 +1309,9 @@ export const AITerminal: React.FC = () => {
                   <button
                     onClick={() => navigate('/notes')}
                     className="px-2 py-1 text-xs bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 rounded transition-all"
-                    title="Open in Notes"
+                    title="在笔记中打开"
                   >
-                    Open Full Notes →
+                    打开完整笔记 →
                   </button>
                 </div>
 
@@ -1330,14 +1327,14 @@ export const AITerminal: React.FC = () => {
                         <span className="text-lg flex-shrink-0">⚡</span>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-medium text-text-dark-primary group-hover:text-accent-yellow transition-colors">
-                            Quick Note
+                            快速笔记
                           </h4>
                           <p className="text-xs text-text-dark-tertiary mt-0.5">
                             {quickNoteSummary.entryCount > 0 ? (
                               <>
-                                {quickNoteSummary.entryCount} {quickNoteSummary.entryCount === 1 ? 'entry' : 'entries'}
+                                {quickNoteSummary.entryCount} 条
                                 {quickNoteSummary.lastEntryTime && (
-                                  <> • Last: {new Date(quickNoteSummary.lastEntryTime).toLocaleDateString('en-US', {
+                                  <> • 最近：{new Date(quickNoteSummary.lastEntryTime).toLocaleDateString('zh-CN', {
                                     month: 'short',
                                     day: 'numeric',
                                     hour: '2-digit',
@@ -1346,12 +1343,12 @@ export const AITerminal: React.FC = () => {
                                 )}
                               </>
                             ) : (
-                              'Fast capture for quick thoughts'
+                              '快速记录即兴想法'
                             )}
                           </p>
                         </div>
-                        <span className="text-xs text-accent-yellow opacity-0 group-hover:opacity-100 transition-opacity">
-                          Open →
+                        <span className="text-xs text-accent-yellow opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
+                          打开 →
                         </span>
                       </div>
                     </button>
@@ -1362,16 +1359,16 @@ export const AITerminal: React.FC = () => {
                     <div className="flex flex-col items-center justify-center p-4 text-center">
                       <div className="text-4xl mb-3">📝</div>
                       <p className="text-sm font-medium text-text-dark-primary mb-1">
-                        No notes yet
+                        暂无笔记
                       </p>
                       <p className="text-xs text-text-dark-secondary mb-3">
-                        Save a chat or add a quick thought below
+                        保存一次对话，或在下方添加快速想法
                       </p>
                       <button
                         onClick={() => setTerminalMode('chat')}
                         className="px-3 py-1.5 text-xs bg-accent-green/20 text-accent-green hover:bg-accent-green/30 rounded transition-all"
                       >
-                        ← Back to Chat
+                        ← 返回聊天
                       </button>
                     </div>
                   ) : aiTerminalNotes.length > 0 ? (
@@ -1391,11 +1388,11 @@ export const AITerminal: React.FC = () => {
                                 {note.title}
                               </h4>
                               <p className="text-xs text-text-dark-tertiary mt-0.5 line-clamp-2">
-                                {note.contentText?.substring(0, 100) || 'No content'}
+                                {note.contentText?.substring(0, 100) || '无内容'}
                               </p>
                               <div className="flex items-center gap-2 mt-1.5">
                                 <span className="text-[10px] text-text-dark-tertiary">
-                                  {new Date(note.updatedAt).toLocaleDateString('en-US', {
+                                  {new Date(note.updatedAt).toLocaleDateString('zh-CN', {
                                     month: 'short',
                                     day: 'numeric',
                                     hour: '2-digit',
@@ -1431,7 +1428,7 @@ export const AITerminal: React.FC = () => {
                           handleQuickNoteSubmit();
                         }
                       }}
-                      placeholder="Quick thought..."
+                      placeholder="快速想法…"
                       disabled={isAddingQuickNote}
                       className="flex-1 px-3 py-1.5 text-sm bg-surface-dark border border-border-dark rounded text-text-dark-primary placeholder-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-yellow focus:border-accent-yellow"
                     />
@@ -1439,14 +1436,14 @@ export const AITerminal: React.FC = () => {
                       onClick={handleQuickNoteSubmit}
                       disabled={!quickNoteInput.trim() || isAddingQuickNote}
                       className="px-3 py-1.5 text-sm bg-accent-yellow/20 text-accent-yellow hover:bg-accent-yellow/30 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-all"
-                      title="Add to Quick Note"
-                      aria-label="Add to quick note"
+                      title="添加到快速笔记"
+                      aria-label="添加到快速笔记"
                     >
                       {isAddingQuickNote ? '...' : '+'}
                     </button>
                   </div>
                   <p className="text-[10px] text-text-dark-tertiary mt-1.5 text-center">
-                    {aiTerminalNotes.length} note{aiTerminalNotes.length !== 1 ? 's' : ''} + Quick Note
+                    {aiTerminalNotes.length} 条笔记 + 快速笔记
                   </p>
                 </div>
               </>
@@ -1488,12 +1485,12 @@ export const AITerminal: React.FC = () => {
         <div className="absolute top-12 right-0 w-80 max-h-[70vh] bg-white dark:bg-surface-dark-elevated border-l border-border-light dark:border-border-dark shadow-xl overflow-hidden flex flex-col">
           <div className="p-3 border-b border-border-light dark:border-border-dark flex items-center justify-between bg-surface-light dark:bg-surface-dark flex-shrink-0">
             <h3 className="font-semibold text-sm text-text-light-primary dark:text-text-dark-primary">
-              Select Model
+              选择模型
             </h3>
             <button
               onClick={() => setShowModelSelector(false)}
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button"
-              aria-label="Close model selector"
+              aria-label="关闭模型选择器"
             >
               ✕
             </button>
@@ -1517,12 +1514,12 @@ export const AITerminal: React.FC = () => {
         <div className="absolute top-12 right-0 w-80 max-h-[70vh] bg-white dark:bg-surface-dark-elevated border-l border-border-light dark:border-border-dark shadow-xl overflow-hidden flex flex-col">
           <div className="p-3 border-b border-border-light dark:border-border-dark flex items-center justify-between bg-surface-light dark:bg-surface-dark flex-shrink-0">
             <h3 className="font-semibold text-sm text-text-light-primary dark:text-text-dark-primary">
-              Usage Tracker
+              用量统计
             </h3>
             <button
               onClick={() => setShowUsageTracker(false)}
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button"
-              aria-label="Close usage tracker"
+              aria-label="关闭用量统计"
             >
               ✕
             </button>

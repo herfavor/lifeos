@@ -42,7 +42,7 @@ interface TagInputProps {
  * Input with autocomplete from existing tags across all time entries.
  * Shows tags as colored chips that can be removed.
  */
-export function TagInput({ tags, onChange, placeholder = 'Add tags...', compact = false }: TagInputProps) {
+export function TagInput({ tags, onChange, placeholder = '添加标签…', compact = false }: TagInputProps) {
   const entries = useTimeTrackingStore((s) => s.entries);
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -139,7 +139,7 @@ export function TagInput({ tags, onChange, placeholder = 'Add tags...', compact 
               type="button"
               onClick={() => removeTag(tag)}
               className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-              aria-label={`Remove tag ${tag}`}
+              aria-label={`移除标签 ${tag}`}
             >
               <X className="w-2.5 h-2.5" />
             </button>

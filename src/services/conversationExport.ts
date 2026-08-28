@@ -15,7 +15,7 @@ export type ExportFormat = 'markdown' | 'json' | 'text';
  */
 function formatTimestamp(timestamp: number): string {
   const date = new Date(timestamp);
-  return date.toLocaleString('en-US', {
+  return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -36,12 +36,12 @@ function exportToMarkdown(
 
   lines.push(`# ${title}`);
   lines.push('');
-  lines.push(`**Exported:** ${formatTimestamp(Date.now())}`);
-  lines.push(`**Messages:** ${messages.length}`);
+  lines.push(`**导出时间：** ${formatTimestamp(Date.now())}`);
+  lines.push(`**消息数：** ${messages.length}`);
   lines.push('');
 
   if (systemPrompt) {
-    lines.push('## System Prompt');
+    lines.push('## 系统提示');
     lines.push('');
     lines.push(systemPrompt);
     lines.push('');
@@ -49,14 +49,14 @@ function exportToMarkdown(
     lines.push('');
   }
 
-  lines.push('## Conversation');
+  lines.push('## 对话');
   lines.push('');
 
   for (const message of messages) {
     if (message.role === 'system') continue;
 
     const time = formatTimestamp(message.timestamp);
-    const roleLabel = message.role === 'user' ? 'You' : 'AI';
+    const roleLabel = message.role === 'user' ? '你' : 'AI';
     const modelInfo = message.provider && message.model
       ? ` (${message.provider}/${message.model})`
       : '';
@@ -120,12 +120,12 @@ function exportToText(
   lines.push(title);
   lines.push('='.repeat(title.length));
   lines.push('');
-  lines.push(`Exported: ${formatTimestamp(Date.now())}`);
-  lines.push(`Messages: ${messages.length}`);
+  lines.push(`导出时间：${formatTimestamp(Date.now())}`);
+  lines.push(`消息数：${messages.length}`);
   lines.push('');
 
   if (systemPrompt) {
-    lines.push('System Prompt:');
+    lines.push('系统提示：');
     lines.push('-'.repeat(14));
     lines.push(systemPrompt);
     lines.push('');
@@ -137,7 +137,7 @@ function exportToText(
     if (message.role === 'system') continue;
 
     const time = formatTimestamp(message.timestamp);
-    const roleLabel = message.role === 'user' ? 'You' : 'AI';
+    const roleLabel = message.role === 'user' ? '你' : 'AI';
 
     lines.push(`[${time}] ${roleLabel}:`);
     lines.push(message.content);

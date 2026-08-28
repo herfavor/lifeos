@@ -9,7 +9,7 @@ import type { ThemeDefinition } from './types';
 export const inkWashTheme: ThemeDefinition = {
   id: 'ink-wash',
   name: 'Ink Wash',
-  description: 'Subtle navy and muted grays with quiet refinement',
+  description: '内敛藏蓝与柔和灰，低调精致',
   category: 'minimal',
   preview: {
     primary: '#334155',

@@ -16,7 +16,7 @@ test.describe('Command Palette (Synapse)', () => {
   test('opens with Ctrl+K', async ({ page }) => {
     await page.keyboard.press('Control+k');
 
-    const dialog = page.getByRole('dialog', { name: 'Synapse search' });
+    const dialog = page.getByRole('dialog', { name: 'Synapse 搜索' });
     await expect(dialog).toBeVisible();
 
     const input = page.getByRole('combobox');
@@ -29,7 +29,7 @@ test.describe('Command Palette (Synapse)', () => {
 
     await page.keyboard.press('Escape');
 
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).not.toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).not.toBeVisible();
   });
 
   test('shows search results when typing', async ({ page }) => {
@@ -55,7 +55,7 @@ test.describe('Command Palette (Synapse)', () => {
     await input.fill('>');
 
     // Placeholder should change to command mode
-    await expect(input).toHaveAttribute('placeholder', /command/i);
+    await expect(input).toHaveAttribute('placeholder', /命令/);
   });
 
   test('can toggle dark mode via command', async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('Command Palette (Synapse)', () => {
     await input.fill('>Toggle');
 
     // Find and click the toggle theme command
-    const toggleOption = page.getByRole('option', { name: /Toggle.*Mode/i }).first();
+    const toggleOption = page.getByRole('option', { name: /切换.*模式/i }).first();
     await expect(toggleOption).toBeVisible();
     await toggleOption.click();
 
@@ -86,7 +86,7 @@ test.describe('Command Palette (Synapse)', () => {
     await input.fill('?');
 
     // Should show help content
-    await expect(input).toHaveAttribute('placeholder', /help/i);
+    await expect(input).toHaveAttribute('placeholder', /帮助/);
   });
 
   test('enters navigation mode with / prefix', async ({ page }) => {
@@ -96,7 +96,7 @@ test.describe('Command Palette (Synapse)', () => {
     await input.fill('/');
 
     // Should show page navigation options
-    await expect(input).toHaveAttribute('placeholder', /page/i);
+    await expect(input).toHaveAttribute('placeholder', /页面/);
   });
 
   test('navigates to page via command palette', async ({ page }) => {
@@ -106,7 +106,7 @@ test.describe('Command Palette (Synapse)', () => {
     await input.fill('Notes');
 
     // Click the Notes page result
-    const notesOption = page.getByRole('option', { name: /Notes/i }).first();
+    const notesOption = page.getByRole('option', { name: /笔记/ }).first();
     await expect(notesOption).toBeVisible();
     await notesOption.click();
 
@@ -138,9 +138,9 @@ test.describe('Command Palette (Synapse)', () => {
   test('close button works', async ({ page }) => {
     await openCommandPalette(page);
 
-    const closeButton = page.locator('button[aria-label="Close Synapse"]');
+    const closeButton = page.locator('button[aria-label="关闭 Synapse"]');
     await closeButton.click();
 
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).not.toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).not.toBeVisible();
   });
 });

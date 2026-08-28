@@ -26,20 +26,30 @@ interface PageContentProps extends HTMLAttributes<HTMLDivElement> {
 /**
  * Base classes shared by all variants
  */
-const baseClasses = '';
+const baseClasses = 'w-full';
 
 /**
  * Variant-specific classes
  */
 const variantClasses: Record<PageVariant, string> = {
   // Standard page - scrolls within flex container (Settings, Dashboard, etc.)
-  default: 'flex-1 overflow-y-auto min-h-0',
+  default: 'mx-auto flex-1 overflow-y-auto min-h-0 pt-4 md:pt-5',
   // Full-height - fills viewport, internal scrolling (Graph, Notes, Kanban)
   'full-height': 'flex flex-col flex-1 min-h-0 overflow-hidden',
   // Split-view - horizontal layout for sidebar + content (Link Library, Notes)
   // Uses negative margin to counteract Layout's px-6 padding for edge-to-edge sidebars
-  'split-view': 'flex flex-1 min-h-0 overflow-hidden -mx-6',
+  'split-view': 'flex flex-1 min-h-0 overflow-hidden -mx-4 md:-mx-6 w-auto',
 };
+
+const READING_PAGES = new Set(['settings', 'automations', 'retrospective', 'availability', 'about', 'privacy']);
+const WIDE_PAGES = new Set(['dashboard', 'today', 'activity', 'portfolio', 'energy']);
+
+function getWidthClass(page: string, variant: PageVariant): string {
+  if (variant !== 'default') return '';
+  if (READING_PAGES.has(page)) return 'max-w-[1120px]';
+  if (WIDE_PAGES.has(page)) return 'max-w-[1440px]';
+  return 'max-w-[1360px]';
+}
 
 /**
  * PageContent provides consistent layout structure for all pages.
@@ -67,11 +77,12 @@ export const PageContent = forwardRef<HTMLDivElement, PageContentProps>(
   ({ page, variant = 'default', className = '', children, ...props }, ref) => {
     const pageClass = `${page}-page`;
     const variantClass = variantClasses[variant];
+    const widthClass = getWidthClass(page, variant);
 
     return (
       <div
         ref={ref}
-        className={`${pageClass} ${baseClasses} ${variantClass} ${className}`.trim()}
+        className={`${pageClass} ${baseClasses} ${variantClass} ${widthClass} ${className}`.trim()}
         {...props}
       >
         {children}

@@ -36,7 +36,7 @@ export const HeaderClock: React.FC = () => {
   }, []);
 
   // Get formatted date for tooltip
-  const dateString = currentTime.toLocaleDateString('en-US', {
+  const dateString = currentTime.toLocaleDateString('zh-CN', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',

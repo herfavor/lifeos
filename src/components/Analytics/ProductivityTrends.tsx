@@ -24,7 +24,7 @@ export const ProductivityTrends: React.FC = () => {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       const dateKey = d.toISOString().split('T')[0];
-      const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const label = d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
       data.push({ date: dateKey, label, tasks: 0, notes: 0, timeEntries: 0 });
     }
 
@@ -50,7 +50,7 @@ export const ProductivityTrends: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Productivity Trends
+          效率趋势
         </h3>
 
         <div className="flex items-center gap-1 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-0.5">
@@ -97,7 +97,7 @@ export const ProductivityTrends: React.FC = () => {
           <Line
             type="monotone"
             dataKey="tasks"
-            name="Tasks"
+            name="任务"
             stroke="#22c55e"
             strokeWidth={2}
             dot={false}
@@ -106,7 +106,7 @@ export const ProductivityTrends: React.FC = () => {
           <Line
             type="monotone"
             dataKey="notes"
-            name="Notes"
+            name="笔记"
             stroke="#f59e0b"
             strokeWidth={2}
             dot={false}
@@ -115,7 +115,7 @@ export const ProductivityTrends: React.FC = () => {
           <Line
             type="monotone"
             dataKey="timeEntries"
-            name="Time Entries"
+            name="时间记录"
             stroke="#06b6d4"
             strokeWidth={2}
             dot={false}

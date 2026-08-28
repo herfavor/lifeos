@@ -44,44 +44,44 @@ interface ExportModule {
 const DEFAULT_MODULES: Omit<ExportModule, 'checked'>[] = [
   {
     key: 'notes-storage',
-    label: 'Notes',
-    description: 'All notes, folders, and note metadata',
+    label: '笔记',
+    description: '所有笔记、文件夹和笔记元数据',
     icon: FileText,
   },
   {
     key: 'kanban-tasks',
-    label: 'Tasks',
-    description: 'Tasks, columns, checklists, and comments',
+    label: '任务',
+    description: '任务、列、清单和评论',
     icon: CheckSquare,
   },
   {
     key: 'calendar-events',
-    label: 'Calendar',
-    description: 'Events, recurrences, and reminders',
+    label: '日历',
+    description: '事件、重复和提醒',
     icon: Calendar,
   },
   {
     key: 'time-tracking',
-    label: 'Time Tracking',
-    description: 'Time entries, projects, and timers',
+    label: '时间跟踪',
+    description: '时间记录、项目和计时器',
     icon: Clock,
   },
   {
     key: 'habits-storage',
-    label: 'Habits',
-    description: 'Habit definitions, completions, and streaks',
+    label: '习惯',
+    description: '习惯定义、完成记录和连续天数',
     icon: BarChart3,
   },
   {
     key: 'settings-storage',
-    label: 'Settings',
-    description: 'App preferences and configuration',
+    label: '设置',
+    description: '应用偏好和配置',
     icon: Settings,
   },
   {
     key: 'theme-preferences',
-    label: 'Theme',
-    description: 'Theme and color mode preferences',
+    label: '主题',
+    description: '主题和颜色模式偏好',
     icon: Palette,
   },
 ];
@@ -114,7 +114,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
   const handleExport = async () => {
     const selectedKeys = modules.filter((m) => m.checked).map((m) => m.key);
     if (selectedKeys.length === 0) {
-      onMessage({ type: 'warning', text: 'Please select at least one module to export.' });
+      onMessage({ type: 'warning', text: '请至少选择一个要导出的模块。' });
       return;
     }
 
@@ -189,7 +189,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
         : selectedKeys.length === 1
         ? selectedKeys[0].replace('-storage', '').replace('-', '')
         : `${selectedKeys.length}modules`;
-      const filename = `NeumanOS-${moduleLabel}-${timestamp}.${extension}`;
+      const filename = `LifeOS-${moduleLabel}-${timestamp}.${extension}`;
 
       // Download
       const url = URL.createObjectURL(blob);
@@ -203,13 +203,13 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
 
       onMessage({
         type: 'success',
-        text: `Exported ${selectedKeys.length} module(s) to ${filename} (${formatFileSize(blob.size)})`,
+        text: `已导出 ${selectedKeys.length} 个模块至 ${filename}（${formatFileSize(blob.size)}）`,
       });
 
       log.info('Selective export complete', { modules: selectedKeys, size: blob.size });
     } catch (error) {
       log.error('Selective export failed', { error });
-      onMessage({ type: 'error', text: `Export failed: ${error}` });
+      onMessage({ type: 'error', text: `导出失败：${error}` });
     } finally {
       setIsExporting(false);
     }
@@ -220,11 +220,11 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
       <div className="flex items-center gap-3 mb-1">
         <Package className="w-5 h-5 text-accent-primary" />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Selective Export
+          选择性导出
         </h2>
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Export specific modules instead of everything. Useful for partial backups or migrating individual sections.
+        只导出特定模块而非全部内容。适用于部分备份或迁移个别部分。
       </p>
 
       {/* Select All / None */}
@@ -233,17 +233,17 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
           onClick={selectAll}
           className="text-xs text-accent-primary hover:underline"
         >
-          Select All
+          全选
         </button>
         <span className="text-text-light-tertiary dark:text-text-dark-tertiary">|</span>
         <button
           onClick={selectNone}
           className="text-xs text-accent-primary hover:underline"
         >
-          Select None
+          全不选
         </button>
         <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-auto">
-          {selectedCount} of {modules.length} selected
+          已选择 {selectedCount}/{modules.length}
         </span>
       </div>
 
@@ -289,7 +289,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
       {/* Format Selection */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Export Format
+          导出格式
         </label>
         <div className="flex gap-2">
           <button
@@ -300,7 +300,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
             }`}
           >
-            .brain (compressed)
+            .brain（压缩）
           </button>
           <button
             onClick={() => setExportFormat('json')}
@@ -310,7 +310,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
             }`}
           >
-            .json (readable)
+            .json（可读）
           </button>
         </div>
       </div>
@@ -323,8 +323,8 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
       >
         <Download className="w-4 h-4" />
         {isExporting
-          ? 'Exporting...'
-          : `Export ${selectedCount} Module${selectedCount !== 1 ? 's' : ''}`}
+          ? '正在导出…'
+          : `导出 ${selectedCount} 个模块`}
       </button>
     </div>
   );

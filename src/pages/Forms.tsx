@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { StoreErrorBoundary } from '../components/StoreErrorBoundary';
 import { useFormsStore } from '../stores/useFormsStore';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { Plus, Search, Grid3x3, List, FileText } from 'lucide-react';
+import { Plus, Search, Grid3x3, List, FileText, Trash2, RotateCcw } from 'lucide-react';
 
 /**
  * FormsContent - Exportable content component for embedding in Create page
@@ -23,6 +23,8 @@ export function FormsContent() {
   const responses = useFormsStore((s) => s.responses);
   const createForm = useFormsStore((s) => s.createForm);
   const deleteForm = useFormsStore((s) => s.deleteForm);
+  const restoreForm = useFormsStore((s) => s.restoreForm);
+  const permanentlyDeleteForm = useFormsStore((s) => s.permanentlyDeleteForm);
   const duplicateForm = useFormsStore((s) => s.duplicateForm);
 
   // Compute derived stats in useMemo to avoid infinite loop
@@ -43,9 +45,11 @@ export function FormsContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [formToDelete, setFormToDelete] = useState<string | null>(null);
+  const [formToPermanentlyDelete, setFormToPermanentlyDelete] = useState<string | null>(null);
+  const [showTrash, setShowTrash] = useState(false);
 
   const handleCreateForm = () => {
-    const newForm = createForm('Untitled Form');
+    const newForm = createForm('未命名表单');
     navigate(`/forms/${newForm.id}/edit`);
   };
 
@@ -72,6 +76,13 @@ export function FormsContent() {
     }
   };
 
+  const confirmPermanentDeleteForm = () => {
+    if (formToPermanentlyDelete) {
+      permanentlyDeleteForm(formToPermanentlyDelete);
+      setFormToPermanentlyDelete(null);
+    }
+  };
+
   const handleDuplicateForm = (id: string) => {
     const duplicate = duplicateForm(id);
     if (duplicate) {
@@ -79,8 +90,14 @@ export function FormsContent() {
     }
   };
 
+  // Active forms only; trash is listed separately below.
+  const activeFormsWithStats = formsWithStats.filter((form) => !form.deletedAt);
+  const trashedForms = forms
+    .filter((form) => form.deletedAt)
+    .sort((a, b) => new Date(b.deletedAt?.getTime() ?? 0).getTime() - new Date(a.deletedAt?.getTime() ?? 0).getTime());
+
   // Filter forms by search query
-  const filteredForms = formsWithStats.filter((form) =>
+  const filteredForms = activeFormsWithStats.filter((form) =>
     form.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -95,10 +112,10 @@ export function FormsContent() {
       <header className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
         <div>
           <h2 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            Forms
+            表单
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            {sortedForms.length} {sortedForms.length === 1 ? 'form' : 'forms'}
+            {sortedForms.length} 个表单
           </p>
         </div>
 
@@ -108,7 +125,7 @@ export function FormsContent() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <input
               type="text"
-              placeholder="Search forms..."
+              placeholder="搜索表单…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-primary"
@@ -124,7 +141,7 @@ export function FormsContent() {
                   ? 'bg-accent-blue dark:bg-accent-blue text-white'
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }`}
-              aria-label="Grid view"
+              aria-label="网格视图"
             >
               <Grid3x3 className="w-4 h-4" />
             </button>
@@ -135,7 +152,7 @@ export function FormsContent() {
                   ? 'bg-accent-blue dark:bg-accent-blue text-white'
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }`}
-              aria-label="List view"
+              aria-label="列表视图"
             >
               <List className="w-4 h-4" />
             </button>
@@ -147,7 +164,7 @@ export function FormsContent() {
             className="flex items-center gap-2 px-4 py-2 bg-accent-blue dark:bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
           >
             <Plus className="w-4 h-4" />
-            New Form
+            新建表单
           </button>
         </div>
       </header>
@@ -161,12 +178,12 @@ export function FormsContent() {
               <FileText className="w-12 h-12 text-text-light-tertiary dark:text-text-dark-tertiary" />
             </div>
             <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-              {searchQuery ? 'No forms found' : 'No forms yet'}
+              {searchQuery ? '未找到表单' : '还没有表单'}
             </h2>
             <p className="text-text-light-secondary dark:text-text-dark-secondary mb-6 max-w-md">
               {searchQuery
-                ? 'Try adjusting your search query'
-                : 'Create your first form to track habits, collect data, or build custom surveys'}
+                ? '请调整搜索关键词'
+                : '创建你的第一个表单，用于追踪习惯、收集数据或制作自定义调查问卷'}
             </p>
             {!searchQuery && (
               <button
@@ -174,7 +191,7 @@ export function FormsContent() {
                 className="flex items-center gap-2 px-6 py-3 bg-accent-blue dark:bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
               >
                 <Plus className="w-5 h-5" />
-                Create Your First Form
+                创建你的第一个表单
               </button>
             )}
           </div>
@@ -209,15 +226,71 @@ export function FormsContent() {
             ))}
           </div>
         )}
+
+        {/* Recycle bin */}
+        {trashedForms.length > 0 && (
+          <div className="mt-8">
+            <button
+              onClick={() => setShowTrash(!showTrash)}
+              className="flex items-center gap-2 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary mb-4"
+            >
+              <Trash2 className="w-4 h-4" />
+              回收站（{trashedForms.length}）
+            </button>
+            {showTrash && (
+              <div className="space-y-2 opacity-70">
+                {trashedForms.map((form) => (
+                  <div
+                    key={form.id}
+                    className="flex items-center justify-between bg-surface-light dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-text-light-primary dark:text-text-dark-primary">{form.title || '未命名表单'}</p>
+                      <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">删除于 {new Date(form.deletedAt?.getTime() ?? Date.now()).toLocaleString()}（回复会保留到永久删除）</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => restoreForm(form.id)}
+                        className="p-2 hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary"
+                        title="恢复"
+                        aria-label={`恢复表单 ${form.title}`}
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setFormToPermanentlyDelete(form.id)}
+                        className="p-2 hover:bg-status-error/10 rounded-lg text-status-error"
+                        title="永久删除"
+                        aria-label={`永久删除表单 ${form.title}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <ConfirmDialog
         isOpen={formToDelete !== null}
         onClose={() => setFormToDelete(null)}
         onConfirm={confirmDeleteForm}
-        title="Delete Form"
-        message="Are you sure you want to delete this form and all its responses?"
-        confirmText="Delete"
+        title="删除表单"
+        message="确定将表单移到回收站吗？回复会保留；之后仍可恢复表单。"
+        confirmText="移到回收站"
+        variant="warning"
+      />
+
+      <ConfirmDialog
+        isOpen={formToPermanentlyDelete !== null}
+        onClose={() => setFormToPermanentlyDelete(null)}
+        onConfirm={confirmPermanentDeleteForm}
+        title="永久删除表单"
+        message="确定要永久删除此表单及其所有回复吗？此操作无法撤销。"
+        confirmText="永久删除"
         variant="danger"
       />
     </>
@@ -273,8 +346,8 @@ function FormCard({ form, onEdit, onFill, onViewResponses, onDelete, onDuplicate
       {/* Stats */}
       <div className="p-4">
         <div className="flex items-center justify-between text-xs text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          <span>{form.fields.length} {form.fields.length === 1 ? 'field' : 'fields'}</span>
-          <span>{form.responseCount} {form.responseCount === 1 ? 'response' : 'responses'}</span>
+          <span>{form.fields.length} 个字段</span>
+          <span>{form.responseCount} 条回复</span>
         </div>
 
         {/* Actions */}
@@ -283,23 +356,23 @@ function FormCard({ form, onEdit, onFill, onViewResponses, onDelete, onDuplicate
             onClick={onFill}
             className="w-full px-3 py-2 text-sm bg-accent-blue dark:bg-accent-blue text-white rounded hover:bg-accent-blue-hover"
           >
-            Fill Form
+            填写表单
           </button>
           <div className="flex gap-2">
             <button
               onClick={onEdit}
               className="flex-1 px-2 py-1 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
             >
-              Edit
+              编辑
             </button>
             <button
               onClick={onViewResponses}
               className="flex-1 px-2 py-1 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
             >
-              Responses
+              回复
             </button>
           </div>
-          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -307,7 +380,7 @@ function FormCard({ form, onEdit, onFill, onViewResponses, onDelete, onDuplicate
               }}
               className="flex-1 px-2 py-1 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
             >
-              Duplicate
+              复制
             </button>
             <button
               onClick={(e) => {
@@ -316,7 +389,7 @@ function FormCard({ form, onEdit, onFill, onViewResponses, onDelete, onDuplicate
               }}
               className="flex-1 px-2 py-1 text-xs bg-accent-red/10 text-accent-red rounded hover:bg-accent-red/20"
             >
-              Delete
+              删除
             </button>
           </div>
         </div>
@@ -340,7 +413,7 @@ function FormListItem({ form, onEdit, onFill, onViewResponses, onDelete, onDupli
           {form.title}
         </h3>
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          {form.fields.length} fields • {form.responseCount} responses • Updated {new Date(form.updatedAt).toLocaleDateString()}
+          {form.fields.length} 个字段 • {form.responseCount} 条回复 • 更新于 {new Date(form.updatedAt).toLocaleDateString()}
         </p>
       </div>
 
@@ -350,31 +423,31 @@ function FormListItem({ form, onEdit, onFill, onViewResponses, onDelete, onDupli
           onClick={onFill}
           className="px-4 py-2 text-sm bg-accent-blue dark:bg-accent-blue text-white rounded hover:bg-accent-blue-hover"
         >
-          Fill Form
+          填写表单
         </button>
         <button
           onClick={onEdit}
           className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
         >
-          Edit
+          编辑
         </button>
         <button
           onClick={onViewResponses}
           className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
         >
-          Responses
+          回复
         </button>
         <button
           onClick={onDuplicate}
           className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated rounded hover:bg-surface-light dark:hover:bg-surface-dark"
         >
-          Duplicate
+          复制
         </button>
         <button
           onClick={onDelete}
           className="px-3 py-2 text-sm bg-accent-red/10 text-accent-red rounded hover:bg-accent-red/20"
         >
-          Delete
+          删除
         </button>
       </div>
     </div>

@@ -17,7 +17,7 @@ export function ProjectSelector({
   value,
   onChange,
   className = '',
-  placeholder = 'Select project...',
+  placeholder = '选择项目…',
   showNoProject = true
 }: ProjectSelectorProps) {
   const { projects, loadProjects } = useTimeTrackingStore();

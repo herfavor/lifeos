@@ -134,6 +134,8 @@ export const NotesList: React.FC<NotesListProps> = ({
         ? Object.values(notesObj) // Show all notes when "All Notes" is selected
         : Object.values(notesObj).filter((note) => note.folderId === activeFolderId);
 
+    filtered = filtered.filter((note) => !note.deletedAt);
+
     // Filter by tags (AND logic - note must have ALL selected tags or their children)
     if (activeTags.length > 0) {
       filtered = filtered.filter((note) =>
@@ -230,16 +232,16 @@ export const NotesList: React.FC<NotesListProps> = ({
         {/* Notes header */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <h3 className="text-sm font-medium uppercase tracking-wide text-text-light-secondary dark:text-text-dark-secondary">
-            Notes ({notes.length})
+            笔记 ({notes.length})
           </h3>
           <div className="flex items-center gap-2">
             <button
               onClick={onOpenExportModal}
               className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-1"
-              title="Export notes (Cmd+Shift+E)"
+              title="导出笔记（Cmd+Shift+E）"
             >
               <FileDown className="w-4 h-4" />
-              Export
+              导出
             </button>
             <button
               onClick={toggleMultiSelectMode}
@@ -249,21 +251,21 @@ export const NotesList: React.FC<NotesListProps> = ({
                   : 'border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }`}
             >
-              {selectionMode ? 'Cancel' : 'Select'}
+              {selectionMode ? '取消' : '选择'}
             </button>
             <button
               onClick={onOpenTemplateLibrary}
               className="px-3 py-1.5 bg-accent-purple text-white rounded-lg hover:bg-accent-purple-hover transition-colors text-sm font-medium flex items-center gap-1"
-              title="Create note from template"
+              title="从模板创建笔记"
             >
               <Sparkles className="w-4 h-4" />
-              Template
+              模板
             </button>
             <button
               onClick={() => createNote({ folderId: activeFolderId })}
               className="px-3 py-1.5 bg-gradient-button-primary text-white rounded-lg hover:shadow-glow-magenta transition-all text-sm font-medium"
             >
-              + New
+              + 新建
             </button>
           </div>
         </div>
@@ -300,7 +302,7 @@ export const NotesList: React.FC<NotesListProps> = ({
                 onClick={() => setVisibleCount((c) => c + BATCH_SIZE)}
                 className="w-full py-2 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-colors text-center"
               >
-                Show {Math.min(hiddenCount, BATCH_SIZE)} more ({hiddenCount} remaining)
+                再显示 {Math.min(hiddenCount, BATCH_SIZE)} 条（剩余 {hiddenCount} 条）
               </button>
             )}
 
@@ -313,26 +315,26 @@ export const NotesList: React.FC<NotesListProps> = ({
                 </div>
               </div>
               <h3 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-3">
-                {activeTags.length > 0 ? 'No notes match these tags' : 'No notes in this folder'}
+                {activeTags.length > 0 ? '没有笔记匹配这些标签' : '此文件夹中没有笔记'}
               </h3>
               <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2 max-w-sm mx-auto">
                 {activeTags.length > 0
-                  ? 'Try removing some tags or create a new note'
-                  : 'Start capturing your thoughts, ideas, and knowledge'}
+                  ? '尝试移除一些标签或新建笔记'
+                  : '开始记录你的想法、灵感和知识'}
               </p>
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-6">
-                Tip: Use{' '}
+                提示：使用{' '}
                 <kbd className="px-2 py-1 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded text-xs font-mono">
                   Cmd+N
                 </kbd>{' '}
-                to create notes quickly
+                快速创建笔记
               </p>
               <button
                 onClick={() => createNote({ folderId: activeFolderId })}
                 className="px-6 py-3 bg-gradient-button-primary text-white rounded-lg hover:shadow-glow-magenta transition-all font-medium inline-flex items-center gap-2"
               >
                 <FileText className="w-5 h-5" />
-                Create Your First Note
+                创建你的第一条笔记
               </button>
             </div>
           )}

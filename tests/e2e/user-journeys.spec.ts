@@ -14,24 +14,24 @@ test.describe('User Journey: First-Time User', () => {
     await page.goto('/');
 
     // Step 1: Welcome
-    await expect(page.getByText('Your privacy-first productivity platform')).toBeVisible({ timeout: 5000 });
-    await page.getByRole('button', { name: /Next/i }).click();
+    await expect(page.getByText('你的隐私优先生产力平台')).toBeVisible({ timeout: 5000 });
+    await page.getByRole('button', { name: /下一步/ }).click();
 
     // Step 2: Features
-    await expect(page.getByText('Everything you need to stay organized')).toBeVisible();
-    await page.getByRole('button', { name: /Next/i }).click();
+    await expect(page.getByText('井然有序所需的一切')).toBeVisible();
+    await page.getByRole('button', { name: /下一步/ }).click();
 
     // Step 3: Setup
-    await expect(page.getByText('Personalize your experience')).toBeVisible();
+    await expect(page.getByText('个性化你的体验')).toBeVisible();
     const nameInput = page.locator('input#display-name');
     await nameInput.fill('Test User');
-    await page.getByRole('button', { name: /Next/i }).click();
+    await page.getByRole('button', { name: /下一步/ }).click();
 
     // Step 4: Done
-    await expect(page.getByText("You're all set!")).toBeVisible();
+    await expect(page.getByText("一切就绪！")).toBeVisible();
 
-    // Click "Create Your First Note" to go directly to notes
-    await page.getByRole('button', { name: 'Create Your First Note' }).click();
+    // Click "创建你的第一篇笔记" to go directly to notes
+    await page.getByRole('button', { name: '创建你的第一篇笔记' }).click();
     await expect(page).toHaveURL(/\/notes/);
 
     assertNoConsoleErrors(page);
@@ -47,8 +47,8 @@ test.describe('User Journey: Daily Productivity Workflow', () => {
   test('check today, create task, track time, take notes', async ({ page }) => {
     // 1. Check Today page
     await page.goto('/today');
-    await expect(page.getByText("Today's Tasks")).toBeVisible();
-    await expect(page.getByText('Completed')).toBeVisible();
+    await expect(page.getByText("今日任务")).toBeVisible();
+    await expect(page.getByText('已完成')).toBeVisible();
 
     // 2. Navigate to Tasks and create a task
     await page.goto('/tasks');
@@ -57,7 +57,7 @@ test.describe('User Journey: Daily Productivity Workflow', () => {
 
     // 3. Navigate to Notes and create a note
     await page.goto('/notes');
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建新笔记|\+/i }).first();
     await createButton.click();
     const editor = page.locator('[contenteditable="true"]').first();
     await expect(editor).toBeVisible();
@@ -67,7 +67,7 @@ test.describe('User Journey: Daily Productivity Workflow', () => {
 
     // 4. Check Focus mode
     await page.goto('/focus');
-    await expect(page.locator('button[aria-label="Start timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="启动计时器"]')).toBeVisible();
     // Start and immediately stop
     await page.keyboard.press('Space');
     await page.waitForTimeout(500);
@@ -92,15 +92,15 @@ test.describe('User Journey: Project Management', () => {
     await createTask(page, 'PM Task Gamma');
 
     // Switch to Timeline view
-    await page.getByRole('tab', { name: 'Timeline' }).click();
-    await expect(page.getByRole('tab', { name: 'Timeline' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '时间线' }).click();
+    await expect(page.getByRole('tab', { name: '时间线' })).toHaveAttribute('aria-selected', 'true');
 
     // Check PM Dashboard
     await page.goto('/pm');
     await expect(page).toHaveURL(/\/pm/);
 
     // Should show task stats
-    const statsText = page.getByText(/Total|Completed|In Progress|Overdue/i).first();
+    const statsText = page.getByText(/任务总数|已完成|进行中|逾期/i).first();
     await expect(statsText).toBeVisible();
 
     assertNoConsoleErrors(page);
@@ -113,7 +113,7 @@ test.describe('User Journey: Notes & Knowledge Management', () => {
     await navigateTo(page, '/notes');
 
     // Create a note with formatting
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note|\+/i }).first();
+    const createButton = page.getByRole('button', { name: /新建笔记|创建新笔记|\+/i }).first();
     await createButton.click();
     const editor = page.locator('[contenteditable="true"]').first();
     await expect(editor).toBeVisible();
@@ -131,12 +131,12 @@ test.describe('User Journey: Notes & Knowledge Management', () => {
     await expect(editor.locator('strong, b')).toContainText('Important');
 
     // Switch to Daily Notes tab
-    await page.getByRole('tab', { name: 'Daily Notes' }).click();
-    await expect(page.getByRole('tab', { name: 'Daily Notes' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '每日笔记' }).click();
+    await expect(page.getByRole('tab', { name: '每日笔记' })).toHaveAttribute('aria-selected', 'true');
 
     // Switch to Graph tab
-    await page.getByRole('tab', { name: 'Graph' }).click();
-    await expect(page.getByRole('tab', { name: 'Graph' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '图谱' }).click();
+    await expect(page.getByRole('tab', { name: '图谱' })).toHaveAttribute('aria-selected', 'true');
 
     assertNoConsoleErrors(page);
   });
@@ -149,7 +149,7 @@ test.describe('User Journey: Search & Navigation', () => {
 
     // Open Synapse
     await page.keyboard.press('Control+k');
-    const dialog = page.getByRole('dialog', { name: 'Synapse search' });
+    const dialog = page.getByRole('dialog', { name: 'Synapse 搜索' });
     await expect(dialog).toBeVisible();
 
     // Search for a page
@@ -192,11 +192,11 @@ test.describe('User Journey: Content Creation', () => {
     await navigateTo(page, '/create');
 
     // Create a document
-    await page.getByRole('button', { name: /Document/i }).first().click();
+    await page.getByRole('button', { name: /文档/ }).first().click();
     await page.waitForTimeout(500);
 
     // Go back to create page
-    const backBtn = page.locator('button[aria-label="Back to create"]');
+    const backBtn = page.locator('button[aria-label="返回创建"]');
     if (await backBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await backBtn.click();
       await page.waitForTimeout(300);
@@ -205,7 +205,7 @@ test.describe('User Journey: Content Creation', () => {
     }
 
     // Create a spreadsheet
-    await page.getByRole('button', { name: /Spreadsheet/i }).first().click();
+    await page.getByRole('button', { name: /电子表格/ }).first().click();
     await page.waitForTimeout(500);
 
     // Go back
@@ -216,7 +216,7 @@ test.describe('User Journey: Content Creation', () => {
     }
 
     // Create a presentation
-    await page.getByRole('button', { name: /Presentation/i }).first().click();
+    await page.getByRole('button', { name: /演示文稿/ }).first().click();
     await page.waitForTimeout(500);
 
     assertNoConsoleErrors(page);
@@ -227,16 +227,16 @@ test.describe('User Journey: Content Creation', () => {
     await navigateTo(page, '/create');
 
     // Switch to Diagrams
-    await page.getByRole('tab', { name: 'Diagrams' }).click();
-    await expect(page.getByRole('tab', { name: 'Diagrams' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '绘图' }).click();
+    await expect(page.getByRole('tab', { name: '绘图' })).toHaveAttribute('aria-selected', 'true');
 
     // Switch to Forms
-    await page.getByRole('tab', { name: 'Forms' }).click();
-    await expect(page.getByRole('tab', { name: 'Forms' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '表单' }).click();
+    await expect(page.getByRole('tab', { name: '表单' })).toHaveAttribute('aria-selected', 'true');
 
     // Back to Create
-    await page.getByRole('tab', { name: 'Create' }).click();
-    await expect(page.getByRole('tab', { name: 'Create' })).toHaveAttribute('aria-selected', 'true');
+    await page.getByRole('tab', { name: '创建' }).click();
+    await expect(page.getByRole('tab', { name: '创建' })).toHaveAttribute('aria-selected', 'true');
 
     assertNoConsoleErrors(page);
   });
@@ -248,14 +248,14 @@ test.describe('User Journey: Settings Configuration', () => {
     await navigateTo(page, '/settings');
 
     const tabs = [
-      { name: 'General', url: /\/settings/ },
-      { name: 'Projects', url: /tab=projects/ },
-      { name: 'Time Tracking', url: /tab=time/ },
-      { name: 'Tasks', url: /tab=tasks/ },
-      { name: 'Notes & Calendar', url: /tab=notes/ },
-      { name: 'Backup & Data', url: /tab=backup/ },
-      { name: 'AI Terminal', url: /tab=ai/ },
-      { name: 'Advanced', url: /tab=advanced/ },
+      { name: '通用', url: /\/settings/ },
+      { name: '项目', url: /tab=projects/ },
+      { name: '时间跟踪', url: /tab=time/ },
+      { name: '任务', url: /tab=tasks/ },
+      { name: '笔记与日历', url: /tab=notes/ },
+      { name: '备份与数据', url: /tab=backup/ },
+      { name: 'AI 提供商', url: /tab=ai/ },
+      { name: '高级', url: /tab=advanced/ },
     ];
 
     for (const tab of tabs) {
@@ -303,10 +303,10 @@ test.describe('User Journey: Full App Navigation', () => {
 
     for (const path of pages) {
       await navigateTo(page, path);
-      // Verify page loaded without crash — title should still be NeumanOS
+      // Verify page loaded without crash — title should still be LifeOS
       if (path !== '/focus') {
         // Focus is full-screen overlay, may not show title
-        await expect(page).toHaveTitle(/NeumanOS/i);
+        await expect(page).toHaveTitle(/LifeOS/i);
       }
     }
 

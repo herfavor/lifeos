@@ -26,7 +26,7 @@ test.describe('Note Context Menu', () => {
 
   test('opens context menu on right-click', async ({ page }) => {
     await openContextMenu(page);
-    const menu = page.locator('[role="menu"][aria-label="Note context menu"]');
+    const menu = page.locator('[role="menu"][aria-label="笔记右键菜单"]');
     if (await menu.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(menu).toBeVisible();
     }
@@ -35,7 +35,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Move to Folder option', async ({ page }) => {
     await openContextMenu(page);
-    const menuItem = page.getByRole('menuitem', { name: /Move to Folder/ });
+    const menuItem = page.getByRole('menuitem', { name: /移动到文件夹/ });
     if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(menuItem).toBeVisible();
     }
@@ -44,7 +44,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Duplicate option', async ({ page }) => {
     await openContextMenu(page);
-    const menuItem = page.getByRole('menuitem', { name: 'Duplicate' });
+    const menuItem = page.getByRole('menuitem', { name: '创建副本' });
     if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(menuItem).toBeVisible();
     }
@@ -53,7 +53,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Export to Markdown option', async ({ page }) => {
     await openContextMenu(page);
-    const menuItem = page.getByRole('menuitem', { name: 'Export to Markdown' });
+    const menuItem = page.getByRole('menuitem', { name: '导出为 Markdown' });
     if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(menuItem).toBeVisible();
     }
@@ -62,7 +62,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Export to PDF option', async ({ page }) => {
     await openContextMenu(page);
-    const menuItem = page.getByRole('menuitem', { name: 'Export to PDF' });
+    const menuItem = page.getByRole('menuitem', { name: '导出为 PDF' });
     if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(menuItem).toBeVisible();
     }
@@ -71,7 +71,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Pin/Unpin option', async ({ page }) => {
     await openContextMenu(page);
-    const pinItem = page.getByRole('menuitem', { name: /^Pin$|^Unpin$/ });
+    const pinItem = page.getByRole('menuitem', { name: /^置顶$|^取消置顶$/ });
     if (await pinItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(pinItem).toBeVisible();
     }
@@ -80,7 +80,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Favorite/Unfavorite option', async ({ page }) => {
     await openContextMenu(page);
-    const favItem = page.getByRole('menuitem', { name: /^Favorite$|^Unfavorite$/ });
+    const favItem = page.getByRole('menuitem', { name: /^收藏$|^取消收藏$/ });
     if (await favItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(favItem).toBeVisible();
     }
@@ -89,7 +89,7 @@ test.describe('Note Context Menu', () => {
 
   test('context menu has Delete option', async ({ page }) => {
     await openContextMenu(page);
-    const deleteItem = page.getByRole('menuitem', { name: 'Delete' });
+    const deleteItem = page.getByRole('menuitem', { name: '删除' });
     if (await deleteItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(deleteItem).toBeVisible();
     }
@@ -98,7 +98,7 @@ test.describe('Note Context Menu', () => {
 
   test('can duplicate a note', async ({ page }) => {
     await openContextMenu(page);
-    const dupItem = page.getByRole('menuitem', { name: 'Duplicate' });
+    const dupItem = page.getByRole('menuitem', { name: '创建副本' });
     if (await dupItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await dupItem.click();
       await page.waitForTimeout(500);
@@ -109,7 +109,7 @@ test.describe('Note Context Menu', () => {
 
   test('can pin a note', async ({ page }) => {
     await openContextMenu(page);
-    const pinItem = page.getByRole('menuitem', { name: 'Pin' });
+    const pinItem = page.getByRole('menuitem', { name: '置顶' });
     if (await pinItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await pinItem.click();
       await page.waitForTimeout(300);
@@ -119,7 +119,7 @@ test.describe('Note Context Menu', () => {
 
   test('can favorite a note', async ({ page }) => {
     await openContextMenu(page);
-    const favItem = page.getByRole('menuitem', { name: 'Favorite' });
+    const favItem = page.getByRole('menuitem', { name: '收藏' });
     if (await favItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await favItem.click();
       await page.waitForTimeout(300);
@@ -131,7 +131,7 @@ test.describe('Note Context Menu', () => {
     await openContextMenu(page);
     await page.keyboard.press('Escape');
     await page.waitForTimeout(200);
-    const menu = page.locator('[role="menu"][aria-label="Note context menu"]');
+    const menu = page.locator('[role="menu"][aria-label="笔记右键菜单"]');
     await expect(menu).not.toBeVisible();
     assertNoConsoleErrors(page);
   });

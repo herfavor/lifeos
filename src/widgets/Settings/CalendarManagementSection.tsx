@@ -78,9 +78,9 @@ export function CalendarManagementSection() {
 
       if (result.success && result.events) {
         const count = syncICSSubscription(sub.id, result.events);
-        setSyncStatus({ id: sub.id, message: `Synced ${count} events`, type: 'success' });
+        setSyncStatus({ id: sub.id, message: `已同步 ${count} 个事件`, type: 'success' });
       } else {
-        setSyncStatus({ id: sub.id, message: result.error || 'Parse failed', type: 'error' });
+        setSyncStatus({ id: sub.id, message: result.error || '解析失败', type: 'error' });
       }
     } catch (err) {
       setSyncStatus({ id: sub.id, message: String(err), type: 'error' });
@@ -95,7 +95,7 @@ export function CalendarManagementSection() {
       {/* Calendars Section */}
       <div className="bento-card p-6">
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-          My Calendars
+          我的日历
         </h2>
 
         {/* Calendar list */}
@@ -125,13 +125,13 @@ export function CalendarManagementSection() {
                     onClick={() => handleSaveEdit(cal.id)}
                     className="text-xs text-accent-primary hover:underline"
                   >
-                    Save
+                    保存
                   </button>
                   <button
                     onClick={() => setEditingCal(null)}
                     className="text-xs text-text-light-secondary hover:underline"
                   >
-                    Cancel
+                    取消
                   </button>
                 </>
               ) : (
@@ -146,7 +146,7 @@ export function CalendarManagementSection() {
                   <button
                     onClick={() => toggleCalendarVisibility(cal.id)}
                     className="p-1 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
-                    title={cal.visible ? 'Hide calendar' : 'Show calendar'}
+                    title={cal.visible ? '隐藏日历' : '显示日历'}
                   >
                     {cal.visible ? (
                       <Eye className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
@@ -185,7 +185,7 @@ export function CalendarManagementSection() {
             value={newCalName}
             onChange={(e) => setNewCalName(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleAddCalendar(); }}
-            placeholder="New calendar name"
+            placeholder="新日历名称"
             className="flex-1 px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
           />
           <button
@@ -194,7 +194,7 @@ export function CalendarManagementSection() {
             className="flex items-center gap-1 px-3 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            Add
+            添加
           </button>
         </div>
 
@@ -217,19 +217,19 @@ export function CalendarManagementSection() {
       <div className="bento-card p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Calendar Subscriptions
+            日历订阅
           </h2>
           <button
             onClick={() => setShowICSForm(!showICSForm)}
             className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-accent-primary text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Globe className="w-4 h-4" />
-            Subscribe to URL
+            订阅 URL
           </button>
         </div>
 
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-          Subscribe to external ICS calendar URLs (Google Calendar, Outlook, etc.) for read-only sync.
+          订阅外部 ICS 日历 URL（Google Calendar、Outlook 等）以进行只读同步。
         </p>
 
         {/* Add subscription form */}
@@ -239,14 +239,14 @@ export function CalendarManagementSection() {
               type="text"
               value={icsName}
               onChange={(e) => setIcsName(e.target.value)}
-              placeholder="Calendar name (e.g. Google Calendar)"
+              placeholder="日历名称（例如 Google Calendar）"
               className="w-full px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary"
             />
             <input
               type="url"
               value={icsUrl}
               onChange={(e) => setIcsUrl(e.target.value)}
-              placeholder="ICS URL (e.g. https://calendar.google.com/...basic.ics)"
+              placeholder="ICS URL（例如 https://calendar.google.com/...basic.ics）"
               className="w-full px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary"
             />
             <div className="flex items-center gap-3">
@@ -258,7 +258,7 @@ export function CalendarManagementSection() {
               />
               <div className="flex-1">
                 <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Auto-sync interval (minutes, 0 = manual)
+                  自动同步间隔（分钟，0 = 手动）
                 </label>
                 <input
                   type="number"
@@ -276,13 +276,13 @@ export function CalendarManagementSection() {
                 disabled={!icsName.trim() || !icsUrl.trim()}
                 className="px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
               >
-                Add Subscription
+                添加订阅
               </button>
               <button
                 onClick={() => setShowICSForm(false)}
                 className="px-4 py-2 text-sm font-medium bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
               >
-                Cancel
+                取消
               </button>
             </div>
           </div>
@@ -291,7 +291,7 @@ export function CalendarManagementSection() {
         {/* Subscriptions list */}
         {icsSubscriptions.length === 0 ? (
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary italic">
-            No subscriptions yet. Add an ICS URL to sync external calendars.
+            暂无订阅。添加 ICS URL 以同步外部日历。
           </p>
         ) : (
           <div className="space-y-2">
@@ -310,8 +310,8 @@ export function CalendarManagementSection() {
                   </div>
                   <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary truncate">
                     {sub.lastSyncedAt
-                      ? `Last synced: ${new Date(sub.lastSyncedAt).toLocaleString()}`
-                      : 'Never synced'}
+                      ? `上次同步：${new Date(sub.lastSyncedAt).toLocaleString()}`
+                      : '从未同步'}
                   </div>
                 </div>
                 {syncStatus?.id === sub.id && (
@@ -325,14 +325,14 @@ export function CalendarManagementSection() {
                   onClick={() => handleSync(sub)}
                   disabled={syncingId === sub.id}
                   className="p-1.5 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-colors disabled:opacity-50"
-                  title="Sync now"
+                  title="立即同步"
                 >
                   <RefreshCw className={`w-4 h-4 text-accent-primary ${syncingId === sub.id ? 'animate-spin' : ''}`} />
                 </button>
                 <button
                   onClick={() => removeICSSubscription(sub.id)}
                   className="p-1.5 rounded hover:bg-status-error/10 transition-colors"
-                  title="Remove subscription"
+                  title="移除订阅"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-status-error" />
                 </button>

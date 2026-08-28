@@ -8,6 +8,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type {
   Folder,
@@ -256,7 +257,7 @@ export const useFoldersStore = create<FoldersStore>()(
 
         const duplicate = createDefaultFolder({
           ...original,
-          name: `${original.name} (Copy)`,
+          name: `${original.name}（副本）`,
         });
 
         set((state) => ({
@@ -555,11 +556,20 @@ export const useActiveFolder = () =>
     return activeId ? state.folders[activeId] : null;
   });
 
-export const useFolderTree = () =>
-  useFoldersStore((state) => state.getTree());
+export const useFolderTree = () => {
+  // getTree() builds a fresh array; deriving it inside the selector would hand
+  // React an unstable snapshot ("Maximum update depth exceeded"). Memoize over
+  // the stable raw state instead.
+  const folders = useFoldersStore((state) => state.folders);
+  const getTree = useFoldersStore((state) => state.getTree);
+  return useMemo(() => getTree(), [folders, getTree]);
+};
 
-export const useFolderPath = (folderId: string) =>
-  useFoldersStore((state) => state.getPath(folderId));
+export const useFolderPath = (folderId: string) => {
+  const folders = useFoldersStore((state) => state.folders);
+  const getPath = useFoldersStore((state) => state.getPath);
+  return useMemo(() => getPath(folderId), [folders, getPath, folderId]);
+};
 
 export const useIsFolderExpanded = (folderId: string) =>
   useFoldersStore((state) => state.expandedFolderIds.has(folderId));

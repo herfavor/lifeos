@@ -1,21 +1,22 @@
 {
-  "name": "neumanos",
+  "name": "lifeos",
   "private": true,
   "version": "1.5.0",
-  "description": "NeumanOS - Privacy-first, local-only productivity dashboard",
-  "author": "Travis Neuman",
+  "description": "LifeOS — 本地优先的个人综合管理平台 (A local-first personal dashboard and management workspace)",
+  "author": "LifeOS Contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/travisjneuman/neumanos.git"
+    "url": "https://github.com/herfavor/lifeos.git"
   },
-  "homepage": "https://os.neuman.dev",
+  "homepage": "https://github.com/herfavor/lifeos#readme",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:production": "NODE_ENV=production npm run build",
     "lint": "eslint . --config config/eslint.config.js",
+    "lint:design-tokens": "node scripts/check-design-tokens.mjs",
     "preview": "vite preview",
     "test": "vitest --config config/vitest.config.ts",
     "test:ui": "vitest --ui --config config/vitest.config.ts",

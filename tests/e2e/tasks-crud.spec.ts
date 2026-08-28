@@ -15,38 +15,38 @@ test.describe('Tasks Page - Tab Navigation', () => {
   });
 
   test('shows all task tabs', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: 'Tasks' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Timeline' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Habits' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Resources' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '任务' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '时间线' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '习惯' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: '资源' })).toBeVisible();
   });
 
   test('tasks tab is selected by default', async ({ page }) => {
-    const tasksTab = page.getByRole('tab', { name: 'Tasks' });
+    const tasksTab = page.getByRole('tab', { name: '任务' });
     await expect(tasksTab).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Timeline tab', async ({ page }) => {
-    await switchTab(page, 'Timeline');
-    await expect(page.getByRole('tab', { name: 'Timeline' })).toHaveAttribute('aria-selected', 'true');
+    await switchTab(page, '时间线');
+    await expect(page.getByRole('tab', { name: '时间线' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Habits tab', async ({ page }) => {
-    await switchTab(page, 'Habits');
-    await expect(page.getByRole('tab', { name: 'Habits' })).toHaveAttribute('aria-selected', 'true');
+    await switchTab(page, '习惯');
+    await expect(page.getByRole('tab', { name: '习惯' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('can switch to Resources tab', async ({ page }) => {
-    await switchTab(page, 'Resources');
-    await expect(page.getByRole('tab', { name: 'Resources' })).toHaveAttribute('aria-selected', 'true');
+    await switchTab(page, '资源');
+    await expect(page.getByRole('tab', { name: '资源' })).toHaveAttribute('aria-selected', 'true');
   });
 
   test('tabs accessible via URL params', async ({ page }) => {
     await page.goto('/tasks?tab=timeline');
-    await expect(page.getByRole('tab', { name: 'Timeline' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: '时间线' })).toHaveAttribute('aria-selected', 'true');
 
     await page.goto('/tasks?tab=habits');
-    await expect(page.getByRole('tab', { name: 'Habits' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: '习惯' })).toHaveAttribute('aria-selected', 'true');
   });
 });
 
@@ -57,9 +57,9 @@ test.describe('Tasks Page - Kanban Board', () => {
 
   test('displays kanban columns', async ({ page }) => {
     // Default columns should be visible
-    await expect(page.getByRole('heading', { name: 'To Do' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'In Progress' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Done' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '待办' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '进行中' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '已完成' })).toBeVisible();
   });
 
   test('can create a task inline', async ({ page }) => {
@@ -70,15 +70,15 @@ test.describe('Tasks Page - Kanban Board', () => {
   });
 
   test('can cancel task creation', async ({ page }) => {
-    const addButton = page.getByRole('button', { name: '+ Add task' }).first();
+    const addButton = page.getByRole('button', { name: '+ 添加任务' }).first();
     await addButton.click();
 
-    const input = page.getByPlaceholder('Task title...');
+    const input = page.getByPlaceholder('任务标题…');
     await expect(input).toBeVisible();
     await input.fill('Should Not Be Created');
 
     // Cancel
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.getByRole('button', { name: '取消', exact: true }).click();
 
     // Input should be gone
     await expect(input).not.toBeVisible();
@@ -93,7 +93,7 @@ test.describe('Tasks Page - Kanban Board', () => {
     await createTask(page, 'Beta Task');
 
     // Search for Alpha
-    const searchInput = page.getByPlaceholder(/Search tasks/);
+    const searchInput = page.getByPlaceholder(/搜索任务/);
     await searchInput.fill('Alpha');
 
     await page.waitForTimeout(300);
@@ -112,13 +112,13 @@ test.describe('Tasks Page - Kanban Board', () => {
   });
 
   test('has view toggle buttons', async ({ page }) => {
-    await expect(page.locator('button[title="Board View"]')).toBeVisible();
-    await expect(page.locator('button[title="List View"]')).toBeVisible();
-    await expect(page.locator('button[title="Calendar View"]')).toBeVisible();
+    await expect(page.locator('button[title="看板 视图"]')).toBeVisible();
+    await expect(page.locator('button[title="列表 视图"]')).toBeVisible();
+    await expect(page.locator('button[title="日历 视图"]')).toBeVisible();
   });
 
   test('can switch to list view', async ({ page }) => {
-    await page.locator('button[title="List View"]').click();
+    await page.locator('button[title="列表 视图"]').click();
     await page.waitForTimeout(300);
 
     // Board view heading structure should change
@@ -126,7 +126,7 @@ test.describe('Tasks Page - Kanban Board', () => {
   });
 
   test('can open columns manager', async ({ page }) => {
-    const columnsBtn = page.locator('button[title="Manage Columns"]');
+    const columnsBtn = page.locator('button[title="管理列"]');
     await columnsBtn.click();
 
     // Columns manager should open (typically a modal or dropdown)
@@ -134,12 +134,12 @@ test.describe('Tasks Page - Kanban Board', () => {
   });
 
   test('has export button', async ({ page }) => {
-    const exportBtn = page.getByRole('button', { name: 'Export' });
+    const exportBtn = page.getByRole('button', { name: '导出' });
     await expect(exportBtn).toBeVisible();
   });
 
   test('can open archived tasks view', async ({ page }) => {
-    const archivedBtn = page.locator('button[title="View Archived Tasks"]');
+    const archivedBtn = page.locator('button[title="查看已归档任务"]');
     await archivedBtn.click();
     await page.waitForTimeout(300);
   });
@@ -157,7 +157,7 @@ test.describe('Tasks Page - Task Detail', () => {
 
     // Detail panel should show the task title
     // It should have subtask/checklist/comments/activity tabs
-    const subtasksTab = page.getByText('subtasks', { exact: false });
+    const subtasksTab = page.getByText('子任务', { exact: false });
     if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(subtasksTab).toBeVisible();
     }

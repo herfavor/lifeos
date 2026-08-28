@@ -24,11 +24,11 @@ const METADATA: AIProviderMetadata = {
   id: 'openrouter',
   name: 'OpenRouter',
   displayName: 'OpenRouter',
-  description: 'Access 200+ AI models through one API. Best flexibility and model selection.',
+  description: '通过一个 API 访问 200+ 个 AI 模型。灵活性和模型选择俱佳。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://openrouter.ai/keys',
-  apiKeyLabel: 'OpenRouter API Key',
+  apiKeyLabel: 'OpenRouter API 密钥',
 
   hasFreeModels: true,
   freeModelIds: [
@@ -40,7 +40,7 @@ const METADATA: AIProviderMetadata = {
   freeTierLimits: {
     requestsPerDay: 50,
     requestsPerMinute: 20,
-    description: 'Free tier: 50 requests/day, 20 RPM. Upgrade for 1,000 req/day with $10 purchase.',
+    description: '免费层级：每天 50 次请求、20 RPM。充值 10 美元可升级到每天 1,000 次请求。',
   },
 
   supportsCORS: true,
@@ -67,7 +67,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'reasoning', 'analysis'],
-    description: 'Meta\'s latest Llama model. Excellent for general tasks, coding, and reasoning.',
+    description: 'Meta 最新的 Llama 模型。非常适合通用任务、编码和推理。',
   },
   {
     id: 'google/gemini-2.0-flash-exp:free',
@@ -82,7 +82,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'creative', 'multimodal'],
-    description: 'Google\'s fastest model with 1M token context. Great for long documents.',
+    description: 'Google 最快的模型，支持 100 万 token 上下文。非常适合长文档。',
   },
   {
     id: 'mistralai/mistral-7b-instruct:free',
@@ -96,7 +96,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'quick-tasks'],
-    description: 'Small, fast model for quick tasks and simple questions.',
+    description: '小巧快速的模型，适合快速任务和简单问题。',
   },
 ];
 
@@ -117,7 +117,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 3.0,
     requiresApiKey: true,
     useCases: ['analysis', 'reasoning', 'writing', 'code'],
-    description: 'Anthropic\'s best model. Excellent for analysis and long-form writing.',
+    description: 'Anthropic 的最佳模型。非常适合分析和长文写作。',
   },
   {
     id: 'openai/gpt-4o',
@@ -134,7 +134,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 2.5,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'reasoning', 'multimodal'],
-    description: 'OpenAI\'s flagship multimodal model. Best all-around performance.',
+    description: 'OpenAI 的旗舰多模态模型。综合性能最佳。',
   },
   {
     id: 'deepseek/deepseek-r1',
@@ -149,7 +149,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 0.55,
     requiresApiKey: true,
     useCases: ['reasoning', 'math', 'code', 'analysis'],
-    description: 'DeepSeek\'s reasoning model. Rivals GPT-4 at 2% of the cost.',
+    description: 'DeepSeek 的推理模型。以 GPT-4 的 2% 成本媲美其表现。',
   },
 ];
 
@@ -181,7 +181,7 @@ export class OpenRouterProvider implements AIProvider {
       dangerouslyAllowBrowser: true, // OpenRouter supports CORS
       defaultHeaders: {
         'HTTP-Referer': window.location.origin, // Required by OpenRouter
-        'X-Title': 'NeumanOS', // Optional: show in OpenRouter dashboard
+        'X-Title': 'LifeOS', // Optional: show in OpenRouter dashboard
       },
     });
   }
@@ -212,7 +212,7 @@ export class OpenRouterProvider implements AIProvider {
         dangerouslyAllowBrowser: true,
         defaultHeaders: {
           'HTTP-Referer': window.location.origin,
-          'X-Title': 'NeumanOS',
+          'X-Title': 'LifeOS',
         },
       });
 
@@ -253,7 +253,7 @@ export class OpenRouterProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'OpenRouter provider not configured. Please add your API key.',
+        'OpenRouter 提供商尚未配置。请添加你的 API 密钥。',
         'openrouter'
       );
     }
@@ -342,32 +342,32 @@ export class OpenRouterProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('Incorrect API key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid OpenRouter API key. Please check your API key and try again.',
+          'OpenRouter API 密钥无效。请检查你的 API 密钥后重试。',
           'openrouter'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'OpenRouter rate limit exceeded. Please wait a moment and try again.',
+          '已超出 OpenRouter 速率限制。请稍等片刻后重试。',
           'openrouter',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('quota')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'OpenRouter quota exceeded. Please upgrade your plan or wait for reset.',
+          'OpenRouter 配额已用尽。请升级你的套餐或等待重置。',
           'openrouter'
         );
       } else if (err?.status === 404 || err?.message?.includes('model')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on OpenRouter.`,
+          `OpenRouter 上未找到模型“${model}”。`,
           'openrouter'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `OpenRouter error: ${err?.message || 'Unknown error occurred'}`,
+          `OpenRouter 错误：${err?.message || '发生未知错误'}`,
           'openrouter'
         );
       }

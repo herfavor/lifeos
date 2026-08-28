@@ -22,7 +22,7 @@ export function MiniCalendar({ onDateSelect, currentDate }: MiniCalendarProps) {
   const [miniYear, setMiniYear] = useState(currentDate.getFullYear());
   const [miniMonth, setMiniMonth] = useState(currentDate.getMonth());
 
-  const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const dayHeaders = ['日', '一', '二', '三', '四', '五', '六'];
 
   // Build dates with event indicators
   const calendarData = useMemo(() => {
@@ -93,7 +93,7 @@ export function MiniCalendar({ onDateSelect, currentDate }: MiniCalendarProps) {
     }
   };
 
-  const monthLabel = new Date(miniYear, miniMonth, 1).toLocaleDateString('en-US', {
+  const monthLabel = new Date(miniYear, miniMonth, 1).toLocaleDateString('zh-CN', {
     month: 'short',
     year: 'numeric',
   });
@@ -105,7 +105,7 @@ export function MiniCalendar({ onDateSelect, currentDate }: MiniCalendarProps) {
         <button
           onClick={handlePrevMonth}
           className="p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
-          aria-label="Previous month"
+          aria-label="上个月"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
         </button>
@@ -115,7 +115,7 @@ export function MiniCalendar({ onDateSelect, currentDate }: MiniCalendarProps) {
         <button
           onClick={handleNextMonth}
           className="p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
-          aria-label="Next month"
+          aria-label="下个月"
         >
           <ChevronRight className="w-3.5 h-3.5" />
         </button>

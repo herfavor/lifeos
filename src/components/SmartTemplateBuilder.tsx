@@ -40,18 +40,18 @@ const ICON_OPTIONS = [
 ];
 
 const ACTION_TYPES: { type: TemplateActionType; label: string; icon: React.ReactNode }[] = [
-  { type: 'create-note', label: 'Create Note', icon: <FileText className="w-4 h-4" /> },
-  { type: 'create-task', label: 'Create Task', icon: <CheckSquare className="w-4 h-4" /> },
-  { type: 'create-event', label: 'Create Event', icon: <Calendar className="w-4 h-4" /> },
-  { type: 'create-doc', label: 'Create Document', icon: <File className="w-4 h-4" /> },
-  { type: 'start-timer', label: 'Start Timer', icon: <Timer className="w-4 h-4" /> },
+  { type: 'create-note', label: '创建笔记', icon: <FileText className="w-4 h-4" /> },
+  { type: 'create-task', label: '创建任务', icon: <CheckSquare className="w-4 h-4" /> },
+  { type: 'create-event', label: '创建事件', icon: <Calendar className="w-4 h-4" /> },
+  { type: 'create-doc', label: '创建文档', icon: <File className="w-4 h-4" /> },
+  { type: 'start-timer', label: '开始计时器', icon: <Timer className="w-4 h-4" /> },
 ];
 
 const CATEGORY_OPTIONS = [
-  { value: 'workflow', label: 'Workflow' },
-  { value: 'meeting', label: 'Meeting' },
-  { value: 'planning', label: 'Planning' },
-  { value: 'custom', label: 'Custom' },
+  { value: 'workflow', label: '工作流' },
+  { value: 'meeting', label: '会议' },
+  { value: 'planning', label: '规划' },
+  { value: 'custom', label: '自定义' },
 ];
 
 function createEmptyAction(type: TemplateActionType): TemplateAction {
@@ -184,7 +184,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border-dark">
           <h2 className="text-sm font-semibold text-text-dark-primary flex-1">
-            {editingTemplate ? 'Edit Template' : 'Create Template'}
+            {editingTemplate ? '编辑模板' : '创建模板'}
           </h2>
           <button
             onClick={onClose}
@@ -226,13 +226,13 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Template name"
+                placeholder="模板名称"
                 className="w-full px-3 py-2 text-sm bg-surface-dark border border-border-dark rounded-lg text-text-dark-primary placeholder:text-text-dark-secondary/50 focus:outline-none focus:border-accent-blue/50"
               />
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
+                placeholder="描述"
                 className="w-full px-3 py-1.5 text-xs bg-surface-dark border border-border-dark rounded-lg text-text-dark-primary placeholder:text-text-dark-secondary/50 focus:outline-none focus:border-accent-blue/50"
               />
             </div>
@@ -241,7 +241,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
           {/* Category */}
           <div>
             <label className="block text-xs font-medium text-text-dark-secondary mb-1">
-              Category
+              分类
             </label>
             <select
               value={category}
@@ -260,7 +260,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-medium text-text-dark-secondary uppercase tracking-wider">
-                Actions ({actions.length})
+                操作 ({actions.length})
               </label>
             </div>
 
@@ -294,14 +294,14 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-medium text-text-dark-secondary uppercase tracking-wider">
-                Variables ({variables.length})
+                变量 ({variables.length})
               </label>
               <button
                 onClick={handleAddVariable}
                 className="flex items-center gap-1 text-xs text-accent-blue hover:text-accent-blue/80 transition-colors"
               >
                 <Plus className="w-3 h-3" />
-                Add
+                添加
               </button>
             </div>
 
@@ -324,7 +324,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
                     onChange={(e) =>
                       handleUpdateVariable(index, { label: e.target.value })
                     }
-                    placeholder="Label"
+                    placeholder="标签"
                     className="flex-1 px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
                   />
                   <select
@@ -336,9 +336,9 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
                     }
                     className="px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
                   >
-                    <option value="text">Text</option>
-                    <option value="date">Date</option>
-                    <option value="select">Select</option>
+                    <option value="text">文本</option>
+                    <option value="date">日期</option>
+                    <option value="select">选择</option>
                   </select>
                   <button
                     onClick={() => handleRemoveVariable(index)}
@@ -351,7 +351,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
             </div>
 
             <p className="text-xs text-text-dark-secondary/60 mt-1">
-              Use {'{{key}}'} in action fields to reference variables.
+              使用 {'{{key}}'} 在操作字段中引用变量。
             </p>
           </div>
 
@@ -359,17 +359,17 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
           {actions.length > 0 && (
             <div className="p-3 bg-surface-dark rounded-lg border border-border-dark">
               <p className="text-xs font-medium text-text-dark-secondary mb-2">
-                Preview
+                预览
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-lg">{icon}</span>
                 <div>
                   <p className="text-sm font-medium text-text-dark-primary">
-                    {name || 'Untitled Template'}
+                    {name || '未命名模板'}
                   </p>
                   <p className="text-xs text-text-dark-secondary">
-                    {actions.length} action{actions.length !== 1 ? 's' : ''} &middot;{' '}
-                    {variables.length} variable{variables.length !== 1 ? 's' : ''}
+                    {actions.length} 个操作 &middot;{' '}
+                    {variables.length} 个变量
                   </p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm rounded-lg border border-border-dark text-text-dark-secondary hover:text-text-dark-primary hover:bg-surface-dark transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleSave}
@@ -391,7 +391,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
             className="px-4 py-2 text-sm font-medium rounded-lg bg-accent-blue text-white hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
-            {editingTemplate ? 'Update' : 'Create'}
+            {editingTemplate ? '更新' : '创建'}
           </button>
         </div>
       </div>
@@ -438,13 +438,13 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
           <input
             value={(action.data.title as string) || ''}
             onChange={(e) => onUpdate({ title: e.target.value })}
-            placeholder="Title"
+            placeholder="标题"
             className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
           <textarea
             value={(action.data.content as string) || ''}
             onChange={(e) => onUpdate({ content: e.target.value })}
-            placeholder="Content (supports {{variables}})"
+            placeholder="内容（支持 {{variables}}）"
             rows={3}
             className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none resize-none"
           />
@@ -458,7 +458,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
                   .filter(Boolean),
               })
             }
-            placeholder="Tags (comma-separated)"
+            placeholder="标签（用逗号分隔）"
             className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
         </div>
@@ -469,13 +469,13 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
           <input
             value={(action.data.title as string) || ''}
             onChange={(e) => onUpdate({ title: e.target.value })}
-            placeholder="Task title"
+            placeholder="任务标题"
             className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
           <input
             value={(action.data.description as string) || ''}
             onChange={(e) => onUpdate({ description: e.target.value })}
-            placeholder="Description"
+            placeholder="描述"
             className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
           <div className="flex gap-2">
@@ -484,9 +484,9 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
               onChange={(e) => onUpdate({ priority: e.target.value })}
               className="px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">低</option>
+              <option value="medium">中</option>
+              <option value="high">高</option>
             </select>
             <input
               value={((action.data.tags as string[]) || []).join(', ')}
@@ -498,7 +498,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
                     .filter(Boolean),
                 })
               }
-              placeholder="Tags (comma-separated)"
+              placeholder="标签（用逗号分隔）"
               className="flex-1 px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
             />
           </div>
@@ -510,7 +510,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
           <input
             value={(action.data.title as string) || ''}
             onChange={(e) => onUpdate({ title: e.target.value })}
-            placeholder="Event title"
+            placeholder="事件标题"
             className="flex-1 px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
           <div className="flex items-center gap-1">
@@ -522,7 +522,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
               min={15}
               step={15}
             />
-            <span className="text-xs text-text-dark-secondary">min</span>
+            <span className="text-xs text-text-dark-secondary">分钟</span>
           </div>
         </div>
       )}
@@ -532,7 +532,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
           <input
             value={(action.data.title as string) || ''}
             onChange={(e) => onUpdate({ title: e.target.value })}
-            placeholder="Document title"
+            placeholder="文档标题"
             className="flex-1 px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           />
           <select
@@ -540,8 +540,8 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
             onChange={(e) => onUpdate({ type: e.target.value })}
             className="px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
           >
-            <option value="doc">Document</option>
-            <option value="sheet">Spreadsheet</option>
+            <option value="doc">文档</option>
+            <option value="sheet">电子表格</option>
           </select>
         </div>
       )}
@@ -550,7 +550,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
         <input
           value={(action.data.description as string) || ''}
           onChange={(e) => onUpdate({ description: e.target.value })}
-          placeholder="Timer description"
+          placeholder="计时器描述"
           className="w-full px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none"
         />
       )}

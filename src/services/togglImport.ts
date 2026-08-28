@@ -35,7 +35,7 @@ type TogglRow = z.infer<typeof TogglRowSchema>;
 export const parseTogglCSV = (csvContent: string): TogglRow[] => {
   const lines = csvContent.trim().split('\n');
   if (lines.length < 2) {
-    throw new Error('CSV file is empty or has no data rows');
+    throw new Error('CSV 文件为空或没有数据行');
   }
 
   // Parse header
@@ -126,7 +126,7 @@ export const importTogglCSV = (
     const rows = parseTogglCSV(csvContent);
 
     if (rows.length === 0) {
-      return { success: false, error: 'No valid time entries found in CSV' };
+      return { success: false, error: 'CSV 中未找到有效的时间记录' };
     }
 
     const entries: Array<TimeEntry & { _togglProject?: string; _togglClient?: string }> = [];
@@ -137,7 +137,7 @@ export const importTogglCSV = (
       const endTime = togglDateTimeToISO(row['End date'], row['End time']);
 
       // Map Toggl project to our project ID (or use project name as fallback)
-      const togglProjectName = row.Project || 'Untitled Project';
+      const togglProjectName = row.Project || '未命名项目';
       const projectId = projectMappings[togglProjectName] || togglProjectName;
 
       // Parse tags
@@ -190,7 +190,7 @@ export const readCSVFile = (file: File): Promise<string> => {
       const content = e.target?.result as string;
       resolve(content);
     };
-    reader.onerror = () => reject(new Error('Failed to read CSV file'));
+    reader.onerror = () => reject(new Error('读取 CSV 文件失败'));
     reader.readAsText(file);
   });
 };
@@ -205,7 +205,7 @@ export const extractTogglProjects = (
   const projectMap = new Map<string, { togglClient: string; count: number }>();
 
   entries.forEach((entry) => {
-    const project = entry._togglProject || 'Untitled';
+    const project = entry._togglProject || '未命名';
     const client = entry._togglClient || '';
 
     if (projectMap.has(project)) {

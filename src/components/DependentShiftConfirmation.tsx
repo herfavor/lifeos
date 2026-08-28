@@ -23,22 +23,22 @@ export function DependentShiftConfirmation({
   onDontAskAgain,
 }: DependentShiftConfirmationProps) {
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return 'Not set';
+    if (!dateStr) return '未设置';
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-bg-primary border border-border-primary rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+      <div className="bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-border-primary">
-          <h2 className="text-xl font-semibold text-text-primary">
-            Shift Dependent Tasks?
+        <div className="p-6 border-b border-border-light dark:border-border-dark">
+          <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
+            顺延依赖任务？
           </h2>
-          <p className="text-text-secondary mt-2">
-            Moving this task will affect <strong>{shifts.length}</strong> dependent task{shifts.length !== 1 ? 's' : ''}
+          <p className="text-text-light-secondary dark:text-text-dark-secondary mt-2">
+            移动此任务将影响 <strong>{shifts.length}</strong> 个依赖任务
           </p>
         </div>
 
@@ -57,29 +57,29 @@ export function DependentShiftConfirmation({
               return (
                 <div
                   key={shift.taskId}
-                  className="bg-bg-secondary rounded-lg p-4 border border-border-primary"
+                  className="bg-surface-light-elevated dark:bg-surface-dark rounded-lg p-4 border border-border-light dark:border-border-dark"
                 >
-                  <div className="font-medium text-text-primary mb-2">
+                  <div className="font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
                     {task.title}
                   </div>
-                  <div className="text-sm text-text-secondary space-y-1">
+                  <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary space-y-1">
                     {task.startDate !== shift.newStartDate && (
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary">Start:</span>
-                        <span className="line-through text-text-tertiary">{oldStart}</span>
+                        <span className="text-text-light-tertiary dark:text-text-dark-tertiary">开始：</span>
+                        <span className="line-through text-text-light-tertiary dark:text-text-dark-tertiary">{oldStart}</span>
                         <span className="text-accent-primary">→</span>
-                        <span className="text-text-primary font-medium">{newStart}</span>
+                        <span className="text-text-light-primary dark:text-text-dark-primary font-medium">{newStart}</span>
                       </div>
                     )}
                     {task.dueDate !== shift.newDueDate && (
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary">Due:</span>
-                        <span className="line-through text-text-tertiary">{oldDue}</span>
+                        <span className="text-text-light-tertiary dark:text-text-dark-tertiary">截止：</span>
+                        <span className="line-through text-text-light-tertiary dark:text-text-dark-tertiary">{oldDue}</span>
                         <span className="text-accent-primary">→</span>
-                        <span className="text-text-primary font-medium">{newDue}</span>
+                        <span className="text-text-light-primary dark:text-text-dark-primary font-medium">{newDue}</span>
                       </div>
                     )}
-                    <div className="text-xs text-text-tertiary mt-2 italic">
+                    <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-2 italic">
                       {shift.reason}
                     </div>
                   </div>
@@ -90,25 +90,25 @@ export function DependentShiftConfirmation({
         </div>
 
         {/* Actions */}
-        <div className="p-6 border-t border-border-primary flex items-center justify-between">
+        <div className="p-6 border-t border-border-light dark:border-border-dark flex items-center justify-between">
           <button
             onClick={onDontAskAgain}
-            className="text-sm text-text-tertiary hover:text-text-secondary transition-colors"
+            className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-secondary dark:text-text-dark-secondary transition-colors"
           >
-            Don't ask again
+            不再询问
           </button>
           <div className="flex gap-3">
             <button
               onClick={onCancel}
-              className="px-4 py-2 rounded-lg border border-border-primary text-text-primary hover:bg-bg-secondary transition-colors"
+              className="px-4 py-2 rounded-lg border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:bg-surface-dark transition-colors"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={onConfirm}
               className="px-4 py-2 rounded-lg bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
             >
-              Shift All Tasks
+              顺延所有任务
             </button>
           </div>
         </div>

@@ -30,10 +30,10 @@ export function HabitTemplatePicker({ onSelect, onSelectPack, onClose }: HabitTe
       <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[80vh] overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-            Habit Templates
+            习惯模板
           </h2>
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-4">
-            Pick a single habit or use a full pack to create multiple habits at once.
+            可以选择单个习惯，或使用整套模板一次性创建多个习惯。
           </p>
 
           <div className="space-y-3">
@@ -55,7 +55,7 @@ export function HabitTemplatePicker({ onSelect, onSelectPack, onClose }: HabitTe
                         {pack.name}
                       </div>
                       <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                        {pack.description} ({pack.templates.length} habits)
+                        {pack.description}（{pack.templates.length} 个习惯）
                       </div>
                     </div>
                     {isExpanded ? (
@@ -74,7 +74,7 @@ export function HabitTemplatePicker({ onSelect, onSelectPack, onClose }: HabitTe
                           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-accent-primary hover:bg-accent-primary/5 transition-colors border-b border-border-light dark:border-border-dark"
                         >
                           <Layers className="w-4 h-4" />
-                          Use All {pack.templates.length} Habits
+                          使用全部 {pack.templates.length} 个习惯
                         </button>
                       )}
 
@@ -117,7 +117,7 @@ export function HabitTemplatePicker({ onSelect, onSelectPack, onClose }: HabitTe
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Cancel
+            取消
           </button>
         </div>
       </div>

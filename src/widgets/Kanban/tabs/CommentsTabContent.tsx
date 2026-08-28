@@ -43,7 +43,7 @@ export const CommentsTabContent: React.FC<CommentsTabContentProps> = ({
             ))
         ) : (
           <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-            💬 No comments yet
+            💬 暂无评论
           </div>
         )}
       </div>
@@ -53,7 +53,7 @@ export const CommentsTabContent: React.FC<CommentsTabContentProps> = ({
         <textarea
           value={newCommentText}
           onChange={(e) => setNewCommentText(e.target.value)}
-          placeholder="Add a comment..."
+          placeholder="添加评论…"
           className="w-full p-3 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none resize-y"
           rows={3}
         />
@@ -61,7 +61,7 @@ export const CommentsTabContent: React.FC<CommentsTabContentProps> = ({
           onClick={handleSubmit}
           className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors"
         >
-          Post Comment
+          发表评论
         </button>
       </div>
     </div>

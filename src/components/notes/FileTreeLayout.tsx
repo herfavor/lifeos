@@ -51,6 +51,12 @@ import { useNotesStore } from '../../stores/useNotesStore';
 import type { Folder, Note } from '../../types/notes';
 import { SidebarResizer } from './SidebarResizer';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import {
+  downloadBlob,
+  exportNoteToMarkdown,
+  getMarkdownFilename,
+} from '../../utils/markdownExport';
+import { exportNoteToPDFWithFeedback } from './notePdfExportHandler';
 
 export interface FileTreeLayoutProps {
   /** Content to render in the editor pane */
@@ -206,7 +212,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
           {...folderDragAttrs}
           className="w-5 h-5 flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing"
           role="button"
-          aria-label={`Drag ${folder.name} to reorder`}
+          aria-label={`拖动 ${folder.name} 以重新排序`}
           tabIndex={0}
           onClick={(e) => e.stopPropagation()}
         >
@@ -247,7 +253,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
         </span>
 
         {/* Hover actions */}
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
           {/* New subfolder button */}
           <button
             onClick={(e) => {
@@ -255,8 +261,8 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
               onCreateSubfolder(folder.id);
             }}
             className="p-1 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
-            title="New subfolder"
-            aria-label="Create subfolder"
+            title="新建子文件夹"
+            aria-label="创建子文件夹"
           >
             <FolderPlus className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -268,8 +274,8 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
               onCreateNote(folder.id);
             }}
             className="p-1 rounded hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
-            title="New note in folder"
-            aria-label="Create new note in folder"
+            title="在文件夹中新建笔记"
+            aria-label="在文件夹中创建新笔记"
           >
             <Plus className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -384,7 +390,7 @@ const DraggableNoteItem: React.FC<DraggableNoteItemProps> = ({
           {...attributes}
           className="w-5 h-5 flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing"
           role="button"
-          aria-label={`Drag ${note.title || 'Untitled'} to reorder`}
+          aria-label={`拖动 ${note.title || '未命名'} 以重新排序`}
           tabIndex={0}
           onClick={(e) => e.stopPropagation()}
         >
@@ -405,7 +411,7 @@ const DraggableNoteItem: React.FC<DraggableNoteItemProps> = ({
               : 'text-text-light-primary dark:text-text-dark-primary'
           }`}
         >
-          {note.title || 'Untitled'}
+          {note.title || '未命名'}
         </span>
 
         {/* Indicators */}
@@ -509,6 +515,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
   // Delete confirmation state
   const [folderToDelete, setFolderToDelete] = useState<{ id: string; name: string } | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<{ id: string; title: string } | null>(null);
+  const exportingNoteIdsRef = useRef(new Set<string>());
 
   // Configure drag sensors
   const sensors = useSensors(
@@ -685,18 +692,15 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
   );
 
   const handleNoteExportMarkdown = useCallback((note: Note) => {
-    const content = `# ${note.title}\n\n${note.content}`;
-    const blob = new Blob([content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${note.title || 'Untitled'}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
+    const content = exportNoteToMarkdown(note, notesObj, Object.values(foldersObj));
+    downloadBlob(
+      new Blob([content], { type: 'text/markdown;charset=utf-8' }),
+      getMarkdownFilename(note)
+    );
+  }, [foldersObj, notesObj]);
 
-  const handleNoteExportPDF = useCallback((_note: Note) => {
-    toast.info('PDF export coming soon!');
+  const handleNoteExportPDF = useCallback((note: Note) => {
+    void exportNoteToPDFWithFeedback(note, exportingNoteIdsRef.current);
   }, []);
 
   const handleNoteTogglePin = useCallback(
@@ -723,7 +727,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
     (noteId: string) => {
       const note = notesObj[noteId];
       if (note) {
-        setNoteToDelete({ id: noteId, title: note.title || 'Untitled Note' });
+        setNoteToDelete({ id: noteId, title: note.title || '未命名笔记' });
       }
     },
     [notesObj]
@@ -741,12 +745,12 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
   const handleSaveAsTemplate = useCallback(
     (note: Note) => {
       createNoteTemplate({
-        name: note.title || 'Untitled Template',
+        name: note.title || '未命名模板',
         description: note.contentText,
         icon: note.icon,
         defaultTags: note.tags,
       });
-      toast.success('Template created from note');
+      toast.success('已从笔记创建模板');
     },
     [createNoteTemplate]
   );
@@ -773,7 +777,10 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
   }, []);
 
   // Convert objects to arrays
-  const notes = useMemo(() => Object.values(notesObj), [notesObj]);
+  const notes = useMemo(
+    () => Object.values(notesObj).filter((note) => !note.deletedAt),
+    [notesObj]
+  );
   const folders = useMemo(() => Object.values(foldersObj), [foldersObj]);
 
   // Filter notes by search query and tags
@@ -786,7 +793,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
       result = result.filter(
         (note) =>
           note.title.toLowerCase().includes(query) ||
-          note.content.toLowerCase().includes(query)
+          note.contentText.toLowerCase().includes(query)
       );
     }
 
@@ -901,22 +908,22 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-border-light dark:border-border-dark flex-shrink-0">
               <span className="text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary">
-                Explorer
+                资源管理器
               </span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => createFolder()}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="New folder"
-                  aria-label="Create new folder"
+                  title="新建文件夹"
+                  aria-label="创建新文件夹"
                 >
                   <FolderPlus className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </button>
                 <button
                   onClick={() => handleCreateNote(null)}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="New note"
-                  aria-label="Create new note"
+                  title="新建笔记"
+                  aria-label="创建新笔记"
                 >
                   <Plus className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </button>
@@ -924,8 +931,8 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
                   <button
                     onClick={onOpenLayoutSettings}
                     className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                    title="Layout settings"
-                    aria-label="Open layout settings"
+                    title="布局设置"
+                    aria-label="打开布局设置"
                   >
                     <Settings2 className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                   </button>
@@ -933,8 +940,8 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
                 <button
                   onClick={toggleSidebar}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="Collapse sidebar"
-                  aria-label="Collapse sidebar"
+                  title="折叠侧边栏"
+                  aria-label="折叠侧边栏"
                 >
                   <PanelLeftClose className="w-3.5 h-3.5 text-text-light-primary dark:text-text-dark-primary" />
                 </button>
@@ -947,7 +954,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 <input
                   type="text"
-                  placeholder="Search notes..."
+                  placeholder="搜索笔记…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-8 pr-3 py-1.5 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-md focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary"
@@ -1016,13 +1023,13 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
                   <div className="px-4 py-8 text-center">
                     <FileText className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary mx-auto mb-2" />
                     <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                      No notes yet
+                      暂无笔记
                     </p>
                     <button
                       onClick={() => handleCreateNote(null)}
                       className="mt-2 text-sm text-accent-primary hover:underline"
                     >
-                      Create your first note
+                      创建你的第一篇笔记
                     </button>
                   </div>
                 )}
@@ -1047,8 +1054,8 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
           <button
             onClick={toggleSidebar}
             className="p-2 m-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Expand sidebar"
-            aria-label="Expand sidebar"
+            title="展开侧边栏"
+            aria-label="展开侧边栏"
           >
             <PanelLeftOpen className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -1087,6 +1094,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
           onExportPDF={handleNoteExportPDF}
           onTogglePin={handleNoteTogglePin}
           onToggleFavorite={handleNoteToggleFavorite}
+          onArchive={(noteId) => updateNote(noteId, { isArchived: !noteContextMenu.note.isArchived })}
           onDelete={handleNoteDelete}
           onSaveAsTemplate={handleSaveAsTemplate}
         />
@@ -1098,7 +1106,7 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
           isOpen={folderPickerState.isOpen}
           onClose={handleFolderPickerClose}
           onSelect={handleFolderPickerSelect}
-          title={folderPickerState.itemType === 'folder' ? 'Move Folder to...' : 'Move Note to...'}
+          title={folderPickerState.itemType === 'folder' ? '将文件夹移动到…' : '将笔记移动到…'}
           currentFolderId={folderPickerState.currentFolderId}
           excludeFolderId={folderPickerState.excludeFolderId}
           itemType={folderPickerState.itemType}
@@ -1110,9 +1118,9 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
         isOpen={!!folderToDelete}
         onClose={() => setFolderToDelete(null)}
         onConfirm={confirmFolderDelete}
-        title="Delete Folder"
-        message={`Delete folder "${folderToDelete?.name}" and all its contents? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除文件夹"
+        message={`确定删除文件夹“${folderToDelete?.name}”吗？其中的笔记会移到上级文件夹，不会被删除。`}
+        confirmText="删除"
         variant="danger"
       />
 
@@ -1120,9 +1128,9 @@ export const FileTreeLayout: React.FC<FileTreeLayoutProps> = ({
         isOpen={!!noteToDelete}
         onClose={() => setNoteToDelete(null)}
         onConfirm={confirmNoteDelete}
-        title="Delete Note"
-        message={`Delete "${noteToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除笔记"
+        message={`确定将“${noteToDelete?.title}”移到回收站吗？可在笔记回收站恢复。`}
+        confirmText="移到回收站"
         variant="danger"
       />
     </div>

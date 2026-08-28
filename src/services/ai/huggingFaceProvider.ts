@@ -24,11 +24,11 @@ const METADATA: AIProviderMetadata = {
   id: 'huggingface',
   name: 'Hugging Face',
   displayName: 'Hugging Face',
-  description: 'Access thousands of open-source AI models. True free tier with no credit card.',
+  description: '可访问数千个开源 AI 模型。真正的免费层级，无需信用卡。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://huggingface.co/settings/tokens',
-  apiKeyLabel: 'Hugging Face API Token',
+  apiKeyLabel: 'Hugging Face API 令牌',
 
   hasFreeModels: true,
   freeModelIds: [
@@ -38,7 +38,7 @@ const METADATA: AIProviderMetadata = {
   ],
 
   freeTierLimits: {
-    description: 'Free tier: Monthly inference credits. Rate limits vary by model popularity.',
+    description: '免费层级：每月推理额度。速率限制因模型热度而异。',
   },
 
   supportsCORS: true,
@@ -65,7 +65,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'quick-tasks'],
-    description: 'Meta\'s compact Llama model. Good balance of speed and quality.',
+    description: 'Meta 的紧凑型 Llama 模型。速度和质量的良好平衡。',
   },
   {
     id: 'microsoft/Phi-3-mini-4k-instruct',
@@ -79,7 +79,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'quick-tasks'],
-    description: 'Microsoft\'s small, fast model for simple tasks.',
+    description: 'Microsoft 的小巧快速模型，适合简单任务。',
   },
   {
     id: 'mistralai/Mistral-7B-Instruct-v0.3',
@@ -93,7 +93,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'analysis'],
-    description: 'Mistral\'s efficient 7B model with large context window.',
+    description: 'Mistral 高效的 7B 模型，上下文窗口大。',
   },
   {
     id: 'google/gemma-2-2b-it',
@@ -107,7 +107,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'quick-tasks'],
-    description: 'Google\'s lightweight Gemma model. Very fast for simple queries.',
+    description: 'Google 的轻量级 Gemma 模型。处理简单查询非常快。',
   },
 ];
 
@@ -203,7 +203,7 @@ export class HuggingFaceProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Hugging Face provider not configured. Please add your API token.',
+        'Hugging Face 提供商尚未配置。请添加你的 API 令牌。',
         'huggingface'
       );
     }
@@ -287,39 +287,39 @@ export class HuggingFaceProvider implements AIProvider {
       if (err?.message?.includes('401') || err?.message?.includes('Invalid token')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid Hugging Face API token. Please check your token and try again.',
+          'Hugging Face API 令牌无效。请检查你的令牌后重试。',
           'huggingface'
         );
       } else if (err?.message?.includes('429') || err?.message?.includes('rate limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'Hugging Face rate limit exceeded. Please wait a moment and try again.',
+          '已超出 Hugging Face 速率限制。请稍等片刻后重试。',
           'huggingface',
           true // retryable
         );
       } else if (err?.message?.includes('quota')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'Hugging Face quota exceeded. Please wait for your monthly credits to reset.',
+          'Hugging Face 配额已用尽。请等待每月额度重置。',
           'huggingface'
         );
       } else if (err?.message?.includes('404') || err?.message?.includes('not found')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found or not available on Hugging Face.`,
+          `Hugging Face 上未找到或暂不可用模型“${model}”。`,
           'huggingface'
         );
       } else if (err?.message?.includes('Model is currently loading')) {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          'Model is loading. Please wait a moment and try again.',
+          '模型正在加载。请稍等片刻后重试。',
           'huggingface',
           true // retryable
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `Hugging Face error: ${err?.message || 'Unknown error occurred'}`,
+          `Hugging Face 错误：${err?.message || '发生未知错误'}`,
           'huggingface'
         );
       }

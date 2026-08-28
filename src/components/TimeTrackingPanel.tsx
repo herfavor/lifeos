@@ -134,7 +134,7 @@ export function TimeTrackingPanel() {
   // Handlers
   const handleStartTimer = () => {
     startTimer({
-      description: description || 'Untitled Task',
+      description: description || '未命名任务',
       projectId: selectedProjectId || undefined,
     });
   };
@@ -236,7 +236,7 @@ export function TimeTrackingPanel() {
         <div
           onMouseDown={handleDragStart}
           className="h-4 cursor-ns-resize hover:bg-accent-primary/10 transition-all duration-standard ease-smooth flex items-center justify-center group"
-          title="Drag to resize panel"
+          title="拖动调整面板大小"
         >
           <div className="w-full h-0.5 bg-border-light dark:bg-border-dark rounded-buttongroup-hover:bg-accent-primary transition-all duration-standard ease-smooth" />
         </div>
@@ -247,14 +247,14 @@ export function TimeTrackingPanel() {
         <div className="flex items-center gap-2">
           <span className="text-lg">⏱️</span>
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Time Tracking
+            时间记录
           </h3>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={togglePanelCollapsed}
-            className="p-1 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
-            aria-label={isPanelCollapsed ? 'Expand panel' : 'Collapse panel'}
+            className="p-1 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
+            aria-label={isPanelCollapsed ? '展开面板' : '折叠面板'}
           >
             {isPanelCollapsed ? (
               <ChevronUp className="w-4 h-4" />
@@ -264,8 +264,8 @@ export function TimeTrackingPanel() {
           </button>
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="p-1 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
-            aria-label="Time tracking settings"
+            className="p-1 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
+            aria-label="时间记录设置"
           >
             <Settings className="w-4 h-4" />
           </button>
@@ -285,7 +285,7 @@ export function TimeTrackingPanel() {
                 </div>
                 {activeEntry.isPaused && (
                   <div className="text-xs text-status-warning font-medium mt-1">
-                    Paused
+                    已暂停
                   </div>
                 )}
               </div>
@@ -296,8 +296,8 @@ export function TimeTrackingPanel() {
               type="text"
               value={description}
               onChange={handleDescriptionChange}
-              placeholder="What are you working on?"
-              className="w-full px-3 py-2 mb-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttonfocus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
+              placeholder="正在做什么？"
+              className="w-full px-3 py-2 mb-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
             />
 
             {/* Project Selector */}
@@ -305,7 +305,7 @@ export function TimeTrackingPanel() {
               <ProjectSelector
                 value={selectedProjectId}
                 onChange={setSelectedProjectId}
-                placeholder="📁 Select Project"
+                placeholder="📁 选择项目"
                 showNoProject={true}
               />
             </div>
@@ -316,35 +316,35 @@ export function TimeTrackingPanel() {
                 {!activeEntry ? (
                   <button
                     onClick={handleStartTimer}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-accent-primary text-white dark:text-dark-background rounded-buttonfont-medium hover:opacity-90 transition-opacity"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-button font-medium hover:opacity-90 transition-opacity"
                   >
                     <Play className="w-4 h-4" />
-                    Start Timer
+                    开始计时
                   </button>
                 ) : (
                 <>
                   <button
                     onClick={activeEntry?.isPaused ? handleResumeTimer : handlePauseTimer}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-status-warning text-white rounded-buttonfont-medium hover:opacity-90 transition-opacity"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-status-warning text-white rounded-button font-medium hover:opacity-90 transition-opacity"
                   >
                     {activeEntry?.isPaused ? (
                       <>
                         <Play className="w-4 h-4" />
-                        Resume
+                        继续
                       </>
                     ) : (
                       <>
                         <Pause className="w-4 h-4" />
-                        Pause
+                        暂停
                       </>
                     )}
                   </button>
                   <button
                     onClick={handleStopTimer}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-status-error text-white rounded-buttonfont-medium hover:opacity-90 transition-opacity"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-status-error text-white rounded-button font-medium hover:opacity-90 transition-opacity"
                   >
                     <Square className="w-4 h-4" />
-                    Stop
+                    停止
                   </button>
                 </>
               )}
@@ -353,10 +353,10 @@ export function TimeTrackingPanel() {
               {/* Manual Entry Button */}
               <button
                 onClick={() => setShowManualEntryModal(true)}
-                className="w-full flex items-center justify-center gap-2 px-3 py-1.5 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttontext-text-light-primary dark:text-text-dark-primary font-medium hover:bg-surface-light dark:hover:bg-surface-dark transition-all duration-standard ease-smooth"
+                className="w-full flex items-center justify-center gap-2 px-3 py-1.5 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button text-text-light-primary dark:text-text-dark-primary font-medium hover:bg-surface-light dark:hover:bg-surface-dark transition-all duration-standard ease-smooth"
               >
                 <Plus className="w-4 h-4" />
-                Add Manual Entry
+                添加手动记录
               </button>
             </div>
           </div>
@@ -368,19 +368,19 @@ export function TimeTrackingPanel() {
               style={{ height: `${recentEntriesHeight}px` }}
             >
               <h4 className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                Recent Entries (Last 48h)
+                最近记录（48 小时内）
               </h4>
               <div className="overflow-y-auto" style={{ height: `calc(100% - 24px)` }}>
                 {recentEntries.length === 0 ? (
                   <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary italic">
-                    No entries yet. Start your first timer!
+                    暂无记录，开始你的第一次计时吧！
                   </p>
                 ) : (
                   <div className="space-y-1">
                     {recentEntries.map((entry) => (
                       <div
                         key={entry.id}
-                        className={`${getDensityClasses()} px-2 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated cursor-pointer transition-all duration-standard ease-smooth`}
+                        className={`${getDensityClasses()} px-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated cursor-pointer transition-all duration-standard ease-smooth`}
                         onClick={() => handleContinueEntry(entry)}
                       >
                         <div className="flex items-start justify-between">
@@ -419,7 +419,7 @@ export function TimeTrackingPanel() {
             <div className="px-3 py-3 border-t border-border-light dark:border-border-dark">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary">
-                  Today's Total:
+                  今日总计：
                 </span>
                 <span className="text-sm font-mono font-bold text-accent-primary">
                   {formatDuration(todayTotal, { showSeconds: false })}
@@ -427,9 +427,9 @@ export function TimeTrackingPanel() {
               </div>
               <button
                 onClick={handleViewAll}
-                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary font-medium transition-all duration-standard ease-smooth"
+                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary font-medium transition-all duration-standard ease-smooth"
               >
-                View All →
+                查看全部 →
               </button>
             </div>
           )}

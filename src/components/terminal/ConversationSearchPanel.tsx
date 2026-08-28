@@ -97,7 +97,7 @@ export const ConversationSearchPanel: React.FC<ConversationSearchPanelProps> = (
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search conversations..."
+          placeholder="搜索对话..."
           className="flex-1 bg-transparent text-sm text-text-dark-primary placeholder-text-dark-tertiary outline-none"
           autoComplete="off"
         />
@@ -116,16 +116,16 @@ export const ConversationSearchPanel: React.FC<ConversationSearchPanelProps> = (
           onChange={(e) => setDateFilter(e.target.value as typeof dateFilter)}
           className="text-[10px] bg-surface-dark border border-border-dark rounded px-1.5 py-0.5 text-text-dark-secondary focus:outline-none"
         >
-          <option value="all">All time</option>
-          <option value="7d">Last 7 days</option>
-          <option value="30d">Last 30 days</option>
-          <option value="90d">Last 90 days</option>
+          <option value="all">全部时间</option>
+          <option value="7d">最近 7 天</option>
+          <option value="30d">最近 30 天</option>
+          <option value="90d">最近 90 天</option>
         </select>
         <input
           type="text"
           value={modelFilter}
           onChange={(e) => setModelFilter(e.target.value)}
-          placeholder="Filter by model..."
+          placeholder="按模型筛选..."
           className="text-[10px] bg-surface-dark border border-border-dark rounded px-1.5 py-0.5 text-text-dark-secondary placeholder-text-dark-tertiary focus:outline-none w-28"
         />
       </div>
@@ -134,13 +134,13 @@ export const ConversationSearchPanel: React.FC<ConversationSearchPanelProps> = (
       <div className="flex-1 overflow-y-auto">
         {query.length < 2 && (
           <div className="px-4 py-8 text-center text-text-dark-tertiary text-sm">
-            Type at least 2 characters to search
+            输入至少 2 个字符以搜索
           </div>
         )}
 
         {query.length >= 2 && results.length === 0 && (
           <div className="px-4 py-8 text-center text-text-dark-tertiary text-sm">
-            No matching conversations found
+            未找到匹配的对话
           </div>
         )}
 
@@ -156,13 +156,13 @@ export const ConversationSearchPanel: React.FC<ConversationSearchPanelProps> = (
                   {group.title}
                 </span>
                 <span className="text-[10px] text-text-dark-tertiary ml-auto flex-shrink-0">
-                  {group.results.length} match{group.results.length !== 1 ? 'es' : ''}
+                  {group.results.length} 条匹配
                 </span>
               </div>
               {/* Show first match snippet */}
               <div className="text-xs text-text-dark-secondary line-clamp-2 pl-5">
                 <span className="text-text-dark-tertiary">
-                  {group.results[0].messageRole === 'user' ? 'You: ' : 'AI: '}
+                  {group.results[0].messageRole === 'user' ? '你：' : 'AI：'}
                 </span>
                 {highlightMatch(group.results[0].matchSnippet)}
               </div>
@@ -174,8 +174,8 @@ export const ConversationSearchPanel: React.FC<ConversationSearchPanelProps> = (
       {/* Footer */}
       <div className="px-3 py-1.5 border-t border-border-dark text-[10px] text-text-dark-tertiary text-center flex-shrink-0">
         {results.length > 0
-          ? `${results.length} result${results.length !== 1 ? 's' : ''} in ${grouped.size} conversation${grouped.size !== 1 ? 's' : ''}`
-          : 'Search across all saved conversations'}
+          ? `${results.length} 条结果，来自 ${grouped.size} 个对话`
+          : '搜索所有已保存的对话'}
       </div>
     </div>
   );

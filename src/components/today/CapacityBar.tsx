@@ -59,11 +59,11 @@ export const CapacityBar: React.FC<CapacityBarProps> = ({ dateKey, hoursTracked 
         <div className="flex items-center gap-2">
           <StatusIcon className={`w-4 h-4 ${statusTextColors[status]}`} />
           <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary text-sm">
-            Capacity
+            可用时间
           </h3>
         </div>
         <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          {availableHours}h available
+          {availableHours} 小时可用
         </span>
       </div>
 
@@ -85,15 +85,15 @@ export const CapacityBar: React.FC<CapacityBarProps> = ({ dateKey, hoursTracked 
       <div className="flex items-center gap-4 mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
         <div className="flex items-center gap-1.5">
           <div className={`w-2.5 h-2.5 rounded-sm ${statusColors[status]}`} />
-          <span>{completedHours.toFixed(1)}h done</span>
+          <span>{completedHours.toFixed(1)} 小时已完成</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className={`w-2.5 h-2.5 rounded-sm ${statusColors[status]} opacity-30`} />
-          <span>{plannedHours.toFixed(1)}h planned</span>
+          <span>{plannedHours.toFixed(1)} 小时已计划</span>
         </div>
         {status === 'red' && (
           <span className="text-accent-red font-medium">
-            Over by {(plannedHours - availableHours).toFixed(1)}h
+            超出 {(plannedHours - availableHours).toFixed(1)} 小时
           </span>
         )}
       </div>

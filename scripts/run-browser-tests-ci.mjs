@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const EXPECTED_REPOSITORY = 'travisjneuman/neumanos';
+const EXPECTED_REPOSITORY = 'herfavor/lifeos';
 const ALLOWED_PROJECT_SETS = new Set([
   '--project=chromium --project=mobile-chrome',
   '--project=firefox',

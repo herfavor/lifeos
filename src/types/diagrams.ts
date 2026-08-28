@@ -106,6 +106,9 @@ export interface Diagram {
   updatedAt: Date;
   thumbnail?: string; // base64 PNG
 
+  // Recycle-bin timestamp. Deleted diagrams remain recoverable until permanently removed.
+  deletedAt?: Date;
+
   // Canvas state
   canvasState: CanvasState;
 

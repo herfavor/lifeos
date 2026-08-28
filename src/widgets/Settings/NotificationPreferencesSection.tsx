@@ -42,11 +42,11 @@ export const NotificationPreferencesSection: React.FC = () => {
       <div className="flex items-center gap-3 mb-1">
         <Bell className="w-5 h-5 text-accent-primary" />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Notification Preferences
+          通知偏好
         </h2>
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Control which notifications you receive and when.
+        控制你接收哪些通知以及何时接收。
       </p>
 
       {/* Master Toggle */}
@@ -60,14 +60,14 @@ export const NotificationPreferencesSection: React.FC = () => {
             )}
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Enable Notifications
+                启用通知
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
                 {permissionStatus === 'denied'
-                  ? 'Blocked by browser. Enable in browser settings.'
+                  ? '已被浏览器阻止。请在浏览器设置中启用。'
                   : permissionStatus === 'granted'
-                  ? 'Browser notifications are allowed'
-                  : 'Permission not yet requested'}
+                  ? '允许浏览器通知'
+                  : '尚未请求权限'}
               </p>
             </div>
           </div>
@@ -92,28 +92,28 @@ export const NotificationPreferencesSection: React.FC = () => {
       {/* Notification Types */}
       <div className="space-y-3 mb-6">
         <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
-          Notification Types
+          通知类型
         </h3>
 
         <ToggleRow
-          label="Habit Reminders"
-          description="Remind you about pending habits"
+          label="习惯提醒"
+          description="提醒你未完成的习惯"
           enabled={store.habitReminders}
           disabled={!store.enabled}
           onChange={store.setHabitReminders}
         />
 
         <ToggleRow
-          label="Task Due Reminders"
-          description="Notify when tasks are due soon"
+          label="任务到期提醒"
+          description="任务即将到期时通知"
           enabled={store.taskDueReminders}
           disabled={!store.enabled}
           onChange={store.setTaskDueReminders}
         />
 
         <ToggleRow
-          label="Event Reminders"
-          description="Calendar event notifications"
+          label="事件提醒"
+          description="日历事件通知"
           enabled={store.eventReminders}
           disabled={!store.enabled}
           onChange={store.setEventReminders}
@@ -125,16 +125,16 @@ export const NotificationPreferencesSection: React.FC = () => {
         <div className="flex items-center gap-2 mb-3">
           <Moon className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
-            Quiet Hours
+            免打扰时段
           </h3>
         </div>
         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mb-3">
-          No notifications will be sent during quiet hours.
+          免打扰时段内不会发送任何通知。
         </p>
         <div className="flex items-center gap-3">
           <div>
             <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Start
+              开始
             </label>
             <input
               type="time"
@@ -144,10 +144,10 @@ export const NotificationPreferencesSection: React.FC = () => {
               className="px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary disabled:opacity-50"
             />
           </div>
-          <span className="text-text-light-tertiary dark:text-text-dark-tertiary mt-5">to</span>
+          <span className="text-text-light-tertiary dark:text-text-dark-tertiary mt-5">至</span>
           <div>
             <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              End
+              结束
             </label>
             <input
               type="time"
@@ -171,10 +171,10 @@ export const NotificationPreferencesSection: React.FC = () => {
             )}
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Notification Sound
+                通知声音
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Play a sound when notifications appear
+                收到通知时播放声音
               </p>
             </div>
           </div>

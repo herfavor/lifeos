@@ -46,14 +46,14 @@ export function HabitJournal({ habit, onClose }: HabitJournalProps) {
                 {habit.title}
               </h2>
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                Completion Journal
+                完成日记
               </p>
             </div>
           </div>
 
           {habitCompletions.length === 0 ? (
             <p className="text-center py-8 text-text-light-tertiary dark:text-text-dark-tertiary">
-              No completions yet. Start building your streak!
+              还没有完成记录，开始建立连续记录吧！
             </p>
           ) : (
             <div className="space-y-3">
@@ -123,7 +123,7 @@ export function HabitJournal({ habit, onClose }: HabitJournalProps) {
                           </p>
                           <button
                             onClick={() => handleStartEdit(completion.id, completion.notes ?? '')}
-                            className="p-0.5 opacity-0 group-hover:opacity-100 hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded shrink-0"
+                            className="p-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded shrink-0"
                           >
                             <Edit2 className="w-3 h-3 text-text-light-tertiary" />
                           </button>
@@ -133,7 +133,7 @@ export function HabitJournal({ habit, onClose }: HabitJournalProps) {
                           onClick={() => handleStartEdit(completion.id, '')}
                           className="mt-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-primary transition-colors"
                         >
-                          + Add note
+                          + 添加备注
                         </button>
                       )}
                     </div>
@@ -149,7 +149,7 @@ export function HabitJournal({ habit, onClose }: HabitJournalProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>

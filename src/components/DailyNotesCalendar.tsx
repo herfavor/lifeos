@@ -43,6 +43,7 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
     // Filter to daily notes in the current month
     Object.values(notes).forEach((note) => {
       if (
+        !note.deletedAt &&
         note.folderId === dailyNotesSettings.folderId &&
         note.tags.includes('daily-note')
       ) {
@@ -100,7 +101,7 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
     if (!hasNote) {
       return (
         <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          Click to create
+          点击创建
         </div>
       );
     }
@@ -109,7 +110,7 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
       <div className="flex items-center gap-1">
         <FileText className="w-3 h-3 text-accent-primary" />
         <span className="text-xs font-medium text-accent-primary">
-          Daily Note
+          每日笔记
         </span>
       </div>
     );
@@ -117,8 +118,8 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
 
   // Format display text
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    '一月', '二月', '三月', '四月', '五月', '六月',
+    '七月', '八月', '九月', '十月', '十一月', '十二月'
   ];
   const displayText = `${monthNames[month]} ${year}`;
 
@@ -136,7 +137,7 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
         onToday={handleToday}
         statusMessage={
           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {noteCount} {noteCount === 1 ? 'note' : 'notes'}
+            {noteCount} 篇笔记
           </div>
         }
       />
@@ -151,7 +152,7 @@ export function DailyNotesCalendar({ onDateSelect }: DailyNotesCalendarProps) {
 
       {/* Helper text */}
       <div className="text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
-        Click any date to create or open a daily note
+        点击任意日期创建或打开每日笔记
       </div>
     </div>
   );

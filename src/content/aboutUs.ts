@@ -1,37 +1,33 @@
 /**
- * About Us Content
+ * LifeOS brand content
  *
- * Centralized content for the About Us modal and related brand messaging.
- * This keeps content separate from component logic for easier maintenance.
- *
- * Structure:
- * - stories: Full narratives for desktop (Story 1 = Platform, Story 2 = Founder)
- * - compact: Shortened versions for mobile display
- * - foundation: 1% status messaging
- * - philosophy: Hero/footer reusable blocks
- * - taglines: Micro tagline options for various contexts
+ * Short product-narrative texts used by the command palette and other
+ * surfaces. LifeOS is a local-first personal dashboard and management
+ * workspace: 方便 · 清晰 · 聚合 · 整理.
  */
 
 export interface AboutUsContent {
   stories: {
-    platform: {
+    /** Product & philosophy */
+    product: {
       title: string;
       subtitle: string;
       content: string;
     };
-    founder: {
+    /** Data ownership & local-first promise */
+    values: {
       title: string;
       subtitle: string;
       content: string;
     };
   };
   compact: {
-    platform: {
+    product: {
       title: string;
       subtitle: string;
       content: string;
     };
-    founder: {
+    values: {
       title: string;
       subtitle: string;
       content: string;
@@ -47,104 +43,54 @@ export interface AboutUsContent {
 
 export const aboutUsContent: AboutUsContent = {
   stories: {
-    platform: {
-      title: 'Platform & Principles',
-      subtitle: 'NeumanOS',
-      content: `NeumanOS exists because the tools that are supposed to help us stay organized have quietly become another source of chaos.
+    product: {
+      title: '产品与理念',
+      subtitle: 'LifeOS',
+      content: `LifeOS 是一个本地优先的个人综合管理平台。
 
-Most people now live across a stack of subscriptions and tabs: one app for planning, another for ideas, another for tracking work, another for personal logistics, plus a handful of dashboards at the office. Each one promises clarity. Together, they fracture attention, duplicate effort, and leave your information scattered across systems you don't really control.
+它想解决的不是"功能不够多"，而是日常数字生活里更常见的问题：信息散落在十几个应用里，重要的事情被淹没，想记录一件事却要先想清楚"该记在哪"。
 
-On top of that, many of those tools feel unfinished: new features layered over old problems, workflows that never quite get refined, and products that change direction faster than you can build trust in them. The result is a life and career that are important and complex, being managed by a patchwork of tools that are mostly convenient for the vendors who sell them.
+LifeOS 把今天要做的事、正在推进的项目、近期的日程、笔记与收藏聚合到同一个工作台。打开它，你应该能在一屏之内看到自己的整体状态：知道现在什么最重要，知道去哪里继续昨天的工作，也能随手把一闪而过的想法先放进来。
 
-NeumanOS is being built from the opposite starting point.
-
-Instead of chasing surface features, almost all of the work so far has gone into an enduring foundation: how information is stored, how it is kept private, how risk is handled, and how the system should behave before it grows. The goal is not to impress with a long feature list, but to earn the right to hold someone's real commitments, notes, and decisions.
-
-A few core principles define that foundation:
-
-• Local-first mindset – Your information should live with you first, not be locked away behind someone else's subscription or infrastructure.
-
-• Ownership and respect – Your thoughts, plans, and records are not fuel for engagement metrics or growth strategies. They are treated as personal property, not product.
-
-• Honest communication – The platform is described as it truly is: early, foundation-heavy, and far from complete. No marketing fiction.
-
-• Calm by design – No artificial urgency, attention traps, or manipulative flows. The tool should quietly support your focus instead of competing with it.
-
-• Built for many kinds of lives – The same core should feel natural whether you are running a household, a team, a business, or all three at once.
-
-NeumanOS is a long-term effort to prove that an organizing system can be principled, stable, and genuinely respectful of the people who rely on it. It is not a reaction against any single workplace or product, but against the broader pattern of subscription bloat and half-finished tools that demand trust without earning it.
-
-For anyone who is tired of feeling spread thin across tools—and tired of renting access to their own information—NeumanOS is being shaped as a place where everything important can live together, on your terms.`,
+LifeOS 的核心理念是方便、清晰、聚合、整理——功能为整理服务，而不是相反。默认界面保持克制，高级能力收在"更多功能"里，需要时它们都在，不需要时它们不打扰你。`,
     },
-    founder: {
-      title: 'Values & Background',
-      subtitle: 'From the Founder',
-      content: `My name is Travis J. Neuman, and NeumanOS started as a personal line in the sand about how our tools should treat us.
+    values: {
+      title: '本地优先与数据主权',
+      subtitle: 'LifeOS 的承诺',
+      content: `你的数据属于你。
 
-I've spent my career in information technology and operations. I've supported a multi-location hospitality group as an IT manager and senior systems administrator. I currently work as a technical project manager in managed services for a global industrial technology environment. I've looked after servers, networks, point-of-sale systems, cloud services, monitoring platforms, and the many tools that keep businesses running.
+LifeOS 运行在你的浏览器里，所有内容——任务、笔记、日程、收藏——都保存在你自己的设备上。没有账户，没有服务器，没有埋点上传；断网也可以完整使用。
 
-I genuinely enjoyed that work and still do. I've been fortunate to work with teams and organizations I respect. NeumanOS is not a protest against any employer—past or present. It is a response to something larger: the way we, as individuals and professionals, are increasingly bound to sprawling subscription stacks and unfinished products, both inside and outside the office.
+这带来三个承诺：
 
-Over the years, I've also run a homelab, built personal websites, and experimented with almost every category of "productivity" tool you can imagine. Some were excellent in specific areas. Very few felt like they were engineered and ethically grounded to be a long-term home for the things that actually matter in a person's life.
+一、可导出。你的数据随时可以完整导出备份，不被任何平台锁定。
 
-So instead of looking for another app, I started building a platform from the ground up, and I chose to treat it with the same seriousness as infrastructure that businesses depend on.
+二、可审计。LifeOS 以 MIT 许可证开源，数据如何存储一目了然。
 
-That's why the early work on NeumanOS has focused on:
-
-• Defining a local-first approach so people aren't forced to give up control of their information.
-
-• Writing down privacy boundaries and risk assumptions instead of hiding them.
-
-• Setting clear standards for honesty in how the platform is described versus what it can actually do.
-
-• Holding the code and the product to the expectation that it should be safe to rely on for real responsibilities, not just side projects.
-
-I use this platform myself. My own projects, routines, and planning live on the same foundation that NeumanOS is built on. That means I feel its rough edges first and benefit from its improvements like any other user would. It also keeps me grounded: if a decision wouldn't be acceptable for my own life, it doesn't belong in the product.
-
-What I stand for with NeumanOS is simple:
-
-• Tools that hold our lives together should be designed with respect, not manipulation.
-
-• Our information should not be hostage to subscriptions and shifting business models.
-
-• Foundations should be built carefully, even if that means progress looks slower from the outside.
-
-NeumanOS is the ongoing expression of those beliefs in code, design, and practice.`,
+三、AI 有分寸。独立的 AI 指挥中心遵循“观察 → 理解 → 建议 → 用户确认 → 执行”的行为原则，帮助你整理、规范、总结与建议，而不会在未经确认的情况下批量改动你的个人信息。`,
     },
   },
   compact: {
-    platform: {
-      title: 'Platform',
-      subtitle: 'NeumanOS',
-      content: `NeumanOS is a response to two quiet problems: tool overload and shallow craftsmanship.
-
-We juggle multiple apps and subscriptions just to keep a normal life and career on track. Each one tries to solve a slice of the puzzle, but together they scatter our attention and leave our information stored on systems we don't really control.
-
-This platform is being built from the foundation up, not as a feature checklist. The work so far has been about local-first thinking, clear privacy boundaries, honest communication, and calm design—so that when people choose to trust it with their work and lives, that trust is earned.
-
-NeumanOS is for anyone who wants a single, principled place to organize their world without feeling like they're renting access to their own data.`,
+    product: {
+      title: '产品与理念',
+      subtitle: 'LifeOS',
+      content: `LifeOS 是一个本地优先的个人综合管理平台：把今天、项目、日程、笔记与收藏聚合在一个工作台里。核心理念是方便、清晰、聚合、整理——打开就能看到自己的整体状态，并快速进入正确的工具。`,
     },
-    founder: {
-      title: 'From the Founder',
-      subtitle: '',
-      content: `I'm Travis J. Neuman, an IT professional who has spent years supporting real businesses, real infrastructure, and real people.
-
-I've seen how much we rely on software to hold our responsibilities together, and how often that software feels fragmented, subscription-heavy, and half-finished. I've also enjoyed working with organizations that do important work, which is why this project isn't aimed at any one employer. It is aimed at the pattern that traps all of us in tool sprawl.
-
-NeumanOS is my decision to build something different. I treat it like critical infrastructure: local-first by design, explicit about privacy and risk, and held to a higher bar of honesty in how it's described and used.
-
-It's the platform I want for myself—and I'm building it for anyone who's tired of compromising on how their tools treat them.`,
+    values: {
+      title: '本地优先与数据主权',
+      subtitle: 'LifeOS 的承诺',
+      content: `你的数据保存在你自己的设备上：无账户、无服务器、离线可用、随时导出。AI 指挥中心只在提出建议与获得确认后才执行操作。`,
     },
   },
-  foundation: `NeumanOS is intentionally at the 1% mark—most of the work so far has gone into building a durable foundation and ethical guardrails, so every future layer rests on something you can actually trust.`,
+  foundation: `LifeOS 从第一天起就坚持本地优先的地基：数据存在哪里、如何导出、谁能看到，都必须清清楚楚。上层的一切功能都建立在这个地基之上。`,
   philosophy: {
-    full: `We believe the tools that hold our lives together should respect us. NeumanOS is built local-first, subscription-skeptical, and ruthlessly honest about what it can and cannot do—so you stay in control of your information, not the other way around.`,
-    short: `NeumanOS is built on a simple idea: organizing your life and work should never require giving up ownership of your data or your attention.`,
+    full: `我们相信，承载个人生活的工具应当尊重使用者。LifeOS 以本地优先的方式构建，帮助你聚合与整理自己的信息——你始终掌控自己的数据，而不是反过来。`,
+    short: `LifeOS 建立在一个简单的理念之上：整理你的生活与工作，绝不应要求你交出对数据的所有权。`,
   },
   taglines: [
-    'NeumanOS is a local-first, ethics-driven platform for organizing your life and work without surrendering your data.',
-    'Built like critical infrastructure, designed for real lives—NeumanOS puts your information and attention back under your control.',
-    'A calm, principled way to keep everything that matters in one place—without being owned by your tools.',
+    'LifeOS 是一个本地优先的个人综合管理平台——聚合、整理，数据始终在你手里。',
+    '看到整体状态，进入正确的工具——LifeOS 让个人信息井井有条。',
+    '一种宁静而有条理的方式，把重要的事放在同一个地方。',
   ],
 };
 

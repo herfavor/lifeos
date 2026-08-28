@@ -16,6 +16,14 @@ import { createSyncedStorage } from '../lib/syncedStorage';
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
 import { normalizeUrl } from '../utils/urlNormalizer';
 import { useActivityStore } from './useActivityStore';
+import {
+  decodePersistedValue,
+  isUnknownRecord,
+  toFiniteNumber,
+  toStringArray,
+  toValidDate,
+  unwrapPersistedState,
+} from '../utils/persistedState';
 
 // ============================================================================
 // Types
@@ -158,6 +166,95 @@ type LinkLibraryStore = LinkLibraryState & LinkLibraryActions;
 
 const generateId = () => `link_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 const generateCollectionId = () => `col_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+const RECOVERY_DATE = new Date(0);
+
+function normalizeLink(value: unknown, fallbackId: string, index: number): Link | null {
+  const decoded = decodePersistedValue(value);
+  if (!isUnknownRecord(decoded)) return null;
+
+  const id = typeof decoded.id === 'string' && decoded.id.trim()
+    ? decoded.id
+    : fallbackId || `recovered-link-${index + 1}`;
+  const url = typeof decoded.url === 'string' ? decoded.url : '';
+  const createdAt = toValidDate(decoded.createdAt, RECOVERY_DATE);
+
+  return {
+    ...decoded,
+    id,
+    url,
+    title: typeof decoded.title === 'string' && decoded.title.trim()
+      ? decoded.title
+      : url || `恢复的收藏 ${index + 1}`,
+    description: typeof decoded.description === 'string' ? decoded.description : undefined,
+    favicon: typeof decoded.favicon === 'string' ? decoded.favicon : undefined,
+    category: typeof decoded.category === 'string' ? decoded.category : undefined,
+    folderId: typeof decoded.folderId === 'string' ? decoded.folderId : undefined,
+    tags: toStringArray(decoded.tags),
+    projectIds: toStringArray(decoded.projectIds),
+    isFavorite: decoded.isFavorite === true,
+    isArchived: decoded.isArchived === true,
+    deletedAt: decoded.deletedAt == null ? undefined : toValidDate(decoded.deletedAt, createdAt),
+    lastVisited: decoded.lastVisited == null ? undefined : toValidDate(decoded.lastVisited, createdAt),
+    visitCount: Math.max(0, toFiniteNumber(decoded.visitCount, 0)),
+    sortOrder: toFiniteNumber(decoded.sortOrder, index),
+    createdAt,
+    updatedAt: toValidDate(decoded.updatedAt, createdAt),
+  } as Link;
+}
+
+export function normalizePersistedLinks(value: unknown): Record<string, Link> {
+  const decoded = decodePersistedValue(value);
+  const entries: Array<[string, unknown]> = Array.isArray(decoded)
+    ? decoded.map((item, index) => [isUnknownRecord(item) && typeof item.id === 'string' ? item.id : `recovered-link-${index + 1}`, item])
+    : isUnknownRecord(decoded)
+      ? Object.entries(decoded)
+      : [];
+
+  const normalized: Record<string, Link> = {};
+  entries.forEach(([fallbackId, raw], index) => {
+    const link = normalizeLink(raw, fallbackId, index);
+    if (link) normalized[link.id] = link;
+  });
+  return normalized;
+}
+
+function normalizeCollection(value: unknown, fallbackId: string, index: number): LinkCollection | null {
+  const decoded = decodePersistedValue(value);
+  if (!isUnknownRecord(decoded)) return null;
+  const id = typeof decoded.id === 'string' && decoded.id.trim()
+    ? decoded.id
+    : fallbackId || `recovered-collection-${index + 1}`;
+  const createdAt = toValidDate(decoded.createdAt, RECOVERY_DATE);
+  return {
+    ...decoded,
+    id,
+    name: typeof decoded.name === 'string' && decoded.name.trim()
+      ? decoded.name
+      : `恢复的集合 ${index + 1}`,
+    icon: typeof decoded.icon === 'string' ? decoded.icon : undefined,
+    color: typeof decoded.color === 'string' ? decoded.color : undefined,
+    linkIds: toStringArray(decoded.linkIds),
+    isExpanded: decoded.isExpanded !== false,
+    sortOrder: toFiniteNumber(decoded.sortOrder, index),
+    createdAt,
+    updatedAt: toValidDate(decoded.updatedAt, createdAt),
+  } as LinkCollection;
+}
+
+export function normalizePersistedCollections(value: unknown): Record<string, LinkCollection> {
+  const decoded = decodePersistedValue(value);
+  const entries: Array<[string, unknown]> = Array.isArray(decoded)
+    ? decoded.map((item, index) => [isUnknownRecord(item) && typeof item.id === 'string' ? item.id : `recovered-collection-${index + 1}`, item])
+    : isUnknownRecord(decoded)
+      ? Object.entries(decoded)
+      : [];
+  const normalized: Record<string, LinkCollection> = {};
+  entries.forEach(([fallbackId, raw], index) => {
+    const collection = normalizeCollection(raw, fallbackId, index);
+    if (collection) normalized[collection.id] = collection;
+  });
+  return normalized;
+}
 
 // ============================================================================
 // Store Implementation
@@ -1042,107 +1139,49 @@ export const useLinkLibraryStore = create<LinkLibraryStore>()(
     {
       name: 'link-library',
       storage: createJSONStorage(() => createSyncedStorage()),
-      version: 3, // v3: Add deletedAt for soft delete / trash functionality
+      version: 4, // v4: defensively normalize legacy and malformed bookmark records
       partialize: (state) => ({
         // Only persist data, not UI state
         links: state.links,
         collections: state.collections,
       }),
       migrate: (persistedState: unknown, version: number) => {
-        let state = persistedState as Record<string, unknown>;
-
-        // Version 0 -> 1: Add projectIds field to all links
-        if (version < 1 && state.links) {
-          if (import.meta.env.DEV) console.log('[LinkLibraryStore] Adding projectIds field to all links');
-          const links = state.links as Record<string, Record<string, unknown>>;
-          const updatedLinks: Record<string, Link> = {};
-          Object.entries(links).forEach(([id, link]) => {
-            updatedLinks[id] = {
-              ...(link as unknown as Link),
-              projectIds: (link.projectIds as string[] | undefined) ?? [],
-            };
-          });
-          state = {
-            ...state,
-            links: updatedLinks,
-          };
+        const decoded = unwrapPersistedState(persistedState);
+        const state = isUnknownRecord(decoded) ? decoded : {};
+        if (version < 4 && import.meta.env.DEV) {
+          console.log('[LinkLibraryStore] Normalizing legacy bookmark records');
         }
-
-        // Version 1 -> 2: Add sortOrder field to all links
-        if (version < 2 && state.links) {
-          if (import.meta.env.DEV) console.log('[LinkLibraryStore] Adding sortOrder field to all links');
-          // Group links by folderId and assign sortOrder by createdAt
-          const links = state.links as Record<string, Record<string, unknown>>;
-          const linksByFolder: Record<string, Array<[string, Record<string, unknown>]>> = {};
-
-          Object.entries(links).forEach(([id, link]) => {
-            const folderId = (link.folderId as string | undefined) ?? '__root__';
-            if (!linksByFolder[folderId]) {
-              linksByFolder[folderId] = [];
-            }
-            linksByFolder[folderId].push([id, link]);
-          });
-
-          const updatedLinks: Record<string, Link> = {};
-
-          Object.values(linksByFolder).forEach((folderLinks) => {
-            // Sort by createdAt to preserve chronological order
-            folderLinks.sort((a, b) => {
-              const dateA = new Date((a[1].createdAt as string) || 0).getTime();
-              const dateB = new Date((b[1].createdAt as string) || 0).getTime();
-              return dateA - dateB;
-            });
-
-            folderLinks.forEach(([id, link], index) => {
-              updatedLinks[id] = {
-                ...(link as unknown as Link),
-                sortOrder: index,
-              };
-            });
-          });
-
-          state = {
-            ...state,
-            links: updatedLinks,
-          };
-        }
-
-        // Version 2 -> 3: Add deletedAt field (soft delete)
-        // No migration needed - deletedAt is optional and defaults to undefined
-        if (version < 3) {
-          if (import.meta.env.DEV) console.log('[LinkLibraryStore] v3: deletedAt field available for soft delete');
-        }
-
-        return state;
+        return {
+          ...state,
+          links: normalizePersistedLinks(state.links),
+          collections: normalizePersistedCollections(state.collections),
+        };
       },
       onRehydrateStorage: () => (state) => {
-        if (state?.links) {
-          // Convert date strings back to Date objects
-          Object.values(state.links).forEach((link) => {
-            if (typeof link.createdAt === 'string') {
-              link.createdAt = new Date(link.createdAt);
-            }
-            if (typeof link.updatedAt === 'string') {
-              link.updatedAt = new Date(link.updatedAt);
-            }
-            if (link.lastVisited && typeof link.lastVisited === 'string') {
-              link.lastVisited = new Date(link.lastVisited);
-            }
-            if (link.deletedAt && typeof link.deletedAt === 'string') {
-              link.deletedAt = new Date(link.deletedAt);
-            }
-          });
+        // Normalization is applied through `merge` (below) on every hydrate,
+        // so no direct mutation of the hydrated state is needed here.
+        void state;
+        // Honor the documented 30-day recycle-bin promise: purge expired
+        // deleted bookmarks once storage has been rehydrated.
+        if (state) {
+          try {
+            state.purgeOldDeletedLinks?.(30);
+          } catch {
+            // Purge is best-effort; never fail hydration over it.
+          }
         }
-        if (state?.collections) {
-          Object.values(state.collections).forEach((collection) => {
-            if (typeof collection.createdAt === 'string') {
-              collection.createdAt = new Date(collection.createdAt);
-            }
-            if (typeof collection.updatedAt === 'string') {
-              collection.updatedAt = new Date(collection.updatedAt);
-            }
-          });
-        }
+      },
+      // zustand persist's recommended merge point: normalize legacy/malformed
+      // records before they enter the store, without mutating the hydrated
+      // object in place (which subscribers could miss).
+      merge: (persistedState: unknown, currentState: LinkLibraryStore) => {
+        const state = isUnknownRecord(persistedState) ? persistedState : {};
+        return {
+          ...currentState,
+          ...state,
+          links: normalizePersistedLinks(state.links),
+          collections: normalizePersistedCollections(state.collections),
+        };
       },
     }
   )

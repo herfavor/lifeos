@@ -67,9 +67,9 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
       {subtasks && subtasks.length > 0 && (
         <div>
           <div className="flex justify-between text-sm mb-2">
-            <span className="font-medium text-text-light-primary dark:text-text-dark-primary">Progress</span>
+            <span className="font-medium text-text-light-primary dark:text-text-dark-primary">进度</span>
             <span className="text-text-light-secondary dark:text-text-dark-secondary">
-              {completedCount} of {totalCount}
+              {completedCount} / {totalCount}
             </span>
           </div>
           <div className="w-full bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-full h-2">
@@ -121,7 +121,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
                         ? 'bg-accent-yellow text-white'
                         : 'bg-accent-blue text-white'
                     }`}>
-                      {subtask.priority.charAt(0).toUpperCase() + subtask.priority.slice(1)}
+                      {subtask.priority === 'high' ? '高' : subtask.priority === 'medium' ? '中' : '低'}
                     </span>
                   )}
                   {subtask.dueDate && (
@@ -136,7 +136,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
               <button
                 onClick={() => onDelete(subtask.id)}
                 className="text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-colors"
-                title="Delete subtask"
+                title="删除子任务"
               >
                 ✕
               </button>
@@ -146,7 +146,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
       ) : (
         <div className="text-center py-2">
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            📝 No subtasks yet
+            📝 暂无子任务
           </p>
         </div>
       )}
@@ -158,32 +158,32 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
             type="text"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Subtask title"
+            placeholder="子任务标题"
             className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue"
             autoFocus
           />
           <textarea
             value={newDescription}
             onChange={(e) => setNewDescription(e.target.value)}
-            placeholder="Description (optional)"
+            placeholder="描述（可选）"
             rows={2}
             className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
           />
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">Priority</label>
+              <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">优先级</label>
               <select
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
                 className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="low">低</option>
+                <option value="medium">中</option>
+                <option value="high">高</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">Due Date</label>
+              <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">截止日期</label>
               <input
                 type="date"
                 value={newDueDate}
@@ -198,13 +198,13 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
               disabled={!newTitle.trim()}
               className="flex-1 px-4 py-2 text-sm bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add Subtask
+              添加子任务
             </button>
             <button
               onClick={handleCancel}
               className="px-4 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg hover:opacity-80 transition-opacity"
             >
-              Cancel
+              取消
             </button>
           </div>
         </div>
@@ -213,7 +213,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
           onClick={() => setShowAddForm(true)}
           className="w-full px-4 py-2 text-sm bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
         >
-          + Add Subtask
+          + 添加子任务
         </button>
       )}
     </div>

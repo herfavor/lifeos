@@ -8,11 +8,11 @@ Use only this repository's existing canonical live checkout. A dirty, divergent,
 
 <!-- phase-5-provider-agnostic-baseline -->
 
-Last updated: 2026-04-29
+Last updated: 2026-08-28
 
 ## Project overview
 
-NeumanOS is a privacy-first, local-only productivity app built with React, TypeScript, Vite, IndexedDB/local storage, Vitest, and a hosted-only Playwright browser-test suite.
+LifeOS (a fork of the MIT-licensed NeumanOS; see NOTICE.md) is a local-first Web/PWA personal workspace built with React, TypeScript, Vite, IndexedDB/local storage, Vitest, and a hosted-only Playwright browser-test suite.
 
 ## Operating rules for AI agents
 
@@ -45,7 +45,7 @@ Only run commands supported by checked-in docs/config. Confidently discovered co
 
 Browser tests are prohibited on TJNMPM. Do not run `npm run test:e2e`, a Playwright CLI, a browser installer, or a browser server locally. The sole approved execution lane is the manual `Hosted browser tests` GitHub Actions workflow on GitHub-hosted Linux. It uses synthetic data and a task-owned production preview; it must not target production or receive credentials.
 
-Current unit-test baseline after the April 29, 2026 maintenance pass: `npm test -- --run` runs 24 Vitest files / 694 tests.
+Current verified unit-test baseline on 2026-08-28 main CI: `npm test -- --run` runs 67 Vitest files / 898 tests.
 
 ## Dependency/security maintenance notes
 

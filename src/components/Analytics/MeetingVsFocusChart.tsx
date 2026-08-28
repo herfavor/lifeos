@@ -24,8 +24,8 @@ export function MeetingVsFocusChart({ events, dateRange }: MeetingVsFocusChartPr
     const { meetingHours, focusHours } = getMeetingVsFocusTime(events, dateRange);
 
     return [
-      { name: 'Meeting Time', value: Number(meetingHours.toFixed(2)), type: 'meeting' },
-      { name: 'Focus Time', value: Number(focusHours.toFixed(2)), type: 'focus' },
+      { name: '会议时间', value: Number(meetingHours.toFixed(2)), type: 'meeting' },
+      { name: '专注时间', value: Number(focusHours.toFixed(2)), type: 'focus' },
     ].filter((item) => item.value > 0);
   }, [events, dateRange]);
 
@@ -33,7 +33,7 @@ export function MeetingVsFocusChart({ events, dateRange }: MeetingVsFocusChartPr
     return (
       <div className="w-full h-64 flex items-center justify-center">
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No calendar events in selected period
+          所选时间段内暂无日历事件
         </p>
       </div>
     );
@@ -63,7 +63,7 @@ export function MeetingVsFocusChart({ events, dateRange }: MeetingVsFocusChartPr
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${Number(value ?? 0).toFixed(2)} hours`, 'Time']}
+            formatter={(value) => [`${Number(value ?? 0).toFixed(2)} 小时`, '时间']}
           />
           <Legend
             wrapperStyle={{

@@ -34,7 +34,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
   isOpen,
   onClose,
   onSelect,
-  title = 'Move to Folder',
+  title = '移动到文件夹',
   currentFolderId,
   excludeFolderId,
   itemType = 'note',
@@ -152,7 +152,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
           <span className="text-sm font-medium truncate">{node.name}</span>
           {isCurrent && (
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-auto">
-              (current)
+              （当前）
             </span>
           )}
         </div>
@@ -188,7 +188,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
           <button
             onClick={onClose}
             className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
-            aria-label="Close"
+            aria-label="关闭"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -200,7 +200,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <input
               type="text"
-              placeholder="Search folders..."
+              placeholder="搜索文件夹…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all"
@@ -226,10 +226,10 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
               aria-selected={selectedId === null}
             >
               <Home className="w-4 h-4 shrink-0" />
-              <span className="text-sm font-medium">Root (No Folder)</span>
+              <span className="text-sm font-medium">根目录（无文件夹）</span>
               {currentFolderId === null && (
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-auto">
-                  (current)
+                  （当前）
                 </span>
               )}
             </div>
@@ -265,7 +265,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
                     <span className="text-sm font-medium truncate">{folder.name}</span>
                     {isCurrent && (
                       <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-auto">
-                        (current)
+                        （当前）
                       </span>
                     )}
                   </div>
@@ -273,7 +273,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
               })
             ) : (
               <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                No folders found for "{searchQuery}"
+                未找到与“{searchQuery}”匹配的文件夹
               </div>
             )
           ) : (
@@ -282,7 +282,7 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
               folderTree.map((node) => renderFolderItem(node, 0))
             ) : (
               <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                No folders yet
+                还没有文件夹
               </div>
             )
           )}
@@ -294,13 +294,13 @@ export const FolderPickerModal: React.FC<FolderPickerModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium rounded-lg border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleConfirm}
             className="px-4 py-2 text-sm font-medium rounded-lg bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
           >
-            Move Here
+            移动到这里
           </button>
         </div>
       </div>

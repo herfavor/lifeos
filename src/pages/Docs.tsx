@@ -31,6 +31,9 @@ import {
   Sparkles,
   Shapes,
   ClipboardList,
+  Archive,
+  RotateCcw,
+  MoreHorizontal,
 } from 'lucide-react';
 import { StoreErrorBoundary } from '../components/StoreErrorBoundary';
 import { useDocsStore } from '../stores/useDocsStore';
@@ -42,6 +45,7 @@ import { PageContent } from '../components/PageContent';
 import { TabNavigation, type Tab } from '../components/TabNavigation';
 import { DiagramsContent } from './Diagrams';
 import { FormsContent } from './Forms';
+import { isFeatureExposed } from '../config/features';
 
 // Lazy load RecentDocsList
 const RecentDocsList = lazy(() => import('../components/docs/RecentDocsList'));
@@ -63,17 +67,17 @@ const DOC_TYPE_ICONS = {
 };
 
 const DOC_TYPE_LABELS = {
-  doc: 'Document',
-  sheet: 'Spreadsheet',
-  slides: 'Presentation',
+  doc: '文档',
+  sheet: '电子表格',
+  slides: '演示文稿',
 };
 
 // Category labels for platform docs
 const CATEGORY_LABELS: Record<string, string> = {
-  'getting-started': 'Getting Started',
-  'user-guides': 'User Guides',
-  'product': 'Product',
-  'other': 'Other',
+  'getting-started': '入门指南',
+  'user-guides': '用户指南',
+  'product': '产品',
+  'other': '其他',
 };
 
 interface DocItemProps {
@@ -81,24 +85,29 @@ interface DocItemProps {
   isActive: boolean;
   onClick: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
+  onMenuClick: (e: React.MouseEvent) => void;
 }
 
-function DocItem({ doc, isActive, onClick, onContextMenu }: DocItemProps) {
+function DocItem({ doc, isActive, onClick, onContextMenu, onMenuClick }: DocItemProps) {
   const Icon = DOC_TYPE_ICONS[doc.type];
 
   return (
-    <button
-      onClick={onClick}
+    <div
       onContextMenu={onContextMenu}
-      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors ${
+      className={`group flex w-full items-center rounded-lg transition-colors ${
         isActive
           ? 'bg-accent-primary/10 text-accent-primary'
           : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated'
       }`}
     >
-      <Icon className="w-4 h-4 shrink-0" />
-      <span className="truncate text-sm">{doc.title}</span>
-    </button>
+      <button onClick={onClick} className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left">
+        <Icon className="w-4 h-4 shrink-0" />
+        <span className="truncate text-sm">{doc.title}</span>
+      </button>
+      <button onClick={onMenuClick} className="mr-1 rounded p-1 text-text-light-tertiary hover:bg-surface-light dark:text-text-dark-tertiary dark:hover:bg-surface-dark" aria-label={`打开“${doc.title}”的操作菜单`}>
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+    </div>
   );
 }
 
@@ -111,6 +120,7 @@ interface FolderItemProps {
   onClick: () => void;
   onToggle: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
+  onMenuClick: (e: React.MouseEvent) => void;
   onEditChange: (name: string) => void;
   onEditSave: () => void;
   children?: React.ReactNode;
@@ -125,6 +135,7 @@ function FolderItem({
   onClick,
   onToggle,
   onContextMenu,
+  onMenuClick,
   onEditChange,
   onEditSave,
   children,
@@ -170,6 +181,13 @@ function FolderItem({
             </span>
           )}
         </button>
+        <button
+          onClick={onMenuClick}
+          className="mr-1 shrink-0 rounded p-1 text-text-light-tertiary hover:bg-surface-light dark:text-text-dark-tertiary dark:hover:bg-surface-dark"
+          aria-label={`打开“${folder.name}”的操作菜单`}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </button>
       </div>
       {isExpanded && children && <div className="ml-4 mt-1">{children}</div>}
     </div>
@@ -185,7 +203,14 @@ interface ContextMenuProps {
 }
 
 function ContextMenu({ x, y, doc, onClose }: ContextMenuProps) {
-  const { deleteDoc, duplicateDoc, setActiveDoc } = useDocsStore();
+  const {
+    deleteDoc,
+    archiveDoc,
+    restoreDoc,
+    permanentlyDeleteDoc,
+    duplicateDoc,
+    setActiveDoc,
+  } = useDocsStore();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -205,7 +230,8 @@ function ContextMenu({ x, y, doc, onClose }: ContextMenuProps) {
   };
 
   const confirmDelete = () => {
-    deleteDoc(doc.id);
+    if (doc.deletedAt) permanentlyDeleteDoc(doc.id);
+    else deleteDoc(doc.id);
     setShowDeleteConfirm(false);
     onClose();
   };
@@ -217,27 +243,31 @@ function ContextMenu({ x, y, doc, onClose }: ContextMenuProps) {
         className="fixed z-50 w-48 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg"
         style={{ left: x, top: y }}
       >
-        <button
-          onClick={handleEdit}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
-        >
-          <Edit className="w-4 h-4" />
-          <span className="text-sm">Edit</span>
-        </button>
-        <button
-          onClick={handleDuplicate}
-          className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
-        >
-          <Copy className="w-4 h-4" />
-          <span className="text-sm">Duplicate</span>
-        </button>
+        {!doc.archivedAt && !doc.deletedAt && (
+          <>
+            <button onClick={handleEdit} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
+              <Edit className="w-4 h-4" /><span className="text-sm">编辑</span>
+            </button>
+            <button onClick={handleDuplicate} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
+              <Copy className="w-4 h-4" /><span className="text-sm">创建副本</span>
+            </button>
+            <button onClick={() => { archiveDoc(doc.id); onClose(); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
+              <Archive className="w-4 h-4" /><span className="text-sm">归档</span>
+            </button>
+          </>
+        )}
+        {(doc.archivedAt || doc.deletedAt) && (
+          <button onClick={() => { restoreDoc(doc.id); onClose(); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary">
+            <RotateCcw className="w-4 h-4" /><span className="text-sm">恢复到我的文档</span>
+          </button>
+        )}
         <div className="border-t border-border-light dark:border-border-dark" />
         <button
           onClick={handleDelete}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-status-error/10 text-status-error"
         >
           <Trash2 className="w-4 h-4" />
-          <span className="text-sm">Delete</span>
+          <span className="text-sm">{doc.deletedAt ? '永久删除' : '移到回收站'}</span>
         </button>
       </div>
 
@@ -245,9 +275,9 @@ function ContextMenu({ x, y, doc, onClose }: ContextMenuProps) {
         isOpen={showDeleteConfirm}
         onClose={() => { setShowDeleteConfirm(false); onClose(); }}
         onConfirm={confirmDelete}
-        title="Delete Document"
-        message={`Delete "${doc.title}"?`}
-        confirmText="Delete"
+        title={doc.deletedAt ? '永久删除文档' : '移到回收站'}
+        message={doc.deletedAt ? `永久删除“${doc.title}”？此操作无法恢复。` : `将“${doc.title}”移到回收站？之后仍可恢复。`}
+        confirmText={doc.deletedAt ? '永久删除' : '移到回收站'}
         variant="danger"
       />
     </>
@@ -278,7 +308,7 @@ function FolderContextMenu({ x, y, folder: _folder, onClose, onRename, onDelete 
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
           <Edit className="w-4 h-4" />
-          <span className="text-sm">Rename</span>
+          <span className="text-sm">重命名</span>
         </button>
         <div className="border-t border-border-light dark:border-border-dark" />
         <button
@@ -286,7 +316,7 @@ function FolderContextMenu({ x, y, folder: _folder, onClose, onRename, onDelete 
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-status-error/10 text-status-error"
         >
           <Trash2 className="w-4 h-4" />
-          <span className="text-sm">Delete</span>
+          <span className="text-sm">删除</span>
         </button>
       </div>
     </>
@@ -295,15 +325,21 @@ function FolderContextMenu({ x, y, folder: _folder, onClose, onRename, onDelete 
 
 // Phase 5: Tab configuration for Create page (simplified - removed redundant document type tabs)
 type CreateTabType = 'create' | 'diagrams' | 'forms';
+type DocCollectionView = 'active' | 'archived' | 'trash';
 
 const VALID_TABS: CreateTabType[] = ['create', 'diagrams', 'forms'];
 
 // Tab configuration for TabNavigation component
 const CREATE_TABS: Tab[] = [
-  { id: 'create', label: 'Create', icon: Sparkles },
-  { id: 'diagrams', label: 'Diagrams', icon: Shapes },
-  { id: 'forms', label: 'Forms', icon: ClipboardList },
+  { id: 'create', label: '创建', icon: Sparkles },
+  { id: 'diagrams', label: '绘图', icon: Shapes },
+  { id: 'forms', label: '表单', icon: ClipboardList },
 ];
+const EXPOSED_CREATE_TABS = CREATE_TABS.filter((tab) => {
+  if (tab.id === 'diagrams') return isFeatureExposed('diagrams');
+  if (tab.id === 'forms') return isFeatureExposed('forms');
+  return true;
+});
 
 export function Docs() {
   const navigate = useNavigate();
@@ -354,15 +390,18 @@ export function Docs() {
     setActiveDoc,
     setActiveFolder,
     setViewMode,
-    getDocsInFolder,
     getSubfolders,
     getFilteredDocs,
+    getArchivedDocs,
+    getDeletedDocs,
+    permanentlyDeleteDoc,
     createFolder,
     updateFolder,
     deleteFolder,
   } = useDocsStore();
 
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [docCollectionView, setDocCollectionView] = useState<DocCollectionView>('active');
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -380,6 +419,7 @@ export function Docs() {
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editingFolderName, setEditingFolderName] = useState('');
   const [folderToDelete, setFolderToDelete] = useState<DocFolder | null>(null);
+  const [showClearTrashConfirm, setShowClearTrashConfirm] = useState(false);
 
   // Get platform doc content if viewing one
   const activePlatformDoc = useMemo(() => {
@@ -412,17 +452,24 @@ export function Docs() {
 
   // Get filtered docs based on project context
   const filteredDocs = useMemo(() => getFilteredDocs(), [docs, getFilteredDocs]);
+  const archivedDocs = useMemo(() => getArchivedDocs(), [docs, getArchivedDocs]);
+  const deletedDocs = useMemo(() => getDeletedDocs(), [docs, getDeletedDocs]);
+  const visibleDocs = docCollectionView === 'archived'
+    ? archivedDocs
+    : docCollectionView === 'trash'
+      ? deletedDocs
+      : filteredDocs;
 
   // Get docs at root level
   const rootDocs = useMemo(
-    () => filteredDocs.filter((d) => !d.folderId),
-    [filteredDocs]
+    () => docCollectionView === 'active' ? visibleDocs.filter((d) => !d.folderId) : visibleDocs,
+    [docCollectionView, visibleDocs]
   );
 
   // Get folders at root level
   const rootFolders = useMemo(
-    () => folders.filter((f) => !f.parentId),
-    [folders]
+    () => docCollectionView === 'active' ? folders.filter((f) => !f.parentId) : [],
+    [docCollectionView, folders]
   );
 
   const toggleFolder = (folderId: string) => {
@@ -521,10 +568,12 @@ export function Docs() {
 
   // Render folder tree recursively
   const renderFolderTree = (parentId: string | null): React.ReactNode => {
-    const childFolders = getSubfolders(parentId);
-    const childDocs = getDocsInFolder(parentId).filter((d) =>
-      filteredDocs.includes(d)
-    );
+    const childFolders = docCollectionView === 'active' ? getSubfolders(parentId) : [];
+    const childDocs = visibleDocs
+      .filter((d) => docCollectionView === 'active'
+        ? (parentId === null ? !d.folderId : d.folderId === parentId)
+        : parentId === null)
+      .sort((a, b) => a.order - b.order);
 
     return (
       <>
@@ -539,6 +588,11 @@ export function Docs() {
             onClick={() => setActiveFolder(folder.id)}
             onToggle={() => toggleFolder(folder.id)}
             onContextMenu={(e) => handleFolderContextMenu(e, folder)}
+            onMenuClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              setFolderContextMenu({ x: rect.left, y: rect.bottom + 4, folder });
+            }}
             onEditChange={setEditingFolderName}
             onEditSave={handleSaveEditFolder}
           >
@@ -552,6 +606,7 @@ export function Docs() {
             isActive={activeDocId === doc.id}
             onClick={() => handleDocClick(doc)}
             onContextMenu={(e) => handleContextMenu(e, doc)}
+            onMenuClick={(e) => handleContextMenu(e, doc)}
           />
         ))}
       </>
@@ -564,12 +619,14 @@ export function Docs() {
   return (
     <PageContent page="create">
       {/* Phase 5: Tab Navigation */}
-      <TabNavigation
-        tabs={CREATE_TABS}
-        activeTab={activeTab}
-        onTabChange={(tabId) => handleTabChange(tabId as CreateTabType)}
-        ariaLabel="Create navigation"
-      />
+      {EXPOSED_CREATE_TABS.length > 1 && (
+        <TabNavigation
+          tabs={EXPOSED_CREATE_TABS}
+          activeTab={activeTab}
+          onTabChange={(tabId) => handleTabChange(tabId as CreateTabType)}
+          ariaLabel="文档导航"
+        />
+      )}
 
       {/* Tab Content */}
       <div
@@ -611,24 +668,28 @@ export function Docs() {
                     >
                       <Plus className="w-4 h-4 text-accent-primary" />
                       <FileText className="w-4 h-4 text-accent-primary" />
-                      <span className="text-sm">Document</span>
+                      <span className="text-sm">文档</span>
                     </button>
-                    <button
-                      onClick={() => handleCreateDoc('sheet')}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
-                    >
-                      <Plus className="w-4 h-4 text-accent-primary" />
-                      <Table2 className="w-4 h-4 text-accent-primary" />
-                      <span className="text-sm">Spreadsheet</span>
-                    </button>
-                    <button
-                      onClick={() => handleCreateDoc('slides')}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
-                    >
-                      <Plus className="w-4 h-4 text-accent-purple" />
-                      <Presentation className="w-4 h-4 text-accent-purple" />
-                      <span className="text-sm">Presentation</span>
-                    </button>
+                    {isFeatureExposed('spreadsheets') && (
+                      <button
+                        onClick={() => handleCreateDoc('sheet')}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
+                      >
+                        <Plus className="w-4 h-4 text-accent-primary" />
+                        <Table2 className="w-4 h-4 text-accent-primary" />
+                        <span className="text-sm">电子表格</span>
+                      </button>
+                    )}
+                    {isFeatureExposed('presentations') && (
+                      <button
+                        onClick={() => handleCreateDoc('slides')}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-colors hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
+                      >
+                        <Plus className="w-4 h-4 text-accent-purple" />
+                        <Presentation className="w-4 h-4 text-accent-purple" />
+                        <span className="text-sm">演示文稿</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Sidebar content */}
@@ -646,7 +707,7 @@ export function Docs() {
                         )}
                         <BookOpen className="w-4 h-4" />
                         <span className="text-xs font-medium uppercase tracking-wider">
-                          Platform Docs
+                          平台文档
                         </span>
                       </button>
                       {showPlatformDocs && (
@@ -680,21 +741,54 @@ export function Docs() {
 
                     {/* User Docs Section */}
                     <div>
-                      <div className="flex items-center justify-between px-2 py-1.5 mb-1">
+                      <div className="mb-2 grid grid-cols-3 gap-1 px-1" aria-label="文档状态">
+                        {([
+                          ['active', '文档'],
+                          ['archived', '归档'],
+                          ['trash', '回收站'],
+                        ] as const).map(([view, label]) => (
+                          <button
+                            key={view}
+                            onClick={() => {
+                              setDocCollectionView(view);
+                              setActiveDoc(null);
+                            }}
+                            className={`rounded-md px-2 py-1.5 text-xs transition-colors ${
+                              docCollectionView === view
+                                ? 'bg-accent-primary/10 font-medium text-accent-primary'
+                                : 'text-text-light-secondary hover:bg-surface-light-alt dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated'
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between gap-2 px-2 py-1.5 mb-1">
                         <span className="text-xs font-medium uppercase tracking-wider text-text-light-secondary dark:text-text-dark-secondary">
-                          My Documents
+                          {docCollectionView === 'active' ? '我的文档' : docCollectionView === 'archived' ? '已归档文档' : '文档回收站'}
                         </span>
-                        <button
-                          onClick={() => setIsCreatingFolder(true)}
-                          className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary"
-                          title="Create folder"
-                        >
-                          <FolderPlus className="w-3.5 h-3.5" />
-                        </button>
+                        {docCollectionView === 'active' && (
+                          <button
+                            onClick={() => setIsCreatingFolder(true)}
+                            className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary"
+                            title="创建文件夹"
+                          >
+                            <FolderPlus className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {docCollectionView === 'trash' && deletedDocs.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setShowClearTrashConfirm(true)}
+                            className="rounded px-1.5 py-1 text-xs text-status-error hover:bg-status-error-bg"
+                          >
+                            清空
+                          </button>
+                        )}
                       </div>
 
                       {/* New folder input */}
-                      {isCreatingFolder && (
+                      {isCreatingFolder && docCollectionView === 'active' && (
                         <div className="flex items-center gap-2 px-2 py-1.5 mb-1">
                           <Folder className="w-4 h-4 text-accent-yellow shrink-0" />
                           <input
@@ -711,7 +805,7 @@ export function Docs() {
                                 setNewFolderName('');
                               }
                             }}
-                            placeholder="New folder name..."
+                            placeholder="新文件夹名称…"
                             autoFocus
                             className="flex-1 min-w-0 text-sm bg-transparent border-b border-accent-primary focus:outline-none text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary"
                           />
@@ -725,10 +819,10 @@ export function Docs() {
                         <div className="text-center py-8 px-4">
                           <FileText className="w-10 h-10 mx-auto text-text-light-tertiary dark:text-text-dark-tertiary mb-3" />
                           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                            No documents yet
+                            {docCollectionView === 'active' ? '还没有文档' : docCollectionView === 'archived' ? '没有已归档文档' : '回收站为空'}
                           </p>
                           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                            Click "New" to create a document, spreadsheet, or presentation
+                            {docCollectionView === 'active' ? '点击上方按钮创建第一篇文档' : '通过文档右键菜单可在状态之间移动'}
                           </p>
                         </div>
                       )}
@@ -747,7 +841,7 @@ export function Docs() {
                         }`}
                       >
                         <List className="w-3.5 h-3.5" />
-                        List
+                        列表
                       </button>
                       <button
                         onClick={() => setViewMode('grid')}
@@ -758,7 +852,7 @@ export function Docs() {
                         }`}
                       >
                         <Grid className="w-3.5 h-3.5" />
-                        Grid
+                        网格
                       </button>
                     </div>
                   </div>
@@ -776,7 +870,7 @@ export function Docs() {
                         <button
                           onClick={() => navigate('/create')}
                           className="p-1.5 rounded-lg hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated transition-colors"
-                          aria-label="Back to create"
+                          aria-label="返回创建"
                         >
                           <ArrowLeft className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
                         </button>
@@ -785,7 +879,7 @@ export function Docs() {
                             {activePlatformDoc.title}
                           </h1>
                           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                            Platform Documentation
+                            平台文档资料
                           </p>
                         </div>
                       </div>
@@ -797,7 +891,7 @@ export function Docs() {
                         fallback={
                           <div className="flex items-center justify-center py-12">
                             <div className="animate-pulse text-text-light-tertiary dark:text-text-dark-tertiary">
-                              Loading documentation...
+                              正在加载文档…
                             </div>
                           </div>
                         }
@@ -814,7 +908,7 @@ export function Docs() {
                         <button
                           onClick={() => navigate('/create')}
                           className="p-1.5 rounded-lg hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated transition-colors"
-                          aria-label="Back to create"
+                          aria-label="返回创建"
                         >
                           <ArrowLeft className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
                         </button>
@@ -842,7 +936,7 @@ export function Docs() {
                         fallback={
                           <div className="flex items-center justify-center h-64">
                             <div className="animate-pulse text-text-light-tertiary dark:text-text-dark-tertiary">
-                              Loading editor...
+                              正在加载编辑器…
                             </div>
                           </div>
                         }
@@ -883,15 +977,12 @@ export function Docs() {
                       <div className="text-center p-8 max-w-lg">
                         <div className="flex justify-center gap-4 mb-6">
                           <FileText className="w-12 h-12 text-accent-primary opacity-80" />
-                          <Table2 className="w-12 h-12 text-accent-secondary opacity-80" />
-                          <Presentation className="w-12 h-12 text-accent-purple opacity-80" />
                         </div>
                         <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-3">
-                          Documents, Spreadsheets & Presentations
+                          本地文档
                         </h2>
                         <p className="text-text-light-secondary dark:text-text-dark-secondary">
-                          Create professional documents, analyze data with spreadsheets, and
-                          build stunning presentations - all stored locally with full privacy.
+                          创建并整理与任务、项目相关的文档。所有内容均保存在当前设备。
                         </p>
                       </div>
                     </div>
@@ -936,9 +1027,21 @@ export function Docs() {
                 isOpen={folderToDelete !== null}
                 onClose={() => setFolderToDelete(null)}
                 onConfirm={confirmDeleteFolder}
-                title="Delete Folder"
-                message={folderToDelete ? `Delete folder "${folderToDelete.name}"? Documents inside will be moved to the parent folder.` : ''}
-                confirmText="Delete"
+                title="删除文件夹"
+                message={folderToDelete ? `删除文件夹“${folderToDelete.name}”？文件夹内的文档将移至上级文件夹。` : ''}
+                confirmText="删除"
+                variant="danger"
+              />
+              <ConfirmDialog
+                isOpen={showClearTrashConfirm}
+                onClose={() => setShowClearTrashConfirm(false)}
+                onConfirm={() => {
+                  deletedDocs.forEach((doc) => permanentlyDeleteDoc(doc.id));
+                  setShowClearTrashConfirm(false);
+                }}
+                title="清空文档回收站"
+                message={`永久删除回收站中的 ${deletedDocs.length} 篇文档？此操作无法恢复。`}
+                confirmText="永久删除全部"
                 variant="danger"
               />
             </div>

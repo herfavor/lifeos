@@ -1,10 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Copy, Check, Settings2 } from 'lucide-react';
 import { useCalendarStore } from '../stores/useCalendarStore';
 import { PageContent } from '../components/PageContent';
-import { PageHeader } from '../components/PageHeader';
 
-interface AvailabilitySettings {
+export interface AvailabilitySettings {
   workingHoursStart: number; // 0-23
   workingHoursEnd: number;   // 0-23
   slotDuration: 30 | 60;    // minutes
@@ -16,12 +15,37 @@ interface TimeSlot {
   isFree: boolean;
 }
 
-const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAYS_OF_WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+const AVAILABILITY_SETTINGS_KEY = 'lifeos-availability-settings';
+const DEFAULT_AVAILABILITY_SETTINGS: AvailabilitySettings = {
+  workingHoursStart: 9,
+  workingHoursEnd: 17,
+  slotDuration: 60,
+};
+
+export function normalizeAvailabilitySettings(value: unknown): AvailabilitySettings {
+  if (!value || typeof value !== 'object') return DEFAULT_AVAILABILITY_SETTINGS;
+  const candidate = value as Partial<AvailabilitySettings>;
+  const start = Number.isInteger(candidate.workingHoursStart) ? candidate.workingHoursStart! : 9;
+  const end = Number.isInteger(candidate.workingHoursEnd) ? candidate.workingHoursEnd! : 17;
+  const slotDuration = candidate.slotDuration === 30 ? 30 : 60;
+  if (start < 0 || end > 23 || start >= end) return DEFAULT_AVAILABILITY_SETTINGS;
+  return { workingHoursStart: start, workingHoursEnd: end, slotDuration };
+}
+
+function loadAvailabilitySettings(): AvailabilitySettings {
+  try {
+    const raw = localStorage.getItem(AVAILABILITY_SETTINGS_KEY);
+    return raw ? normalizeAvailabilitySettings(JSON.parse(raw)) : DEFAULT_AVAILABILITY_SETTINGS;
+  } catch {
+    return DEFAULT_AVAILABILITY_SETTINGS;
+  }
+}
 
 function formatHour(hour: number): string {
   const h = hour % 12 || 12;
-  const ampm = hour < 12 ? 'AM' : 'PM';
-  return `${h}${ampm}`;
+  const ampm = hour < 12 ? '上午' : '下午';
+  return `${ampm} ${h}`;
 }
 
 function timeToMinutes(time: string): number {
@@ -37,13 +61,13 @@ function minutesToTime(minutes: number): string {
 
 export function Availability() {
   const events = useCalendarStore((s) => s.events);
-  const [settings, setSettings] = useState<AvailabilitySettings>({
-    workingHoursStart: 9,
-    workingHoursEnd: 17,
-    slotDuration: 60,
-  });
+  const [settings, setSettings] = useState<AvailabilitySettings>(loadAvailabilitySettings);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(AVAILABILITY_SETTINGS_KEY, JSON.stringify(settings));
+  }, [settings]);
 
   // Compute next 7 days starting from today
   const next7Days = useMemo(() => {
@@ -106,14 +130,14 @@ export function Availability() {
 
   // Generate shareable text
   const generateShareableText = (): string => {
-    const lines = ['My Availability (next 7 days)', ''];
+    const lines = ['我的空闲时间（未来 7 天）', ''];
 
     dailySlots.forEach(({ date, slots }) => {
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      const dayName = date.toLocaleDateString('zh-CN', { weekday: 'long', month: 'short', day: 'numeric' });
       const freeSlots = slots.filter((s) => s.isFree);
 
       if (freeSlots.length === 0) {
-        lines.push(`${dayName}: No availability`);
+        lines.push(`${dayName}：无空闲时间`);
       } else {
         // Merge consecutive free slots
         const merged: Array<{ start: string; end: string }> = [];
@@ -150,22 +174,20 @@ export function Availability() {
   }, [settings.workingHoursStart, settings.workingHoursEnd]);
 
   return (
-    <>
-      <PageHeader />
       <PageContent page="availability" variant="default">
         <div className="space-y-6">
           {/* Controls */}
           <div className="flex items-center justify-between">
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Showing free time blocks for the next 7 days based on your calendar events.
+              根据你的日历事件显示未来 7 天的空闲时间段。
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:bg-surface-light-tertiary dark:hover:bg-surface-dark-secondary transition-colors text-text-light-secondary dark:text-text-dark-secondary"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark transition-colors text-text-light-secondary dark:text-text-dark-secondary"
               >
                 <Settings2 className="w-4 h-4" />
-                Settings
+                设置
               </button>
               <button
                 onClick={handleCopyLink}
@@ -174,12 +196,12 @@ export function Availability() {
                 {copied ? (
                   <>
                     <Check className="w-4 h-4" />
-                    Copied
+                    已复制
                   </>
                 ) : (
                   <>
                     <Copy className="w-4 h-4" />
-                    Copy Availability
+                    复制空闲时段
                   </>
                 )}
               </button>
@@ -189,41 +211,41 @@ export function Availability() {
           {/* Settings Panel */}
           {showSettings && (
             <div className="p-4 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark space-y-4">
-              <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">Settings</h3>
+              <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">设置</h3>
               <div className="flex items-center gap-6">
                 <div className="space-y-1">
-                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Working Hours Start</label>
+                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">工作开始时间</label>
                   <select
                     value={settings.workingHoursStart}
                     onChange={(e) => setSettings((s) => ({ ...s, workingHoursStart: Number(e.target.value) }))}
                     className="block w-full px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
                   >
-                    {Array.from({ length: 24 }, (_, i) => (
-                      <option key={i} value={i}>{formatHour(i)}</option>
+                    {Array.from({ length: 23 }, (_, i) => (
+                      <option key={i} value={i} disabled={i >= settings.workingHoursEnd}>{formatHour(i)}</option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Working Hours End</label>
+                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">工作结束时间</label>
                   <select
                     value={settings.workingHoursEnd}
                     onChange={(e) => setSettings((s) => ({ ...s, workingHoursEnd: Number(e.target.value) }))}
                     className="block w-full px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
                   >
-                    {Array.from({ length: 24 }, (_, i) => (
-                      <option key={i} value={i}>{formatHour(i)}</option>
+                    {Array.from({ length: 23 }, (_, i) => i + 1).map((hour) => (
+                      <option key={hour} value={hour} disabled={hour <= settings.workingHoursStart}>{formatHour(hour)}</option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Slot Duration</label>
+                  <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">时段时长</label>
                   <select
                     value={settings.slotDuration}
                     onChange={(e) => setSettings((s) => ({ ...s, slotDuration: Number(e.target.value) as 30 | 60 }))}
                     className="block w-full px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
                   >
-                    <option value={30}>30 min</option>
-                    <option value={60}>1 hour</option>
+                    <option value={30}>30 分钟</option>
+                    <option value={60}>1 小时</option>
                   </select>
                 </div>
               </div>
@@ -237,7 +259,7 @@ export function Availability() {
                 <thead>
                   <tr>
                     <th className="p-3 text-left text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary border-b border-border-light dark:border-border-dark w-16">
-                      Time
+                      时间
                     </th>
                     {next7Days.map((day, i) => {
                       const isToday = day.toDateString() === new Date().toDateString();
@@ -283,14 +305,14 @@ export function Availability() {
                                   ? 'bg-accent-green/15 dark:bg-accent-green/10'
                                   : 'bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/30'
                               }`}
-                              title={slot ? `${slot.start} - ${slot.end}: ${slot.isFree ? 'Free' : 'Busy'}` : ''}
+                              title={slot ? `${slot.start} - ${slot.end}：${slot.isFree ? '空闲' : '忙碌'}` : ''}
                             >
                               <div className={`text-center text-[10px] font-medium ${
                                 slot?.isFree
                                   ? 'text-accent-green'
                                   : 'text-text-light-tertiary dark:text-text-dark-tertiary'
                               }`}>
-                                {slot?.isFree ? 'Free' : 'Busy'}
+                                {slot?.isFree ? '空闲' : '忙碌'}
                               </div>
                             </td>
                           );
@@ -308,9 +330,9 @@ export function Availability() {
                                       ? 'bg-accent-green/15 dark:bg-accent-green/10 text-accent-green'
                                       : 'bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/30 text-text-light-tertiary dark:text-text-dark-tertiary'
                                   } ${si === 0 ? 'border-b border-border-light/20 dark:border-border-dark/20' : ''}`}
-                                  title={`${slot.start} - ${slot.end}: ${slot.isFree ? 'Free' : 'Busy'}`}
+                                  title={`${slot.start} - ${slot.end}：${slot.isFree ? '空闲' : '忙碌'}`}
                                 >
-                                  {slot.isFree ? 'Free' : 'Busy'}
+                                  {slot.isFree ? '空闲' : '忙碌'}
                                 </div>
                               ))}
                             </div>
@@ -328,16 +350,15 @@ export function Availability() {
           <div className="flex items-center gap-6 text-xs text-text-light-secondary dark:text-text-dark-secondary">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded bg-accent-green/20 border border-accent-green/30" />
-              <span>Free</span>
+              <span>空闲</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded bg-surface-light-secondary dark:bg-surface-dark-secondary border border-border-light dark:border-border-dark" />
-              <span>Busy</span>
+              <span>忙碌</span>
             </div>
           </div>
         </div>
       </PageContent>
-    </>
   );
 }
 

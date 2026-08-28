@@ -7,7 +7,7 @@
  * - Assets folder for images/attachments
  *
  * Converts Notion-specific markdown (callouts, toggles, embeds)
- * to standard markdown for NeumanOS.
+ * to standard markdown for LifeOS.
  */
 
 import { logger } from '../logger';
@@ -51,7 +51,7 @@ function convertNotionMarkdown(content: string): string {
   // Convert Notion callouts: > 💡 text → > **Note:** text
   result = result.replace(
     /^>\s*(?:🔴|🟠|🟡|🟢|🔵|🟣|⚪|⚫|💡|📌|⚠️|❗|❓|✅|📝|🔗)\s*/gmu,
-    '> **Note:** '
+    '> **笔记：** '
   );
 
   // Convert Notion toggle syntax: <details><summary>Title</summary> → ## Title
@@ -133,7 +133,7 @@ function isTaskDatabase(headers: string[]): boolean {
 }
 
 /**
- * Map Notion/generic priority to NeumanOS priority
+ * Map Notion/generic priority to LifeOS priority
  */
 function mapPriority(value: string): 'low' | 'medium' | 'high' {
   const lower = value.toLowerCase().trim();
@@ -280,7 +280,7 @@ export async function importNotionZip(
 
   try {
     // For ZIP files, we need to use a library or the File System Access API
-    // Since NeumanOS is a browser app, we'll handle both ZIP and folder uploads
+    // Since LifeOS is a browser app, we'll handle both ZIP and folder uploads
     // For ZIP: extract entries using a lightweight approach
     const arrayBuffer = await file.arrayBuffer();
     const files = await extractZipEntries(arrayBuffer);
@@ -319,17 +319,17 @@ export async function importNotionZip(
         // Skip asset files (images, etc.) - they're referenced but not stored
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        errors.push(`Failed to parse ${entry.name}: ${msg}`);
+        errors.push(`解析 ${entry.name} 失败：${msg}`);
         log.warn('Failed to parse Notion entry', { file: entry.name, error: msg });
       }
     }
 
     if (entries.length === 0) {
-      warnings.push('No importable files found in the ZIP. Expected .md or .csv files.');
+      warnings.push('在 ZIP 中未找到可导入的文件。应为 .md 或 .csv 文件。');
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    errors.push(`Failed to read ZIP file: ${msg}`);
+    errors.push(`读取 ZIP 文件失败：${msg}`);
     log.error('Notion ZIP import failed', { error: msg });
   }
 
@@ -376,7 +376,7 @@ export async function importNotionFiles(
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      errors.push(`Failed to parse ${file.name}: ${msg}`);
+      errors.push(`解析 ${file.name} 失败：${msg}`);
     }
   }
 

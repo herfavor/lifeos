@@ -18,42 +18,42 @@ test.describe('Focus Mode', () => {
     await expect(page.getByText(/\d{2}:\d{2}/)).toBeVisible();
 
     // Exit button should be available
-    await expect(page.locator('button[aria-label="Exit Focus Mode"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="退出专注模式"]')).toBeVisible();
 
     // Reset button should be available
-    await expect(page.locator('button[aria-label="Reset session"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="重置专注时段"]')).toBeVisible();
   });
 
   test('can start and pause timer', async ({ page }) => {
     // Initially should show start button
-    const startBtn = page.locator('button[aria-label="Start timer"]');
+    const startBtn = page.locator('button[aria-label="启动计时器"]');
     await expect(startBtn).toBeVisible();
 
     // Start the timer
     await startBtn.click();
 
     // Should now show pause button
-    const pauseBtn = page.locator('button[aria-label="Pause timer"]');
+    const pauseBtn = page.locator('button[aria-label="暂停计时器"]');
     await expect(pauseBtn).toBeVisible();
 
     // Recording indicator should appear
-    await expect(page.getByText('Recording')).toBeVisible();
+    await expect(page.getByText('记录中')).toBeVisible();
 
     // Pause the timer
     await pauseBtn.click();
 
     // Should show start button again
-    await expect(page.locator('button[aria-label="Start timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="启动计时器"]')).toBeVisible();
   });
 
   test('can toggle timer with Space key', async ({ page }) => {
     // Press Space to start
     await page.keyboard.press('Space');
-    await expect(page.locator('button[aria-label="Pause timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="暂停计时器"]')).toBeVisible();
 
     // Press Space to pause
     await page.keyboard.press('Space');
-    await expect(page.locator('button[aria-label="Start timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="启动计时器"]')).toBeVisible();
   });
 
   test('can reset session with R key', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('Focus Mode', () => {
   });
 
   test('can exit focus mode with exit button', async ({ page }) => {
-    await page.locator('button[aria-label="Exit Focus Mode"]').click();
+    await page.locator('button[aria-label="退出专注模式"]').click();
 
     // Should navigate away from /focus
     await expect(page).not.toHaveURL(/\/focus/);
@@ -84,11 +84,11 @@ test.describe('Focus Mode', () => {
 
   test('reset button resets the timer', async ({ page }) => {
     // Start the timer
-    await page.locator('button[aria-label="Start timer"]').click();
+    await page.locator('button[aria-label="启动计时器"]').click();
     await page.waitForTimeout(1500);
 
     // Click reset
-    await page.locator('button[aria-label="Reset session"]').click();
+    await page.locator('button[aria-label="重置专注时段"]').click();
 
     // Timer should reset
     await expect(page.getByText('00:00')).toBeVisible();

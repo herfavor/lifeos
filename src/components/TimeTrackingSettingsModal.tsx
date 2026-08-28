@@ -48,24 +48,24 @@ export function TimeTrackingSettingsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Time Tracking Settings"
+      title="时间记录设置"
       maxWidth="sm"
     >
       <div className="space-y-4">
         {/* Time Display Section */}
         <div>
           <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-            Time Display
+            时间显示
           </h4>
           <div className="space-y-3 pl-1">
             {/* Time Format (Global) */}
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  Time format
+                  时间格式
                 </label>
                 <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                  App-wide setting
+                  全局设置
                 </p>
               </div>
               <select
@@ -73,15 +73,15 @@ export function TimeTrackingSettingsModal({
                 onChange={(e) => setTimeFormat(e.target.value as TimeFormat)}
                 className="px-2 py-1 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="12h">12-hour (1:30 PM)</option>
-                <option value="24h">24-hour (13:30)</option>
+                <option value="12h">12 小时制（下午 1:30）</option>
+                <option value="24h">24 小时制（13:30）</option>
               </select>
             </div>
 
             {/* Show Seconds */}
             <div className="flex items-center justify-between">
               <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Show seconds
+                显示秒数
               </label>
               <button
                 onClick={() => setShowSeconds(!showSeconds)}
@@ -106,13 +106,13 @@ export function TimeTrackingSettingsModal({
         {/* Panel Display Section */}
         <div className="pt-2 border-t border-border-light dark:border-border-dark">
           <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-            Panel Display
+            面板显示
           </h4>
           <div className="space-y-3 pl-1">
             {/* Entry Density */}
             <div className="flex items-center justify-between">
               <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Entry density
+                记录密度
               </label>
               <select
                 value={entryDisplayDensity}
@@ -121,16 +121,16 @@ export function TimeTrackingSettingsModal({
                 }
                 className="px-2 py-1 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="compact">Compact</option>
-                <option value="normal">Normal</option>
-                <option value="comfortable">Comfortable</option>
+                <option value="compact">紧凑</option>
+                <option value="normal">常规</option>
+                <option value="comfortable">宽松</option>
               </select>
             </div>
 
             {/* Visible Entries */}
             <div className="flex items-center justify-between">
               <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Max visible entries
+                最大可见记录数
               </label>
               <select
                 value={visibleEntries}
@@ -139,7 +139,7 @@ export function TimeTrackingSettingsModal({
               >
                 {[3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                   <option key={n} value={n}>
-                    {n} entries
+                    {n} 条记录
                   </option>
                 ))}
               </select>
@@ -148,7 +148,7 @@ export function TimeTrackingSettingsModal({
             {/* Show Mini Summary */}
             <div className="flex items-center justify-between">
               <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Show today's total
+                显示今日总计
               </label>
               <button
                 onClick={() => setShowMiniSummary(!showMiniSummary)}
@@ -172,10 +172,10 @@ export function TimeTrackingSettingsModal({
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  Auto-expand for new entries
+                  新记录自动展开
                 </label>
                 <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                  Disabled after manual resize
+                  手动调整大小后禁用
                 </p>
               </div>
               <button
@@ -204,13 +204,13 @@ export function TimeTrackingSettingsModal({
             onClick={handleResetToDefaults}
             className="px-3 py-1.5 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
           >
-            Reset to defaults
+            恢复默认设置
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-accent-primary text-white dark:text-dark-background rounded-button text-sm font-medium hover:opacity-90 transition-opacity"
+            className="px-4 py-1.5 bg-accent-primary text-white rounded-button text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Done
+            完成
           </button>
         </div>
       </div>

@@ -138,14 +138,14 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
     const diff = now.getTime() - new Date(date).getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
+    if (days === 0) return '今天';
+    if (days === 1) return '昨天';
+    if (days < 7) return `${days} 天前`;
     return new Date(date).toLocaleDateString();
   };
 
   // First line of content for preview
-  const preview = note.contentText.split('\n')[0] || 'No content';
+  const preview = note.contentText.split('\n')[0] || '无内容';
 
   return (
     <div
@@ -188,7 +188,7 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
       {exportSuccess && (
         <div className="absolute -top-8 left-0 right-0 bg-accent-green text-white text-xs py-1 px-2 rounded shadow-lg z-10 text-center flex items-center justify-center gap-1">
           <Check className="w-3 h-3" />
-          Exported: {exportSuccess}
+          已导出：{exportSuccess}
         </div>
       )}
 
@@ -207,7 +207,7 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
               e.stopPropagation();
               onToggleSelection?.(note.id);
             }}
-            aria-label={isSelected ? `Deselect ${note.title}` : `Select ${note.title}`}
+            aria-label={isSelected ? `取消选择${note.title}` : `选择${note.title}`}
           >
             {isSelected ? (
               <CheckCircle2 className="w-5 h-5 fill-accent-primary" />
@@ -225,7 +225,7 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
                 : 'text-text-light-tertiary dark:text-text-dark-tertiary'
             }`}
             role="button"
-            aria-label={`Drag ${note.title || 'note'} to move`}
+            aria-label={`拖动${note.title || '笔记'}以移动`}
             tabIndex={0}
             onClick={(e) => e.stopPropagation()}
           >
@@ -233,16 +233,16 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
           </span>
         ) : null}
 
-        {/* Vertical action column - progressive disclosure */}
-        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-100 shrink-0 w-7">
+        {/* Vertical action column - progressive disclosure; revealed on hover, keyboard focus and touch */}
+        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-100 shrink-0 w-7">
           <button
             onClick={(e) => {
               e.stopPropagation();
               exportNoteToMarkdown(note);
             }}
             className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-            title="Export to Markdown"
-            aria-label="Export to Markdown"
+            title="导出为 Markdown"
+            aria-label="导出为 Markdown"
           >
             <Download className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -250,8 +250,8 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
             onClick={handlePDFExport}
             disabled={isExporting}
             className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={isExporting ? 'Exporting...' : 'Export to PDF'}
-            aria-label={isExporting ? 'Exporting to PDF' : 'Export to PDF'}
+            title={isExporting ? '导出中…' : '导出为 PDF'}
+            aria-label={isExporting ? '正在导出为 PDF' : '导出为 PDF'}
           >
             {isExporting ? (
               <Loader2 className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary animate-spin" />
@@ -265,8 +265,8 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
               toggleFavorite(note.id);
             }}
             className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-            title={note.isFavorite ? 'Unfavorite' : 'Favorite'}
-            aria-label={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            title={note.isFavorite ? '取消收藏' : '收藏'}
+            aria-label={note.isFavorite ? '从收藏中移除' : '添加到收藏'}
           >
             <Star
               className={`w-4 h-4 transition-colors ${
@@ -282,8 +282,8 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
               togglePin(note.id);
             }}
             className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-            title={note.isPinned ? 'Unpin' : 'Pin'}
-            aria-label={note.isPinned ? 'Unpin note' : 'Pin note'}
+            title={note.isPinned ? '取消置顶' : '置顶'}
+            aria-label={note.isPinned ? '取消置顶笔记' : '置顶笔记'}
           >
             <Pin
               className={`w-4 h-4 ${
@@ -299,8 +299,8 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
               setShowDeleteDialog(true);
             }}
             className="p-1.5 hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded text-accent-red transition-colors"
-            title="Delete"
-            aria-label="Delete note"
+            title="删除"
+            aria-label="删除笔记"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -348,7 +348,7 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
               })}
               {note.tags.length > 3 && (
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary px-1">
-                  +{note.tags.length - 3} more
+                  +{note.tags.length - 3} 更多
                 </span>
               )}
             </div>
@@ -370,8 +370,9 @@ const NoteListItemComponent: React.FC<NoteListItemProps> = ({
             deleteNote(note.id);
             setShowDeleteDialog(false);
           }}
-          title="Delete Note"
-          message={`Are you sure you want to delete "${note.title}"? This action cannot be undone.`}
+          title="删除笔记"
+          message={`确定将“${note.title}”移到回收站吗？之后仍可恢复。`}
+          confirmText="移到回收站"
           variant="danger"
         />
       )}

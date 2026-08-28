@@ -10,21 +10,21 @@ import { X, Trash2, Save } from 'lucide-react';
 import type { Risk, RiskCategory, RiskStatus } from '../../types';
 
 const CATEGORIES: { value: RiskCategory; label: string }[] = [
-  { value: 'technical', label: 'Technical' },
-  { value: 'schedule', label: 'Schedule' },
-  { value: 'budget', label: 'Budget' },
-  { value: 'resource', label: 'Resource' },
-  { value: 'external', label: 'External' },
+  { value: 'technical', label: '技术' },
+  { value: 'schedule', label: '进度' },
+  { value: 'budget', label: '预算' },
+  { value: 'resource', label: '资源' },
+  { value: 'external', label: '外部' },
 ];
 
 const STATUSES: { value: RiskStatus; label: string }[] = [
-  { value: 'identified', label: 'Identified' },
-  { value: 'mitigating', label: 'Mitigating' },
-  { value: 'closed', label: 'Closed' },
+  { value: 'identified', label: '已识别' },
+  { value: 'mitigating', label: '缓解中' },
+  { value: 'closed', label: '已关闭' },
 ];
 
-const PROBABILITY_LABELS = ['', 'Rare', 'Unlikely', 'Possible', 'Likely', 'Certain'];
-const IMPACT_LABELS = ['', 'Negligible', 'Minor', 'Moderate', 'Major', 'Catastrophic'];
+const PROBABILITY_LABELS = ['', '罕见', '不太可能', '可能', '很可能', '几乎确定'];
+const IMPACT_LABELS = ['', '可忽略', '轻微', '中等', '重大', '灾难性'];
 
 interface RiskDetailPanelProps {
   risk: Risk | null;
@@ -117,14 +117,14 @@ export function RiskDetailPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {isEdit ? 'Edit Risk' : 'Add Risk'}
+            {isEdit ? '编辑风险' : '添加风险'}
           </h2>
           <div className="flex items-center gap-2">
             {isEdit && onDelete && (
               <button
                 onClick={() => onDelete(risk.id)}
                 className="p-2 text-status-error hover:bg-status-error/10 rounded-lg transition-colors"
-                title="Delete risk"
+                title="删除风险"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -142,33 +142,33 @@ export function RiskDetailPanel({
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Title */}
           <div>
-            <label className={labelClass}>Title</label>
+            <label className={labelClass}>标题</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className={inputClass}
-              placeholder="Risk title"
+              placeholder="风险标题"
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className={labelClass}>Description</label>
+            <label className={labelClass}>描述</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               className={`${inputClass} resize-none`}
               rows={3}
-              placeholder="Describe the risk..."
+              placeholder="描述该风险…"
             />
           </div>
 
           {/* Category + Status row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelClass}>Category</label>
+              <label className={labelClass}>类别</label>
               <select
                 value={form.category}
                 onChange={(e) =>
@@ -184,7 +184,7 @@ export function RiskDetailPanel({
               </select>
             </div>
             <div>
-              <label className={labelClass}>Status</label>
+              <label className={labelClass}>状态</label>
               <select
                 value={form.status}
                 onChange={(e) =>
@@ -204,7 +204,7 @@ export function RiskDetailPanel({
           {/* Probability */}
           <div>
             <label className={labelClass}>
-              Probability: {form.probability} - {PROBABILITY_LABELS[form.probability]}
+              概率：{form.probability} - {PROBABILITY_LABELS[form.probability]}
             </label>
             <input
               type="range"
@@ -220,15 +220,15 @@ export function RiskDetailPanel({
               className="w-full accent-accent-primary"
             />
             <div className="flex justify-between text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              <span>Rare</span>
-              <span>Certain</span>
+              <span>罕见</span>
+              <span>几乎确定</span>
             </div>
           </div>
 
           {/* Impact */}
           <div>
             <label className={labelClass}>
-              Impact: {form.impact} - {IMPACT_LABELS[form.impact]}
+              影响：{form.impact} - {IMPACT_LABELS[form.impact]}
             </label>
             <input
               type="range"
@@ -244,25 +244,25 @@ export function RiskDetailPanel({
               className="w-full accent-accent-primary"
             />
             <div className="flex justify-between text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              <span>Negligible</span>
-              <span>Catastrophic</span>
+              <span>可忽略</span>
+              <span>灾难性</span>
             </div>
           </div>
 
           {/* Risk Score display */}
           <div className="p-3 bg-surface-light dark:bg-surface-dark rounded-lg text-center">
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Risk Score
+              风险评分
             </span>
             <p className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}</p>
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              {score >= 15 ? 'High' : score >= 8 ? 'Medium' : 'Low'}
+              {score >= 15 ? '高' : score >= 8 ? '中' : '低'}
             </span>
           </div>
 
           {/* Mitigation Plan */}
           <div>
-            <label className={labelClass}>Mitigation Strategy</label>
+            <label className={labelClass}>缓解策略</label>
             <textarea
               value={form.mitigationPlan}
               onChange={(e) =>
@@ -270,19 +270,19 @@ export function RiskDetailPanel({
               }
               className={`${inputClass} resize-none`}
               rows={3}
-              placeholder="How will this risk be mitigated?"
+              placeholder="如何缓解该风险？"
             />
           </div>
 
           {/* Owner */}
           <div>
-            <label className={labelClass}>Owner</label>
+            <label className={labelClass}>负责人</label>
             <input
               type="text"
               value={form.owner}
               onChange={(e) => setForm({ ...form, owner: e.target.value })}
               className={inputClass}
-              placeholder="Risk owner"
+              placeholder="风险负责人"
             />
           </div>
         </form>
@@ -295,7 +295,7 @@ export function RiskDetailPanel({
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-button font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4" />
-            {isEdit ? 'Update Risk' : 'Add Risk'}
+            {isEdit ? '更新风险' : '添加风险'}
           </button>
         </div>
       </div>

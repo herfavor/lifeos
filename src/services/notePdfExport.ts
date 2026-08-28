@@ -131,7 +131,7 @@ export async function exportNoteToPDF(
     }
   } catch (error) {
     console.error('Failed to export note to PDF:', error);
-    throw new Error('Failed to export note to PDF');
+    throw new Error('导出笔记为 PDF 失败');
   }
 }
 

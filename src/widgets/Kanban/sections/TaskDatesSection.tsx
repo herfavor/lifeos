@@ -48,7 +48,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
       {!isMilestone && (
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Start Date
+            开始日期
           </label>
           {isEditingStartDate ? (
             <NaturalLanguageDateInput
@@ -60,7 +60,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
               }}
               label=""
               autoFocus
-              placeholder="Type 'tomorrow', 'next Monday'..."
+              placeholder="输入日期（例如 “tomorrow”、“next Monday”）"
             />
           ) : (
             <button
@@ -78,14 +78,14 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
                       setStartDate(null);
                       onFieldBlur('startDate', null);
                     }}
-                    className="opacity-0 group-hover:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
-                    aria-label="Clear start date"
+                    className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
+                    aria-label="清除开始日期"
                   >
                     ✕
                   </button>
                 </>
               ) : (
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">+ Add start date</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">+ 添加开始日期</span>
               )}
             </button>
           )}
@@ -95,7 +95,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
       {/* Due Date / Milestone Date */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          {isMilestone ? 'Milestone Date' : 'Due Date'}
+          {isMilestone ? '里程碑日期' : '截止日期'}
         </label>
         {isEditingDueDate ? (
           <NaturalLanguageDateInput
@@ -107,7 +107,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
             }}
             label=""
             autoFocus
-            placeholder="Type 'tomorrow', 'next Friday'..."
+            placeholder="输入日期（例如 “tomorrow”、“next Friday”）"
           />
         ) : (
           <button
@@ -136,15 +136,15 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
                     if (isOverdue) {
                       return (
                         <span className="ml-2 text-xs text-accent-red">
-                          overdue by {Math.abs(days)} day{Math.abs(days) !== 1 ? 's' : ''}
+                          逾期 {Math.abs(days)} 天
                         </span>
                       );
                     }
                     if (isDueToday) {
-                      return <span className="ml-2 text-xs text-accent-orange">due today</span>;
+                      return <span className="ml-2 text-xs text-accent-orange">今天到期</span>;
                     }
                     if (days > 0 && days <= 7) {
-                      return <span className="ml-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">{days} day{days !== 1 ? 's' : ''} from now</span>;
+                      return <span className="ml-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">{days} 天后</span>;
                     }
                     return null;
                   })()}
@@ -155,14 +155,14 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
                     setDueDate(null);
                     onFieldBlur('dueDate', null);
                   }}
-                  className="opacity-0 group-hover:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
-                  aria-label="Clear due date"
+                  className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
+                  aria-label="清除截止日期"
                 >
                   ✕
                 </button>
               </>
             ) : (
-              <span className="text-text-light-secondary dark:text-text-dark-secondary">+ Add due date</span>
+              <span className="text-text-light-secondary dark:text-text-dark-secondary">+ 添加截止日期</span>
             )}
           </button>
         )}

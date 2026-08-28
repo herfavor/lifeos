@@ -55,11 +55,11 @@ const formatUploadDate = (dateString: string): string => {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-  return date.toLocaleDateString();
+  if (diffMins < 1) return '刚刚';
+  if (diffMins < 60) return `${diffMins} 分钟前`;
+  if (diffHours < 24) return `${diffHours} 小时前`;
+  if (diffDays < 7) return `${diffDays} 天前`;
+  return date.toLocaleDateString('zh-CN');
 };
 
 /**
@@ -116,8 +116,8 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
     return (
       <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
         <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No attachments yet</p>
-        <p className="text-xs mt-1">Upload files using the form above</p>
+        <p className="text-sm">暂无附件</p>
+        <p className="text-xs mt-1">请使用上方表单上传文件</p>
       </div>
     );
   }
@@ -156,8 +156,8 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
                   <button
                     onClick={() => handlePreview(attachment)}
                     className="p-1.5 rounded hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue transition-colors"
-                    title={isPdf ? 'Open in new tab' : 'Preview'}
-                    aria-label={isPdf ? 'Open in new tab' : 'Preview'}
+                    title={isPdf ? '在新标签页中打开' : '预览'}
+                    aria-label={isPdf ? '在新标签页中打开' : '预览'}
                   >
                     <Eye className="w-4 h-4" />
                   </button>
@@ -167,8 +167,8 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
                 <button
                   onClick={() => handleDownload(attachment)}
                   className="p-1.5 rounded hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue transition-colors"
-                  title="Download"
-                  aria-label="Download"
+                  title="下载"
+                  aria-label="下载"
                 >
                   <Download className="w-4 h-4" />
                 </button>
@@ -181,8 +181,8 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
                       ? 'bg-status-error text-white'
                       : 'hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error'
                   }`}
-                  title={confirmDelete === attachment.id ? 'Click again to confirm' : 'Delete'}
-                  aria-label={confirmDelete === attachment.id ? 'Click again to confirm' : 'Delete'}
+                  title={confirmDelete === attachment.id ? '再次点击确认删除' : '删除'}
+                  aria-label={confirmDelete === attachment.id ? '再次点击确认删除' : '删除'}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

@@ -73,13 +73,13 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
     try {
       const { note, saveResult } = saveMessageToDailyNote(message, effectivePromptMessage);
       if (saveResult.skipped) {
-        toast.info(`Already saved to "${note.title}"`);
+        toast.info(`该消息已保存到 "${note.title}"`);
       } else {
-        toast.success(`Saved to "${note.title}"`);
+        toast.success(`已保存到 "${note.title}"`);
       }
       onSaveComplete();
     } catch (error) {
-      toast.error('Failed to save to daily notes');
+      toast.error('保存到每日笔记失败');
       console.error('Failed to save to daily notes:', error);
     } finally {
       setIsSaving(false);
@@ -97,13 +97,13 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
         position: 'append',
       });
       if (result.skipped) {
-        toast.info(`Already saved to "${noteTitle}"`);
+        toast.info(`该消息已保存到 "${noteTitle}"`);
       } else {
-        toast.success(`Saved to "${noteTitle}"`);
+        toast.success(`已保存到 "${noteTitle}"`);
       }
       onSaveComplete();
     } catch (error) {
-      toast.error('Failed to save to note');
+      toast.error('保存到笔记失败');
       console.error('Failed to save to note:', error);
     } finally {
       setIsSaving(false);
@@ -113,7 +113,7 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
   // Handle create new note
   const handleCreateNewNote = useCallback(async () => {
     if (!newNoteTitle.trim()) {
-      toast.error('Please enter a note title');
+      toast.error('请输入笔记标题');
       return;
     }
 
@@ -124,10 +124,10 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
         promptMessage: effectivePromptMessage,
         title: newNoteTitle.trim(),
       });
-      toast.success(`Created "${note.title}"`);
+      toast.success(`已创建 "${note.title}"`);
       onSaveComplete();
     } catch (error) {
-      toast.error('Failed to create note');
+      toast.error('创建笔记失败');
       console.error('Failed to create note:', error);
     } finally {
       setIsSaving(false);
@@ -153,14 +153,14 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
         position: 'append',
       });
       if (result.skipped) {
-        toast.info(`Already saved to "${noteTitle}"`);
+        toast.info(`该消息已保存到 "${noteTitle}"`);
       } else {
-        toast.success(`Saved to "${noteTitle}"`);
+        toast.success(`已保存到 "${noteTitle}"`);
       }
       setShowDestinationPicker(false);
       onSaveComplete();
     } catch (error) {
-      toast.error('Failed to save to note');
+      toast.error('保存到笔记失败');
       console.error('Failed to save to note:', error);
     } finally {
       setIsSaving(false);
@@ -177,11 +177,11 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
         title,
         folderId,
       });
-      toast.success(`Created "${note.title}"`);
+      toast.success(`已创建 "${note.title}"`);
       setShowDestinationPicker(false);
       onSaveComplete();
     } catch (error) {
-      toast.error('Failed to create note');
+      toast.error('创建笔记失败');
       console.error('Failed to create note:', error);
     } finally {
       setIsSaving(false);
@@ -195,24 +195,24 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Save to notes"
+      aria-label="保存到笔记"
     >
       <div
         ref={modalRef}
         className="w-[calc(100%-32px)] max-w-[280px] bg-surface-light dark:bg-surface-dark rounded-lg shadow-xl border border-border-light dark:border-border-dark overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         role="menu"
-        aria-label="Save to notes options"
+        aria-label="保存到笔记选项"
       >
         {/* Header */}
         <div className="px-3 py-2 border-b border-border-light dark:border-border-dark bg-surface-light-alt dark:bg-surface-dark-alt flex items-center justify-between">
           <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Save to Notes
+            保存到笔记
           </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-tertiary dark:text-text-dark-tertiary transition-colors"
-            aria-label="Close"
+            className="p-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-tertiary dark:text-text-dark-tertiary transition-colors"
+            aria-label="关闭"
           >
             <X className="w-4 h-4" />
           </button>
@@ -227,17 +227,17 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
             value={newNoteTitle}
             onChange={(e) => setNewNoteTitle(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter note title..."
+            placeholder="输入笔记标题..."
             className="w-full px-3 py-2 text-sm rounded-md border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-accent-blue/50"
             disabled={isSaving}
           />
           <div className="flex gap-2 mt-2">
             <button
               onClick={() => setShowNewNoteInput(false)}
-              className="flex-1 px-3 py-1.5 text-xs rounded-md bg-surface-light-alt dark:bg-surface-dark-alt hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-secondary dark:text-text-dark-secondary transition-colors"
+              className="flex-1 px-3 py-1.5 text-xs rounded-md bg-surface-light-alt dark:bg-surface-dark-alt hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
               disabled={isSaving}
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleCreateNewNote}
@@ -247,7 +247,7 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
               {isSaving ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
               ) : (
-                'Create'
+                '创建'
               )}
             </button>
           </div>
@@ -260,16 +260,16 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
             <button
               onClick={handleSaveToDailyNote}
               disabled={isSaving}
-              className="w-full px-3 py-2 text-left hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-3 disabled:opacity-50"
               role="menuitem"
             >
               <Calendar className="w-4 h-4 text-accent-blue" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                  Today's AI Notes
+                  今日 AI 笔记
                 </div>
                 <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary truncate">
-                  Daily note in AI Terminal folder
+                  AI 助手文件夹中的每日笔记
                 </div>
               </div>
               {isSaving && <Loader2 className="w-4 h-4 animate-spin text-accent-blue" />}
@@ -279,12 +279,12 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
             <button
               onClick={() => setShowNewNoteInput(true)}
               disabled={isSaving}
-              className="w-full px-3 py-2 text-left hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-3 disabled:opacity-50"
               role="menuitem"
             >
               <FolderPlus className="w-4 h-4 text-accent-green" />
               <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                New Note...
+                新建笔记...
               </span>
             </button>
           </div>
@@ -294,7 +294,7 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
             <>
               <div className="px-3 py-1.5 border-t border-border-light dark:border-border-dark">
                 <span className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary uppercase tracking-wide">
-                  Recent
+                  最近
                 </span>
               </div>
               <div className="py-1 max-h-32 overflow-y-auto">
@@ -303,7 +303,7 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
                     key={note.id}
                     onClick={() => handleSaveToRecentNote(note.id, note.title)}
                     disabled={isSaving}
-                    className="w-full px-3 py-2 text-left hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors flex items-center gap-3 disabled:opacity-50"
+                    className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-3 disabled:opacity-50"
                     role="menuitem"
                   >
                     <FileText className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
@@ -325,12 +325,12 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
           <button
             onClick={() => setShowDestinationPicker(true)}
             disabled={isSaving}
-            className="w-full px-3 py-2 text-left hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors flex items-center gap-3 disabled:opacity-50"
+            className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-3 disabled:opacity-50"
             role="menuitem"
           >
             <FolderSearch className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Choose Folder/Note...
+              选择文件夹/笔记...
             </span>
             <ChevronRight className="w-4 h-4 ml-auto text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -343,7 +343,7 @@ export const SaveToNotesPopover: React.FC<SaveToNotesPopoverProps> = ({
         onClose={() => setShowDestinationPicker(false)}
         onSelectNote={handlePickerSelectNote}
         onCreateNote={handlePickerCreateNote}
-        title="Choose Destination"
+        title="选择保存位置"
         isSaving={isSaving}
       />
       </div>

@@ -115,7 +115,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onDismiss }) => {
             hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated
             transition-all duration-150
           "
-          aria-label="Dismiss notification"
+          aria-label="关闭通知"
         >
           <X className="w-4 h-4" />
         </button>
@@ -150,7 +150,7 @@ export const ToastContainer: React.FC = () => {
   return (
     <div
       className="fixed bottom-0 left-0 p-6 z-50 pointer-events-none"
-      aria-label="Notifications"
+      aria-label="通知"
     >
       <div className="flex flex-col gap-2">
         <AnimatePresence mode="popLayout">

@@ -1,5 +1,5 @@
 /**
- * Module Usage Chart
+ * 模块使用情况 Chart
  *
  * Donut chart showing activity distribution across modules.
  * Uses Recharts PieChart with color-coded segments.
@@ -26,16 +26,16 @@ const MODULE_COLORS: Record<ModuleType, string> = {
 };
 
 const MODULE_LABELS: Record<ModuleType, string> = {
-  notes: 'Notes',
-  tasks: 'Tasks',
-  calendar: 'Calendar',
-  docs: 'Documents',
-  'time-tracking': 'Time Tracking',
-  habits: 'Habits',
-  links: 'Links',
+  notes: '笔记',
+  tasks: '任务',
+  calendar: '日历',
+  docs: '文档',
+  'time-tracking': '时间追踪',
+  habits: '习惯',
+  links: '链接',
   ai: 'AI',
-  forms: 'Forms',
-  diagrams: 'Diagrams',
+  forms: '表单',
+  diagrams: '绘图',
 };
 
 export const ModuleUsageChart: React.FC = () => {
@@ -88,11 +88,11 @@ export const ModuleUsageChart: React.FC = () => {
     return (
       <div className="rounded-xl border border-border-light dark:border-border-dark p-5 bg-surface-light dark:bg-surface-dark">
         <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-          Module Usage
+          模块使用情况
         </h3>
         <div className="flex items-center justify-center h-48">
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            No activity data yet
+            暂无活动数据
           </p>
         </div>
       </div>
@@ -102,7 +102,7 @@ export const ModuleUsageChart: React.FC = () => {
   return (
     <div className="rounded-xl border border-border-light dark:border-border-dark p-5 bg-surface-light dark:bg-surface-dark">
       <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-        Module Usage
+        模块使用情况
       </h3>
 
       <ResponsiveContainer width="100%" height={260}>

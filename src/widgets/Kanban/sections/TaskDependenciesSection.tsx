@@ -25,6 +25,17 @@ const getDependencyLabel = (type: DependencyType): string => {
   return labels[type];
 };
 
+const getStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    backlog: '待办池',
+    todo: '待办',
+    inprogress: '进行中',
+    review: '评审中',
+    done: '已完成',
+  };
+  return labels[status] || status;
+};
+
 const getDependencyIcon = (type: DependencyType): string => {
   const icons = {
     'finish-to-start': '⏭️',
@@ -57,7 +68,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
   return (
     <div>
       <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-        Dependencies
+        依赖
       </label>
 
       {/* Current Dependencies */}
@@ -79,7 +90,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
             return (
               <div
                 key={dep.taskId}
-                className="flex items-center gap-2 p-2 bg-status-warning-bg dark:bg-status-warning-bg-dark rounded-lg border border-status-warning dark:border-status-warning hover:border-status-warning-hover dark:hover:border-status-warning-hover transition-colors group cursor-pointer"
+                className="flex items-center gap-2 p-2 bg-status-warning-bg dark:bg-status-warning-bg-dark rounded-lg border border-status-warning dark:border-status-warning hover:border-accent-yellow-hover dark:hover:border-accent-yellow-hover transition-colors group cursor-pointer"
                 onClick={() => {
                   if (onCardClick) {
                     onCardClick(blockerTask);
@@ -95,16 +106,15 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
                     {/* Overdue blocker warning */}
                     {isOverdue && (
                       <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark border border-status-error-border dark:border-status-error-border-dark">
-                        ⚠️ {daysOverdue}d overdue
+                        ⚠️ 逾期 {daysOverdue} 天
                       </span>
                     )}
                   </div>
                   <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-6">
-                    {getDependencyLabel(dep.type)} • {blockerTask.status}
+                    {getDependencyLabel(dep.type)} • {getStatusLabel(blockerTask.status)}
                     {dep.lag !== 0 && (
                       <span className="ml-2">
-                        {dep.lag > 0 ? `+${dep.lag}` : dep.lag} day{Math.abs(dep.lag) !== 1 ? 's' : ''}
-                        {dep.lag > 0 ? ' delay' : ' lead'}
+                        {dep.lag > 0 ? `延迟 ${dep.lag}` : `提前 ${Math.abs(dep.lag)}`} 天
                       </span>
                     )}
                   </div>
@@ -114,8 +124,8 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
                     e.stopPropagation(); // Prevent navigation when removing
                     onRemoveDependency(dep.taskId);
                   }}
-                  className="opacity-0 group-hover:opacity-100 text-text-light-secondary hover:text-status-error transition-opacity"
-                  title="Remove dependency"
+                  className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary hover:text-status-error transition-opacity"
+                  title="移除依赖"
                 >
                   ✕
                 </button>
@@ -125,7 +135,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
         </div>
       ) : (
         <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary py-1 mb-3">
-          🔓 No dependencies
+          🔓 暂无依赖
         </div>
       )}
 
@@ -133,7 +143,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
       {blockedTasks.length > 0 && (
         <div className="mb-4">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            🔒 Blocks These Tasks
+            🔒 阻塞以下任务
           </div>
           <div className="space-y-1">
             {blockedTasks.map((blocked) => (
@@ -158,7 +168,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
       {/* Add New Dependency */}
       <div className="border-t border-border-light dark:border-border-dark pt-3 mt-3">
         <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-          Add Dependency
+          添加依赖
         </div>
         <DependencyPicker
           currentTask={task}

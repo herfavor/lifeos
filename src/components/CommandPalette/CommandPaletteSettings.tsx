@@ -42,7 +42,7 @@ export const CommandPaletteSettings: React.FC<SynapseSettingsProps> = ({
       className="fixed inset-0 z-[10001] flex items-center justify-center"
       role="dialog"
       aria-modal="true"
-      aria-label="Synapse Settings"
+      aria-label="Synapse 设置"
     >
       {/* Backdrop */}
       <div
@@ -56,12 +56,12 @@ export const CommandPaletteSettings: React.FC<SynapseSettingsProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Synapse Settings
+            Synapse 设置
           </h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            aria-label="Close settings"
+            aria-label="关闭设置"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -72,10 +72,10 @@ export const CommandPaletteSettings: React.FC<SynapseSettingsProps> = ({
           {/* Search Engine Selection */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Preferred Search Engine
+              首选搜索引擎
             </label>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-              This engine will be used when you search the web from Synapse.
+              从 Synapse 搜索网页时将使用此引擎。
             </p>
             <div className="grid grid-cols-2 gap-2">
               {SEARCH_ENGINES.map((engine) => (
@@ -110,29 +110,29 @@ export const CommandPaletteSettings: React.FC<SynapseSettingsProps> = ({
           {/* Keyboard Shortcuts Info */}
           <div className="pt-4 border-t border-border-light dark:border-border-dark">
             <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-              Keyboard Shortcuts
+              键盘快捷键
             </h3>
             <div className="space-y-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
               <div className="flex justify-between items-center">
-                <span>Open Synapse</span>
+                <span>打开 Synapse</span>
                 <kbd className="px-2 py-1 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated font-mono text-xs">
                   Ctrl+K / ⌘K
                 </kbd>
               </div>
               <div className="flex justify-between items-center">
-                <span>Navigate results</span>
+                <span>浏览结果</span>
                 <kbd className="px-2 py-1 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated font-mono text-xs">
                   ↑ ↓
                 </kbd>
               </div>
               <div className="flex justify-between items-center">
-                <span>Select result</span>
+                <span>选择结果</span>
                 <kbd className="px-2 py-1 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated font-mono text-xs">
                   Enter
                 </kbd>
               </div>
               <div className="flex justify-between items-center">
-                <span>Close</span>
+                <span>关闭</span>
                 <kbd className="px-2 py-1 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated font-mono text-xs">
                   Esc
                 </kbd>
@@ -147,7 +147,7 @@ export const CommandPaletteSettings: React.FC<SynapseSettingsProps> = ({
             onClick={onClose}
             className="w-full px-4 py-2.5 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors font-medium"
           >
-            Done
+            完成
           </button>
         </div>
       </div>

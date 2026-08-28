@@ -97,7 +97,7 @@ function parseNotionCSV(csvText: string): NotionImportResult {
   // Split into lines (handle \r\n and \n)
   const lines = csvText.split(/\r?\n/);
   if (lines.length < 2) {
-    return { notes: [], warnings: ['CSV file is empty or has no data rows'] };
+    return { notes: [], warnings: ['CSV 文件为空或没有数据行'] };
   }
 
   // Parse header
@@ -113,7 +113,7 @@ function parseNotionCSV(csvText: string): NotionImportResult {
 
   if (titleIdx === -1) {
     // If we can't find a title column, use the first column
-    warnings.push('Could not detect a "Title" or "Name" column. Using the first column as title.');
+    warnings.push('未能检测到"标题"或"名称"列，将使用第一列作为标题。');
   }
 
   const effectiveTitleIdx = titleIdx === -1 ? 0 : titleIdx;
@@ -124,7 +124,7 @@ function parseNotionCSV(csvText: string): NotionImportResult {
     if (!line) continue;
 
     const cols = parseCSVLine(line);
-    const title = cols[effectiveTitleIdx] || 'Untitled';
+    const title = cols[effectiveTitleIdx] || '未命名';
 
     // Skip rows with empty titles
     if (!title.trim()) continue;
@@ -177,7 +177,7 @@ function parseNotionCSV(csvText: string): NotionImportResult {
   }
 
   if (notes.length === 0) {
-    warnings.push('No valid notes found in the CSV file');
+    warnings.push('在 CSV 文件中未找到有效的笔记');
   }
 
   return { notes, warnings };
@@ -205,7 +205,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
       setStage('preview');
     } catch (error) {
       log.error('Notion CSV import failed', { error });
-      onMessage({ type: 'error', text: `Failed to parse CSV: ${error}` });
+      onMessage({ type: 'error', text: `CSV 解析失败：${error}` });
     }
 
     if (fileInputRef.current) {
@@ -235,13 +235,13 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
       setStage('complete');
       onMessage({
         type: 'success',
-        text: `Successfully imported ${count} notes from Notion.`,
+        text: `已成功从 Notion 导入 ${count} 条笔记。`,
       });
     } catch (error) {
       log.error('Note creation failed during Notion import', { error });
       onMessage({
         type: 'error',
-        text: `Import partially failed: ${count} of ${result.notes.length} notes imported.`,
+        text: `导入部分失败：已导入 ${result.notes.length} 条笔记中的 ${count} 条。`,
       });
       setStage('complete');
     }
@@ -262,11 +262,11 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
       <div className="flex items-center gap-3 mb-1">
         <FileSpreadsheet className="w-5 h-5 text-accent-primary" />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Notion Import
+          Notion 导入
         </h2>
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Import notes from a Notion CSV export. In Notion, open a database, click (...) then "Export" and choose CSV.
+        从 Notion CSV 导出中导入笔记。在 Notion 中打开数据库，点击 (...) 后选择"导出"并选择 CSV。
       </p>
 
       {/* Idle State */}
@@ -274,11 +274,11 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
         <div className="border-2 border-dashed border-border-light dark:border-border-dark rounded-lg p-8 text-center">
           <FileSpreadsheet className="w-12 h-12 mx-auto mb-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            Select a CSV file exported from Notion
+            选择从 Notion 导出的 CSV 文件
           </p>
           <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium cursor-pointer transition-colors">
             <Upload className="w-4 h-4" />
-            Select CSV File
+            选择 CSV 文件
             <input
               ref={fileInputRef}
               type="file"
@@ -288,7 +288,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
             />
           </label>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-3">
-            Supports columns: Title/Name, Content/Body, Tags, Created Time, Last Edited Time
+            支持的列：标题/名称、内容/正文、标签、创建时间、最后编辑时间
           </p>
         </div>
       )}
@@ -309,7 +309,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
                   {result.notes.length}
                 </p>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  Notes Found
+                  找到的笔记
                 </p>
               </div>
               <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg text-center">
@@ -318,7 +318,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
                   {allTags.length}
                 </p>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  Unique Tags
+                  唯一标签
                 </p>
               </div>
             </div>
@@ -339,7 +339,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
             {result.notes.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                  Sample Notes (first 5)
+                  示例笔记（前 5 条）
                 </h3>
                 <div className="space-y-2">
                   {result.notes.slice(0, 5).map((note, i) => (
@@ -353,7 +353,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
                           {note.title}
                         </p>
                         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary truncate">
-                          {note.tags.length > 0 ? `Tags: ${note.tags.join(', ')}` : 'No tags'}
+                          {note.tags.length > 0 ? `标签：${note.tags.join(', ')}` : '无标签'}
                           {note.content ? ` | ${note.content.slice(0, 80)}...` : ''}
                         </p>
                       </div>
@@ -361,7 +361,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
                   ))}
                   {result.notes.length > 5 && (
                     <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-                      ...and {result.notes.length - 5} more
+                      ...以及另外 {result.notes.length - 5} 条
                     </p>
                   )}
                 </div>
@@ -376,13 +376,13 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
                 className="flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium transition-colors disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />
-                Import {result.notes.length} Notes
+                导入 {result.notes.length} 条笔记
               </button>
               <button
                 onClick={handleReset}
                 className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
               >
-                Cancel
+                取消
               </button>
             </div>
           </motion.div>
@@ -400,7 +400,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
             />
           </div>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Creating note {importedCount} of {result.notes.length}...
+            正在创建第 {importedCount} 条笔记（共 {result.notes.length} 条）...
           </p>
         </div>
       )}
@@ -410,16 +410,16 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
         <div className="text-center py-8">
           <Check className="w-12 h-12 mx-auto mb-4 text-accent-green" />
           <p className="text-sm text-text-light-primary dark:text-text-dark-primary font-medium mb-2">
-            Import Complete
+            导入完成
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            {importedCount} notes imported from Notion
+            已从 Notion 导入 {importedCount} 条笔记
           </p>
           <button
             onClick={handleReset}
             className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
           >
-            Import More
+            继续导入
           </button>
         </div>
       )}

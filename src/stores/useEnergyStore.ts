@@ -46,6 +46,7 @@ interface EnergyState {
 
   // Actions
   logEnergy: (level: number, timeOfDay: TimeOfDay, note?: string) => void;
+  updateLog: (id: string, updates: Pick<EnergyLog, 'level' | 'timeOfDay'> & { note?: string }) => void;
   getEnergyForDate: (date: string) => EnergyLog[];
   calculatePatterns: () => EnergyPattern[];
   getOptimalTimeForTask: (energyCost: 1 | 2 | 3 | 4 | 5) => string;
@@ -71,6 +72,22 @@ export const useEnergyStore = create<EnergyState>()(
 
         set((state) => ({
           logs: [...state.logs, log],
+        }));
+      },
+
+      updateLog: (id, updates) => {
+        const level = Math.min(10, Math.max(1, Math.round(updates.level)));
+        set((state) => ({
+          logs: state.logs.map((log) =>
+            log.id === id
+              ? {
+                  ...log,
+                  level,
+                  timeOfDay: updates.timeOfDay,
+                  note: updates.note?.trim() || undefined,
+                }
+              : log
+          ),
         }));
       },
 
@@ -137,7 +154,7 @@ export const useEnergyStore = create<EnergyState>()(
         // For high energy cost tasks, find the time slot with highest average energy
         // For low energy cost, any time works
         if (energyCost <= 2) {
-          return `Any time works for low-energy tasks. Current: ${currentTimeOfDay}`;
+          return `低能量任务任何时间都可以。当前时段：${currentTimeOfDay}`;
         }
 
         // Find the time slot with highest energy across all days
@@ -145,7 +162,7 @@ export const useEnergyStore = create<EnergyState>()(
         let bestTime: TimeOfDay = 'morning';
         let bestAvg = 0;
 
-        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
         const times: TimeOfDay[] = ['morning', 'afternoon', 'evening'];
 
         for (const pattern of patterns) {
@@ -166,10 +183,10 @@ export const useEnergyStore = create<EnergyState>()(
         }
 
         if (bestAvg === 0) {
-          return 'Not enough data yet. Log your energy for a few weeks to see patterns.';
+          return '数据不足。请连续记录几周能量水平，即可查看规律。';
         }
 
-        return `Schedule for ${bestDay} ${bestTime} (avg energy: ${bestAvg}/10)`;
+        return `建议安排在${bestDay} ${bestTime}（平均能量：${bestAvg}/10）`;
       },
     }),
     {

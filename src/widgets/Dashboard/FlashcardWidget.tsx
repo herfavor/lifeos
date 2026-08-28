@@ -23,17 +23,17 @@ export function FlashcardWidget(_props: WidgetComponentProps) {
           <div className="flex items-center gap-2">
             <Brain className="w-5 h-5 text-accent-primary" />
             <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
-              Flashcards
+              闪卡
             </span>
           </div>
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {totalCards} card{totalCards !== 1 ? 's' : ''}
+            {totalCards} 张卡片
           </span>
         </div>
 
         {totalCards === 0 ? (
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary text-center py-4">
-            No flashcards yet. Create some to get started.
+            暂无闪卡，创建一些开始吧。
           </p>
         ) : (
           <>
@@ -43,7 +43,7 @@ export function FlashcardWidget(_props: WidgetComponentProps) {
                   {totalDue}
                 </div>
                 <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                  cards due for review
+                  张待复习卡片
                 </div>
               </div>
               {totalDue > 0 && (
@@ -52,7 +52,7 @@ export function FlashcardWidget(_props: WidgetComponentProps) {
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-primary text-white rounded-lg text-sm hover:bg-accent-primary/90 transition-colors"
                 >
                   <Play className="w-3.5 h-3.5" />
-                  Review
+                  复习
                 </button>
               )}
             </div>
@@ -73,7 +73,7 @@ export function FlashcardWidget(_props: WidgetComponentProps) {
                     </span>
                     <span className="text-text-light-tertiary dark:text-text-dark-tertiary">
                       {deckDue > 0 && (
-                        <span className="text-accent-primary font-medium mr-1">{deckDue} due</span>
+                        <span className="text-accent-primary font-medium mr-1">{deckDue} 待复习</span>
                       )}
                       / {deckTotal}
                     </span>
@@ -89,7 +89,7 @@ export function FlashcardWidget(_props: WidgetComponentProps) {
           className="w-full flex items-center justify-center gap-2 py-2 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Cards
+          添加卡片
         </button>
       </div>
 

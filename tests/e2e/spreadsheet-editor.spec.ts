@@ -15,7 +15,7 @@ test.describe('Spreadsheet Editor', () => {
   });
 
   test('can create a new spreadsheet', async ({ page }) => {
-    const spreadsheetBtn = page.getByRole('button', { name: /Spreadsheet/i }).first();
+    const spreadsheetBtn = page.getByRole('button', { name: /电子表格/i }).first();
     if (await spreadsheetBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await spreadsheetBtn.click();
       await page.waitForTimeout(500);
@@ -24,7 +24,7 @@ test.describe('Spreadsheet Editor', () => {
   });
 
   test('spreadsheet renders grid cells', async ({ page }) => {
-    const spreadsheetBtn = page.getByRole('button', { name: /Spreadsheet/i }).first();
+    const spreadsheetBtn = page.getByRole('button', { name: /电子表格/i }).first();
     if (await spreadsheetBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await spreadsheetBtn.click();
       await page.waitForTimeout(500);
@@ -40,7 +40,7 @@ test.describe('Spreadsheet Editor', () => {
   });
 
   test('can click on a cell', async ({ page }) => {
-    const spreadsheetBtn = page.getByRole('button', { name: /Spreadsheet/i }).first();
+    const spreadsheetBtn = page.getByRole('button', { name: /电子表格/i }).first();
     if (await spreadsheetBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await spreadsheetBtn.click();
       await page.waitForTimeout(500);
@@ -55,13 +55,13 @@ test.describe('Spreadsheet Editor', () => {
   });
 
   test('has toolbar with formatting buttons', async ({ page }) => {
-    const spreadsheetBtn = page.getByRole('button', { name: /Spreadsheet/i }).first();
+    const spreadsheetBtn = page.getByRole('button', { name: /电子表格/i }).first();
     if (await spreadsheetBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await spreadsheetBtn.click();
       await page.waitForTimeout(500);
 
       // Check for formatting toolbar buttons
-      const boldBtn = page.locator('[title="Bold"]');
+      const boldBtn = page.locator('[title^="加粗"]');
       if (await boldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(boldBtn).toBeVisible();
       }

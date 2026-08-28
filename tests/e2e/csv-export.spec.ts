@@ -15,7 +15,7 @@ test.describe('Data Export', () => {
 
   test('tasks page has export option', async ({ page }) => {
     await navigateTo(page, '/tasks');
-    const exportBtn = page.getByRole('button', { name: /export/i });
+    const exportBtn = page.getByRole('button', { name: /导出/i });
     if (await exportBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(exportBtn).toBeVisible();
     }
@@ -24,7 +24,7 @@ test.describe('Data Export', () => {
 
   test('time tracking has export option', async ({ page }) => {
     await navigateTo(page, '/time');
-    const exportBtn = page.getByRole('button', { name: /export/i });
+    const exportBtn = page.getByRole('button', { name: /导出/i });
     if (await exportBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(exportBtn).toBeVisible();
     }
@@ -33,12 +33,12 @@ test.describe('Data Export', () => {
 
   test('gantt view has export options', async ({ page }) => {
     await navigateTo(page, '/tasks');
-    const ganttBtn = page.getByRole('button', { name: /gantt/i });
+    const ganttBtn = page.getByRole('button', { name: /时间线/i });
     if (await ganttBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await ganttBtn.click();
       await page.waitForTimeout(500);
 
-      const exportBtn = page.getByRole('button', { name: /export/i });
+      const exportBtn = page.getByRole('button', { name: /导出/i });
       if (await exportBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(exportBtn).toBeVisible();
       }
@@ -48,7 +48,7 @@ test.describe('Data Export', () => {
 
   test('backup page has export brain', async ({ page }) => {
     await navigateTo(page, '/settings?tab=backup');
-    const exportBtn = page.getByRole('button', { name: 'Export Brain' });
+    const exportBtn = page.getByRole('button', { name: '导出 Brain' });
     if (await exportBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(exportBtn).toBeVisible();
     }

@@ -14,6 +14,8 @@ interface MonthlyCalendarGridProps {
   renderDayContent: (data: DayData) => ReactNode;
   onDayClick?: (dateKey: string) => void;
   onDayDoubleClick?: (dateKey: string) => void;
+  /** Denser cells for planning pages that pair the month with an agenda. */
+  compact?: boolean;
 }
 
 /**
@@ -27,11 +29,10 @@ export function MonthlyCalendarGrid({
   renderDayContent,
   onDayClick,
   onDayDoubleClick,
+  compact = false,
 }: MonthlyCalendarGridProps) {
-  // Full day names for header (matching TimeEntryCalendar)
-  const dayHeaders = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayHeaders = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
-  // Calculate calendar grid data
   const calendarData = useMemo(() => {
     const firstDayOfWeek = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -42,17 +43,13 @@ export function MonthlyCalendarGrid({
 
     const days: (DayData | null)[] = [];
 
-    // Empty cells before month starts
     for (let i = 0; i < firstDayOfWeek; i++) {
       days.push(null);
     }
 
-    // Days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const isToday = year === todayYear && month === todayMonth && day === todayDate;
-      // Standard format (YYYY-M-D) for calendar store compatibility
       const dateKey = `${year}-${month + 1}-${day}`;
-      // ISO format (YYYY-MM-DD) for time entry API lookups
       const isoDateKey = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
       days.push({
@@ -68,28 +65,25 @@ export function MonthlyCalendarGrid({
   }, [year, month]);
 
   return (
-    <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
-      {/* Day Headers */}
-      <div className="grid grid-cols-7 gap-1 mb-1">
-        {dayHeaders.map(day => (
+    <div className={`rounded-xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark ${compact ? 'p-2.5' : 'p-5'}`}>
+      <div className="mb-1 grid grid-cols-7 gap-1">
+        {dayHeaders.map((day) => (
           <div
             key={day}
-            className="text-center text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary py-2"
+            className={`text-center font-medium text-text-light-tertiary dark:text-text-dark-tertiary ${compact ? 'py-1 text-[11px]' : 'py-2 text-xs'}`}
           >
             {day}
           </div>
         ))}
       </div>
 
-      {/* Calendar Days */}
       <div className="grid grid-cols-7 gap-1">
         {calendarData.map((dayData, index) => {
           if (dayData === null) {
-            // Empty cell before month starts
             return (
               <div
                 key={`empty-${index}`}
-                className="min-h-[80px] bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-button border border-border-light dark:border-border-dark opacity-30"
+                className={`${compact ? 'min-h-[50px]' : 'min-h-[74px]'} rounded-lg border border-transparent bg-surface-light-elevated/35 dark:bg-surface-dark-elevated/35`}
               />
             );
           }
@@ -99,15 +93,14 @@ export function MonthlyCalendarGrid({
               key={dayData.dateKey}
               onClick={() => onDayClick?.(dayData.dateKey)}
               onDoubleClick={() => onDayDoubleClick?.(dayData.dateKey)}
-              className={`min-h-[80px] p-2 rounded-button border transition-all text-left ${
+              className={`${compact ? 'min-h-[50px] p-1.5' : 'min-h-[74px] p-2'} group rounded-lg border text-left transition-colors ${
                 dayData.isToday
-                  ? 'border-accent-primary border-2 bg-accent-primary/5'
-                  : 'border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark'
+                  ? 'border-accent-primary/60 bg-accent-primary/5'
+                  : 'border-border-light/70 bg-surface-light hover:border-accent-primary/30 hover:bg-surface-light-elevated/40 dark:border-border-dark/70 dark:bg-surface-dark dark:hover:bg-surface-dark-elevated/40'
               }`}
             >
-              {/* Day Number */}
               <div
-                className={`text-sm font-semibold mb-1 ${
+                className={`${compact ? 'text-[11px]' : 'text-xs'} mb-1 font-semibold ${
                   dayData.isToday
                     ? 'text-accent-primary'
                     : 'text-text-light-primary dark:text-text-dark-primary'
@@ -116,7 +109,6 @@ export function MonthlyCalendarGrid({
                 {dayData.day}
               </div>
 
-              {/* Custom content from parent */}
               {renderDayContent(dayData)}
             </button>
           );

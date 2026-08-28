@@ -7,7 +7,12 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { formatFileSize, isFileSystemAccessSupported } from '../brainBackup';
+import {
+  deserializeValueFromBackup,
+  formatFileSize,
+  isFileSystemAccessSupported,
+  serializeValueForBackup,
+} from '../brainBackup';
 
 // Mock logger to prevent console noise
 vi.mock('../logger', () => ({
@@ -28,16 +33,38 @@ vi.mock('../../utils/buildInfo', () => ({
 }));
 
 describe('brainBackup', () => {
+  describe('structured backup values', () => {
+    it('round-trips an image Blob without losing its bytes or MIME type', async () => {
+      const source = new Blob([new Uint8Array([0, 1, 2, 127, 255])], {
+        type: 'image/webp',
+      });
+
+      const serialized = await serializeValueForBackup(source);
+      const restored = deserializeValueFromBackup(serialized);
+
+      expect(restored).toBeInstanceOf(Blob);
+      expect((restored as Blob).type).toBe('image/webp');
+      expect(Array.from(new Uint8Array(await (restored as Blob).arrayBuffer()))).toEqual([
+        0, 1, 2, 127, 255,
+      ]);
+    });
+
+    it('keeps JSON-backed stores compatible with the existing string format', async () => {
+      const serialized = await serializeValueForBackup('{"state":{"items":[1,2]}}');
+      expect(deserializeValueFromBackup(serialized)).toBe('{"state":{"items":[1,2]}}');
+    });
+  });
+
   describe('formatFileSize', () => {
     it('should format 0 bytes', () => {
-      expect(formatFileSize(0)).toBe('0 Bytes');
+      expect(formatFileSize(0)).toBe('0 字节');
     });
 
     it('should format bytes (under 1KB)', () => {
-      expect(formatFileSize(1)).toBe('1 Bytes');
-      expect(formatFileSize(100)).toBe('100 Bytes');
-      expect(formatFileSize(500)).toBe('500 Bytes');
-      expect(formatFileSize(1023)).toBe('1023 Bytes');
+      expect(formatFileSize(1)).toBe('1 字节');
+      expect(formatFileSize(100)).toBe('100 字节');
+      expect(formatFileSize(500)).toBe('500 字节');
+      expect(formatFileSize(1023)).toBe('1023 字节');
     });
 
     it('should format kilobytes', () => {
@@ -68,7 +95,7 @@ describe('brainBackup', () => {
 
     it('should handle edge cases', () => {
       // Just under 1 KB
-      expect(formatFileSize(1000)).toBe('1000 Bytes');
+      expect(formatFileSize(1000)).toBe('1000 字节');
       // Just over 1 KB
       expect(formatFileSize(1025)).toBe('1 KB');
       // Exact power of 1024
@@ -188,7 +215,7 @@ describe('brainBackup', () => {
       }
 
       const result: ExportResult = {
-        filename: 'NeumanOS-Backup-2025-01-01.brain',
+        filename: 'LifeOS-Backup-2025-01-01.brain',
         size: 12345,
         compressed: true,
       };
@@ -309,15 +336,15 @@ describe('brainBackup', () => {
     it('should generate valid backup filename', () => {
       const generateFilename = () => {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        return `NeumanOS-Backup-${timestamp}.brain`;
+        return `LifeOS-Backup-${timestamp}.brain`;
       };
 
       const filename = generateFilename();
-      expect(filename).toMatch(/^NeumanOS-Backup-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.brain$/);
+      expect(filename).toMatch(/^LifeOS-Backup-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.brain$/);
     });
 
     it('should have .brain extension', () => {
-      const filename = 'NeumanOS-Backup-2025-01-01T12-00-00.brain';
+      const filename = 'LifeOS-Backup-2025-01-01T12-00-00.brain';
       expect(filename.endsWith('.brain')).toBe(true);
     });
   });

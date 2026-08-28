@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../services/logger';
 import type {
@@ -28,8 +29,99 @@ import { useSettingsStore } from './useSettingsStore';
 import { findBlockInContent } from '../utils/blockReferences';
 import { createNotePreview } from '../utils/notePreview';
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
+import { ensureLexicalContent, isValidLexicalJson, replaceTextInLexical } from '../utils/markdownToLexical';
+import {
+  decodePersistedValue,
+  isUnknownRecord,
+  toStringArray,
+  toValidDate,
+  unwrapPersistedState,
+} from '../utils/persistedState';
 
 const log = logger.module('NotesStore');
+
+const RECOVERY_DATE = new Date(0);
+
+function normalizePersistedNote(rawValue: unknown, fallbackId: string): Note | null {
+  const decoded = decodePersistedValue(rawValue);
+  // A scalar string may be the only surviving copy of a legacy note. Keep it
+  // as recovered plain text instead of silently deleting the entry.
+  const raw = isUnknownRecord(decoded)
+    ? decoded
+    : typeof decoded === 'string'
+      ? { contentText: decoded }
+      : null;
+  if (!raw) return null;
+
+  const id = typeof raw.id === 'string' && raw.id.trim() ? raw.id : fallbackId;
+  const content = typeof raw.content === 'string' ? raw.content : '';
+  const contentIsSerializedLexical = (() => {
+    try {
+      const parsed = JSON.parse(content) as { root?: unknown };
+      return typeof parsed === 'object' && parsed !== null &&
+        typeof parsed.root === 'object' && parsed.root !== null;
+    } catch {
+      return false;
+    }
+  })();
+  const contentText = typeof raw.contentText === 'string'
+    ? raw.contentText
+    // Legacy Markdown belongs in contentText, but a malformed serialized
+    // Lexical document is not user text. `ensureLexicalContent` can repair it
+    // to a safe empty paragraph without exposing its JSON to the user.
+    : content && !isValidLexicalJson(content) && !contentIsSerializedLexical
+      ? content
+      : '';
+  const createdAt = toValidDate(raw.createdAt, RECOVERY_DATE);
+  const updatedAt = toValidDate(raw.updatedAt, createdAt);
+
+  return {
+    ...raw,
+    id,
+    folderId: typeof raw.folderId === 'string' ? raw.folderId : null,
+    parentNoteId: typeof raw.parentNoteId === 'string' ? raw.parentNoteId : null,
+    title:
+      typeof raw.title === 'string' && raw.title.trim()
+        ? raw.title
+        : NOTE_CONSTANTS.DEFAULT_TITLE,
+    content: ensureLexicalContent(content, contentText),
+    contentText,
+    tags: toStringArray(raw.tags),
+    projectIds: toStringArray(raw.projectIds),
+    aliases: raw.aliases === undefined ? undefined : toStringArray(raw.aliases),
+    linkedNotes: raw.linkedNotes === undefined ? undefined : toStringArray(raw.linkedNotes),
+    linkedEventIds:
+      raw.linkedEventIds === undefined ? undefined : toStringArray(raw.linkedEventIds),
+    createdAt,
+    updatedAt,
+    deletedAt: raw.deletedAt == null ? undefined : toValidDate(raw.deletedAt, updatedAt),
+    isPinned: raw.isPinned === true,
+    isArchived: raw.isArchived === true,
+    isFavorite: raw.isFavorite === true,
+  } as Note;
+}
+
+/** Repair notes independently so one malformed entry never wipes the library. */
+export function normalizePersistedNotes(value: unknown): Record<string, Note> {
+  const decoded = decodePersistedValue(value);
+  const entries: Array<[string, unknown]> = Array.isArray(decoded)
+    ? decoded.map((note, index) => {
+        const id = isUnknownRecord(note) && typeof note.id === 'string'
+          ? note.id
+          : `recovered-note-${index + 1}`;
+        return [id, note];
+      })
+    : isUnknownRecord(decoded)
+      ? Object.entries(decoded)
+      : [];
+
+  const normalized: Record<string, Note> = {};
+  for (const [key, rawNote] of entries) {
+    const note = normalizePersistedNote(rawNote, key);
+    if (note) normalized[note.id] = note;
+  }
+  return normalized;
+}
 
 /**
  * Phase 4: Default note templates for quick note creation
@@ -37,8 +129,8 @@ const log = logger.module('NotesStore');
 const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   {
     id: 'meeting-notes',
-    name: 'Meeting Notes',
-    description: '## Meeting Notes\n\n**Date:** \n**Attendees:** \n\n### Agenda\n1. \n\n### Discussion Points\n- \n\n### Action Items\n- [ ] \n\n### Next Steps\n',
+    name: '会议记录',
+    description: '## 会议记录\n\n**日期：** \n**参会人：** \n\n### 议程\n1. \n\n### 讨论要点\n- \n\n### 行动项\n- [ ] \n\n### 后续步骤\n',
     icon: '📋',
     category: 'Work',
     defaultTags: ['meeting'],
@@ -46,8 +138,8 @@ const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   },
   {
     id: 'daily-journal',
-    name: 'Daily Journal',
-    description: '## Daily Journal\n\n**Date:** \n\n### Gratitude\n- \n\n### Today\'s Goals\n- [ ] \n\n### Reflections\n\n\n### Tomorrow\'s Focus\n',
+    name: '每日日记',
+    description: '## 每日日记\n\n**日期：** \n\n### 感恩\n- \n\n### 今日目标\n- [ ] \n\n### 反思\n\n\n### 明日焦点\n',
     icon: '📔',
     category: 'Personal',
     defaultTags: ['journal'],
@@ -55,8 +147,8 @@ const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   },
   {
     id: 'project-plan',
-    name: 'Project Plan',
-    description: '## Project: \n\n### Overview\n\n\n### Goals\n- \n\n### Timeline\n| Phase | Start | End | Status |\n|-------|-------|-----|--------|\n| Planning | | | |\n| Development | | | |\n| Testing | | | |\n\n### Resources\n- \n\n### Risks\n- \n',
+    name: '项目计划',
+    description: '## 项目： \n\n### 概述\n\n\n### 目标\n- \n\n### 时间线\n| 阶段 | 开始 | 结束 | 状态 |\n|-------|-------|-----|--------|\n| 规划 | | | |\n| 开发 | | | |\n| 测试 | | | |\n\n### 资源\n- \n\n### 风险\n- \n',
     icon: '📊',
     category: 'Work',
     defaultTags: ['project'],
@@ -64,8 +156,8 @@ const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   },
   {
     id: 'todo-list',
-    name: 'Todo List',
-    description: '## Todo List\n\n### High Priority\n- [ ] \n\n### Medium Priority\n- [ ] \n\n### Low Priority\n- [ ] \n\n### Completed\n- [x] \n',
+    name: '待办清单',
+    description: '## 待办清单\n\n### 高优先级\n- [ ] \n\n### 中优先级\n- [ ] \n\n### 低优先级\n- [ ] \n\n### 已完成\n- [x] \n',
     icon: '✅',
     category: 'Productivity',
     defaultTags: ['todo'],
@@ -73,8 +165,8 @@ const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   },
   {
     id: 'weekly-review',
-    name: 'Weekly Review',
-    description: '## Weekly Review\n\n**Week of:** \n\n### Accomplishments\n- \n\n### Challenges\n- \n\n### Lessons Learned\n- \n\n### Next Week\'s Goals\n- [ ] \n\n### Notes\n',
+    name: '每周回顾',
+    description: '## 每周回顾\n\n**周次：** \n\n### 成果\n- \n\n### 挑战\n- \n\n### 经验教训\n- \n\n### 下周目标\n- [ ] \n\n### 备注\n',
     icon: '📅',
     category: 'Personal',
     defaultTags: ['review', 'weekly'],
@@ -82,8 +174,8 @@ const DEFAULT_NOTE_TEMPLATES: NoteTemplate[] = [
   },
   {
     id: 'decision-record',
-    name: 'Decision Record',
-    description: '## Decision: {title}\n\n**Date:** {date}\n**Status:** Proposed | Accepted | Deprecated | Superseded\n\n### Context\nWhat is the issue or problem we need to solve?\n\n\n### Options Considered\n1. **Option A** — \n2. **Option B** — \n3. **Option C** — \n\n### Decision\nWhat was decided?\n\n\n### Rationale\nWhy was this option chosen over the alternatives?\n\n\n### Consequences\n**Positive:**\n- \n\n**Negative:**\n- \n\n**Risks:**\n- \n\n### Related\n- \n',
+    name: '决策记录',
+    description: '## 决策：{title}\n\n**日期：** {date}\n**状态：** 提议 | 已接受 | 已弃用 | 已取代\n\n### 背景\n我们需要解决的问题是什么？\n\n\n### 考虑的方案\n1. **方案 A** — \n2. **方案 B** — \n3. **方案 C** — \n\n### 决策\n决定了什么？\n\n\n### 理由\n为什么选择此方案而非其他备选方案？\n\n\n### 影响\n**正面影响：**\n- \n\n**负面影响：**\n- \n\n**风险：**\n- \n\n### 相关\n- \n',
     icon: '⚖️',
     category: 'Work',
     defaultTags: ['decision', 'adr'],
@@ -107,10 +199,14 @@ interface NotesStore {
   getNote: (id: string) => Note | undefined;
   updateNote: (id: string, updates: NoteUpdate) => void;
   deleteNote: (id: string) => void;
+  restoreNote: (id: string) => void;
+  permanentlyDeleteNote: (id: string) => void;
   duplicateNote: (id: string) => Note | null;
 
   // Actions - Bulk operations
   deleteNotes: (ids: string[]) => void;
+  restoreNotes: (ids: string[]) => void;
+  permanentlyDeleteNotes: (ids: string[]) => void;
   moveNote: (noteId: string, targetFolderId: string | null) => void;
   moveNotesToFolder: (noteIds: string[], folderId: string | null) => void;
   archiveNotes: (noteIds: string[]) => void;
@@ -202,7 +298,7 @@ interface NotesStore {
  */
 const createDefaultNote = (overrides?: Partial<Note>): Note => {
   const now = new Date();
-  return {
+  const note: Note = {
     id: uuidv4(),
     folderId: null,
     title: NOTE_CONSTANTS.DEFAULT_TITLE,
@@ -216,6 +312,8 @@ const createDefaultNote = (overrides?: Partial<Note>): Note => {
     isArchived: false,
     ...overrides,
   };
+  note.content = ensureLexicalContent(note.content, note.contentText);
+  return note;
 };
 
 /**
@@ -258,18 +356,20 @@ const sortNotes = (notes: Note[], config: NoteSortConfig): Note[] => {
  * Filter notes based on filter type
  */
 const filterNotes = (notes: Note[], filter: NoteFilter): Note[] => {
+  if (filter === 'trash') return notes.filter((note) => note.deletedAt);
+  const activeNotes = notes.filter((note) => !note.deletedAt);
   switch (filter) {
     case 'favorites':
-      return notes.filter((note) => note.isFavorite);
+      return activeNotes.filter((note) => note.isFavorite);
     case 'pinned':
-      return notes.filter((note) => note.isPinned);
+      return activeNotes.filter((note) => note.isPinned);
     case 'archived':
-      return notes.filter((note) => note.isArchived);
+      return activeNotes.filter((note) => note.isArchived);
     case 'unarchived':
-      return notes.filter((note) => !note.isArchived);
+      return activeNotes.filter((note) => !note.isArchived);
     case 'all':
     default:
-      return notes;
+      return activeNotes;
   }
 };
 
@@ -304,7 +404,7 @@ export const useNotesStore = create<NotesStore>()(
           type: 'created',
           module: 'notes',
           entityId: newNote.id,
-          entityTitle: newNote.title || 'Untitled Note',
+          entityTitle: newNote.title || '未命名笔记',
         });
         return newNote;
       },
@@ -326,13 +426,26 @@ export const useNotesStore = create<NotesStore>()(
           updates.content !== undefined ||
           updates.title !== undefined ||
           updates.tags !== undefined;
+        // `content` is the rich-document boundary. Normalize only when it is
+        // explicitly written so legacy plain-text-only updates to contentText
+        // retain their existing behavior, while version restores and external
+        // callers can never persist an empty Lexical root.
+        const normalizedUpdates = updates.content !== undefined
+          ? {
+              ...updates,
+              content: ensureLexicalContent(
+                updates.content,
+                updates.contentText ?? note.contentText
+              ),
+            }
+          : updates;
 
         set((state) => ({
           notes: {
             ...state.notes,
             [id]: {
               ...note,
-              ...updates,
+              ...normalizedUpdates,
               ...(shouldUpdateTimestamp ? { updatedAt: new Date() } : {}),
             },
           },
@@ -343,7 +456,7 @@ export const useNotesStore = create<NotesStore>()(
             type: 'updated',
             module: 'notes',
             entityId: id,
-            entityTitle: note.title || 'Untitled Note',
+            entityTitle: note.title || '未命名笔记',
           });
         }
       },
@@ -359,33 +472,26 @@ export const useNotesStore = create<NotesStore>()(
         // Store the previous activeNoteId for undo
         const wasActive = get().activeNoteId === id;
 
-        // Delete the note
-        set((state) => {
-          const { [id]: deleted, ...remainingNotes } = state.notes;
-          return {
-            notes: remainingNotes,
-            activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
-          };
-        });
+        const deletedAt = new Date();
+        set((state) => ({
+          notes: {
+            ...state.notes,
+            [id]: { ...noteToDelete, deletedAt },
+          },
+          activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
+        }));
 
         log.debug('Note deleted', { id });
         useActivityStore.getState().logActivity({
           type: 'deleted',
           module: 'notes',
           entityId: id,
-          entityTitle: noteToDelete.title || 'Untitled Note',
-        });
-
-        // Delete associated images from IndexedDB (async, fire-and-forget)
-        import('../services/indexedDB').then(({ indexedDBService }) => {
-          indexedDBService.deleteNoteImages(id).catch((err) => {
-            log.error('Failed to delete note images', { id, error: err });
-          });
+          entityTitle: noteToDelete.title || '未命名笔记',
         });
 
         // Add undo action
         useUndoStore.getState().addUndoAction(
-          `Note "${noteToDelete.title}" deleted`,
+          `已删除笔记“${noteToDelete.title}”`,
           () => {
             // Restore the note
             set((state) => ({
@@ -400,6 +506,30 @@ export const useNotesStore = create<NotesStore>()(
         );
       },
 
+      restoreNote: (id) => {
+        const note = get().notes[id];
+        if (!note?.deletedAt) return;
+        set((state) => ({
+          notes: { ...state.notes, [id]: { ...note, deletedAt: undefined } },
+        }));
+        log.debug('Note restored from trash', { id });
+      },
+
+      permanentlyDeleteNote: (id) => {
+        const note = get().notes[id];
+        if (!note?.deletedAt) return;
+        set((state) => {
+          const { [id]: _deleted, ...remainingNotes } = state.notes;
+          return { notes: remainingNotes };
+        });
+        import('../services/indexedDB').then(({ indexedDBService }) => {
+          indexedDBService.deleteNoteImages(id).catch((err) => {
+            log.error('Failed to delete note images', { id, error: err });
+          });
+        });
+        log.info('Note permanently deleted', { id });
+      },
+
       duplicateNote: (id) => {
         const original = get().notes[id];
         if (!original) {
@@ -412,7 +542,7 @@ export const useNotesStore = create<NotesStore>()(
 
         const duplicate = createDefaultNote({
           ...originalWithoutMeta,
-          title: `${original.title} (Copy)`,
+          title: `${original.title} 的副本`,
           isPinned: false, // Don't copy pin status
         });
 
@@ -429,26 +559,33 @@ export const useNotesStore = create<NotesStore>()(
 
       // Bulk operations
       deleteNotes: (ids) => {
+        const deletedAt = new Date();
         set((state) => {
-          const remainingNotes = { ...state.notes };
-          ids.forEach((id) => delete remainingNotes[id]);
+          const updatedNotes = { ...state.notes };
+          ids.forEach((id) => {
+            if (updatedNotes[id]) updatedNotes[id] = { ...updatedNotes[id], deletedAt };
+          });
           return {
-            notes: remainingNotes,
+            notes: updatedNotes,
             activeNoteId: ids.includes(state.activeNoteId || '')
               ? null
               : state.activeNoteId,
           };
         });
-        log.debug('Deleted notes', { count: ids.length });
+        log.debug('Moved notes to trash', { count: ids.length });
+      },
 
-        // Delete associated images from IndexedDB (async, fire-and-forget)
-        import('../services/indexedDB').then(({ indexedDBService }) => {
-          ids.forEach((id) => {
-            indexedDBService.deleteNoteImages(id).catch((err) => {
-              log.error('Failed to delete images for note', { id, error: err });
-            });
-          });
-        });
+      restoreNotes: (ids) => {
+        set((state) => ({
+          notes: Object.fromEntries(Object.entries(state.notes).map(([id, note]) => [
+            id,
+            ids.includes(id) ? { ...note, deletedAt: undefined } : note,
+          ])),
+        }));
+      },
+
+      permanentlyDeleteNotes: (ids) => {
+        ids.forEach((id) => get().permanentlyDeleteNote(id));
       },
 
       moveNote: (noteId, targetFolderId) => {
@@ -481,7 +618,7 @@ export const useNotesStore = create<NotesStore>()(
 
         // Add undo action
         useUndoStore.getState().addUndoAction(
-          `Note "${note.title}" moved`,
+          `已移动笔记“${note.title}”`,
           () => {
             set((state) => {
               const currentNote = state.notes[noteId];
@@ -555,7 +692,7 @@ export const useNotesStore = create<NotesStore>()(
       // Queries
       getAllNotes: () => {
         const state = get();
-        const notes = Object.values(state.notes);
+        const notes = Object.values(state.notes).filter((note) => !note.deletedAt);
         const filtered = filterNotes(notes, state.filter);
         return sortNotes(filtered, state.sortConfig);
       },
@@ -563,7 +700,7 @@ export const useNotesStore = create<NotesStore>()(
       getFilteredNotes: () => {
         const { activeProjectIds } = useProjectContextStore.getState();
         const state = get();
-        let notes = Object.values(state.notes);
+        let notes = Object.values(state.notes).filter((note) => !note.deletedAt);
 
         // Apply archive filter
         notes = filterNotes(notes, state.filter);
@@ -579,14 +716,16 @@ export const useNotesStore = create<NotesStore>()(
       getNotesByFolder: (folderId) => {
         const state = get();
         const notes = Object.values(state.notes).filter(
-          (note) => note.folderId === folderId
+          (note) => note.folderId === folderId && !note.deletedAt
         );
         const filtered = filterNotes(notes, state.filter);
         return sortNotes(filtered, state.sortConfig);
       },
 
       getNotesBy: (predicate) => {
-        const notes = Object.values(get().notes).filter(predicate);
+        const notes = Object.values(get().notes).filter(
+          (note) => !note.deletedAt && predicate(note)
+        );
         return sortNotes(notes, get().sortConfig);
       },
 
@@ -594,7 +733,7 @@ export const useNotesStore = create<NotesStore>()(
         if (!query.trim()) return [];
 
         // Use fuzzy search for better results
-        const allNotes = Object.values(get().notes);
+        const allNotes = Object.values(get().notes).filter((note) => !note.deletedAt);
         const results = fuzzySearch(
           allNotes,
           query,
@@ -612,7 +751,7 @@ export const useNotesStore = create<NotesStore>()(
       fuzzySearchNotes: (query) => {
         if (!query.trim()) return [];
 
-        const allNotes = Object.values(get().notes);
+        const allNotes = Object.values(get().notes).filter((note) => !note.deletedAt);
         return fuzzySearch(
           allNotes,
           query,
@@ -722,7 +861,7 @@ export const useNotesStore = create<NotesStore>()(
       },
 
       getAllTags: () => {
-        const notes = Object.values(get().notes);
+        const notes = Object.values(get().notes).filter((note) => !note.deletedAt);
         const tagSet = new Set<string>();
         notes.forEach((note) => {
           note.tags.forEach((tag) => tagSet.add(tag));
@@ -731,7 +870,7 @@ export const useNotesStore = create<NotesStore>()(
       },
 
       getTagUsageCounts: () => {
-        const notes = Object.values(get().notes);
+        const notes = Object.values(get().notes).filter((note) => !note.deletedAt);
         const counts = new Map<string, number>();
         notes.forEach((note) => {
           note.tags.forEach((tag) => {
@@ -978,24 +1117,28 @@ export const useNotesStore = create<NotesStore>()(
 
       // Utility
       getNoteCount: () => {
-        return Object.keys(get().notes).length;
+        return Object.values(get().notes).filter((note) => !note.deletedAt).length;
       },
 
       getNotesInFolder: (folderId) => {
         return Object.values(get().notes).filter(
-          (note) => note.folderId === folderId
+          (note) => note.folderId === folderId && !note.deletedAt
         );
       },
 
       exportNotes: () => {
-        return Object.values(get().notes);
+        return Object.values(get().notes).filter((note) => !note.deletedAt);
       },
 
       importNotes: (notes, merge) => {
+        const normalizedNotes = notes.map((note) => ({
+          ...note,
+          content: ensureLexicalContent(note.content, note.contentText),
+        }));
         if (!merge) {
           // Replace all notes
           set({
-            notes: Object.fromEntries(notes.map((note) => [note.id, note])),
+            notes: Object.fromEntries(normalizedNotes.map((note) => [note.id, note])),
             activeNoteId: null,
           });
           log.info('Imported notes', { count: notes.length, mode: 'replace' });
@@ -1003,7 +1146,7 @@ export const useNotesStore = create<NotesStore>()(
           // Merge with existing notes
           set((state) => {
             const updatedNotes = { ...state.notes };
-            notes.forEach((note) => {
+            normalizedNotes.forEach((note) => {
               updatedNotes[note.id] = note;
             });
             return { notes: updatedNotes };
@@ -1022,15 +1165,21 @@ export const useNotesStore = create<NotesStore>()(
       getBacklinks: (noteId: string) => {
         const state = get();
         const note = state.notes[noteId];
-        if (!note) return [];
+        if (!note || note.deletedAt) return [];
 
-        return getBacklinksUtil(noteId, note.title, state.notes);
+        const activeNotes = Object.fromEntries(
+          Object.entries(state.notes).filter(([, candidate]) => !candidate.deletedAt)
+        );
+        return getBacklinksUtil(noteId, note.title, activeNotes);
       },
 
       updateLinkedNotes: (noteId: string, content: string) => {
         const state = get();
         const linkTitles = extractWikiLinks(content);
-        const linkedNoteIds = resolveLinksToIds(linkTitles, state.notes);
+        const activeNotes = Object.fromEntries(
+          Object.entries(state.notes).filter(([, note]) => !note.deletedAt)
+        );
+        const linkedNoteIds = resolveLinksToIds(linkTitles, activeNotes);
 
         set((currentState) => {
           const note = currentState.notes[noteId];
@@ -1083,9 +1232,17 @@ export const useNotesStore = create<NotesStore>()(
         const after = content.substring(endPosition);
         const wikiLink = `[[${textAtPosition}]]`; // Preserve original case
         const newContentText = before + wikiLink + after;
+        const occurrence = before.toLocaleLowerCase().split(targetTitle.toLocaleLowerCase()).length - 1;
+        const lexicalContent = ensureLexicalContent(note.content, note.contentText);
+        const newContent = replaceTextInLexical(
+          lexicalContent,
+          textAtPosition,
+          wikiLink,
+          occurrence
+        );
 
         // Update the note using the updateNote action to ensure proper handling
-        get().updateNote(noteId, { contentText: newContentText });
+        get().updateNote(noteId, { content: newContent, contentText: newContentText });
 
         log.debug('Converted text to wiki link', {
           noteId,
@@ -1128,7 +1285,7 @@ export const useNotesStore = create<NotesStore>()(
       createNoteTemplate: (params: Partial<NoteTemplate>): NoteTemplate => {
         const newTemplate: NoteTemplate = {
           id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          name: params.name || 'Untitled Template',
+          name: params.name || '未命名模板',
           description: params.description || '',
           icon: params.icon,
           category: params.category,
@@ -1256,7 +1413,7 @@ export const useNotesStore = create<NotesStore>()(
 
       getBlockContent: (noteId: string, blockId: string) => {
         const note = get().notes[noteId];
-        if (!note) return null;
+        if (!note || note.deletedAt) return null;
 
         const blockInfo = findBlockInContent(note.contentText, blockId);
         return blockInfo ? blockInfo.content : null;
@@ -1264,7 +1421,7 @@ export const useNotesStore = create<NotesStore>()(
 
       getNotePreview: (noteId: string, blockId?: string) => {
         const note = get().notes[noteId];
-        if (!note) return null;
+        if (!note || note.deletedAt) return null;
 
         return createNotePreview(note, blockId);
       },
@@ -1272,12 +1429,12 @@ export const useNotesStore = create<NotesStore>()(
       // ==================== SUBNOTES/NESTED NOTES ====================
 
       getChildNotes: (noteId: string) => {
-        const notes = Object.values(get().notes);
+        const notes = Object.values(get().notes).filter((note) => !note.deletedAt);
         return notes.filter((note) => note.parentNoteId === noteId);
       },
 
       getNoteTree: (folderId: string | null) => {
-        const notes = Object.values(get().notes);
+        const notes = Object.values(get().notes).filter((note) => !note.deletedAt);
 
         // Build tree recursively
         const buildTree = (parentId: string | null, depth: number, path: string[]): NoteTreeNode[] => {
@@ -1342,7 +1499,7 @@ export const useNotesStore = create<NotesStore>()(
 
         // Add undo action
         useUndoStore.getState().addUndoAction(
-          `Note "${note.title}" ${parentNoteId ? 'nested' : 'unnested'}`,
+          `已将笔记“${note.title}”${parentNoteId ? '设为子笔记' : '移出子笔记'}`,
           () => {
             set((currentState) => {
               const currentNote = currentState.notes[noteId];
@@ -1446,79 +1603,43 @@ export const useNotesStore = create<NotesStore>()(
     {
       name: 'notes', // IndexedDB key
       storage: createJSONStorage(() => createSyncedStorage()),
-      version: 4, // v4: Add parentNoteId for subnotes support
+      version: 6, // v6: add recoverable note deletion
       partialize: (state) => ({
         // Only persist notes and custom templates, not UI state
         notes: state.notes,
         customNoteTemplates: state.customNoteTemplates,
       }),
       migrate: (persistedState: unknown, version: number) => {
-        let state = persistedState as Record<string, unknown>;
-
-        // Version 1 -> 2: Add customNoteTemplates
-        if (version < 2) {
-          state = {
-            ...state,
-            customNoteTemplates: [],
-          };
-        }
-
-        // Version 2 -> 3: Add projectIds field to all notes
-        if (version < 3 && state.notes) {
-          log.info('Adding projectIds field to all notes');
-          const notes = state.notes as Record<string, Record<string, unknown>>;
-          const updatedNotes: Record<string, Record<string, unknown>> = {};
-          Object.entries(notes).forEach(([id, note]) => {
-            updatedNotes[id] = {
-              ...note,
-              projectIds: (note.projectIds as string[] | undefined) ?? [],
-            };
-          });
-          state = {
-            ...state,
-            notes: updatedNotes,
-          };
-        }
-
-        // Version 3 -> 4: Add parentNoteId field for subnotes
-        if (version < 4 && state.notes) {
-          log.info('Adding parentNoteId field to all notes');
-          const notes = state.notes as Record<string, Record<string, unknown>>;
-          const updatedNotes: Record<string, Record<string, unknown>> = {};
-          Object.entries(notes).forEach(([id, note]) => {
-            updatedNotes[id] = {
-              ...note,
-              parentNoteId: (note.parentNoteId as string | null | undefined) ?? null,
-            };
-          });
-          state = {
-            ...state,
-            notes: updatedNotes,
-          };
-        }
-
-        return state;
+        const decoded = unwrapPersistedState(persistedState);
+        const state = isUnknownRecord(decoded) ? decoded : {};
+        if (version < 6) log.info('Normalizing legacy note data', { version });
+        return {
+          ...state,
+          notes: normalizePersistedNotes(state.notes),
+          customNoteTemplates: Array.isArray(state.customNoteTemplates)
+            ? state.customNoteTemplates
+            : [],
+        };
+      },
+      // Only merge the two persisted data fields. This prevents a malformed
+      // backup from replacing store actions and keeps all runtime defaults.
+      merge: (persistedState, currentState) => {
+        const decoded = unwrapPersistedState(persistedState);
+        const state = isUnknownRecord(decoded) ? decoded : {};
+        return {
+          ...currentState,
+          notes: normalizePersistedNotes(state.notes),
+          customNoteTemplates: Array.isArray(state.customNoteTemplates)
+            ? (state.customNoteTemplates as NoteTemplate[])
+            : [],
+        };
       },
       // Handle date serialization
       onRehydrateStorage: () => (state) => {
         log.debug('Notes store rehydrating');
         if (state) {
           try {
-            // Ensure notes object exists and is valid
-            if (state.notes && typeof state.notes === 'object') {
-              // Convert date strings back to Date objects
-              Object.values(state.notes).forEach((note) => {
-                if (typeof note.createdAt === 'string') {
-                  note.createdAt = new Date(note.createdAt);
-                }
-                if (typeof note.updatedAt === 'string') {
-                  note.updatedAt = new Date(note.updatedAt);
-                }
-              });
-            } else {
-              log.warn('Corrupted notes data detected, resetting to empty');
-              state.notes = {};
-            }
+            state.notes = normalizePersistedNotes(state.notes);
 
             // Ensure customNoteTemplates is initialized
             if (!state.customNoteTemplates || !Array.isArray(state.customNoteTemplates)) {
@@ -1527,10 +1648,10 @@ export const useNotesStore = create<NotesStore>()(
             }
           } catch (err) {
             log.error('Error during notes store rehydration', { error: err });
-            // Reset to safe defaults
-            state.notes = {};
+            // Keep any entries that can still be repaired independently.
+            state.notes = normalizePersistedNotes(state.notes);
             state.activeNoteId = null;
-            state.customNoteTemplates = [];
+            if (!Array.isArray(state.customNoteTemplates)) state.customNoteTemplates = [];
           }
         }
         log.info('Notes store rehydrated');
@@ -1545,10 +1666,21 @@ export const useNotesStore = create<NotesStore>()(
 export const useActiveNote = () =>
   useNotesStore((state) => {
     const activeId = state.activeNoteId;
-    return activeId ? state.notes[activeId] : null;
+    const activeNote = activeId ? state.notes[activeId] : null;
+    return activeNote && !activeNote.deletedAt ? activeNote : null;
   });
 
-export const useNotesByFolder = (folderId: string | null) =>
-  useNotesStore((state) => state.getNotesByFolder(folderId));
+export const useNotesByFolder = (folderId: string | null) => {
+  // getNotesByFolder() builds a fresh array on every call; deriving inside the
+  // selector gives React an unstable snapshot ("Maximum update depth exceeded").
+  // Memoize over the stable raw state instead.
+  const notes = useNotesStore((state) => state.notes);
+  const getNotesByFolder = useNotesStore((state) => state.getNotesByFolder);
+  return useMemo(() => getNotesByFolder(folderId), [notes, getNotesByFolder, folderId]);
+};
 
-export const useAllTags = () => useNotesStore((state) => state.getAllTags());
+export const useAllTags = () => {
+  const notes = useNotesStore((state) => state.notes);
+  const getAllTags = useNotesStore((state) => state.getAllTags);
+  return useMemo(() => getAllTags(), [notes, getAllTags]);
+};

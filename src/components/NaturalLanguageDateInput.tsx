@@ -36,7 +36,7 @@ interface NaturalLanguageDateInputProps {
 export function NaturalLanguageDateInput({
   value, // External controlled value (YYYY-MM-DD format)
   onChange,
-  placeholder = 'Type a date (e.g., "tomorrow", "next Friday")',
+  placeholder = '输入日期（例如 "tomorrow"、"next Friday"）',
   label,
   disabled = false,
   autoFocus = false,
@@ -285,7 +285,7 @@ export function NaturalLanguageDateInput({
               ? 'border-accent-red focus:ring-accent-red'
               : 'border-border-light dark:border-border-dark focus:ring-accent-blue'
           }`}
-          aria-label={label || 'Date input'}
+          aria-label={label || '日期输入'}
           aria-describedby={`${componentId}-preview`}
           aria-invalid={isInvalid}
           aria-autocomplete="list"
@@ -300,7 +300,7 @@ export function NaturalLanguageDateInput({
             type="button"
             onClick={handleClear}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            aria-label="Clear date"
+            aria-label="清除日期"
           >
             <X className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -323,7 +323,7 @@ export function NaturalLanguageDateInput({
           id={`${componentId}-preview`}
           className="mt-1 text-[10px] text-accent-red dark:text-accent-red"
         >
-          Could not parse date
+          无法解析日期
         </div>
       )}
 
@@ -333,7 +333,7 @@ export function NaturalLanguageDateInput({
           ref={dropdownRef}
           id={`${componentId}-suggestions`}
           role="listbox"
-          aria-label="Date suggestions"
+          aria-label="日期建议"
           className="absolute z-50 w-full mt-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg max-h-60 overflow-y-auto"
         >
           {filteredSuggestions.map((suggestion, index) => {

@@ -29,10 +29,10 @@ interface DailyReviewProps {
 }
 
 const MOOD_OPTIONS: Array<{ value: DailyReviewType['mood']; icon: React.ReactNode; label: string }> = [
-  { value: 'great', icon: <ThumbsUp className="w-4 h-4" />, label: 'Great' },
-  { value: 'good', icon: <Smile className="w-4 h-4" />, label: 'Good' },
-  { value: 'okay', icon: <Meh className="w-4 h-4" />, label: 'Okay' },
-  { value: 'rough', icon: <Frown className="w-4 h-4" />, label: 'Rough' },
+  { value: 'great', icon: <ThumbsUp className="w-4 h-4" />, label: '很棒' },
+  { value: 'good', icon: <Smile className="w-4 h-4" />, label: '不错' },
+  { value: 'okay', icon: <Meh className="w-4 h-4" />, label: '一般' },
+  { value: 'rough', icon: <Frown className="w-4 h-4" />, label: '糟糕' },
 ];
 
 export const DailyReview: React.FC<DailyReviewProps> = ({
@@ -77,10 +77,10 @@ export const DailyReview: React.FC<DailyReviewProps> = ({
         <div className="flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-accent-yellow" />
           <span className="font-semibold text-text-light-primary dark:text-text-dark-primary text-sm">
-            Daily Review
+            每日回顾
           </span>
           {existingReview && (
-            <span className="text-xs text-accent-green">Saved</span>
+            <span className="text-xs text-accent-green">已保存</span>
           )}
         </div>
         {isExpanded ? (
@@ -97,19 +97,19 @@ export const DailyReview: React.FC<DailyReviewProps> = ({
             <div className="flex items-center gap-2 text-sm">
               <CheckCircle2 className="w-4 h-4 text-accent-green" />
               <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                {tasksCompleted}/{tasksDue} tasks
+                {tasksCompleted}/{tasksDue} 个任务
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-accent-primary" />
               <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                {hoursTracked.toFixed(1)}h tracked
+                {hoursTracked.toFixed(1)} 小时已记录
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Target className="w-4 h-4 text-accent-purple" />
               <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                {goalsCompleted}/{plan.goals.length} goals
+                {goalsCompleted}/{plan.goals.length} 个目标
               </span>
             </div>
           </div>
@@ -117,7 +117,7 @@ export const DailyReview: React.FC<DailyReviewProps> = ({
           {/* Mood selector */}
           <div>
             <label className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2 block">
-              How was your day?
+              今天过得怎么样？
             </label>
             <div className="flex gap-2">
               {MOOD_OPTIONS.map((option) => (
@@ -140,12 +140,12 @@ export const DailyReview: React.FC<DailyReviewProps> = ({
           {/* Reflection notes */}
           <div>
             <label className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2 block">
-              Reflections
+              反思
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="What went well? What could be better? Key learnings..."
+              placeholder="哪些地方做得不错？哪些地方可以改进？关键收获…"
               rows={3}
               className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary outline-none focus:border-accent-primary resize-none"
             />
@@ -156,7 +156,7 @@ export const DailyReview: React.FC<DailyReviewProps> = ({
             onClick={handleSave}
             className="w-full py-2 rounded-lg text-sm font-medium bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
           >
-            {existingReview ? 'Update Review' : 'Save Review'}
+            {existingReview ? '更新回顾' : '保存回顾'}
           </button>
         </div>
       )}

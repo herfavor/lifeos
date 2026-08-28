@@ -32,10 +32,10 @@ interface WeeklyPlanningProps {
 /** Format minutes to a short string */
 const formatMin = (mins: number): string => {
   if (mins === 0) return '';
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return `${mins}分钟`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return m > 0 ? `${h}h${m}m` : `${h}h`;
+  return m > 0 ? `${h}小时${m}分钟` : `${h}小时`;
 };
 
 interface DaySummary {
@@ -126,10 +126,10 @@ export const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ today }) => {
         <div className="flex items-center gap-2">
           <CalendarDays className="w-4 h-4 text-accent-secondary" />
           <span className="font-semibold text-text-light-primary dark:text-text-dark-primary text-sm">
-            Weekly Plan
+            周计划
           </span>
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {totalCompleted}/{totalTasks} tasks
+            {totalCompleted}/{totalTasks} 个任务
           </span>
         </div>
         {isExpanded ? (
@@ -146,7 +146,7 @@ export const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ today }) => {
             <button
               onClick={() => setWeekOffset((o) => o - 1)}
               className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-              aria-label="Previous week"
+              aria-label="上一周"
             >
               <ChevronLeft className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -159,14 +159,14 @@ export const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ today }) => {
                   onClick={() => setWeekOffset(0)}
                   className="text-xs text-accent-primary hover:text-accent-primary-hover"
                 >
-                  This week
+                  本周
                 </button>
               )}
             </div>
             <button
               onClick={() => setWeekOffset((o) => o + 1)}
               className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-              aria-label="Next week"
+              aria-label="下一周"
             >
               <ChevronRight className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -272,7 +272,7 @@ export const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ today }) => {
                         </span>
                         {/* Quick move buttons: prev/next day */}
                         {!day.isPast && task.status !== 'done' && (
-                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
                             {days.map((target) => {
                               if (
                                 target.dateKey === day.dateKey ||
@@ -291,7 +291,7 @@ export const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ today }) => {
                                     );
                                   }}
                                   className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-accent-primary/10 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-primary transition-colors"
-                                  title={`Move to ${format(target.date, 'EEE')}`}
+                                  title={`移至 ${format(target.date, 'EEE')}`}
                                 >
                                   {target.dayLabel.charAt(0)}
                                 </button>

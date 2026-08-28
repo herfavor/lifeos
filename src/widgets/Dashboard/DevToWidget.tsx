@@ -31,12 +31,12 @@ export const DevToWidget: React.FC = () => {
 
     try {
       const response = await fetch('https://dev.to/api/articles?per_page=5&top=7');
-      if (!response.ok) throw new Error('Failed to fetch Dev.to articles');
+      if (!response.ok) throw new Error('获取 Dev.to 文章失败');
 
       const data = await response.json();
       setArticles(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load articles');
+      setError(err instanceof Error ? err.message : '加载文章失败');
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export const DevToWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Dev.to Articles"
+      title="Dev.to 文章"
       icon="📝"
       loading={loading}
       error={error}

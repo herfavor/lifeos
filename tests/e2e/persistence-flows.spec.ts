@@ -34,7 +34,7 @@ test.describe('Task Persistence', () => {
     await page.getByText('Tagged Persist Task').click();
     await page.waitForTimeout(300);
 
-    const tagInput = page.getByPlaceholder('Add a tag...');
+    const tagInput = page.getByPlaceholder('添加标签…');
     if (await tagInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await tagInput.fill('e2e-tag');
       await page.keyboard.press('Enter');
@@ -72,7 +72,7 @@ test.describe('Task Persistence', () => {
     await page.getByText('Description Persist Task').click();
     await page.waitForTimeout(300);
 
-    const descInput = page.getByPlaceholder('Add a description...');
+    const descInput = page.getByPlaceholder('添加描述…');
     if (await descInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await descInput.fill('This description should persist');
       await page.waitForTimeout(500); // auto-save
@@ -107,7 +107,7 @@ test.describe('Note Persistence', () => {
   test('created note content persists after reload', async ({ page }) => {
     await navigateTo(page, '/notes');
 
-    const newBtn = page.getByRole('button', { name: /new.*note|create.*note|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*笔记|创建.*笔记|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -141,7 +141,7 @@ test.describe('Settings Persistence', () => {
   test('display name persists after reload', async ({ page }) => {
     await navigateTo(page, '/settings');
 
-    const nameInput = page.getByPlaceholder('Enter your name');
+    const nameInput = page.getByPlaceholder('输入你的姓名');
     if (await nameInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await nameInput.clear();
       await nameInput.fill('Persistence Test User');
@@ -151,7 +151,7 @@ test.describe('Settings Persistence', () => {
       await page.reload();
       await page.waitForLoadState('networkidle').catch(() => {});
 
-      const updatedInput = page.getByPlaceholder('Enter your name');
+      const updatedInput = page.getByPlaceholder('输入你的姓名');
       if (await updatedInput.isVisible({ timeout: 3000 }).catch(() => false)) {
         await expect(updatedInput).toHaveValue('Persistence Test User');
       }
@@ -162,7 +162,7 @@ test.describe('Settings Persistence', () => {
   test('dark mode persists after reload', async ({ page }) => {
     await navigateTo(page, '/settings');
 
-    const darkBtn = page.getByRole('button', { name: 'Dark', exact: true });
+    const darkBtn = page.getByRole('button', { name: '深色', exact: true });
     if (await darkBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await darkBtn.click();
       await page.waitForTimeout(300);

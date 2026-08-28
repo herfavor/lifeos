@@ -16,26 +16,26 @@ interface DependencyPickerProps {
 const DEPENDENCY_TYPES: Array<{ value: DependencyType; label: string; description: string; icon: string }> = [
   {
     value: 'finish-to-start',
-    label: 'Finish-to-Start (FS)',
-    description: 'This task starts when dependency finishes',
+    label: '完成到开始（FS）',
+    description: '当前任务在前置任务完成后开始',
     icon: '⏭️',
   },
   {
     value: 'start-to-start',
-    label: 'Start-to-Start (SS)',
-    description: 'This task starts when dependency starts',
+    label: '开始到开始（SS）',
+    description: '当前任务在前置任务开始时开始',
     icon: '🤝',
   },
   {
     value: 'finish-to-finish',
-    label: 'Finish-to-Finish (FF)',
-    description: 'This task finishes when dependency finishes',
+    label: '完成到完成（FF）',
+    description: '当前任务在前置任务完成后完成',
     icon: '🏁',
   },
   {
     value: 'start-to-finish',
-    label: 'Start-to-Finish (SF)',
-    description: 'This task finishes when dependency starts (rare)',
+    label: '开始到完成（SF）',
+    description: '当前任务在前置任务开始时完成（很少使用）',
     icon: '🔄',
   },
 ];
@@ -69,17 +69,17 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
       {/* Task Selector */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-          Depends On Task
+          依赖任务
         </label>
         <select
           value={selectedTaskId}
           onChange={(e) => setSelectedTaskId(e.target.value)}
           className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
         >
-          <option value="">Select task...</option>
+          <option value="">选择任务…</option>
           {filteredTasks.map(t => (
             <option key={t.id} value={t.id}>
-              {t.title} ({t.status})
+              {t.title}（{t.status === 'backlog' ? '待处理' : t.status === 'todo' ? '待办' : t.status === 'inprogress' ? '进行中' : t.status === 'review' ? '评审中' : '已完成'}）
             </option>
           ))}
         </select>
@@ -90,7 +90,7 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
           {/* Dependency Type Selector */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Dependency Type
+              依赖类型
             </label>
             <div className="space-y-2">
               {DEPENDENCY_TYPES.map(type => (
@@ -126,10 +126,10 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
           {/* Lag Time Input */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Lag Time (days)
+              滞后时间（天）
             </label>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Positive for delay, negative for lead/overlap
+              正数表示延迟，负数表示提前/重叠
             </p>
             <input
               type="number"
@@ -141,7 +141,7 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
             />
             {lag !== 0 && (
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                {lag > 0 ? `+${lag} day delay` : `${lag} day lead (overlap)`}
+                {lag > 0 ? `延迟 ${lag} 天` : `提前 ${lag} 天（重叠）`}
               </div>
             )}
           </div>
@@ -151,7 +151,7 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
             onClick={handleAdd}
             className="w-full px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors"
           >
-            Add Dependency
+            添加依赖
           </button>
         </>
       )}

@@ -287,7 +287,7 @@ export const useInvoicingStore = create<InvoicingStore>()(
 
               lineItems.push({
                 id: crypto.randomUUID(),
-                description: project?.name || 'No Project',
+                description: project?.name || '无项目',
                 quantity: Math.round(totalHours * 100) / 100,
                 rate,
                 amount: Math.round(amount * 100) / 100,
@@ -320,7 +320,7 @@ export const useInvoicingStore = create<InvoicingStore>()(
 
               lineItems.push({
                 id: crypto.randomUUID(),
-                description: `Work on ${new Date(date).toLocaleDateString('en-US', {
+                description: `工作于 ${new Date(date).toLocaleDateString('zh-CN', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'

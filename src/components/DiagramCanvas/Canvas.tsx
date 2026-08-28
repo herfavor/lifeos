@@ -396,7 +396,7 @@ function DiagramElementComponent({
       return (
         <KonvaText
           {...commonProps}
-          text={element.text || 'Text'}
+          text={element.text || '文本'}
           fontSize={element.fontSize || 16}
           fontFamily={element.fontFamily || 'Arial'}
           fontStyle={element.fontWeight === 'bold' ? 'bold' : 'normal'}

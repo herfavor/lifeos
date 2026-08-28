@@ -48,7 +48,7 @@ export function createSlideFromLayout(
             y: SLIDE_HEIGHT / 2 - 100,
             width: 1200,
             height: 120,
-            content: 'Presentation Title',
+            content: '演示文稿标题',
             fontSize: 72,
             fontWeight: 'bold',
             textAlign: 'center',
@@ -60,7 +60,7 @@ export function createSlideFromLayout(
             y: SLIDE_HEIGHT / 2 + 60,
             width: 800,
             height: 60,
-            content: 'Subtitle or author name',
+            content: '副标题或作者姓名',
             fontSize: 32,
             fontWeight: 'normal',
             textAlign: 'center',
@@ -79,7 +79,7 @@ export function createSlideFromLayout(
             y: 80,
             width: SLIDE_WIDTH - 200,
             height: 80,
-            content: 'Slide Title',
+            content: '幻灯片标题',
             fontSize: 48,
             fontWeight: 'bold',
             textAlign: 'left',
@@ -91,7 +91,7 @@ export function createSlideFromLayout(
             y: 200,
             width: SLIDE_WIDTH - 200,
             height: SLIDE_HEIGHT - 280,
-            content: '• First point\n• Second point\n• Third point',
+            content: '• 第一点\n• 第二点\n• 第三点',
             fontSize: 28,
             fontWeight: 'normal',
             textAlign: 'left',
@@ -110,7 +110,7 @@ export function createSlideFromLayout(
             y: 80,
             width: SLIDE_WIDTH - 200,
             height: 80,
-            content: 'Slide Title',
+            content: '幻灯片标题',
             fontSize: 48,
             fontWeight: 'bold',
             textAlign: 'left',
@@ -122,7 +122,7 @@ export function createSlideFromLayout(
             y: 200,
             width: (SLIDE_WIDTH - 250) / 2,
             height: SLIDE_HEIGHT - 280,
-            content: '• Left column point 1\n• Left column point 2',
+            content: '• 左侧栏要点 1\n• 左侧栏要点 2',
             fontSize: 24,
             fontWeight: 'normal',
             textAlign: 'left',
@@ -134,7 +134,7 @@ export function createSlideFromLayout(
             y: 200,
             width: (SLIDE_WIDTH - 250) / 2,
             height: SLIDE_HEIGHT - 280,
-            content: '• Right column point 1\n• Right column point 2',
+            content: '• 右侧栏要点 1\n• 右侧栏要点 2',
             fontSize: 24,
             fontWeight: 'normal',
             textAlign: 'left',
@@ -153,7 +153,7 @@ export function createSlideFromLayout(
             y: SLIDE_HEIGHT / 2 - 60,
             width: 1000,
             height: 120,
-            content: 'Section Title',
+            content: '章节标题',
             fontSize: 64,
             fontWeight: 'bold',
             textAlign: 'center',
@@ -209,10 +209,10 @@ function createTextElement(config: {
 export const THEME_PRESETS: ThemePreset[] = [
   {
     id: 'default',
-    name: 'Default',
+    name: '默认',
     theme: {
       id: 'default',
-      name: 'Default',
+      name: '默认',
       colors: {
         primary: '#1F2937',
         secondary: '#4B5563',
@@ -229,10 +229,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'dark',
-    name: 'Dark',
+    name: '深色',
     theme: {
       id: 'dark',
-      name: 'Dark',
+      name: '深色',
       colors: {
         primary: '#F9FAFB',
         secondary: '#D1D5DB',
@@ -249,10 +249,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'ocean',
-    name: 'Ocean',
+    name: '海洋',
     theme: {
       id: 'ocean',
-      name: 'Ocean',
+      name: '海洋',
       colors: {
         primary: '#0369A1',
         secondary: '#0284C7',
@@ -269,10 +269,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'forest',
-    name: 'Forest',
+    name: '森林',
     theme: {
       id: 'forest',
-      name: 'Forest',
+      name: '森林',
       colors: {
         primary: '#166534',
         secondary: '#15803D',
@@ -289,10 +289,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'sunset',
-    name: 'Sunset',
+    name: '日落',
     theme: {
       id: 'sunset',
-      name: 'Sunset',
+      name: '日落',
       colors: {
         primary: '#C2410C',
         secondary: '#EA580C',
@@ -309,10 +309,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'purple',
-    name: 'Purple Haze',
+    name: '紫色迷雾',
     theme: {
       id: 'purple',
-      name: 'Purple Haze',
+      name: '紫色迷雾',
       colors: {
         primary: '#6D28D9',
         secondary: '#7C3AED',
@@ -329,10 +329,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'rose',
-    name: 'Rose',
+    name: '玫瑰',
     theme: {
       id: 'rose',
-      name: 'Rose',
+      name: '玫瑰',
       colors: {
         primary: '#BE185D',
         secondary: '#DB2777',
@@ -349,10 +349,10 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
   {
     id: 'corporate',
-    name: 'Corporate',
+    name: '商务',
     theme: {
       id: 'corporate',
-      name: 'Corporate',
+      name: '商务',
       colors: {
         primary: '#1E3A5F',
         secondary: '#2563EB',
@@ -375,16 +375,16 @@ export const THEME_PRESETS: ThemePreset[] = [
 export function getLayoutDisplayName(layout: SlideLayout): string {
   switch (layout) {
     case 'title':
-      return 'Title Slide';
+      return '标题幻灯片';
     case 'content':
-      return 'Content';
+      return '内容';
     case 'two-column':
-      return 'Two Columns';
+      return '双栏';
     case 'section':
-      return 'Section Header';
+      return '章节标题页';
     case 'blank':
     default:
-      return 'Blank';
+      return '空白';
   }
 }
 

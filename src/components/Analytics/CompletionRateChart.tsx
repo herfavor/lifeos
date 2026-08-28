@@ -45,7 +45,7 @@ export function CompletionRateChart({ tasks, dateRange }: CompletionRateChartPro
           <YAxis
             tick={{ fontSize: 12 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
-            label={{ value: 'Completion %', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
+            label={{ value: '完成率 (%)', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
           />
           <Tooltip
             contentStyle={{
@@ -57,7 +57,7 @@ export function CompletionRateChart({ tasks, dateRange }: CompletionRateChartPro
               const d = new Date(date);
               return d.toLocaleDateString();
             }}
-            formatter={(value) => [`${value ?? 0}%`, 'Completion Rate']}
+            formatter={(value) => [`${value ?? 0}%`, '完成率']}
           />
           <Line
             type="monotone"

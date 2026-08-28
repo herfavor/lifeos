@@ -52,7 +52,7 @@ export const ProjectContextDropdown: React.FC<ProjectContextDropdownProps> = ({
   const getDisplayInfo = () => {
     if (isAllSelected) {
       return {
-        text: 'All Projects',
+        text: '全部项目',
         color: null,
         icon: null, // Use gradient circle instead
         isAllProjects: true,
@@ -73,14 +73,14 @@ export const ProjectContextDropdown: React.FC<ProjectContextDropdownProps> = ({
     }
     if (multipleSelected) {
       return {
-        text: `${activeProjectIds.length} Projects`,
+        text: `${activeProjectIds.length} 个项目`,
         color: null,
         icon: null,
         isAllProjects: false,
       };
     }
     return {
-      text: 'All Projects',
+      text: '全部项目',
       color: null,
       icon: null,
       isAllProjects: true,
@@ -184,7 +184,7 @@ export const ProjectContextDropdown: React.FC<ProjectContextDropdownProps> = ({
         `}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label="Select project context"
+        aria-label="选择项目上下文"
       >
         {/* Color indicator or icon */}
         {displayInfo.isAllProjects ? (
@@ -259,7 +259,7 @@ export const ProjectContextDropdown: React.FC<ProjectContextDropdownProps> = ({
               "
             >
               <Settings className="w-4 h-4" />
-              <span>Manage Projects</span>
+              <span>管理项目</span>
             </button>
           </div>
         </div>

@@ -96,7 +96,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
     // Find the entry to preserve for undo
     const entryToDelete = entries.find(e => e.id === id);
     if (!entryToDelete) {
-      toast.error('Entry not found');
+      toast.error('未找到记录');
       return;
     }
 
@@ -107,7 +107,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
 
       // Add undo action
       addUndoAction(
-        'Time entry deleted',
+        '已删除时间记录',
         async () => {
           // Restore the entry
           await timeTrackingDb.addEntry(entryToDelete);
@@ -117,7 +117,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
       );
     } catch (error) {
       console.error('Failed to delete entry:', error);
-      toast.error('Failed to delete entry', 'Please try again.');
+      toast.error('删除记录失败', '请重试。');
     } finally {
       setDeletingId(null);
     }
@@ -173,7 +173,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
 
       // Add undo action
       addUndoAction(
-        `${count} ${count === 1 ? 'entry' : 'entries'} deleted`,
+        `已删除 ${count} 条记录`,
         async () => {
           // Restore all deleted entries
           for (const entry of entriesToDelete) {
@@ -185,7 +185,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
       );
     } catch (error) {
       console.error('Failed to delete entries:', error);
-      toast.error('Failed to delete entries', 'Please try again.');
+      toast.error('删除记录失败', '请重试。');
     }
   };
 
@@ -321,7 +321,7 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading entries...
+          正在加载记录…
         </div>
       </div>
     );
@@ -347,18 +347,18 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4 flex-wrap">
             <label className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-              Date Range:
+              日期范围：
             </label>
             <select
               value={dateRange}
               onChange={(e) => handleDateRangeChange(e.target.value)}
               className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary"
             >
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="last7days">Last 7 Days</option>
-              <option value="last30days">Last 30 Days</option>
-              <option value="custom">Custom Range</option>
+              <option value="today">今天</option>
+              <option value="yesterday">昨天</option>
+              <option value="last7days">最近 7 天</option>
+              <option value="last30days">最近 30 天</option>
+              <option value="custom">自定义范围</option>
             </select>
 
             {/* Custom Date Range Inputs */}
@@ -369,15 +369,15 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary"
-                  placeholder="Start date"
+                  placeholder="开始日期"
                 />
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">to</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">至</span>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary"
-                  placeholder="End date"
+                  placeholder="结束日期"
                 />
               </>
             )}
@@ -386,23 +386,23 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors"
-              title="Import from Toggl"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
+              title="从 Toggl 导入"
             >
               <Upload className="w-4 h-4" />
-              Import
+              导入
             </button>
             <button
               onClick={handleExportCSV}
               disabled={filteredEntries.length === 0}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white dark:text-dark-background bg-accent-primary rounded-button hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Export to CSV"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-primary rounded-button hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              title="导出为 CSV"
             >
               <Download className="w-4 h-4" />
-              Export CSV
+              导出 CSV
             </button>
             <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {filteredEntries.length} {filteredEntries.length === 1 ? 'entry' : 'entries'}
+              {filteredEntries.length} 条记录
             </div>
           </div>
         </div>
@@ -416,18 +416,18 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by description, project, or tags..."
+              placeholder="按描述、项目或标签搜索…"
               className="w-full pl-10 pr-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
             />
           </div>
           <label className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Project:
+            项目：
           </label>
           <div className="w-64">
             <ProjectSelector
               value={projectFilter}
               onChange={handleProjectFilterChange}
-              placeholder="All Projects"
+              placeholder="所有项目"
               showNoProject={true}
             />
           </div>
@@ -438,10 +438,10 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
       {entries.length === 0 ? (
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-12 text-center">
           <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            No entries found
+            暂无记录
           </p>
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            Start tracking time to see your entries here
+            开始记录时间后，您的记录将显示在这里
           </p>
         </div>
       ) : (
@@ -465,17 +465,17 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                             handleClearSelection();
                           }
                         }}
-                        className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-buttonfocus:ring-2 focus:ring-accent-primary cursor-pointer"
-                        title="Select all on this page"
+                        className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-button focus:ring-2 focus:ring-accent-primary cursor-pointer"
+                        title="选择本页全部"
                       />
                     </th>
                     <th
                       onClick={() => handleSort('date')}
-                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors select-none"
-                      title="Click to sort by date"
+                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors select-none"
+                      title="点击按日期排序"
                     >
                       <div className="flex items-center gap-1">
-                        Date
+                        日期
                         {sortColumn === 'date' && (
                           sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                         )}
@@ -483,11 +483,11 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                     </th>
                     <th
                       onClick={() => handleSort('description')}
-                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors select-none"
-                      title="Click to sort by description"
+                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors select-none"
+                      title="点击按描述排序"
                     >
                       <div className="flex items-center gap-1">
-                        Description
+                        描述
                         {sortColumn === 'description' && (
                           sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                         )}
@@ -495,11 +495,11 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                     </th>
                     <th
                       onClick={() => handleSort('project')}
-                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors select-none"
-                      title="Click to sort by project"
+                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors select-none"
+                      title="点击按项目排序"
                     >
                       <div className="flex items-center gap-1">
-                        Project
+                        项目
                         {sortColumn === 'project' && (
                           sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                         )}
@@ -507,11 +507,11 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                     </th>
                     <th
                       onClick={() => handleSort('time')}
-                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors select-none"
-                      title="Click to sort by time"
+                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors select-none"
+                      title="点击按时间排序"
                     >
                       <div className="flex items-center gap-1">
-                        Time
+                        时间
                         {sortColumn === 'time' && (
                           sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                         )}
@@ -519,18 +519,18 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                     </th>
                     <th
                       onClick={() => handleSort('duration')}
-                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors select-none"
-                      title="Click to sort by duration"
+                      className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors select-none"
+                      title="点击按时长排序"
                     >
                       <div className="flex items-center gap-1">
-                        Duration
+                        时长
                         {sortColumn === 'duration' && (
                           sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                         )}
                       </div>
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider">
-                      Actions
+                      操作
                     </th>
                   </tr>
                 </thead>
@@ -545,12 +545,12 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                           type="checkbox"
                           checked={selectedIds.has(entry.id)}
                           onChange={() => handleToggleSelection(entry.id)}
-                          className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-buttonfocus:ring-2 focus:ring-accent-primary cursor-pointer"
-                          title="Select entry"
+                          className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-button focus:ring-2 focus:ring-accent-primary cursor-pointer"
+                          title="选择记录"
                         />
                       </td>
                       <td className="px-4 py-3 text-sm text-text-light-primary dark:text-text-dark-primary whitespace-nowrap">
-                        {new Date(entry.startTime).toLocaleDateString('en-US', {
+                        {new Date(entry.startTime).toLocaleDateString('zh-CN', {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric'
@@ -561,10 +561,10 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                           <div className="font-medium">{entry.description}</div>
                           {entry.billable && (
                             <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full bg-status-success/10 text-status-success-text border border-status-success/20">
-                              Billable
+                              可计费
                               {(() => {
                                 const rate = entry.hourlyRate || projects.find(p => p.id === entry.projectId)?.hourlyRate;
-                                return rate ? ` @ $${rate.toFixed(2)}/hr` : '';
+                                return rate ? ` @ $${rate.toFixed(2)}/小时` : '';
                               })()}
                             </span>
                           )}
@@ -587,10 +587,10 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                               className="w-2 h-2 rounded-full"
                               style={{ backgroundColor: projects.find(p => p.id === entry.projectId)?.color || '#94A3B8' }}
                             />
-                            <span>{projects.find(p => p.id === entry.projectId)?.name || 'Unknown'}</span>
+                            <span>{projects.find(p => p.id === entry.projectId)?.name || '未知'}</span>
                           </div>
                         ) : (
-                          <span className="text-text-light-tertiary dark:text-text-dark-tertiary italic">No Project</span>
+                          <span className="text-text-light-tertiary dark:text-text-dark-tertiary italic">无项目</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-text-light-secondary dark:text-text-dark-secondary whitespace-nowrap">
@@ -610,19 +610,19 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                           <button
                             onClick={() => onEditEntry?.(entry)}
                             className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue dark:hover:text-accent-blue-hover transition-all duration-standard ease-smooth"
-                            title="Edit entry"
-                            aria-label="Edit entry"
+                            title="编辑记录"
+                            aria-label="编辑记录"
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => {
                               duplicateEntry(entry.id);
-                              toast.success('Entry duplicated');
+                              toast.success('已复制记录');
                             }}
                             className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-all duration-standard ease-smooth"
-                            title="Duplicate entry (copy with today's date)"
-                            aria-label="Duplicate entry"
+                            title="复制记录（以今天日期创建副本）"
+                            aria-label="复制记录"
                           >
                             <Copy className="w-4 h-4" />
                           </button>
@@ -630,8 +630,8 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
                             onClick={() => handleDelete(entry.id)}
                             disabled={deletingId === entry.id}
                             className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error transition-all duration-standard ease-smooth disabled:opacity-50"
-                            title="Delete entry"
-                            aria-label="Delete entry"
+                            title="删除记录"
+                            aria-label="删除记录"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -650,19 +650,19 @@ export function TimeEntryList({ onEditEntry }: TimeEntryListProps) {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated disabled:opacity-50 disabled:cursor-not-allowed text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
+                className="px-4 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated disabled:opacity-50 disabled:cursor-not-allowed text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
               >
-                Previous
+                上一页
               </button>
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Page {currentPage} of {totalPages}
+                第 {currentPage} 页，共 {totalPages} 页
               </span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated disabled:opacity-50 disabled:cursor-not-allowed text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
+                className="px-4 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated disabled:opacity-50 disabled:cursor-not-allowed text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
               >
-                Next
+                下一页
               </button>
             </div>
           )}

@@ -25,7 +25,7 @@ interface ProjectSummaryInput {
   overdueCount: number;
   totalCount: number;
   hoursThisWeek: number;
-  health: 'green' | 'yellow' | 'red';
+  health: 'green' | 'yellow' | 'red' | null;
 }
 
 interface Props {
@@ -70,7 +70,7 @@ export function PortfolioMetrics({ summaries, tasks }: Props) {
 
   const metrics = [
     {
-      label: 'Open Tasks',
+      label: '未完成任务',
       value: totalOpen,
       icon: CheckSquare,
       color: 'text-accent-blue',
@@ -78,7 +78,7 @@ export function PortfolioMetrics({ summaries, tasks }: Props) {
       trend: null as 'up' | 'down' | 'flat' | null,
     },
     {
-      label: 'Hours This Week',
+      label: '本周工时',
       value: `${Math.round(totalHoursThisWeek * 10) / 10}h`,
       icon: Clock,
       color: 'text-accent-purple',
@@ -86,7 +86,7 @@ export function PortfolioMetrics({ summaries, tasks }: Props) {
       trend: null,
     },
     {
-      label: 'Velocity (tasks/wk)',
+      label: '速率（任务/周）',
       value: velocityThisWeek,
       icon: Zap,
       color: 'text-accent-green',
@@ -94,7 +94,7 @@ export function PortfolioMetrics({ summaries, tasks }: Props) {
       trend: velocityTrend,
     },
     {
-      label: 'At-Risk Projects',
+      label: '风险项目',
       value: atRiskCount,
       icon: AlertTriangle,
       color: atRiskCount > 0 ? 'text-accent-red' : 'text-accent-green',

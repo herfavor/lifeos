@@ -7,7 +7,7 @@
  * @module utils/markdownToLexical
  */
 
-import { createEditor } from 'lexical';
+import { $createParagraphNode, $getRoot, createEditor } from 'lexical';
 import type { SerializedEditorState } from 'lexical';
 import { $convertFromMarkdownString, $convertToMarkdownString, TRANSFORMERS } from '@lexical/markdown';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
@@ -104,21 +104,18 @@ export function appendMarkdownToLexical(
       return markdownToLexical(newMarkdown);
     }
 
-    // Parse existing Lexical state - just validate it's JSON
-    try {
-      JSON.parse(existingContent) as SerializedEditorState;
-    } catch {
-      // If existing content isn't valid JSON, treat as empty
+    if (!isValidLexicalJson(existingContent)) {
       log.warn('Invalid existing Lexical content, starting fresh');
       return markdownToLexical(newMarkdown);
     }
 
-    // Strategy: Convert existing to markdown, append, convert back
-    // This is simpler than manipulating the AST directly
-    const existingMarkdown = lexicalToMarkdown(existingContent);
-    const combinedMarkdown = existingMarkdown + separator + newMarkdown;
-
-    return markdownToLexical(combinedMarkdown);
+    // Merge serialized root children instead of round-tripping the existing
+    // document through Markdown. A round trip silently drops custom nodes such
+    // as callouts, embeds, images and wiki links.
+    const existingState = JSON.parse(existingContent) as SerializedEditorState;
+    const appendedState = JSON.parse(markdownToLexical(`${separator}${newMarkdown}`)) as SerializedEditorState;
+    existingState.root.children.push(...appendedState.root.children);
+    return JSON.stringify(existingState);
   } catch (error) {
     log.error('Failed to append markdown to Lexical', { error });
     // Fallback: just return the new content
@@ -179,7 +176,28 @@ export function createEmptyEditorState(): string {
     onError: () => {},
   });
 
+  // Lexical's initial serialized state has an empty root. That state is not
+  // safe to apply with `setEditorState`; every document, including a visually
+  // empty note, must contain an element node.
+  editor.update(() => {
+    const root = $getRoot();
+    if (root.getChildrenSize() === 0) {
+      root.append($createParagraphNode());
+    }
+  }, { discrete: true });
+
   return JSON.stringify(editor.getEditorState().toJSON());
+}
+
+/** True when content is a serialized Lexical-shaped document, even if broken. */
+function hasLexicalRoot(content: string): boolean {
+  try {
+    const parsed = JSON.parse(content) as { root?: unknown };
+    return typeof parsed === 'object' && parsed !== null &&
+      typeof parsed.root === 'object' && parsed.root !== null;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -198,10 +216,76 @@ export function isValidLexicalJson(content: string): boolean {
     return (
       typeof parsed === 'object' &&
       parsed !== null &&
-      'root' in parsed
+      'root' in parsed &&
+      typeof parsed.root === 'object' &&
+      parsed.root !== null &&
+      parsed.root.type === 'root' &&
+      Array.isArray(parsed.root.children) &&
+      parsed.root.children.length > 0
     );
   } catch {
     return false;
+  }
+}
+
+/**
+ * Enforce the Note content contract without rewriting an already-valid rich
+ * document. `contentText` is treated as Markdown only when rich content is
+ * missing or malformed.
+ */
+export function ensureLexicalContent(content?: string | null, contentText?: string | null): string {
+  if (content && isValidLexicalJson(content)) return content;
+  if (contentText?.trim()) return markdownToLexical(contentText);
+  // A few legacy callers stored plain Markdown in `content` before the
+  // Lexical/contentText contract was documented. Recover it instead of
+  // replacing it with an empty state.
+  // Invalid serialized editor JSON (notably legacy `root.children: []`) is
+  // not Markdown. Treat it as an empty document instead of putting its JSON
+  // source into the user's note.
+  if (content?.trim() && !hasLexicalRoot(content)) return markdownToLexical(content);
+  return createEmptyEditorState();
+}
+
+/** Replace one plain-text occurrence while preserving the surrounding AST. */
+export function replaceTextInLexical(
+  content: string,
+  search: string,
+  replacement: string,
+  occurrence = 0
+): string {
+  if (!search || !isValidLexicalJson(content)) return content;
+
+  try {
+    const state = JSON.parse(content) as Record<string, unknown>;
+    let remaining = Math.max(0, occurrence);
+    let replaced = false;
+    const needle = search.toLocaleLowerCase();
+
+    const visit = (value: unknown): void => {
+      if (replaced || typeof value !== 'object' || value === null) return;
+      const node = value as Record<string, unknown>;
+      if (node.type === 'text' && typeof node.text === 'string') {
+        const lower = node.text.toLocaleLowerCase();
+        let from = 0;
+        while (!replaced) {
+          const index = lower.indexOf(needle, from);
+          if (index < 0) break;
+          if (remaining === 0) {
+            node.text = `${node.text.slice(0, index)}${replacement}${node.text.slice(index + search.length)}`;
+            replaced = true;
+            break;
+          }
+          remaining -= 1;
+          from = index + search.length;
+        }
+      }
+      if (Array.isArray(node.children)) node.children.forEach(visit);
+    };
+
+    visit(state.root);
+    return replaced ? JSON.stringify(state) : content;
+  } catch {
+    return content;
   }
 }
 

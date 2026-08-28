@@ -39,7 +39,7 @@ export const SavedLayoutsSection: React.FC = () => {
         <div className="flex items-center gap-3">
           <LayoutGrid className="w-5 h-5 text-accent-primary" />
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Saved Layouts
+            已保存布局
           </h2>
         </div>
         {!showSaveInput && (
@@ -48,12 +48,12 @@ export const SavedLayoutsSection: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
           >
             <Save className="w-3 h-3" />
-            Save Current Layout
+            保存当前布局
           </button>
         )}
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-        Save and restore dashboard widget arrangements.
+        保存并恢复首页扩展组件布局。
       </p>
 
       {/* Save Input */}
@@ -64,7 +64,7 @@ export const SavedLayoutsSection: React.FC = () => {
             value={layoutName}
             onChange={(e) => setLayoutName(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Layout name..."
+            placeholder="布局名称…"
             autoFocus
             className="flex-1 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
           />
@@ -73,7 +73,7 @@ export const SavedLayoutsSection: React.FC = () => {
             disabled={!layoutName.trim()}
             className="px-4 py-2 bg-accent-primary text-white rounded-lg text-sm font-medium hover:bg-accent-primary-hover disabled:opacity-50 transition-colors"
           >
-            Save
+            保存
           </button>
           <button
             onClick={() => {
@@ -82,7 +82,7 @@ export const SavedLayoutsSection: React.FC = () => {
             }}
             className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg text-sm font-medium hover:bg-border-light dark:hover:bg-border-dark transition-colors"
           >
-            Cancel
+            取消
           </button>
         </div>
       )}
@@ -91,8 +91,8 @@ export const SavedLayoutsSection: React.FC = () => {
       {savedLayouts.length === 0 ? (
         <div className="text-center py-8 text-text-light-tertiary dark:text-text-dark-tertiary">
           <LayoutGrid className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No saved layouts yet</p>
-          <p className="text-xs mt-1">Save your current dashboard arrangement to switch between layouts</p>
+          <p className="text-sm">暂无已保存的布局</p>
+          <p className="text-xs mt-1">保存当前首页组件布局，以便在不同布局间切换</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -106,7 +106,7 @@ export const SavedLayoutsSection: React.FC = () => {
                   {layout.name}
                 </p>
                 <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                  {layout.enabledWidgets.length} widgets &middot;{' '}
+                  {layout.enabledWidgets.length} 个组件 &middot;{' '}
                   {new Date(layout.savedAt).toLocaleDateString()}
                 </p>
               </div>
@@ -114,15 +114,15 @@ export const SavedLayoutsSection: React.FC = () => {
                 <button
                   onClick={() => loadLayout(layout.id)}
                   className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg text-accent-primary hover:bg-accent-primary/10 transition-colors"
-                  title="Load this layout"
+                  title="加载此布局"
                 >
                   <Download className="w-3 h-3" />
-                  Load
+                  加载
                 </button>
                 <button
                   onClick={() => deleteLayout(layout.id)}
                   className="p-1.5 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-red transition-colors rounded-lg"
-                  title="Delete this layout"
+                  title="删除此布局"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

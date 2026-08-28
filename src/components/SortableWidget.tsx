@@ -74,9 +74,9 @@ export const SortableWidget: React.FC<SortableWidgetProps> = ({ id, children, cl
         {!isLocked && !isDragging && (
           <button
             onClick={cycleSize}
-            className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-1.5 py-0.5 text-[10px] font-semibold rounded bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue hover:border-accent-blue/50 shadow-sm z-10"
-            title={`Current: ${SIZE_LABELS[currentSize]} — Click to resize`}
-            aria-label={`Resize widget from ${SIZE_LABELS[currentSize]}`}
+            className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-200 px-1.5 py-0.5 text-xs font-semibold rounded bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary hover:border-accent-primary/50 shadow-sm z-10"
+            title={`当前大小：${SIZE_LABELS[currentSize]} — 点击调整大小`}
+            aria-label={`调整组件大小（当前 ${SIZE_LABELS[currentSize]}）`}
           >
             {SIZE_LABELS[currentSize]}
           </button>

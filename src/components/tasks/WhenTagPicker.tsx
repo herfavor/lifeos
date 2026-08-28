@@ -8,11 +8,11 @@ interface WhenTagPickerProps {
 }
 
 const WHEN_TAGS: { value: WhenTag; label: string; icon: string; description: string }[] = [
-  { value: 'today', label: 'Today', icon: '☀️', description: 'Do it today' },
-  { value: 'evening', label: 'This Evening', icon: '🌙', description: 'For tonight' },
-  { value: 'upcoming', label: 'Upcoming', icon: '📅', description: 'Next few days' },
-  { value: 'anytime', label: 'Anytime', icon: '📌', description: 'No time pressure' },
-  { value: 'someday', label: 'Someday', icon: '💭', description: 'Maybe later' },
+  { value: 'today', label: '今天', icon: '☀️', description: '今天完成' },
+  { value: 'evening', label: '今晚', icon: '🌙', description: '今晚完成' },
+  { value: 'upcoming', label: '近期', icon: '📅', description: '接下来几天' },
+  { value: 'anytime', label: '随时', icon: '📌', description: '没有时间压力' },
+  { value: 'someday', label: '某天', icon: '💭', description: '也许以后' },
 ];
 
 export const WhenTagPicker: React.FC<WhenTagPickerProps> = ({ value, onChange, compact = false }) => {
@@ -23,7 +23,7 @@ export const WhenTagPicker: React.FC<WhenTagPickerProps> = ({ value, onChange, c
         onChange={(e) => onChange(e.target.value as WhenTag || undefined)}
         className="px-2 py-1 text-xs border border-border-light dark:border-border-dark rounded bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
       >
-        <option value="">No when tag</option>
+        <option value="">无时间标签</option>
         {WHEN_TAGS.map((t) => (
           <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
         ))}

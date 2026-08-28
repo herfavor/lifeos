@@ -154,7 +154,7 @@ export default function WikiLinkTransformPlugin({ notes }: WikiLinkTransformPlug
               setPendingLinkTitle(title);
               setCreateDialogOpen(true);
             } else {
-              const notesArray = Object.values(notes);
+              const notesArray = Object.values(notes).filter((note) => !note.deletedAt);
               const linkTitleLower = title.toLowerCase();
               const targetNote = notesArray.find(
                 (note) =>
@@ -206,10 +206,10 @@ export default function WikiLinkTransformPlugin({ notes }: WikiLinkTransformPlug
           setPendingLinkTitle('');
         }}
         onConfirm={handleCreateNote}
-        title="Create Note"
-        message={`Note "${pendingLinkTitle}" doesn't exist. Create it?`}
-        confirmText="Create"
-        cancelText="Cancel"
+        title="创建笔记"
+        message={`笔记“${pendingLinkTitle}”不存在，是否创建？`}
+        confirmText="创建"
+        cancelText="取消"
         variant="info"
       />
     </>

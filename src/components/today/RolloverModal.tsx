@@ -5,7 +5,7 @@
  * has incomplete tasks. Lets user move, reschedule, or drop each task.
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { format, startOfDay } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -26,9 +26,9 @@ interface RolloverModalProps {
 }
 
 const DECISION_OPTIONS: Array<{ value: RolloverDecision; icon: React.ReactNode; label: string; desc: string; color: string }> = [
-  { value: 'move', icon: <ArrowRight className="w-4 h-4" />, label: 'Move to today', desc: 'Add to today\'s plan', color: 'text-accent-blue' },
-  { value: 'reschedule', icon: <CalendarClock className="w-4 h-4" />, label: 'Keep in backlog', desc: 'Remove due date', color: 'text-accent-yellow' },
-  { value: 'drop', icon: <Trash2 className="w-4 h-4" />, label: 'Drop', desc: 'Send to backlog', color: 'text-accent-red' },
+  { value: 'move', icon: <ArrowRight className="w-4 h-4" />, label: '移至今天', desc: '添加到今天的计划', color: 'text-accent-blue' },
+  { value: 'reschedule', icon: <CalendarClock className="w-4 h-4" />, label: '移回待处理', desc: '保留任务并移除截止日期', color: 'text-accent-yellow' },
+  { value: 'drop', icon: <Trash2 className="w-4 h-4" />, label: '放弃并归档', desc: '退出活跃任务，可从归档恢复', color: 'text-accent-red' },
 ];
 
 export const RolloverModal: React.FC<RolloverModalProps> = ({
@@ -37,6 +37,7 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
 }) => {
   const tasks = useKanbanStore((s) => s.tasks);
   const updateTask = useKanbanStore((s) => s.updateTask);
+  const archiveTask = useKanbanStore((s) => s.archiveTask);
 
   const today = useMemo(() => startOfDay(new Date()), []);
 
@@ -76,18 +77,29 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
     incompleteTasks.forEach((task) => {
       const decision = decisions[task.id] || 'move';
       if (decision === 'move') {
-        updateTask(task.id, { dueDate: todayDate });
-      } else if (decision === 'reschedule' || decision === 'drop') {
+        updateTask(task.id, { dueDate: todayDate, status: 'todo' });
+      } else if (decision === 'reschedule') {
         updateTask(task.id, { dueDate: null, status: 'backlog' });
+      } else if (decision === 'drop') {
+        archiveTask(task.id);
       }
     });
 
     onComplete();
-  }, [incompleteTasks, decisions, today, updateTask, onComplete]);
+  }, [incompleteTasks, decisions, today, updateTask, archiveTask, onComplete]);
+
+  const didCompleteEmptyRef = useRef(false);
+
+  // No rollover needed — notify the parent once, after render, instead of
+  // mutating parent state during this component's render (React warning).
+  useEffect(() => {
+    if (incompleteTasks.length === 0 && !didCompleteEmptyRef.current) {
+      didCompleteEmptyRef.current = true;
+      onComplete();
+    }
+  }, [incompleteTasks.length, onComplete]);
 
   if (incompleteTasks.length === 0) {
-    // No rollover needed
-    onComplete();
     return null;
   }
 
@@ -106,13 +118,13 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-accent-yellow" />
             <h2 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Incomplete Tasks
+              未完成任务
             </h2>
           </div>
           <button
             onClick={onDismiss}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            aria-label="Dismiss"
+            aria-label="关闭"
           >
             <X className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -120,23 +132,23 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
 
         <div className="px-6 py-4">
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            You have {incompleteTasks.length} incomplete task{incompleteTasks.length !== 1 ? 's' : ''} from previous days.
+            你有 {incompleteTasks.length} 个来自之前日期的未完成任务。
           </p>
 
           {/* Quick actions */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">Quick:</span>
+            <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">快速：</span>
             <button
               onClick={() => setAll('move')}
               className="text-xs px-2 py-0.5 rounded bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-colors"
             >
-              Move all to today
+              全部移至今天
             </button>
             <button
               onClick={() => setAll('drop')}
               className="text-xs px-2 py-0.5 rounded bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
             >
-              Drop all
+              全部放弃并归档
             </button>
           </div>
 
@@ -159,7 +171,7 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
                     </span>
                     {task.dueDate && (
                       <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary flex-shrink-0">
-                        due {format(new Date(task.dueDate), 'MMM d')}
+                        截止 {format(new Date(task.dueDate), 'MMM d')}
                       </span>
                     )}
                   </div>
@@ -192,16 +204,16 @@ export const RolloverModal: React.FC<RolloverModalProps> = ({
             onClick={onDismiss}
             className="px-3 py-1.5 text-sm rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
           >
-            Skip
+            跳过
           </button>
           <button
             onClick={handleApply}
             className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium rounded-lg bg-accent-primary text-white hover:bg-accent-primary-hover transition-colors"
           >
             <Check className="w-4 h-4" />
-            Apply
+            应用
             {moveCount > 0 && (
-              <span className="text-xs opacity-75">({moveCount} to today)</span>
+              <span className="text-xs opacity-75">({moveCount} 项移至今天)</span>
             )}
           </button>
         </div>

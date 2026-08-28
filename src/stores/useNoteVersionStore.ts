@@ -55,10 +55,10 @@ function generateChangeSummary(oldText: string, newText: string): string {
   const newLen = newText.length;
   const diff = newLen - oldLen;
 
-  if (oldLen === 0) return 'Initial version';
-  if (diff > 0) return `Added ${diff} characters`;
-  if (diff < 0) return `Removed ${Math.abs(diff)} characters`;
-  return 'Content modified';
+  if (oldLen === 0) return '初始版本';
+  if (diff > 0) return `新增 ${diff} 个字符`;
+  if (diff < 0) return `删除 ${Math.abs(diff)} 个字符`;
+  return '内容已修改';
 }
 
 export const useNoteVersionStore = create<NoteVersionStore>()(

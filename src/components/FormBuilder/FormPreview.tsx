@@ -44,27 +44,27 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
             <Eye className="w-5 h-5 text-accent-primary" />
             <div>
               <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                Form Preview
+                表单预览
               </h2>
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Test conditional logic and calculated fields
+                测试条件逻辑和计算字段
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
-              aria-label="Reset preview"
+              className="flex items-center gap-2 px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
+              aria-label="重置预览"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset
+              重置
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+              className="px-4 py-2 text-sm bg-accent-primary text-white rounded-lg hover:opacity-90"
             >
-              Close
+              关闭
             </button>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
           {showSuccessMessage && (
             <div className="mb-4 p-4 bg-accent-green/10 border border-accent-green rounded-lg">
               <p className="text-accent-green font-medium">
-                ✓ Form submitted successfully! (Preview mode - not saved)
+                ✓ 表单提交成功！（预览模式 - 不会保存）
               </p>
             </div>
           )}
@@ -99,7 +99,7 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
           {responses.length > 0 && (
             <div className="mt-8 p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg">
               <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-                Preview Submissions ({responses.length})
+                预览提交（{responses.length}）
               </h4>
               <div className="space-y-3 max-h-60 overflow-y-auto">
                 {responses.map((response, index) => (
@@ -108,7 +108,7 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
                     className="p-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded text-xs"
                   >
                     <div className="text-text-light-tertiary dark:text-text-dark-tertiary mb-2">
-                      Submission #{index + 1} -{' '}
+                      提交 #{index + 1} -{' '}
                       {new Date(response.timestamp).toLocaleTimeString()}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
@@ -131,7 +131,7 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
                       })}
                     </div>
                     {response.metadata?.isSpam && (
-                      <div className="mt-2 text-accent-red">⚠ Flagged as spam</div>
+                      <div className="mt-2 text-accent-red">⚠ 标记为垃圾提交</div>
                     )}
                   </div>
                 ))}
@@ -143,15 +143,13 @@ export function FormPreview({ form, onClose }: FormPreviewProps) {
         {/* Footer Help */}
         <div className="p-4 border-t border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated">
           <div className="flex items-start gap-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            <span className="font-medium">💡 Tip:</span>
+            <span className="font-medium">💡 提示：</span>
             <div>
               <p>
-                This is a live preview. Test conditional logic by changing field values and see
-                which fields show/hide.
+                这是实时预览。通过更改字段值来测试条件逻辑，查看哪些字段显示/隐藏。
               </p>
               <p className="mt-1">
-                Calculated fields update in real-time as you fill the form. Submissions are not
-                saved.
+                计算字段会在你填写表单时实时更新。提交不会被保存。
               </p>
             </div>
           </div>

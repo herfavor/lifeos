@@ -30,14 +30,14 @@ export const ClipboardWidget: React.FC = () => {
   const clearHistory = () => setHistory([]);
 
   return (
-    <BaseWidget title="Clipboard" icon="📋">
+    <BaseWidget title="剪贴板" icon="📋">
       <div className="space-y-3">
         <div className="flex gap-2">
           <button onClick={pasteFromClipboard} className="flex-1 px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth">
-            Save Clipboard
+            保存剪贴板
           </button>
           <button onClick={clearHistory} className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-button text-sm font-medium transition-all duration-standard ease-smooth">
-            Clear
+            清除
           </button>
         </div>
 
@@ -57,7 +57,7 @@ export const ClipboardWidget: React.FC = () => {
 
         {history.length === 0 && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Click "Save Clipboard" to add items
+            点击“保存剪贴板”添加条目
           </p>
         )}
       </div>

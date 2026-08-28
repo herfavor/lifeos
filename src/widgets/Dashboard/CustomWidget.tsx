@@ -47,7 +47,7 @@ function parseRSSItems(xml: string): Array<{ label: string; value: string }> {
   const items = doc.querySelectorAll('item');
   const result: Array<{ label: string; value: string }> = [];
   items.forEach((item) => {
-    const title = item.querySelector('title')?.textContent || 'Untitled';
+    const title = item.querySelector('title')?.textContent || '无标题';
     const link = item.querySelector('link')?.textContent || '';
     result.push({ label: title, value: link });
   });
@@ -59,15 +59,15 @@ function normalizeToItems(data: unknown): Array<{ label: string; value: number |
     return data.slice(0, 50).map((item, i) => {
       if (typeof item === 'object' && item !== null) {
         const obj = item as Record<string, unknown>;
-        const label = String(obj.name || obj.title || obj.label || obj.key || `Item ${i + 1}`);
+        const label = String(obj.name || obj.title || obj.label || obj.key || `项目 ${i + 1}`);
         const value = obj.value ?? obj.count ?? obj.score ?? obj.amount ?? '';
         return { label, value: typeof value === 'number' ? value : String(value) };
       }
-      return { label: `Item ${i + 1}`, value: String(item) };
+      return { label: `项目 ${i + 1}`, value: String(item) };
     });
   }
   if (typeof data === 'number') {
-    return [{ label: 'Value', value: data }];
+    return [{ label: '值', value: data }];
   }
   if (typeof data === 'object' && data !== null) {
     return Object.entries(data as Record<string, unknown>).map(([key, val]) => ({
@@ -91,7 +91,7 @@ async function fetchCustomData(config: CustomWidgetConfig): Promise<FetchedData>
   }
 
   if (!dataSource.url) {
-    throw new Error('No URL configured');
+    throw new Error('未配置 URL');
   }
 
   const controller = new AbortController();
@@ -138,7 +138,7 @@ function NumberLayout({ data }: { data: FetchedData }) {
 function ListLayout({ data, maxItems }: { data: FetchedData; maxItems?: number }) {
   const items = maxItems ? data.items.slice(0, maxItems) : data.items;
   if (items.length === 0) {
-    return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">No items</p>;
+    return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">暂无条目</p>;
   }
   return (
     <ul className="space-y-1.5 overflow-y-auto max-h-60">
@@ -170,7 +170,7 @@ function ChartLayout({ data, chartType, maxItems }: { data: FetchedData; chartTy
     .map((item) => ({ name: item.label, value: item.value as number }));
 
   if (chartData.length === 0) {
-    return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">No numeric data for chart</p>;
+    return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">暂无图表数值数据</p>;
   }
 
   const type = chartType || 'bar';
@@ -254,7 +254,7 @@ export const CustomWidget: React.FC<CustomWidgetProps> = ({ widgetId }) => {
       const result = await fetchCustomData(config);
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      setError(err instanceof Error ? err.message : '获取数据失败');
     } finally {
       setLoading(false);
     }
@@ -276,8 +276,8 @@ export const CustomWidget: React.FC<CustomWidgetProps> = ({ widgetId }) => {
 
   if (!config) {
     return (
-      <BaseWidget title="Custom Widget" icon="?">
-        <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">Widget not found</p>
+      <BaseWidget title="自定义组件" icon="?">
+        <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">未找到组件</p>
       </BaseWidget>
     );
   }
@@ -297,7 +297,7 @@ export const CustomWidget: React.FC<CustomWidgetProps> = ({ widgetId }) => {
       case 'chart':
         return <ChartLayout data={data} chartType={config.layout.chartType} maxItems={config.layout.maxItems} />;
       default:
-        return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">Unknown layout</p>;
+        return <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">未知布局</p>;
     }
   };
 

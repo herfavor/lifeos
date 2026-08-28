@@ -5,11 +5,12 @@ import { createSyncedStorage } from '../lib/syncedStorage';
 import { scheduleEventReminders, cancelEventReminders } from '../services/eventReminders';
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
 import { useActivityStore } from './useActivityStore';
+import { v4 as uuidv4 } from 'uuid';
 
 const DEFAULT_CALENDARS: UserCalendar[] = [
-  { id: 'cal-work', name: 'Work', color: '#2563eb', visible: true },
-  { id: 'cal-personal', name: 'Personal', color: '#059669', visible: true },
-  { id: 'cal-birthdays', name: 'Birthdays', color: '#d97706', visible: true },
+  { id: 'cal-work', name: '工作', color: '#2563eb', visible: true },
+  { id: 'cal-personal', name: '个人', color: '#059669', visible: true },
+  { id: 'cal-birthdays', name: '生日', color: '#d97706', visible: true },
 ];
 
 interface CalendarStore extends CalendarState {
@@ -63,7 +64,7 @@ export const useCalendarStore = create<CalendarStore>()(
 
       addEvent: (dateKey, title, description, timeData) => {
         const newEvent: CalendarEvent = {
-          id: Date.now().toString(),
+          id: uuidv4(),
           title,
           description,
           projectIds: [],
@@ -179,7 +180,7 @@ export const useCalendarStore = create<CalendarStore>()(
           type: 'deleted',
           module: 'calendar',
           entityId: eventId,
-          entityTitle: eventToDelete?.title || 'Calendar Event',
+          entityTitle: eventToDelete?.title || '日历事件',
         });
       },
 
@@ -196,7 +197,7 @@ export const useCalendarStore = create<CalendarStore>()(
           const existingEvents = state.events[dateKey] || [];
           const newEvent: CalendarEvent = {
             id: `${recurrenceId}-exception-${Date.now()}`,
-            title: updates.title || 'Untitled',
+            title: updates.title || '未命名',
             recurrenceId,
             recurrenceException: true,
             projectIds: [],

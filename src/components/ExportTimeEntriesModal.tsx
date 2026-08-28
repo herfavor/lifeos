@@ -98,7 +98,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
     const result = exportTimeEntriesToCSV(entries, projects, options);
 
     if (!result.success) {
-      setError(result.error || 'Export failed');
+      setError(result.error || '导出失败');
       return;
     }
 
@@ -157,13 +157,13 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
           <div className="flex items-center gap-3">
             <Download className="w-5 h-5 text-accent-primary" />
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Export Time Entries
+              导出时间记录
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-surface-light-secondary dark:hover:bg-surface-dark-secondary transition-colors"
-            aria-label="Close"
+            aria-label="关闭"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -176,7 +176,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
               <label className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Date Range
+                日期范围
               </label>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -191,12 +191,12 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
                         : 'bg-surface-light-secondary dark:bg-surface-dark-secondary text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                     }`}
                   >
-                    {preset === 'today' && 'Today'}
-                    {preset === 'this-week' && 'This Week'}
-                    {preset === 'this-month' && 'This Month'}
-                    {preset === 'last-month' && 'Last Month'}
-                    {preset === 'all' && 'All Time'}
-                    {preset === 'custom' && 'Custom'}
+                    {preset === 'today' && '今天'}
+                    {preset === 'this-week' && '本周'}
+                    {preset === 'this-month' && '本月'}
+                    {preset === 'last-month' && '上月'}
+                    {preset === 'all' && '全部时间'}
+                    {preset === 'custom' && '自定义'}
                   </button>
                 )
               )}
@@ -207,7 +207,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
               <div className="flex gap-3 mt-3">
                 <div className="flex-1">
                   <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                    From
+                    从
                   </label>
                   <input
                     type="date"
@@ -218,7 +218,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
                 </div>
                 <div className="flex-1">
                   <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                    To
+                    至
                   </label>
                   <input
                     type="date"
@@ -236,7 +236,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
             <div className="flex items-center gap-2 mb-2">
               <FolderOpen className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
               <label className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Project
+                项目
               </label>
             </div>
             <select
@@ -244,7 +244,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
               onChange={(e) => setSelectedProjectId(e.target.value)}
               className="w-full p-2 text-sm bg-surface-light-secondary dark:bg-surface-dark-secondary border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary"
             >
-              <option value="all">All Projects</option>
+              <option value="all">所有项目</option>
               {activeProjects.map((project) => (
                 <option key={project.id} value={project.id}>
                   {project.name}
@@ -258,7 +258,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
             <div className="flex items-center gap-2 mb-2">
               <Filter className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
               <label className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Options
+                选项
               </label>
             </div>
             <div className="space-y-2">
@@ -270,7 +270,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
                   className="w-4 h-4 rounded border-border-light dark:border-border-dark accent-accent-primary"
                 />
                 <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                  Include non-billable entries
+                  包含不可计费记录
                 </span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
@@ -281,7 +281,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
                   className="w-4 h-4 rounded border-border-light dark:border-border-dark accent-accent-primary"
                 />
                 <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                  Include summary totals at bottom
+                  在底部包含汇总总计
                 </span>
               </label>
             </div>
@@ -290,15 +290,15 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
           {/* Preview */}
           <div className="p-3 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg">
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Export Preview
+              导出预览
             </p>
             <p className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              <span className="font-medium">{counts.total}</span> entries
+              <span className="font-medium">{counts.total}</span> 条记录
               {counts.total > 0 && (
                 <>
                   {' '}
-                  ({counts.billable} billable
-                  {includeNonBillable && `, ${counts.nonBillable} non-billable`})
+                  （{counts.billable} 条可计费
+                  {includeNonBillable && `，${counts.nonBillable} 条不可计费`}）
                 </>
               )}
             </p>
@@ -318,7 +318,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleExport}
@@ -326,7 +326,7 @@ export function ExportTimeEntriesModal({ onClose }: ExportTimeEntriesModalProps)
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
-            Export CSV
+            导出 CSV
           </button>
         </div>
       </div>

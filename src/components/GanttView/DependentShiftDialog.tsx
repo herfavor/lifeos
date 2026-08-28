@@ -35,15 +35,15 @@ export function DependentShiftDialog({
   // Get task title by ID
   const getTaskTitle = (taskId: string): string => {
     const task = tasks.find(t => t.id === taskId);
-    return task?.title || `Task ${taskId}`;
+    return task?.title || `任务 ${taskId}`;
   };
 
   // Format date for display
   const formatDate = (dateStr: string | null): string => {
-    if (!dateStr) return 'None';
+    if (!dateStr) return '无';
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   // Get date change description
@@ -51,10 +51,10 @@ export function DependentShiftDialog({
     const task = tasks.find(t => t.id === shift.taskId);
     if (!task) return { start: '', due: '' };
 
-    const oldStart = task.startDate ? formatDate(task.startDate) : 'None';
-    const newStart = shift.newStartDate ? formatDate(shift.newStartDate) : 'None';
-    const oldDue = task.dueDate ? formatDate(task.dueDate) : 'None';
-    const newDue = shift.newDueDate ? formatDate(shift.newDueDate) : 'None';
+    const oldStart = task.startDate ? formatDate(task.startDate) : '无';
+    const newStart = shift.newStartDate ? formatDate(shift.newStartDate) : '无';
+    const oldDue = task.dueDate ? formatDate(task.dueDate) : '无';
+    const newDue = shift.newDueDate ? formatDate(shift.newDueDate) : '无';
 
     return {
       start: oldStart !== newStart ? `${oldStart} → ${newStart}` : '',
@@ -71,7 +71,7 @@ export function DependentShiftDialog({
     <Modal
       isOpen={isOpen}
       onClose={onCancel}
-      title="Dependent Tasks Will Shift"
+      title="依赖任务将发生偏移"
       maxWidth="md"
       hideHeader={true}
     >
@@ -83,11 +83,11 @@ export function DependentShiftDialog({
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-1">
-              Dependent Tasks Will Shift
+              依赖任务将发生偏移
             </h3>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Moving this task will affect {shifts.length} dependent {shifts.length === 1 ? 'task' : 'tasks'}.
-              Review the changes below and confirm to proceed.
+              移动此任务将影响 {shifts.length} 个依赖任务。
+              请查看下面的更改并确认继续。
             </p>
           </div>
         </div>
@@ -109,12 +109,12 @@ export function DependentShiftDialog({
                 <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary space-y-1">
                   {change.start && (
                     <div>
-                      <span className="font-medium">Start:</span> {change.start}
+                      <span className="font-medium">开始：</span> {change.start}
                     </div>
                   )}
                   {change.due && (
                     <div>
-                      <span className="font-medium">Due:</span> {change.due}
+                      <span className="font-medium">截止：</span> {change.due}
                     </div>
                   )}
                   <div className="text-text-light-tertiary dark:text-text-dark-tertiary italic">
@@ -133,14 +133,14 @@ export function DependentShiftDialog({
             disabled={confirmed}
             className="px-4 py-2 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light dark:hover:bg-surface-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleConfirm}
             disabled={confirmed}
-            className="px-4 py-2 text-sm font-medium bg-accent-primary text-white dark:text-dark-background rounded-button hover:bg-accent-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-button hover:bg-accent-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {confirmed ? 'Applying...' : 'Confirm & Apply'}
+            {confirmed ? '正在应用…' : '确认并应用'}
           </button>
         </div>
       </div>

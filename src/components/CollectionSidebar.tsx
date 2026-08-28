@@ -244,7 +244,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         <button
           onClick={onToggleCollapse}
           className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-          title="Expand sidebar"
+          title="展开侧边栏"
         >
           <span className="text-lg">›</span>
         </button>
@@ -253,17 +253,17 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
   }
 
   return (
-    <div className="w-64 flex flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+    <div className="w-56 flex flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
         <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Library
+          收藏
         </h3>
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Collapse sidebar"
+            title="折叠侧边栏"
           >
             <span className="text-lg">‹</span>
           </button>
@@ -274,7 +274,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
       <div className="p-2 border-b border-border-light dark:border-border-dark">
         <SidebarItem
           icon="⭐"
-          label="Favorites"
+          label="星标"
           count={favoriteCount}
           isActive={activeCollectionId === 'favorites' && activeFolderId === null}
           onClick={() => {
@@ -284,7 +284,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         />
         <SidebarItem
           icon="📥"
-          label="Archived"
+          label="已归档"
           count={archivedCount}
           isActive={activeCollectionId === 'archived' && activeFolderId === null}
           onClick={() => {
@@ -294,7 +294,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         />
         <SidebarItem
           icon="🗑️"
-          label="Recently Deleted"
+          label="最近删除"
           count={deletedCount}
           isActive={activeCollectionId === 'deleted' && activeFolderId === null}
           onClick={() => {
@@ -308,7 +308,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 py-2 flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-text-light-secondary dark:text-text-dark-secondary">
-            Folders
+            文件夹
           </span>
         </div>
 
@@ -342,7 +342,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   }
                 }}
                 placeholder={
-                  addingFolderParentId ? 'Subfolder name...' : 'Folder name...'
+                  addingFolderParentId ? '子文件夹名称…' : '文件夹名称…'
                 }
                 autoFocus
                 className="flex-1 px-2 py-1 text-sm rounded border border-border-light dark:border-border-dark
@@ -412,12 +412,12 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         {/* Collections Header */}
         <div className="flex items-center justify-between px-4 py-2 mt-4 border-t border-border-light dark:border-border-dark">
           <span className="text-xs font-medium uppercase tracking-wider text-text-light-secondary dark:text-text-dark-secondary">
-            Collections
+            合集
           </span>
           <button
             onClick={() => setIsAddingCollection(true)}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Add collection"
+            title="添加合集"
           >
             <span className="text-sm">+</span>
           </button>
@@ -438,12 +438,12 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                     setNewCollectionName('');
                   }
                 }}
-                placeholder="Collection name..."
+                placeholder="合集名称…"
                 autoFocus
                 className="flex-1 px-2 py-1 text-sm rounded border border-border-light dark:border-border-dark
                            bg-surface-light dark:bg-surface-dark
                            text-text-light-primary dark:text-text-dark-primary
-                           focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                           focus:outline-none focus:ring-1 focus:ring-accent-primary"
               />
               <button
                 onClick={handleAddCollection}
@@ -468,13 +468,13 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         <div className="px-2 pb-2">
           {sortedCollections.length === 0 && !isAddingCollection ? (
             <p className="px-2 py-4 text-sm text-center text-text-light-secondary dark:text-text-dark-secondary">
-              No collections yet.
+              还没有合集。
               <br />
               <button
                 onClick={() => setIsAddingCollection(true)}
-                className="text-accent-blue hover:underline mt-1"
+                className="text-accent-primary hover:underline mt-1"
               >
-                Create one
+                创建一个
               </button>
             </p>
           ) : (
@@ -497,7 +497,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                       className="flex-1 px-2 py-1 text-sm rounded border border-border-light dark:border-border-dark
                                  bg-surface-light dark:bg-surface-dark
                                  text-text-light-primary dark:text-text-dark-primary
-                                 focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                                 focus:outline-none focus:ring-1 focus:ring-accent-primary"
                     />
                     <button
                       onClick={() => handleEditCollection(collection.id)}
@@ -541,9 +541,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         isOpen={collectionToDelete !== null}
         onClose={() => setCollectionToDelete(null)}
         onConfirm={confirmDeleteCollection}
-        title="Delete Collection"
-        message="Delete this collection? Links will not be deleted."
-        confirmText="Delete"
+        title="删除合集"
+        message="删除此合集？链接不会被删除。"
+        confirmText="删除"
         variant="danger"
       />
 
@@ -552,11 +552,11 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
         isOpen={folderToDelete !== null}
         onClose={() => setFolderToDelete(null)}
         onConfirm={confirmDeleteFolder}
-        title="Delete Folder"
+        title="删除文件夹"
         message={
           <>
             <p className="mb-4">
-              Delete folder "{folderToDelete?.name}"?
+              删除文件夹“{folderToDelete?.name}”？
             </p>
             <div className="space-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -567,7 +567,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   onChange={() => setDeleteAction('move-to-parent')}
                   className="text-accent-primary"
                 />
-                <span className="text-sm">Move links to parent folder</span>
+                <span className="text-sm">将链接移动到上级文件夹</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -577,12 +577,12 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   onChange={() => setDeleteAction('delete')}
                   className="text-accent-red"
                 />
-                <span className="text-sm text-accent-red">Delete all links in folder</span>
+                <span className="text-sm text-accent-red">删除文件夹中的所有链接</span>
               </label>
             </div>
           </>
         }
-        confirmText="Delete Folder"
+        confirmText="删除文件夹"
         variant="danger"
       />
     </div>
@@ -622,7 +622,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         text-left transition-colors
         ${
           isActive
-            ? 'bg-accent-blue/10 text-accent-blue'
+            ? 'bg-accent-blue/10 text-accent-primary'
             : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
         }
       `}
@@ -638,7 +638,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         <span
           className={`text-xs ${
             isActive
-              ? 'text-accent-blue/70'
+              ? 'text-accent-primary/70'
               : 'text-text-light-secondary dark:text-text-dark-secondary'
           }`}
         >
@@ -647,7 +647,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       )}
       {/* Edit/Delete buttons for collections */}
       {(onEdit || onDelete) && (
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
           {onEdit && (
             <button
               onClick={(e) => {
@@ -655,7 +655,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
                 onEdit();
               }}
               className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-              title="Edit"
+              title="编辑"
             >
               <span className="text-xs">✏️</span>
             </button>
@@ -667,7 +667,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
                 onDelete();
               }}
               className="p-1 rounded hover:bg-status-error/20 text-status-error transition-colors"
-              title="Delete"
+              title="删除"
             >
               <span className="text-xs">🗑️</span>
             </button>

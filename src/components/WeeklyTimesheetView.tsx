@@ -41,7 +41,7 @@ function getWeekDays(monday: Date): Date[] {
   });
 }
 
-const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_NAMES = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 
 /**
  * WeeklyTimesheetView Component
@@ -98,7 +98,7 @@ export function WeeklyTimesheetView() {
         const project = projectId ? projects.find((p) => p.id === projectId) : null;
         rowMap.set(projectId, {
           projectId,
-          projectName: project?.name || 'No Project',
+          projectName: project?.name || '无项目',
           projectColor: project?.color || '#94A3B8',
           cells: {},
           totalSeconds: 0,
@@ -181,7 +181,7 @@ export function WeeklyTimesheetView() {
     const endDate = new Date(startDate.getTime() + totalSeconds * 1000);
 
     await addManualEntry({
-      description: 'Timesheet entry',
+      description: '考勤记录',
       projectId: editingCell.projectId ?? undefined,
       startTime: startDate.toISOString(),
       endTime: endDate.toISOString(),
@@ -205,8 +205,8 @@ export function WeeklyTimesheetView() {
   const formatWeekRange = () => {
     const start = weekDays[0];
     const end = weekDays[6];
-    const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
-    const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+    const startMonth = start.toLocaleDateString('zh-CN', { month: 'short' });
+    const endMonth = end.toLocaleDateString('zh-CN', { month: 'short' });
 
     if (startMonth === endMonth) {
       return `${startMonth} ${start.getDate()} - ${end.getDate()}, ${start.getFullYear()}`;
@@ -218,7 +218,7 @@ export function WeeklyTimesheetView() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading timesheet...
+          正在加载考勤表…
         </div>
       </div>
     );
@@ -232,7 +232,7 @@ export function WeeklyTimesheetView() {
           <button
             onClick={() => navigateWeek(-1)}
             className="p-2 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
-            aria-label="Previous week"
+            aria-label="上一周"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -242,7 +242,7 @@ export function WeeklyTimesheetView() {
           <button
             onClick={() => navigateWeek(1)}
             className="p-2 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
-            aria-label="Next week"
+            aria-label="下一周"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -251,7 +251,7 @@ export function WeeklyTimesheetView() {
           onClick={goToCurrentWeek}
           className="px-3 py-1.5 text-sm font-medium text-accent-primary bg-accent-primary/10 rounded-lg hover:bg-accent-primary/20 transition-colors"
         >
-          This Week
+          本周
         </button>
       </div>
 
@@ -262,7 +262,7 @@ export function WeeklyTimesheetView() {
             <thead>
               <tr className="bg-surface-light-elevated dark:bg-surface-dark-elevated border-b border-border-light dark:border-border-dark">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider w-48">
-                  Project
+                  项目
                 </th>
                 {weekDays.map((day, index) => (
                   <th
@@ -280,7 +280,7 @@ export function WeeklyTimesheetView() {
                   </th>
                 ))}
                 <th className="px-4 py-3 text-center text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider min-w-[90px]">
-                  Total
+                  总计
                 </th>
               </tr>
             </thead>
@@ -288,7 +288,7 @@ export function WeeklyTimesheetView() {
               {rows.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-8 text-center text-text-light-secondary dark:text-text-dark-secondary">
-                    No projects found. Create projects in the Projects tab to use the timesheet view.
+                    未找到项目。请在「项目」标签页创建项目后使用考勤表视图。
                   </td>
                 </tr>
               ) : (
@@ -327,7 +327,7 @@ export function WeeklyTimesheetView() {
                                 value={cellHours}
                                 onChange={(e) => setCellHours(e.target.value)}
                                 className="w-10 px-1 py-1 text-xs text-center bg-surface-light-elevated dark:bg-surface-dark-elevated border border-accent-primary rounded focus:outline-none text-text-light-primary dark:text-text-dark-primary"
-                                placeholder="h"
+                                placeholder="时"
                                 autoFocus
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') handleCellSave();
@@ -342,7 +342,7 @@ export function WeeklyTimesheetView() {
                                 value={cellMinutes}
                                 onChange={(e) => setCellMinutes(e.target.value)}
                                 className="w-10 px-1 py-1 text-xs text-center bg-surface-light-elevated dark:bg-surface-dark-elevated border border-accent-primary rounded focus:outline-none text-text-light-primary dark:text-text-dark-primary"
-                                placeholder="m"
+                                placeholder="分"
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') handleCellSave();
                                   if (e.key === 'Escape') setEditingCell(null);
@@ -357,7 +357,7 @@ export function WeeklyTimesheetView() {
                                   ? 'text-text-light-primary dark:text-text-dark-primary font-medium hover:bg-accent-primary/10'
                                   : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                               }`}
-                              title={hasTime ? `${cell.entries.length} entries` : 'Click to add time'}
+                              title={hasTime ? `${cell.entries.length} 条记录` : '点击添加时间'}
                             >
                               {hasTime ? (
                                 formatDuration(cell.totalSeconds, { showSeconds: false })
@@ -384,7 +384,7 @@ export function WeeklyTimesheetView() {
             <tfoot>
               <tr className="bg-surface-light-elevated dark:bg-surface-dark-elevated border-t-2 border-border-light dark:border-border-dark">
                 <td className="px-4 py-3 text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-                  Daily Total
+                  每日合计
                 </td>
                 {weekDays.map((day) => {
                   const dateKey = formatDateKey(day);
@@ -420,19 +420,19 @@ export function WeeklyTimesheetView() {
       {/* Week Summary */}
       <div className="grid grid-cols-3 gap-4">
         <div className="p-4 bg-surface-light dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
-          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Total Hours</div>
+          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">总时长</div>
           <div className="text-2xl font-mono font-bold text-accent-primary mt-1">
             {formatDuration(grandTotal, { showSeconds: false })}
           </div>
         </div>
         <div className="p-4 bg-surface-light dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
-          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Active Projects</div>
+          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">活跃项目</div>
           <div className="text-2xl font-mono font-bold text-text-light-primary dark:text-text-dark-primary mt-1">
             {rows.filter((r) => r.totalSeconds > 0).length}
           </div>
         </div>
         <div className="p-4 bg-surface-light dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
-          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Daily Average</div>
+          <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">日均时长</div>
           <div className="text-2xl font-mono font-bold text-text-light-primary dark:text-text-dark-primary mt-1">
             {(() => {
               const daysWithTime = Object.values(dailyTotals).filter((t) => t > 0).length;

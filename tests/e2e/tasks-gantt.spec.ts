@@ -14,7 +14,7 @@ test.describe('Tasks Gantt Timeline View', () => {
     await navigateTo(page, '/tasks?view=gantt');
 
     // Ensure we're on Gantt view
-    const ganttButton = page.getByRole('button', { name: /timeline|gantt/i });
+    const ganttButton = page.getByRole('button', { name: /时间线|甘特图/i });
     if (await ganttButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await ganttButton.click();
       await page.waitForTimeout(500);
@@ -34,7 +34,7 @@ test.describe('Tasks Gantt Timeline View', () => {
       await expect(timelineElement).toBeVisible();
     } else {
       // If neither is found, just verify we're on the Gantt view by checking for the active button
-      const activeGanttButton = page.getByRole('button', { name: /timeline|gantt/i });
+      const activeGanttButton = page.getByRole('button', { name: /时间线|甘特图/i });
       await expect(activeGanttButton).toBeVisible();
     }
 
@@ -108,22 +108,21 @@ test.describe('Tasks Gantt Timeline View', () => {
         }
       }
     } else {
-      // If no task bars are visible, skip this test gracefully
-      test.skip();
+      await expect(page.getByRole('button', { name: /时间线|甘特图/i })).toBeVisible();
     }
   });
 
   test('can export Gantt chart to PNG', async ({ page }) => {
     // Look for export button or menu
-    const exportButton = page.getByRole('button', { name: /export|download|save/i });
+    const exportButton = page.getByRole('button', { name: /导出|下载|保存/i });
 
     if (await exportButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await exportButton.click();
       await page.waitForTimeout(300);
 
       // Look for PNG export option
-      const pngOption = page.getByRole('button', { name: /png|image/i }).or(
-        page.getByText(/png|image/i)
+      const pngOption = page.getByRole('button', { name: /png|图片/i }).or(
+        page.getByText(/png|图片/i)
       );
 
       if (await pngOption.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -145,7 +144,7 @@ test.describe('Tasks Gantt Timeline View', () => {
 
   test('can export Gantt chart to PDF', async ({ page }) => {
     // Look for export button or menu
-    const exportButton = page.getByRole('button', { name: /export|download|save/i });
+    const exportButton = page.getByRole('button', { name: /导出|下载|保存/i });
 
     if (await exportButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await exportButton.click();
@@ -175,15 +174,15 @@ test.describe('Tasks Gantt Timeline View', () => {
 
   test('can export Gantt data to Excel', async ({ page }) => {
     // Look for export button or menu
-    const exportButton = page.getByRole('button', { name: /export|download|save/i });
+    const exportButton = page.getByRole('button', { name: /导出|下载|保存/i });
 
     if (await exportButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await exportButton.click();
       await page.waitForTimeout(300);
 
       // Look for Excel export option
-      const excelOption = page.getByRole('button', { name: /excel|xlsx|spreadsheet/i }).or(
-        page.getByText(/excel|xlsx|spreadsheet/i)
+      const excelOption = page.getByRole('button', { name: /excel|xlsx|电子表格/i }).or(
+        page.getByText(/excel|xlsx|电子表格/i)
       );
 
       if (await excelOption.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -217,8 +216,8 @@ test.describe('Tasks Gantt Timeline View', () => {
 
   test('can zoom in and out of timeline', async ({ page }) => {
     // Look for zoom controls
-    const zoomInButton = page.getByRole('button', { name: /zoom.*in|\+|magnify/i });
-    const zoomOutButton = page.getByRole('button', { name: /zoom.*out|-|reduce/i });
+    const zoomInButton = page.getByRole('button', { name: /放大/i });
+    const zoomOutButton = page.getByRole('button', { name: /缩小/i });
 
     if (await zoomInButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Get initial view (measure timeline width or scale)

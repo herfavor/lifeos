@@ -57,12 +57,12 @@ export const AISummarizePlugin: React.FC<AISummarizePluginProps> = ({ className 
     });
 
     if (!noteText.trim()) {
-      toast.warning('Nothing to summarize', 'The note is empty.');
+      toast.warning('没有可总结的内容', '笔记为空。');
       return;
     }
 
     if (noteText.trim().length < 50) {
-      toast.warning('Content too short', 'The note needs more content to generate a useful summary.');
+      toast.warning('内容过短', '笔记需要更多内容才能生成有用的摘要。');
       return;
     }
 
@@ -75,11 +75,8 @@ export const AISummarizePlugin: React.FC<AISummarizePluginProps> = ({ className 
       const terminalState = useTerminalStore.getState();
       const hasProvider = terminalState.providers[terminalState.activeProvider]?.isConfigured;
 
-      if (hasProvider && terminalState.encryptionPassword) {
-        const apiKey = await terminalState.getProviderApiKey(
-          terminalState.activeProvider,
-          terminalState.encryptionPassword
-        );
+      if (hasProvider) {
+        const apiKey = await terminalState.getProviderApiKey(terminalState.activeProvider);
 
         if (apiKey) {
           const router = new AIProviderRouter({
@@ -114,7 +111,7 @@ export const AISummarizePlugin: React.FC<AISummarizePluginProps> = ({ className 
       if ($isRangeSelection(selection)) {
         const calloutNode = $createCalloutNode({
           calloutType: 'info',
-          title: 'Summary',
+          title: '摘要',
           content: summary,
         });
         selection.insertNodes([calloutNode]);
@@ -123,7 +120,7 @@ export const AISummarizePlugin: React.FC<AISummarizePluginProps> = ({ className 
         const root = $getRoot();
         const calloutNode = $createCalloutNode({
           calloutType: 'info',
-          title: 'Summary',
+          title: '摘要',
           content: summary,
         });
         root.append(calloutNode);
@@ -131,7 +128,7 @@ export const AISummarizePlugin: React.FC<AISummarizePluginProps> = ({ className 
     });
 
     setIsLoading(false);
-    toast.success('Summary generated');
+    toast.success('摘要已生成');
   }, [editor, isLoading]);
 
   return (

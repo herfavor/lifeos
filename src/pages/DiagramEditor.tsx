@@ -292,7 +292,7 @@ export default function DiagramEditor() {
 
     // Add type-specific properties
     if (currentTool === 'text') {
-      newElement.text = 'Double-click to edit';
+      newElement.text = '双击以编辑';
       newElement.fontSize = 16;
       newElement.fontFamily = 'Arial';
     }
@@ -408,7 +408,7 @@ export default function DiagramEditor() {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-pulse text-text-light-secondary dark:text-text-dark-secondary">
-          Loading diagram...
+          加载绘图…
         </div>
       </div>
     );
@@ -422,8 +422,8 @@ export default function DiagramEditor() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
-              className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded-lg transition-colors"
-              aria-label="Back to diagrams"
+              className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
+              aria-label="返回绘图"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -434,22 +434,22 @@ export default function DiagramEditor() {
               onChange={(e) => setTitle(e.target.value)}
               onBlur={handleSave}
               className="text-lg font-semibold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-accent-primary rounded px-2 py-1"
-              placeholder="Untitled Diagram"
+              placeholder="未命名绘图"
             />
 
             {isSaving && (
               <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Saving...
+                保存中…
               </span>
             )}
           </div>
 
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Save className="w-4 h-4" />
-            Save
+            保存
           </button>
         </header>
 
@@ -478,10 +478,10 @@ export default function DiagramEditor() {
             {currentTool !== 'select' && (
               <button
                 onClick={handleAddShape}
-                className="absolute top-4 right-4 z-10 flex items-center gap-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg shadow-lg hover:opacity-90 transition-opacity"
+                className="absolute top-4 right-4 z-10 flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg shadow-lg hover:opacity-90 transition-opacity"
               >
                 <Plus className="w-4 h-4" />
-                Add {currentTool.charAt(0).toUpperCase() + currentTool.slice(1)}
+                添加 {currentTool.charAt(0).toUpperCase() + currentTool.slice(1)}
               </button>
             )}
 
@@ -492,8 +492,8 @@ export default function DiagramEditor() {
             {diagram.elements.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center text-text-light-tertiary dark:text-text-dark-tertiary">
-                  <p className="text-lg mb-2">Select a tool and click "Add" to create shapes</p>
-                  <p className="text-sm">Or drag existing shapes to move them</p>
+                  <p className="text-lg mb-2">选择工具并点击“添加”创建形状</p>
+                  <p className="text-sm">或拖动现有形状以移动它们</p>
                 </div>
               </div>
             )}

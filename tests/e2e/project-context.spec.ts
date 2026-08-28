@@ -15,8 +15,8 @@ test.describe('Project Context', () => {
   });
 
   test('has project context in sidebar or header', async ({ page }) => {
-    const projectContext = page.locator('[aria-label*="project"], [title*="project"]').first()
-      .or(page.getByText(/All Projects|No Project/i).first());
+    const projectContext = page.locator('[aria-label*="选择项目上下文"], [title*="项目"]').first()
+      .or(page.getByText(/全部项目|无项目/i).first());
     if (await projectContext.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(projectContext).toBeVisible();
     }
@@ -39,7 +39,7 @@ test.describe('Project Context', () => {
     await page.keyboard.press('Control+Shift+P');
     await page.waitForTimeout(300);
 
-    const allOption = page.getByText(/All Projects/i);
+    const allOption = page.getByText(/全部项目/);
     if (await allOption.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(allOption).toBeVisible();
     }

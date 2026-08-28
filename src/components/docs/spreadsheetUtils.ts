@@ -36,7 +36,7 @@ export function letterToCol(letter: string): number {
 export function parseRef(ref: string): { row: number; col: number } {
   const match = ref.match(/^([A-Z]+)(\d+)$/i);
   if (!match) {
-    throw new Error(`Invalid cell reference: ${ref}`);
+    throw new Error(`无效的单元格引用：${ref}`);
   }
   const col = letterToCol(match[1].toUpperCase());
   const row = parseInt(match[2], 10) - 1; // 1-indexed to 0-indexed
@@ -156,7 +156,7 @@ export function formatCellValue(
   // Handle common formats
   if (format.includes('$')) {
     // Currency
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
@@ -165,7 +165,7 @@ export function formatCellValue(
 
   if (format.includes('%')) {
     // Percentage
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('zh-CN', {
       style: 'percent',
       minimumFractionDigits: format.includes('.') ? 2 : 0,
     }).format(value);
@@ -174,7 +174,7 @@ export function formatCellValue(
   if (format.includes('.')) {
     // Decimal places
     const decimals = (format.match(/\.0*/)?.[0]?.length ?? 1) - 1;
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('zh-CN', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     }).format(value);
@@ -182,7 +182,7 @@ export function formatCellValue(
 
   if (format.includes(',')) {
     // Thousands separator
-    return new Intl.NumberFormat('en-US').format(value);
+    return new Intl.NumberFormat('zh-CN').format(value);
   }
 
   return String(value);

@@ -24,6 +24,13 @@ const categoryIcons: Record<TemplateCategory, string> = {
   Productivity: '✅',
 };
 
+const CATEGORY_LABELS: Record<TemplateCategory, string> = {
+  All: '全部',
+  Work: '工作',
+  Personal: '个人',
+  Productivity: '效率',
+};
+
 /**
  * Template Create/Edit Form Component
  */
@@ -49,8 +56,8 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
 
     // Validation
     const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = 'Name is required';
-    if (!description.trim()) newErrors.description = 'Description is required';
+    if (!name.trim()) newErrors.name = '名称是必填项';
+    if (!description.trim()) newErrors.description = '描述是必填项';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -83,13 +90,13 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
       {/* Name Input */}
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Template Name *
+          模板名称 *
         </label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g., Meeting Notes"
+          placeholder="例如：会议记录"
           className="w-full px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
           autoFocus
         />
@@ -99,7 +106,7 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
       {/* Icon Input */}
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Icon (emoji or text)
+          图标（表情符号或文字）
         </label>
         <input
           type="text"
@@ -110,79 +117,79 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
           className="w-full px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
         />
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-          Short emoji or text to identify this template
+          用于标识此模板的简短表情符号或文字
         </p>
       </div>
 
       {/* Category Dropdown */}
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Category
+          分类
         </label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as 'Work' | 'Personal' | 'Productivity')}
           className="w-full px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
         >
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Productivity">Productivity</option>
+          <option value="Work">工作</option>
+          <option value="Personal">个人</option>
+          <option value="Productivity">效率</option>
         </select>
       </div>
 
       {/* Description Textarea */}
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Template Content *
+          模板内容 *
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter template content here..."
+          placeholder="在此输入模板内容…"
           rows={10}
           className="w-full px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue font-mono text-sm resize-y"
         />
         {errors.description && <p className="text-sm text-accent-red mt-1">{errors.description}</p>}
         <div className="mt-2 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
           <p className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Available template variables:
+            可用的模板变量：
           </p>
           <div className="grid grid-cols-2 gap-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{date}'}
               </code>{' '}
-              Current date
+              当前日期
             </div>
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{time}'}
               </code>{' '}
-              Current time
+              当前时间
             </div>
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{datetime}'}
               </code>{' '}
-              Date and time
+              日期和时间
             </div>
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{title}'}
               </code>{' '}
-              Note title
+              笔记标题
             </div>
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{user}'}
               </code>{' '}
-              User name
+              用户名
             </div>
             <div>
               <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                 {'{timestamp}'}
               </code>{' '}
-              Unix timestamp
+              Unix 时间戳
             </div>
           </div>
         </div>
@@ -191,7 +198,7 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
       {/* Default Tags */}
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Default Tags
+          默认标签
         </label>
         <div className="flex gap-2 mb-2">
           <input
@@ -204,7 +211,7 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
                 handleAddTag();
               }
             }}
-            placeholder="Add a tag..."
+            placeholder="添加标签…"
             className="flex-1 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
           />
           <button
@@ -212,7 +219,7 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
             onClick={handleAddTag}
             className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
           >
-            Add
+            添加
           </button>
         </div>
         {defaultTags.length > 0 && (
@@ -236,7 +243,7 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
           </div>
         )}
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-          Tags automatically applied to notes created from this template
+          从该模板创建的笔记会自动应用这些标签
         </p>
       </div>
 
@@ -247,13 +254,13 @@ function TemplateForm({ template, onSave, onCancel }: TemplateFormProps) {
           onClick={onCancel}
           className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
         >
-          Cancel
+          取消
         </button>
         <button
           type="submit"
           className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
         >
-          {template ? 'Save Changes' : 'Create Template'}
+          {template ? '保存更改' : '创建模板'}
         </button>
       </div>
     </form>
@@ -278,7 +285,7 @@ function TemplateCard({ template, onSelect, onEdit, onDelete }: TemplateCardProp
       {/* Built-in Badge */}
       {template.isBuiltIn && (
         <div className="absolute top-2 right-2 px-2 py-0.5 bg-accent-blue/10 text-accent-blue text-xs font-medium rounded">
-          Built-in
+          内置
         </div>
       )}
 
@@ -316,7 +323,7 @@ function TemplateCard({ template, onSelect, onEdit, onDelete }: TemplateCardProp
           ))}
           {template.defaultTags.length > 3 && (
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary px-1">
-              +{template.defaultTags.length - 3} more
+              +{template.defaultTags.length - 3} 更多
             </span>
           )}
         </div>
@@ -330,14 +337,14 @@ function TemplateCard({ template, onSelect, onEdit, onDelete }: TemplateCardProp
             className="flex-1 px-3 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary-hover transition-colors flex items-center justify-center gap-2 text-sm font-medium"
           >
             <Sparkles className="w-4 h-4" />
-            Use Template
+            使用模板
           </button>
         )}
         {canEdit && onEdit && (
           <button
             onClick={onEdit}
             className="px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors"
-            title="Edit template"
+            title="编辑模板"
           >
             <Edit2 className="w-4 h-4" />
           </button>
@@ -346,7 +353,7 @@ function TemplateCard({ template, onSelect, onEdit, onDelete }: TemplateCardProp
           <button
             onClick={onDelete}
             className="px-3 py-2 bg-accent-red/10 text-accent-red rounded-lg hover:bg-accent-red/20 transition-colors"
-            title="Delete template"
+            title="删除模板"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -447,12 +454,12 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark flex-shrink-0">
           <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            {showForm ? (editingTemplate ? 'Edit Template' : 'Create Template') : 'Template Library'}
+            {showForm ? (editingTemplate ? '编辑模板' : '创建模板') : '模板库'}
           </h2>
           <button
             onClick={onClose}
             className="p-2 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-            aria-label="Close modal"
+            aria-label="关闭弹窗"
           >
             <X className="w-5 h-5" />
           </button>
@@ -480,7 +487,7 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
                   <input
                     type="text"
-                    placeholder="Search templates by name, description, or tags..."
+                    placeholder="按名称、描述或标签搜索模板…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
@@ -501,7 +508,7 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                         }`}
                       >
                         <span>{categoryIcons[cat]}</span>
-                        {cat}
+                        {CATEGORY_LABELS[cat]}
                       </button>
                     ))}
                   </div>
@@ -510,7 +517,7 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                     className="flex items-center gap-2 px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors flex-shrink-0"
                   >
                     <Plus className="w-4 h-4" />
-                    New Template
+                    新建模板
                   </button>
                 </div>
               </div>
@@ -520,10 +527,10 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                 <div className="text-center py-12">
                   <p className="text-text-light-secondary dark:text-text-dark-secondary">
                     {searchQuery.trim()
-                      ? `No templates found matching "${searchQuery}"`
+                      ? `未找到与“${searchQuery}”匹配的模板`
                       : selectedCategory !== 'All'
-                      ? `No templates in ${selectedCategory} category`
-                      : 'No templates available'}
+                      ? `“${selectedCategory}”分类中没有模板`
+                      : '暂无可用模板'}
                   </p>
                   {!searchQuery.trim() && selectedCategory === 'All' && (
                     <button
@@ -531,7 +538,7 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                       className="mt-4 px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors inline-flex items-center gap-2"
                     >
                       <Plus className="w-5 h-5" />
-                      Create Your First Template
+                      创建你的第一个模板
                     </button>
                   )}
                 </div>
@@ -559,9 +566,9 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
           isOpen={true}
           onClose={() => setDeleteConfirmTemplate(null)}
           onConfirm={confirmDelete}
-          title="Delete Template"
-          message={`Are you sure you want to delete the template "${deleteConfirmTemplate.name}"? This action cannot be undone.`}
-          confirmText="Delete"
+          title="删除模板"
+          message={`确定要删除模板“${deleteConfirmTemplate.name}”吗？此操作无法撤销。`}
+          confirmText="删除"
           variant="danger"
         />
       )}

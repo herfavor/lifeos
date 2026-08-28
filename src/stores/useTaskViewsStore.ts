@@ -38,7 +38,7 @@ export interface TaskView {
 const BUILT_IN_VIEWS: TaskView[] = [
   {
     id: 'all-tasks',
-    name: 'All Tasks',
+    name: '全部任务',
     icon: '📋',
     filters: [],
     sortBy: 'created',
@@ -47,7 +47,7 @@ const BUILT_IN_VIEWS: TaskView[] = [
   },
   {
     id: 'due-this-week',
-    name: 'Due This Week',
+    name: '本周到期',
     icon: '📅',
     filters: [
       { field: 'dueDate', operator: 'lt', value: 'end-of-week' },
@@ -59,7 +59,7 @@ const BUILT_IN_VIEWS: TaskView[] = [
   },
   {
     id: 'high-priority',
-    name: 'High Priority',
+    name: '高优先级',
     icon: '🔴',
     filters: [{ field: 'priority', operator: 'eq', value: 'high' }],
     sortBy: 'dueDate',
@@ -68,7 +68,7 @@ const BUILT_IN_VIEWS: TaskView[] = [
   },
   {
     id: 'today',
-    name: 'Today',
+    name: '今日',
     icon: '☀️',
     filters: [{ field: 'whenTag', operator: 'eq', value: 'today' }],
     sortBy: 'priority',
@@ -77,7 +77,7 @@ const BUILT_IN_VIEWS: TaskView[] = [
   },
   {
     id: 'backlog',
-    name: 'Backlog',
+    name: '待办',
     icon: '📥',
     filters: [{ field: 'status', operator: 'eq', value: 'backlog' }],
     sortBy: 'created',

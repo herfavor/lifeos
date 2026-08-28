@@ -125,7 +125,7 @@ const DraggableEvent: React.FC<DraggableEventProps> = ({
           <div className="font-medium truncate flex items-center gap-1">
             {event.title}
             {hasConflict && (
-              <span className="flex-shrink-0" aria-label="Overlapping event">
+              <span className="flex-shrink-0" aria-label="事件重叠">
                 <AlertCircle className="w-3 h-3 text-amber-300" />
               </span>
             )}
@@ -399,7 +399,7 @@ export const DayView: React.FC<DayViewProps> = ({
           >
             {/* Hour label */}
             <div className="absolute -top-3 left-0 text-xs text-text-light-secondary dark:text-text-dark-secondary w-12 text-right pr-2">
-              {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
+              {`${String(hour).padStart(2, '0')}:00`}
             </div>
 
             {/* 30-minute half line */}
@@ -530,7 +530,7 @@ export const DayView: React.FC<DayViewProps> = ({
           </div>
           {isToday && (
             <span className="px-3 py-1 bg-accent-blue text-white text-sm font-medium rounded-full">
-              Today
+              今天
             </span>
           )}
         </div>
@@ -540,7 +540,7 @@ export const DayView: React.FC<DayViewProps> = ({
       {allDayEvents.length > 0 && (
         <div className="flex-shrink-0 border-b border-border-light dark:border-border-dark p-2 bg-surface-light-elevated dark:bg-surface-dark-elevated">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            All Day
+            全天
           </div>
           <div className="space-y-1">
             {allDayEvents.map((event) => (

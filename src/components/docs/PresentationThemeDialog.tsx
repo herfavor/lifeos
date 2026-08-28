@@ -51,7 +51,7 @@ export function PresentationThemeDialog({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Themes & Layouts
+            主题与布局
           </h2>
           <button
             onClick={onClose}
@@ -71,7 +71,7 @@ export function PresentationThemeDialog({
                 : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            Themes
+            主题
           </button>
           <button
             onClick={() => setActiveTab('layouts')}
@@ -81,7 +81,7 @@ export function PresentationThemeDialog({
                 : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            Layouts
+            布局
           </button>
         </div>
 
@@ -90,7 +90,7 @@ export function PresentationThemeDialog({
           {activeTab === 'themes' ? (
             <div className="space-y-4">
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Select a theme to apply to your presentation
+                选择一个主题应用到您的演示文稿
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -153,7 +153,7 @@ export function PresentationThemeDialog({
                     className="w-4 h-4 rounded border-border-light dark:border-border-dark"
                   />
                   <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    Apply to all slides
+                    应用到所有幻灯片
                   </span>
                 </label>
               </div>
@@ -161,7 +161,7 @@ export function PresentationThemeDialog({
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Apply a layout template to the current slide
+                将布局模板应用到当前幻灯片
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -197,14 +197,14 @@ export function PresentationThemeDialog({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleApplyTheme}
               disabled={!selectedThemeId}
               className="px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Apply Theme
+              应用主题
             </button>
           </div>
         )}

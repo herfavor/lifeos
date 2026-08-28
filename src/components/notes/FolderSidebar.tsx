@@ -26,7 +26,6 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { FolderOpen } from 'lucide-react';
 import { useFoldersStore } from '../../stores/useFoldersStore';
 import { useNotesStore } from '../../stores/useNotesStore';
-import { useUndoStore } from '../../stores/useUndoStore';
 import { ConfirmDialog } from '../ConfirmDialog';
 import { PromptDialog } from '../PromptDialog';
 import { TagFilter } from '../TagFilter';
@@ -133,7 +132,9 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
 
   // Get note count for a folder
   const getFolderNoteCount = (folderId: string) => {
-    return Object.values(notesObj).filter((note) => note.folderId === folderId).length;
+    return Object.values(notesObj).filter(
+      (note) => note.folderId === folderId && !note.deletedAt
+    ).length;
   };
 
   // Handle folder deletion
@@ -146,60 +147,21 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
   const confirmDeleteFolder = () => {
     if (!selectedFolderId) return;
 
-    // Save folder and notes for undo
     const folderToDelete = foldersObj[selectedFolderId];
     if (!folderToDelete) {
       log.warn('Folder not found', { folderId: selectedFolderId });
       return;
     }
 
-    const notesToDelete = Object.values(notesObj).filter(
-      (note) => note.folderId === selectedFolderId
-    );
-    const noteCount = notesToDelete.length;
+    const noteCount = Object.values(notesObj).filter(
+      (note) => note.folderId === selectedFolderId && !note.deletedAt
+    ).length;
 
-    // Delete all notes in this folder
-    notesToDelete.forEach((note) => {
-      useNotesStore.setState((state) => {
-        const { [note.id]: deleted, ...remainingNotes } = state.notes;
-        return {
-          notes: remainingNotes,
-          activeNoteId: state.activeNoteId === note.id ? null : state.activeNoteId,
-        };
-      });
-    });
-
-    // Delete the folder
+    // The folder store safely moves contained notes to the parent/root.
     deleteFolder(selectedFolderId);
-
-    log.info(`Folder "${folderToDelete.name}" deleted`, { noteCount });
-
-    // Add undo action to restore folder AND notes
-    useUndoStore.getState().addUndoAction(
-      `Folder "${folderToDelete.name}" and ${noteCount} note(s) deleted`,
-      () => {
-        // Restore the folder
-        useFoldersStore.setState((state) => ({
-          folders: {
-            ...state.folders,
-            [folderToDelete.id]: folderToDelete,
-          },
-        }));
-
-        // Restore all notes
-        useNotesStore.setState((state) => {
-          const restoredNotes = { ...state.notes };
-          notesToDelete.forEach((note) => {
-            restoredNotes[note.id] = note;
-          });
-          return {
-            notes: restoredNotes,
-          };
-        });
-
-        log.info(`Folder "${folderToDelete.name}" and ${noteCount} note(s) restored (undo)`);
-      }
-    );
+    setDeleteDialogOpen(false);
+    setSelectedFolderId(null);
+    log.info(`Folder "${folderToDelete.name}" deleted; notes moved safely`, { noteCount });
   };
 
   // Handle folder rename
@@ -295,14 +257,14 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
       {/* Folders header */}
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <h3 className="text-sm font-medium uppercase tracking-wide text-text-light-secondary dark:text-text-dark-secondary">
-          Folders
+          文件夹
         </h3>
         <button
           onClick={() => createFolder()}
           className="text-xs px-3 h-8 bg-accent-blue hover:bg-accent-blue-hover text-white rounded transition-colors font-medium"
-          title="New Folder"
+          title="新建文件夹"
         >
-          + Folder
+          + 文件夹
         </button>
       </div>
 
@@ -310,7 +272,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
       <div className="mb-3 flex-shrink-0">
         <input
           type="text"
-          placeholder="Search notes... (Cmd+K)"
+          placeholder="搜索笔记… (Cmd+K)"
           className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg
                      bg-surface-light dark:bg-surface-dark
                      text-text-light-primary dark:text-text-dark-primary
@@ -333,9 +295,9 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
           }`}
         >
           <FolderOpen className="w-4 h-4" />
-          <span className="text-sm font-medium flex-1">All Notes</span>
+          <span className="text-sm font-medium flex-1">全部笔记</span>
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {Object.keys(notesObj).length}
+            {Object.values(notesObj).filter((note) => !note.deletedAt).length}
           </span>
         </button>
       )}
@@ -348,7 +310,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
           return (
             <div className="overflow-y-auto flex-1 min-h-0">
               <h3 className="text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary mb-2">
-                {searchResults.length} results for &ldquo;{searchQuery}&rdquo;
+                关于“{searchQuery}”的 {searchResults.length} 条结果
               </h3>
               <div className="space-y-2">
                 {searchResults.map((result) => (
@@ -362,7 +324,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
                   >
                     <div className="font-medium text-sm text-text-light-primary dark:text-text-dark-primary mb-1 truncate">
                       <SearchHighlight
-                        text={result.item.title || 'Untitled'}
+                        text={result.item.title || '未命名'}
                         matchedIndices={result.matches['title']}
                       />
                     </div>
@@ -384,7 +346,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
                 ))}
                 {searchResults.length === 0 && (
                   <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-8">
-                    No notes found for &ldquo;{searchQuery}&rdquo;
+                    没有找到与“{searchQuery}”相关的笔记
                   </div>
                 )}
               </div>
@@ -425,7 +387,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
                 {/* Empty state */}
                 {folderTree.length === 0 && (
                   <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-                  No folders yet
+                  暂无文件夹
                 </div>
               )}
               </div>
@@ -446,7 +408,7 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
           onClick={onOpenTagManager}
           className="w-full mt-3 px-3 py-2 text-xs font-medium rounded border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
         >
-          Manage Tags
+          管理标签
         </button>
       </div>
 
@@ -455,9 +417,9 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={confirmDeleteFolder}
-        title="Delete Folder"
-        message={`Delete folder "${selectedFolderName}"? This will also delete ${selectedFolderId ? getFolderNoteCount(selectedFolderId) : 0} note(s) inside.`}
-        confirmText="Delete"
+        title="删除文件夹"
+        message={`确定删除文件夹“${selectedFolderName}”吗？其中的 ${selectedFolderId ? getFolderNoteCount(selectedFolderId) : 0} 篇笔记会移到上级文件夹，不会被删除。`}
+        confirmText="删除"
         variant="danger"
       />
 
@@ -466,11 +428,11 @@ export const FolderSidebar: React.FC<FolderSidebarProps> = ({
         isOpen={renameDialogOpen}
         onClose={() => setRenameDialogOpen(false)}
         onConfirm={confirmRenameFolder}
-        title="Rename Folder"
-        message="Enter a new name for this folder:"
+        title="重命名文件夹"
+        message="请输入该文件夹的新名称："
         defaultValue={selectedFolderName}
-        placeholder="Folder name"
-        confirmText="Rename"
+        placeholder="文件夹名称"
+        confirmText="重命名"
       />
     </div>
   );

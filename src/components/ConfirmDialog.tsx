@@ -33,8 +33,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = '确认',
+  cancelText = '取消',
   variant = 'info',
 }) => {
   const handleConfirm = useCallback(() => {

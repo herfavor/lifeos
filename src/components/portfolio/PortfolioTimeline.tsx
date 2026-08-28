@@ -12,20 +12,22 @@ type ZoomLevel = 'week' | 'month' | 'quarter';
 
 interface ProjectSummaryInput {
   project: { id: string; name: string; color: string; icon?: string };
-  health: 'green' | 'yellow' | 'red';
+  health: 'green' | 'yellow' | 'red' | null;
   completionPercent: number;
 }
 
 interface Props {
   summaries: ProjectSummaryInput[];
   tasks: Task[];
+  onOpenProject?: (projectId: string) => void;
 }
 
-function getHealthBg(health: 'green' | 'yellow' | 'red'): string {
+function getHealthBg(health: 'green' | 'yellow' | 'red' | null): string {
   switch (health) {
     case 'green': return 'bg-accent-green';
     case 'yellow': return 'bg-accent-yellow';
     case 'red': return 'bg-accent-red';
+    default: return 'bg-text-light-tertiary dark:bg-text-dark-tertiary';
   }
 }
 
@@ -40,10 +42,10 @@ function daysBetween(a: Date, b: Date): number {
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
 }
 
-export function PortfolioTimeline({ summaries, tasks }: Props) {
+export function PortfolioTimeline({ summaries, tasks, onOpenProject }: Props) {
   const [zoom, setZoom] = useState<ZoomLevel>('month');
 
   const projectRanges = useMemo(() => {
@@ -119,7 +121,7 @@ export function PortfolioTimeline({ summaries, tasks }: Props) {
   if (projectRanges.length === 0) {
     return (
       <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg p-8 text-center text-text-light-secondary dark:text-text-dark-secondary">
-        <p>No project timeline data available. Add tasks with due dates to see timelines.</p>
+        <p>暂无项目时间线数据。添加带截止日期的任务即可查看时间线。</p>
       </div>
     );
   }
@@ -129,7 +131,7 @@ export function PortfolioTimeline({ summaries, tasks }: Props) {
       {/* Zoom controls */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Project Timeline
+          项目时间线
         </h3>
         <div className="flex items-center gap-1 text-xs">
           {(['week', 'month', 'quarter'] as ZoomLevel[]).map((z) => (
@@ -142,7 +144,7 @@ export function PortfolioTimeline({ summaries, tasks }: Props) {
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              {z}
+              {z === 'week' ? '周' : z === 'month' ? '月' : '季度'}
             </button>
           ))}
         </div>
@@ -171,7 +173,7 @@ export function PortfolioTimeline({ summaries, tasks }: Props) {
             style={{ left: `${todayPercent}%` }}
           >
             <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] text-accent-red font-medium whitespace-nowrap">
-              Today
+              今天
             </div>
           </div>
 
@@ -185,20 +187,20 @@ export function PortfolioTimeline({ summaries, tasks }: Props) {
             return (
               <div key={r.project.id} className="flex items-center gap-2 h-8">
                 {/* Project label */}
-                <div className="w-32 flex-shrink-0 flex items-center gap-1.5 text-xs truncate">
+                <button type="button" onClick={() => onOpenProject?.(r.project.id)} className="w-32 flex-shrink-0 flex items-center gap-1.5 text-xs truncate rounded-md text-left hover:text-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: r.project.color }} />
                   {r.project.icon && <span className="text-sm">{r.project.icon}</span>}
                   <span className="truncate text-text-light-primary dark:text-text-dark-primary font-medium">
                     {r.project.name}
                   </span>
-                </div>
+                </button>
 
                 {/* Bar area */}
                 <div className="flex-1 relative h-6">
                   <div
                     className={`absolute top-0 h-full rounded ${getHealthBg(r.health)} opacity-75`}
                     style={{ left: `${leftPercent}%`, width: `${widthPercent}%`, minWidth: '4px' }}
-                    title={`${r.project.name}: ${r.earliest || 'no start'} - ${r.latest || 'no end'} (${r.completionPercent}% complete)`}
+                    title={`${r.project.name}：${r.earliest || '无开始日期'} - ${r.latest || '无结束日期'}（${r.completionPercent}% 已完成）`}
                   >
                     {/* Completion fill */}
                     <div

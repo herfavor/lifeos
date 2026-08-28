@@ -19,14 +19,14 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories: Array<{ id: ShapeCategory; label: string }> = [
-    { id: 'flowchart', label: 'Flowchart' },
-    { id: 'basic', label: 'Basic' },
+    { id: 'flowchart', label: '流程图' },
+    { id: 'basic', label: '基础' },
     { id: 'uml', label: 'UML' },
-    { id: 'network', label: 'Network' },
-    { id: 'cloud-computing', label: 'Cloud' }, // P2
-    { id: 'people', label: 'People' }, // P2
-    { id: 'data-flow', label: 'Data Flow' }, // P2
-    { id: 'charts', label: 'Charts' }, // P2
+    { id: 'network', label: '网络' },
+    { id: 'cloud-computing', label: '云' }, // P2
+    { id: 'people', label: '人物' }, // P2
+    { id: 'data-flow', label: '数据流' }, // P2
+    { id: 'charts', label: '图表' }, // P2
   ];
 
   // Filter shapes by search query or selected category
@@ -41,11 +41,11 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
 
   if (!isOpen) {
     return (
-      <div className="w-10 shrink-0 bg-surface-light-base dark:bg-surface-dark-base border-r border-border-light dark:border-border-dark flex flex-col items-center py-3">
+      <div className="w-10 shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col items-center py-3">
         <button
           onClick={onToggle}
           className="p-2 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-          aria-label="Open shape palette"
+          aria-label="打开形状面板"
         >
           <ChevronRight className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
         </button>
@@ -54,16 +54,16 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
   }
 
   return (
-    <div className="w-60 shrink-0 bg-surface-light-base dark:bg-surface-dark-base border-r border-border-light dark:border-border-dark flex flex-col">
+    <div className="w-60 shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark">
         <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Shapes
+          形状
         </h3>
         <button
           onClick={onToggle}
           className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-          aria-label="Close shape palette"
+          aria-label="关闭形状面板"
         >
           <ChevronLeft className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
         </button>
@@ -75,10 +75,10 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <input
             type="text"
-            placeholder="Search shapes..."
+            placeholder="搜索形状…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light-base dark:bg-surface-dark-base text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
+            className="w-full pl-8 pr-3 py-1.5 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
           />
         </div>
       </div>
@@ -118,7 +118,7 @@ export function ShapePalette({ onShapeDragStart, isOpen = true, onToggle }: Shap
       <div className="flex-1 overflow-y-auto p-3">
         {shapes.length === 0 ? (
           <div className="text-center py-8 text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            {searchQuery ? 'No shapes found' : 'No shapes in this category'}
+            {searchQuery ? '未找到形状' : '此分类中没有形状'}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2">

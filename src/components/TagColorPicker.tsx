@@ -24,18 +24,18 @@ export interface TagColorPickerProps {
  * Same palette as Status custom field type
  */
 export const TAG_COLORS = [
-  { name: 'blue', token: 'accent-blue', displayName: 'Blue' },
-  { name: 'cyan', token: 'accent-primary', displayName: 'Cyan' },
-  { name: 'purple', token: 'accent-purple', displayName: 'Purple' },
-  { name: 'magenta', token: 'accent-primary', displayName: 'Magenta' },
-  { name: 'green', token: 'status-success', displayName: 'Green' },
-  { name: 'yellow', token: 'status-warning', displayName: 'Yellow' },
-  { name: 'orange', token: 'accent-orange', displayName: 'Orange' },
-  { name: 'red', token: 'status-error', displayName: 'Red' },
-  { name: 'gray', token: 'text-light-tertiary', displayName: 'Gray' },
-  { name: 'slate', token: 'border-light', displayName: 'Slate' },
-  { name: 'pink', token: 'accent-pink', displayName: 'Pink' },
-  { name: 'indigo', token: 'accent-indigo', displayName: 'Indigo' },
+  { name: 'blue', token: 'accent-blue', displayName: '蓝色' },
+  { name: 'cyan', token: 'accent-primary', displayName: '青色' },
+  { name: 'purple', token: 'accent-purple', displayName: '紫色' },
+  { name: 'magenta', token: 'accent-primary', displayName: '品红' },
+  { name: 'green', token: 'status-success', displayName: '绿色' },
+  { name: 'yellow', token: 'status-warning', displayName: '黄色' },
+  { name: 'orange', token: 'accent-orange', displayName: '橙色' },
+  { name: 'red', token: 'status-error', displayName: '红色' },
+  { name: 'gray', token: 'text-light-tertiary', displayName: '灰色' },
+  { name: 'slate', token: 'border-light', displayName: '蓝灰' },
+  { name: 'pink', token: 'accent-pink', displayName: '粉色' },
+  { name: 'indigo', token: 'accent-indigo', displayName: '靛蓝' },
 ] as const;
 
 export function TagColorPicker({ selectedColor, onColorSelect, tagName }: TagColorPickerProps) {
@@ -44,7 +44,7 @@ export function TagColorPicker({ selectedColor, onColorSelect, tagName }: TagCol
       {/* Preview */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Preview
+          预览
         </label>
         <div className="flex items-center gap-2">
           <span
@@ -62,7 +62,7 @@ export function TagColorPicker({ selectedColor, onColorSelect, tagName }: TagCol
       {/* Color Grid */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Select Color
+          选择颜色
         </label>
         <div className="grid grid-cols-4 gap-2">
           {/* No Color Option */}
@@ -77,9 +77,9 @@ export function TagColorPicker({ selectedColor, onColorSelect, tagName }: TagCol
                   : 'border-border-light dark:border-border-dark hover:border-accent-primary/50'
               }
             `}
-            title="No color"
+            title="无颜色"
           >
-            <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">None</span>
+            <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">无</span>
             {!selectedColor && (
               <Check className="absolute top-1 right-1 w-3 h-3 text-accent-primary" />
             )}

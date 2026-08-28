@@ -17,7 +17,7 @@ test.describe('Automations', () => {
   });
 
   test('has new rule button', async ({ page }) => {
-    const newRuleBtn = page.getByRole('button', { name: /new.*rule|add.*rule|create.*rule|\+/i });
+    const newRuleBtn = page.getByRole('button', { name: /新建规则|new.*rule|add.*rule|create.*rule|\+/i });
     if (await newRuleBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(newRuleBtn).toBeVisible();
     }

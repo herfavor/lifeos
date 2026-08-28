@@ -154,7 +154,7 @@ export const BookmarksWidget: React.FC = () => {
             handleEdit(bookmark);
           }}
           className="p-1 hover:bg-surface-light dark:hover:bg-surface-dark-elevated rounded"
-          title="Edit"
+          title="编辑"
         >
           <Pencil className="w-3 h-3 text-text-light-secondary dark:text-text-dark-secondary" />
         </button>
@@ -164,7 +164,7 @@ export const BookmarksWidget: React.FC = () => {
             handleDelete(bookmark.id);
           }}
           className="p-1 hover:bg-accent-red/10 rounded"
-          title="Delete"
+          title="删除"
         >
           <Trash2 className="w-3 h-3 text-accent-red" />
         </button>
@@ -173,14 +173,14 @@ export const BookmarksWidget: React.FC = () => {
   );
 
   return (
-    <BaseWidget title="Bookmarks" icon="🔖" subtitle={`${bookmarks.length} links`}>
+    <BaseWidget title="书签" icon="🔖" subtitle={`${bookmarks.length} 个链接`}>
       <div className="flex flex-col h-full min-h-[160px]">
         {bookmarks.length === 0 && !showAddForm ? (
           <WidgetEmptyState
             icon="🔖"
-            message="No bookmarks yet"
-            hint="Save quick links to your favorite sites"
-            action={{ label: 'Add Bookmark', onClick: () => setShowAddForm(true) }}
+            message="暂无书签"
+            hint="收藏常用网站的快捷链接"
+            action={{ label: '添加书签', onClick: () => setShowAddForm(true) }}
           />
         ) : (
           <>
@@ -205,7 +205,7 @@ export const BookmarksWidget: React.FC = () => {
               <div className="p-3 bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark mb-3 space-y-2">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                    {editId ? 'Edit Bookmark' : 'Add Bookmark'}
+                    {editId ? '编辑书签' : '添加书签'}
                   </span>
                   <button onClick={handleCancel} className="p-0.5">
                     <X className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
@@ -215,7 +215,7 @@ export const BookmarksWidget: React.FC = () => {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Title"
+                  placeholder="标题"
                   className="w-full px-2.5 py-1.5 text-sm rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                   autoFocus
                 />
@@ -233,7 +233,7 @@ export const BookmarksWidget: React.FC = () => {
                   type="text"
                   value={group}
                   onChange={(e) => setGroup(e.target.value)}
-                  placeholder="Group (optional)"
+                  placeholder="分组（可选）"
                   list="bookmark-groups"
                   className="w-full px-2.5 py-1.5 text-sm rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                 />
@@ -247,7 +247,7 @@ export const BookmarksWidget: React.FC = () => {
                   disabled={!title.trim() || !url.trim()}
                   className="w-full px-3 py-1.5 text-sm font-medium bg-accent-blue hover:bg-accent-blue-hover disabled:bg-text-light-tertiary dark:disabled:bg-text-dark-tertiary disabled:cursor-not-allowed text-white rounded-button transition-all duration-standard ease-smooth"
                 >
-                  {editId ? 'Update' : 'Add'}
+                  {editId ? '更新' : '添加'}
                 </button>
               </div>
             )}
@@ -259,7 +259,7 @@ export const BookmarksWidget: React.FC = () => {
                 className="w-full mt-auto flex items-center justify-center gap-1.5 px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
               >
                 <Plus className="w-4 h-4" />
-                Add Bookmark
+                添加书签
               </button>
             )}
           </>

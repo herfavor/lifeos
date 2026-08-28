@@ -40,7 +40,7 @@ function toStandardDateKey(icsDate: string): string {
 function parseStandardDateKey(dateKey: string): Date {
   const parts = dateKey.split('-').map(Number);
   if (parts.length !== 3 || parts.some(isNaN)) {
-    throw new Error(`Invalid date key: ${dateKey}`);
+    throw new Error(`无效的日期：${dateKey}`);
   }
   const [year, month, day] = parts;
   return new Date(year, month - 1, day); // month is 0-indexed in JS Date
@@ -239,7 +239,7 @@ export const importFromICS = (icsData: string): { success: boolean; events?: Cal
   try {
     // Basic validation
     if (!icsData.includes('BEGIN:VCALENDAR')) {
-      return { success: false, error: 'Invalid ICS file format' };
+      return { success: false, error: '无效的 ICS 文件格式' };
     }
 
     const events: CalendarEvent[] = [];
@@ -391,10 +391,10 @@ export const readICSFile = (file: File): Promise<string> => {
       if (typeof content === 'string') {
         resolve(content);
       } else {
-        reject(new Error('Failed to read file as text'));
+        reject(new Error('无法将文件读取为文本'));
       }
     };
-    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.onerror = () => reject(new Error('读取文件失败'));
     reader.readAsText(file);
   });
 };

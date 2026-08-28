@@ -104,9 +104,9 @@ export function DocumentCommentPanel({
                 ? 'bg-accent-primary/10 text-accent-primary'
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated'
             }`}
-            title={showResolved ? 'Hide resolved' : 'Show resolved'}
+            title={showResolved ? '隐藏已解决' : '显示已解决'}
           >
-            {showResolved ? 'Hide resolved' : 'Show all'}
+            {showResolved ? '隐藏已解决' : '显示全部'}
           </button>
           <button
             onClick={onClose}

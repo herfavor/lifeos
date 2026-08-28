@@ -25,14 +25,13 @@ import { KanbanCard } from './Kanban/KanbanCard';
 import { ColumnManager } from './Kanban/ColumnManager';
 import { CardDetailPanel } from './Kanban/CardDetailPanel';
 import { ListView } from './Kanban/ListView';
-import { CalendarView } from './Kanban/CalendarView';
 import { ArchivedView } from './Kanban/ArchivedView';
 import { QuickAddModal } from './Kanban/QuickAddModal';
-import { EisenhowerMatrix } from '../components/tasks/EisenhowerMatrix';
-import { TriageInbox } from '../components/tasks/TriageInbox';
 import { TaskViewSidebar } from '../components/tasks/TaskViewSidebar';
 import { TaskTemplatesPicker } from '../components/tasks/TaskTemplatesPicker';
 import type { Task, TaskStatus } from '../types';
+import { useSearchParams } from 'react-router-dom';
+import { getQuickAddProjectId } from '../utils/projectTaskDeepLink';
 
 /**
  * Kanban Board Widget - React Version with Drag & Drop
@@ -46,7 +45,9 @@ import type { Task, TaskStatus } from '../types';
  * - Keyboard shortcuts for navigation and actions
  */
 export const Kanban: React.FC = () => {
-  const { tasks, columns, moveTask, deleteTask, updateTask, undo, undoHistory, autoArchiveCompletedTasks, visibleColumns = 5, setVisibleColumns } = useKanbanStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const quickAddProjectId = getQuickAddProjectId(searchParams);
+  const { tasks, columns, moveTask, deleteTask, updateTask, undo, undoHistory, autoArchiveCompletedTasks } = useKanbanStore();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [showColumnManager, setShowColumnManager] = useState(false);
   const [columnManagerInitialId, setColumnManagerInitialId] = useState<string | undefined>();
@@ -59,10 +60,36 @@ export const Kanban: React.FC = () => {
   // Get the current task from the store (reactive)
   const selectedTask = detailPanelTaskId ? tasks.find(t => t.id === detailPanelTaskId) || null : null;
 
+  useEffect(() => {
+    const requestedTaskId = searchParams.get('task');
+    if (requestedTaskId && tasks.some((task) => task.id === requestedTaskId)) {
+      setDetailPanelTaskId(requestedTaskId);
+    }
+  }, [searchParams, tasks]);
+
+  // Project Center uses this deep link to open a real creation surface, not a
+  // decorative URL. Keep the project ID available to QuickAddModal until the
+  // user either creates the task or dismisses the modal.
+  useEffect(() => {
+    if (quickAddProjectId) {
+      setShowQuickAdd(true);
+    }
+  }, [quickAddProjectId]);
+
+  const handleQuickAddClose = () => {
+    setShowQuickAdd(false);
+    if (searchParams.get('new') === '1') {
+      const next = new URLSearchParams(searchParams);
+      next.delete('new');
+      next.delete('project');
+      setSearchParams(next, { replace: true });
+    }
+  };
+
   // View mode state with persistence
-  const [viewMode, setViewMode] = useState<'board' | 'list' | 'calendar' | 'matrix' | 'triage'>(() => {
+  const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
     const saved = localStorage.getItem('kanban-view-mode');
-    return (saved as 'board' | 'list' | 'calendar' | 'matrix' | 'triage') || 'board';
+    return saved === 'list' ? 'list' : 'board';
   });
 
   // Task templates modal
@@ -79,6 +106,7 @@ export const Kanban: React.FC = () => {
   const [selectedAssignees, setSelectedAssignees] = useState<Set<string>>(new Set());
   const [showUnassigned, setShowUnassigned] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showMoreActions, setShowMoreActions] = useState(false);
 
   // Phase 3.1: Get members for assignee filter
   const members = useSettingsStore((state) => state.members);
@@ -109,6 +137,7 @@ export const Kanban: React.FC = () => {
   const sortedColumns = useMemo(() => {
     return [...columns].sort((a, b) => a.order - b.order);
   }, [columns]);
+  const visibleColumnCount = Math.min(Math.max(sortedColumns.length, 1), 4);
 
   const columnStatuses = sortedColumns.map((col) => col.id);
 
@@ -282,14 +311,14 @@ export const Kanban: React.FC = () => {
         if (enforceStrict) {
           // Hard limit: prevent move
           setToast({
-            message: `Cannot move task: "${targetColumn.title}" has reached WIP limit (${targetColumn.wipLimit})`,
+            message: `无法移动任务："${targetColumn.title}" 已达到 WIP 上限（${targetColumn.wipLimit}）`,
             showUndo: false,
           });
           return; // Abort move
         } else {
           // Soft limit: show warning but allow move
           setToast({
-            message: `Warning: "${targetColumn.title}" is at/over WIP limit (${tasksInTargetColumn.length + 1}/${targetColumn.wipLimit})`,
+            message: `警告："${targetColumn.title}" 已达到或超过 WIP 上限（${tasksInTargetColumn.length + 1}/${targetColumn.wipLimit}）`,
             showUndo: false,
           });
         }
@@ -354,64 +383,48 @@ export const Kanban: React.FC = () => {
   return (
     <Widget
       id="kanban"
-      title="Kanban Board"
+      title="看板"
       category="Planning"
       draggable={false}
       headerAccessory={
-        <div className="flex items-center gap-1">
-          <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary mr-2">
-            Columns:
-          </span>
-          {[3, 4, 5, 6, 7].map((count) => (
-            <button
-              key={count}
-              onClick={() => setVisibleColumns(count)}
-              className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                visibleColumns === count
-                  ? 'bg-accent-blue text-white'
-                  : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
-              }`}
-              title={`Show ${count} columns at once`}
-            >
-              {count}
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => setShowQuickAdd(true)}
+          className="rounded-lg bg-accent-primary px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
+        >
+          新建任务
+        </button>
       }
     >
       {/* Filter Bar */}
       <div className="mb-4 space-y-3">
         {/* Search and Filter Toggle */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tasks (by title, description, or KAN-#)..."
+            placeholder="搜索任务（按标题、描述或 KAN-#）…"
             className="flex-1 px-4 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue"
           />
-          <button
+          {showMoreActions && <button
             onClick={() => setShowColumnManager(true)}
-            className="px-4 py-2 text-sm font-medium bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors whitespace-nowrap"
-            title="Manage Columns"
+            className="px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:bg-accent-blue-hover transition-colors whitespace-nowrap"
+            title="管理列"
           >
-            ⚙️ Columns
-          </button>
-          <button
+            ⚙️ 列
+          </button>}
+          {showMoreActions && <button
             onClick={() => setShowArchivedView(true)}
             className="px-4 py-2 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors whitespace-nowrap"
-            title="View Archived Tasks"
+            title="查看已归档任务"
           >
-            📦 Archived
-          </button>
+            📦 已归档
+          </button>}
           {/* View Toggle */}
           <div className="flex rounded-lg overflow-hidden border border-border-light dark:border-border-dark">
             {([
-              { id: 'board' as const, label: 'Board', icon: '📋' },
-              { id: 'list' as const, label: 'List', icon: '📊' },
-              { id: 'calendar' as const, label: 'Calendar', icon: '📅' },
-              { id: 'matrix' as const, label: 'Matrix', icon: '🎯' },
-              { id: 'triage' as const, label: 'Triage', icon: '📥' },
+              { id: 'board' as const, label: '看板', icon: '▦' },
+              { id: 'list' as const, label: '列表', icon: '☷' },
             ] as const).map((v, i) => (
               <button
                 key={v.id}
@@ -423,31 +436,38 @@ export const Kanban: React.FC = () => {
                     ? 'bg-accent-blue text-white'
                     : 'bg-surface-light dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                 }`}
-                title={`${v.label} View`}
+                title={`${v.label} 视图`}
               >
                 {v.icon} {v.label}
               </button>
             ))}
           </div>
           {/* Templates button */}
-          <button
+          {showMoreActions && <button
             onClick={() => setShowTemplates(true)}
             className="px-4 py-2 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors whitespace-nowrap"
-            title="Create from Template"
+            title="从模板创建"
           >
-            📝 Template
-          </button>
+            📝 模板
+          </button>}
           {/* Views sidebar toggle */}
-          <button
+          {showMoreActions && <button
             onClick={() => setShowViewSidebar(!showViewSidebar)}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
               showViewSidebar
                 ? 'bg-accent-blue text-white'
-                : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
+                : 'bg-surface-light dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
             }`}
-            title="Saved Views"
+            title="已保存的视图"
           >
-            👁 Views
+            👁 视图
+          </button>}
+          <button
+            onClick={() => setShowMoreActions((value) => !value)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors whitespace-nowrap ${showMoreActions ? 'border-accent-primary bg-accent-primary/10 text-accent-primary' : 'border-border-light bg-surface-light-elevated text-text-light-secondary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-secondary'}`}
+            aria-expanded={showMoreActions}
+          >
+            更多
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -457,14 +477,14 @@ export const Kanban: React.FC = () => {
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
             }`}
           >
-            🔍 Filters {hasActiveFilters && `(${[...selectedPriorities, ...selectedTags, ...selectedAssignees].length + (showUnassigned ? 1 : 0)})`}
+            🔍 筛选 {hasActiveFilters && `(${[...selectedPriorities, ...selectedTags, ...selectedAssignees].length + (showUnassigned ? 1 : 0)})`}
           </button>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
               className="px-4 py-2 text-sm font-medium bg-surface-dark text-white rounded-lg hover:opacity-80 transition-opacity"
             >
-              Clear
+              清除
             </button>
           )}
         </div>
@@ -475,7 +495,7 @@ export const Kanban: React.FC = () => {
             {/* Priority Filter */}
             <div>
               <label className="block text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-2 uppercase tracking-wide">
-                Priority
+                优先级
               </label>
               <div className="flex gap-2 flex-wrap">
                 {(['low', 'medium', 'high'] as const).map((priority) => (
@@ -488,7 +508,7 @@ export const Kanban: React.FC = () => {
                         : 'bg-surface-light dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:border-accent-blue'
                     }`}
                   >
-                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                    {priority === 'low' ? '低' : priority === 'medium' ? '中' : '高'}
                   </button>
                 ))}
               </div>
@@ -498,7 +518,7 @@ export const Kanban: React.FC = () => {
             {allTags.length > 0 && (
               <div>
                 <label className="block text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-2 uppercase tracking-wide">
-                  Tags
+                  标签
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {allTags.map((tag) => (
@@ -522,7 +542,7 @@ export const Kanban: React.FC = () => {
             {members.length > 0 && (
               <div>
                 <label className="block text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-2 uppercase tracking-wide">
-                  Assignees
+                  负责人
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {/* Unassigned Option */}
@@ -534,9 +554,8 @@ export const Kanban: React.FC = () => {
                         : 'bg-surface-light dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:border-text-light-secondary dark:hover:border-text-dark-secondary'
                     }`}
                   >
-                    Unassigned
+                    未指派
                   </button>
-
                   {/* Member Avatars */}
                   {members.map((member) => (
                     <button
@@ -569,8 +588,7 @@ export const Kanban: React.FC = () => {
         {/* Results Count */}
         {hasActiveFilters && (
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            Showing {filteredTasks.length} of {tasks.length} tasks
-          </div>
+            显示 {filteredTasks.length} / {tasks.length} 个任务          </div>
         )}
       </div>
 
@@ -578,10 +596,10 @@ export const Kanban: React.FC = () => {
       <div className="mb-3 flex items-center justify-between">
         <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex items-center gap-4">
           <span>
-            Press <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">?</kbd> for keyboard shortcuts
+            按 <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">?</kbd> 查看键盘快捷键
           </span>
           <span className="hidden md:inline">
-            <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">⌘K</kbd> to quick add task
+            <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">⌘K</kbd> 快速添加任务
           </span>
         </div>
       </div>
@@ -605,7 +623,7 @@ export const Kanban: React.FC = () => {
             >
               <div className="kanban-board min-h-[500px] flex gap-4 overflow-x-auto pb-4 max-w-full">
                 {sortedColumns.map((column, index) => {
-                  const columnWidth = `calc((100% - ${(visibleColumns - 1) * 16}px) / ${visibleColumns})`;
+                  const columnWidth = `calc((100% - ${(visibleColumnCount - 1) * 16}px) / ${visibleColumnCount})`;
 
                   return (
                     <KanbanColumn
@@ -642,23 +660,8 @@ export const Kanban: React.FC = () => {
                 ) : null}
               </DragOverlay>
             </DndContext>
-          ) : viewMode === 'list' ? (
-            <ListView
-              tasks={filteredTasks}
-              columns={columns}
-              onTaskClick={(task) => setDetailPanelTaskId(task.id)}
-            />
-          ) : viewMode === 'matrix' ? (
-            <EisenhowerMatrix
-              tasks={filteredTasks}
-              onTaskClick={(task) => setDetailPanelTaskId(task.id)}
-            />
-          ) : viewMode === 'triage' ? (
-            <TriageInbox
-              onTaskClick={(task) => setDetailPanelTaskId(task.id)}
-            />
           ) : (
-            <CalendarView
+            <ListView
               tasks={filteredTasks}
               columns={columns}
               onTaskClick={(task) => setDetailPanelTaskId(task.id)}
@@ -676,8 +679,8 @@ export const Kanban: React.FC = () => {
           isOpen={true}
           onClose={cancelDelete}
           onConfirm={confirmDelete}
-          title="Delete Task"
-          message={`Are you sure you want to delete "${pendingDeleteTask.title}"? This action cannot be undone.`}
+          title="删除任务"
+          message={`确定要删除"${pendingDeleteTask.title}"吗？此操作无法撤销。`}
           variant="danger"
         />
       )}
@@ -696,7 +699,7 @@ export const Kanban: React.FC = () => {
       {toast && (
         <Toast
           message={toast.message}
-          action={toast.showUndo ? { label: 'Undo', onClick: handleUndo } : undefined}
+          action={toast.showUndo ? { label: '撤销', onClick: handleUndo } : undefined}
           onClose={() => setToast(null)}
         />
       )}
@@ -708,6 +711,11 @@ export const Kanban: React.FC = () => {
         onClose={() => {
           setDetailPanelTaskId(null);
           setSelectedTab('subtasks'); // Reset to default tab
+          if (searchParams.has('task')) {
+            const next = new URLSearchParams(searchParams);
+            next.delete('task');
+            setSearchParams(next, { replace: true });
+          }
         }}
         onSave={(taskId, updates) => {
           updateTask(taskId, updates);
@@ -728,7 +736,8 @@ export const Kanban: React.FC = () => {
       {/* Quick Add Modal (Phase A: Quick Add Cmd+K) */}
       <QuickAddModal
         isOpen={showQuickAdd}
-        onClose={() => setShowQuickAdd(false)}
+        onClose={handleQuickAddClose}
+        defaultProjectId={quickAddProjectId}
       />
 
       {/* Task Templates Picker (Wave 4E) */}

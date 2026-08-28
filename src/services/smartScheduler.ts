@@ -8,6 +8,7 @@
 
 import type { Task, CalendarEvent } from '../types';
 import type { EnergyPattern } from '../stores/useEnergyStore';
+import { normalizeTaskDate, toLocalDateKey } from '../utils/todayTasks';
 
 // ==================== TYPES ====================
 
@@ -144,12 +145,15 @@ export function suggestSchedule(
     t.status !== 'done' && !t.archivedAt
   );
 
-  const todayStr = today.toISOString().split('T')[0];
+  // Local-day comparison (never UTC) — matches the shared Today Query rule.
+  const todayStr = toLocalDateKey(today);
 
   schedulableTasks.sort((a, b) => {
     // Overdue tasks first
-    const aOverdue = a.dueDate && a.dueDate < todayStr ? 1 : 0;
-    const bOverdue = b.dueDate && b.dueDate < todayStr ? 1 : 0;
+    const aDue = normalizeTaskDate(a.dueDate);
+    const bDue = normalizeTaskDate(b.dueDate);
+    const aOverdue = aDue && aDue < todayStr ? 1 : 0;
+    const bOverdue = bDue && bDue < todayStr ? 1 : 0;
     if (aOverdue !== bOverdue) return bOverdue - aOverdue;
 
     // Then by priority (high > medium > low)
@@ -159,9 +163,9 @@ export function suggestSchedule(
     if (aPri !== bPri) return aPri - bPri;
 
     // Then by due date proximity (sooner first)
-    if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
-    if (a.dueDate) return -1;
-    if (b.dueDate) return 1;
+    if (aDue && bDue) return aDue.localeCompare(bDue);
+    if (aDue) return -1;
+    if (bDue) return 1;
 
     return 0;
   });

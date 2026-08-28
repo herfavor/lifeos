@@ -28,7 +28,7 @@ export const IPInfoWidget: React.FC = () => {
     try {
       // Using ipapi.co - free tier allows 1000 requests/day
       const response = await fetch('https://ipapi.co/json/');
-      if (!response.ok) throw new Error('Failed to fetch IP info');
+      if (!response.ok) throw new Error('无法获取 IP 信息');
 
       const data = await response.json();
       setIpData({
@@ -40,7 +40,7 @@ export const IPInfoWidget: React.FC = () => {
         org: data.org,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load IP info');
+      setError(err instanceof Error ? err.message : '无法加载 IP 信息');
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export const IPInfoWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="IP Information"
+      title="IP 信息"
       icon="🌐"
       loading={loading}
       error={error}
@@ -62,7 +62,7 @@ export const IPInfoWidget: React.FC = () => {
         <div className="space-y-3">
           <div className="text-center p-3 bg-surface-light-elevated dark:bg-surface-dark rounded-button transition-all duration-standard ease-smooth">
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Your IP Address
+              你的 IP 地址
             </p>
             <p className="text-2xl font-bold text-accent-blue">{ipData.ip}</p>
           </div>
@@ -70,7 +70,7 @@ export const IPInfoWidget: React.FC = () => {
           <div className="space-y-1">
             {ipData.city && (
               <div className="flex justify-between text-sm p-2 rounded-button bg-surface-light-elevated dark:bg-surface-dark transition-all duration-standard ease-smooth">
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">Location</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">位置</span>
                 <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
                   {ipData.city}, {ipData.region}
                 </span>
@@ -79,7 +79,7 @@ export const IPInfoWidget: React.FC = () => {
 
             {ipData.country && (
               <div className="flex justify-between text-sm p-2 rounded-button bg-surface-light-elevated dark:bg-surface-dark transition-all duration-standard ease-smooth">
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">Country</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">国家/地区</span>
                 <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
                   {ipData.country}
                 </span>
@@ -88,7 +88,7 @@ export const IPInfoWidget: React.FC = () => {
 
             {ipData.timezone && (
               <div className="flex justify-between text-sm p-2 rounded-button bg-surface-light-elevated dark:bg-surface-dark transition-all duration-standard ease-smooth">
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">Timezone</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">时区</span>
                 <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
                   {ipData.timezone}
                 </span>

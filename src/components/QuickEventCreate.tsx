@@ -65,10 +65,10 @@ export function QuickEventCreate({ dateKey, startTime, endTime: endTimeProp, onC
 
   // Format display time
   const [h, m] = startTime.split(':').map(Number);
-  const displayTime = h === 0 ? '12:00 AM'
-    : h < 12 ? `${h}:${m.toString().padStart(2, '0')} AM`
-    : h === 12 ? `12:${m.toString().padStart(2, '0')} PM`
-    : `${h - 12}:${m.toString().padStart(2, '0')} PM`;
+  const displayTime = h === 0 ? '上午 12:00'
+    : h < 12 ? `上午 ${h}:${m.toString().padStart(2, '0')}`
+    : h === 12 ? `下午 12:${m.toString().padStart(2, '0')}`
+    : `下午 ${h - 12}:${m.toString().padStart(2, '0')}`;
 
   return (
     <div
@@ -84,7 +84,7 @@ export function QuickEventCreate({ dateKey, startTime, endTime: endTimeProp, onC
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={handleSave}
-        placeholder="New event title..."
+        placeholder="新事件标题…"
         className="w-full bg-transparent text-white text-xs font-medium placeholder-white/60 outline-none border-none"
       />
     </div>

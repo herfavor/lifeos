@@ -71,9 +71,9 @@ export function HabitSummaryWidget() {
     return (
       <WidgetEmptyState
         icon="🎯"
-        message="No habits yet"
-        hint="Build daily routines and track your streaks"
-        action={{ label: 'Create Habit', onClick: () => navigateTo('/habits') }}
+        message="暂无习惯"
+        hint="建立日常习惯并追踪你的连续记录"
+        action={{ label: '创建习惯', onClick: () => navigateTo('/habits') }}
       />
     );
   }
@@ -93,14 +93,14 @@ export function HabitSummaryWidget() {
             {progress.completed}/{progress.total}
           </div>
           <span className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            today
+            今天
           </span>
         </div>
 
         {totalStreaks > 0 && (
           <div className="flex items-center gap-1 text-accent-orange">
             <Flame className="w-4 h-4" />
-            <span className="text-sm font-medium">{totalStreaks} streak</span>
+            <span className="text-sm font-medium">连续 {totalStreaks} 天</span>
           </div>
         )}
       </div>
@@ -154,7 +154,7 @@ export function HabitSummaryWidget() {
           to="/habits"
           className="block text-center text-sm text-accent-primary hover:underline"
         >
-          View all habits
+          查看全部习惯
         </Link>
       )}
     </div>

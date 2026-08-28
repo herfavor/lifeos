@@ -51,8 +51,8 @@ export const ProjectPicker: React.FC<ProjectPickerProps> = ({
   value,
   onChange,
   mode = 'multi',
-  placeholder = 'Select project...',
-  label = 'Project',
+  placeholder = '选择项目…',
+  label = '项目',
   required = false,
   showLabel = true,
   className = '',
@@ -198,7 +198,7 @@ export const ProjectPicker: React.FC<ProjectPickerProps> = ({
                     type="button"
                     onClick={(e) => handleRemoveProject(project.id, e)}
                     className="p-0.5 hover:bg-surface-light dark:hover:bg-surface-dark rounded-full transition-colors"
-                    aria-label={`Remove ${project.name}`}
+                    aria-label={`移除 ${project.name}`}
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -214,7 +214,7 @@ export const ProjectPicker: React.FC<ProjectPickerProps> = ({
             type="button"
             onClick={handleClear}
             className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-            aria-label="Clear all"
+            aria-label="清除全部"
           >
             <X className="w-4 h-4" />
           </button>
@@ -247,10 +247,10 @@ export const ProjectPicker: React.FC<ProjectPickerProps> = ({
             <div className="p-4 text-center">
               <FolderPlus className="w-8 h-8 mx-auto mb-2 text-text-light-tertiary dark:text-text-dark-tertiary" />
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                No projects yet
+                暂无项目
               </p>
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                Create projects in Settings → Projects
+                可在 设置 → 项目 中创建项目
               </p>
             </div>
           ) : (

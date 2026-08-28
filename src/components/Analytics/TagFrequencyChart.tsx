@@ -24,7 +24,7 @@ export function TagFrequencyChart({ notes, dateRange, limit = 10 }: TagFrequency
     return (
       <div className="w-full h-64 flex items-center justify-center">
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No tags found in selected period
+          所选时间段内未找到标签
         </p>
       </div>
     );
@@ -46,7 +46,7 @@ export function TagFrequencyChart({ notes, dateRange, limit = 10 }: TagFrequency
           <YAxis
             tick={{ fontSize: 12 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
-            label={{ value: 'Usage Count', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
+            label={{ value: '使用次数', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
           />
           <Tooltip
             contentStyle={{
@@ -54,7 +54,7 @@ export function TagFrequencyChart({ notes, dateRange, limit = 10 }: TagFrequency
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${value ?? 0} notes`, 'Count']}
+            formatter={(value) => [`${value ?? 0} 条笔记`, '数量']}
           />
           <Bar dataKey="count" fill="var(--accent-purple)" radius={[4, 4, 0, 0]} />
         </BarChart>

@@ -8,6 +8,7 @@
 
 import { logger } from '../logger';
 import { indexedDBService } from '../indexedDB';
+import { serializeStoreForBackup } from '../brainBackup';
 import { BUILD_HASH, BUILD_TIMESTAMP } from '../../utils/buildInfo';
 
 const log = logger.module('AutoBackup');
@@ -181,7 +182,10 @@ async function verifyPermission(handle: FileSystemDirectoryHandle): Promise<bool
  * Create a .brain backup file content from all IndexedDB data
  */
 async function createBackupContent(): Promise<string> {
-  const allData = await indexedDBService.getAllData();
+  const allData = await indexedDBService.getAllObjects();
+  // A directory handle is browser permission state, not portable user data.
+  delete allData[BACKUP_HANDLE_DB_KEY];
+  const serializedData = await serializeStoreForBackup(allData);
   const exportPackage = {
     version: '1.0',
     exportDate: new Date().toISOString(),
@@ -189,7 +193,7 @@ async function createBackupContent(): Promise<string> {
     appBuildTimestamp: BUILD_TIMESTAMP,
     exportType: 'auto-backup',
     compressed: false,
-    data: allData,
+    data: serializedData,
   };
   return JSON.stringify(exportPackage);
 }
@@ -214,7 +218,7 @@ export async function runAutoBackup(): Promise<string | null> {
   try {
     const content = await createBackupContent();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const filename = `NeumanOS-auto-${timestamp}.brain`;
+    const filename = `LifeOS-auto-${timestamp}.brain`;
 
     // Write backup file
     const fileHandle = await handle.getFileHandle(filename, { create: true });
@@ -256,7 +260,9 @@ async function cleanupOldBackups(
 
     // Use entries() which has broader type support
     for await (const [name, entry] of (dirHandle as unknown as AsyncIterable<[string, FileSystemHandle]>)) {
-      if (entry.kind === 'file' && name.startsWith('NeumanOS-auto-') && name.endsWith('.brain')) {
+      // Accept both the current LifeOS prefix and the legacy NeumanOS prefix
+      // so backups written by older versions still participate in retention.
+      if (entry.kind === 'file' && (name.startsWith('LifeOS-auto-') || name.startsWith('NeumanOS-auto-')) && name.endsWith('.brain')) {
         backupFiles.push(name);
       }
     }
@@ -282,7 +288,7 @@ export async function downloadBackup(): Promise<string | null> {
   try {
     const content = await createBackupContent();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const filename = `NeumanOS-backup-${timestamp}.brain`;
+    const filename = `LifeOS-backup-${timestamp}.brain`;
 
     // Compress
     const blob = new Blob([content]);

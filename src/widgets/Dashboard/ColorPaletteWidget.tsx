@@ -42,7 +42,7 @@ export const ColorPaletteWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Color Palette"
+      title="调色板"
       icon="🎨"
       onRefresh={generatePalette}
     >
@@ -55,7 +55,7 @@ export const ColorPaletteWidget: React.FC = () => {
             <div
               className="w-12 h-12 rounded border-2 border-border-light dark:border-border-dark cursor-pointer hover:scale-110 transition-transform"
               style={{ backgroundColor: color.hex }}
-              title="Click to copy HEX"
+              title="点击复制 HEX"
               onClick={() => copyToClipboard(color.hex)}
             />
             <div className="flex-1">
@@ -76,7 +76,7 @@ export const ColorPaletteWidget: React.FC = () => {
         ))}
 
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary text-center mt-3">
-          Click any color to copy to clipboard
+          点击任意颜色即可复制到剪贴板
         </p>
       </div>
     </BaseWidget>

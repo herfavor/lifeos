@@ -262,7 +262,7 @@ export function SelectField({ field, value, onChange, error }: FieldComponentPro
         aria-describedby={[field.description ? descriptionId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined}
         className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
       >
-        <option value="">Select an option...</option>
+        <option value="">请选择一个选项…</option>
         {field.options?.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -414,13 +414,13 @@ export function RatingField({ field, value, onChange, error }: FieldComponentPro
           {field.description}
         </p>
       )}
-      <div className="flex gap-2" role="radiogroup" aria-label={`Rating for ${field.label}`}>
+      <div className="flex gap-2" role="radiogroup" aria-label={`为 ${field.label} 评分`}>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
             onClick={() => onChange(star)}
-            aria-label={`Rate ${star} out of 5 stars`}
+            aria-label={`评分 ${star} 星（满分 5 星）`}
             aria-pressed={star === rating}
             className={`text-3xl transition-colors ${
               star <= rating
@@ -459,18 +459,18 @@ export function ScaleField({ field, value, onChange, error }: FieldComponentProp
           {field.description}
         </p>
       )}
-      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={`Scale for ${field.label}`}>
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={`为 ${field.label} 打分`}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
           <button
             key={num}
             type="button"
             onClick={() => onChange(num)}
-            aria-label={`Select ${num} out of 10`}
+            aria-label={`选择 ${num}（满分 10 分）`}
             aria-pressed={num === scaleValue}
             className={`w-10 h-10 rounded-lg transition-colors ${
               num === scaleValue
-                ? 'bg-primary-light dark:bg-primary-dark text-white'
-                : 'bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                ? 'bg-accent-primary text-white'
+                : 'bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }`}
           >
             {num}
@@ -479,7 +479,7 @@ export function ScaleField({ field, value, onChange, error }: FieldComponentProp
       </div>
       {scaleValue > 0 && (
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-2" aria-live="polite">
-          Selected: {scaleValue} / 10
+          已选择：{scaleValue} / 10
         </p>
       )}
       {error && <p id={errorId} className="text-xs text-accent-red mt-1" role="alert">{error}</p>}
@@ -510,7 +510,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
 
     // Validate multiple files
     if (!config.multiple && files.length > 1) {
-      setUploadError('Only one file is allowed');
+      setUploadError('一次只能上传一个文件');
       e.target.value = ''; // Reset input
       return;
     }
@@ -521,7 +521,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
     for (const file of files) {
       // Check file size
       if (file.size > maxSizeBytes) {
-        setUploadError(`File "${file.name}" exceeds ${config.maxSizeMB}MB limit`);
+        setUploadError(`文件“${file.name}”超过 ${config.maxSizeMB}MB 大小限制`);
         e.target.value = '';
         return;
       }
@@ -537,7 +537,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
 
       if (!isAllowedType) {
         setUploadError(
-          `File "${file.name}" type not allowed. Allowed types: ${config.allowedTypes.join(', ')}`
+          `文件“${file.name}”的类型不允许。允许的类型：${config.allowedTypes.join(', ')}`
         );
         e.target.value = '';
         return;
@@ -554,7 +554,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
           uploadedAt: new Date(),
         });
       } catch (err) {
-        setUploadError(`Failed to process file "${file.name}"`);
+        setUploadError(`无法处理文件“${file.name}”`);
         e.target.value = '';
         return;
       }
@@ -623,14 +623,14 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
           aria-describedby={ariaDescribedBy}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         />
-        <div className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-border-light dark:border-border-dark rounded-lg hover:border-primary-light dark:hover:border-primary-dark transition-colors bg-surface-light dark:bg-surface-dark">
+        <div className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-border-light dark:border-border-dark rounded-lg hover:border-accent-primary transition-colors bg-surface-light dark:bg-surface-dark">
           <Upload className="w-5 h-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <div className="flex-1">
             <p className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              {config.multiple ? 'Choose files or drag and drop' : 'Choose a file or drag and drop'}
+              {config.multiple ? '选择多个文件或拖放文件' : '选择一个文件或拖放文件'}
             </p>
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              Max {config.maxSizeMB}MB • {config.allowedTypes.join(', ')}
+              最大 {config.maxSizeMB}MB • {config.allowedTypes.join(', ')}
             </p>
           </div>
         </div>
@@ -644,7 +644,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
               key={index}
               className="flex items-center gap-3 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg"
             >
-              <FileIcon className="w-5 h-5 text-primary-light dark:text-primary-dark shrink-0" />
+              <FileIcon className="w-5 h-5 text-accent-primary shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary truncate">
                   {file.fileName}
@@ -657,7 +657,7 @@ export function FileUploadField({ field, value, onChange, error }: FieldComponen
                 type="button"
                 onClick={() => handleRemoveFile(config.multiple ? index : undefined)}
                 className="p-1 hover:bg-accent-red/10 rounded transition-colors"
-                aria-label="Remove file"
+                aria-label="移除文件"
               >
                 <X className="w-4 h-4 text-accent-red" />
               </button>
@@ -691,9 +691,9 @@ function fileToBase64(file: File): Promise<string> {
 
 // Helper: Format file size
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 字节';
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ['字节', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 }

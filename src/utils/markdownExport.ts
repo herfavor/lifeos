@@ -642,13 +642,13 @@ export async function exportAllData(
 /**
  * Generate download filename for export
  *
- * @returns Filename in format: neumanos-export-YYYY-MM-DD-HHmmss.zip
+ * @returns Filename in format: lifeos-export-YYYY-MM-DD-HHmmss.zip
  */
 export function getExportFilename(): string {
   const now = new Date();
   const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
   const time = now.toTimeString().split(' ')[0].replace(/:/g, ''); // HHmmss
-  return `neumanos-export-${date}-${time}.zip`;
+  return `lifeos-export-${date}-${time}.zip`;
 }
 
 // ==================== HELPER FUNCTIONS ====================
@@ -658,11 +658,11 @@ export function getExportFilename(): string {
  */
 function formatStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    backlog: 'Backlog',
-    todo: 'To Do',
-    inprogress: 'In Progress',
-    review: 'Review',
-    done: 'Done',
+    backlog: '待处理',
+    todo: '待办',
+    inprogress: '进行中',
+    review: '评审中',
+    done: '已完成',
   };
   return labels[status] || status;
 }
@@ -672,9 +672,9 @@ function formatStatusLabel(status: string): string {
  */
 function formatPriorityLabel(priority: string): string {
   const labels: Record<string, string> = {
-    low: 'Low',
-    medium: 'Medium',
-    high: 'High',
+    low: '低',
+    medium: '中',
+    high: '高',
   };
   return labels[priority] || priority;
 }
@@ -684,7 +684,7 @@ function formatPriorityLabel(priority: string): string {
  */
 function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', {
+  return d.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

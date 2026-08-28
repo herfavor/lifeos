@@ -33,7 +33,7 @@ export function DependentValidationEditor({
 
   const handleAddValidation = () => {
     if (availableFields.length === 0) {
-      toast.warning('No fields available for conditions', 'Add fields above this one first.');
+      toast.warning('没有可用于条件的字段', '请先在上方添加字段。');
       return;
     }
 
@@ -48,7 +48,7 @@ export function DependentValidationEditor({
         action: 'show',
       },
       validationRule: {
-        message: 'This field is required',
+        message: '此字段为必填项',
       },
     };
 
@@ -74,10 +74,10 @@ export function DependentValidationEditor({
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Dependent Validation
+            条件验证
           </h4>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-            Apply validation rules based on values of other fields
+            根据其他字段的值应用验证规则
           </p>
         </div>
         <button
@@ -87,14 +87,14 @@ export function DependentValidationEditor({
           disabled={availableFields.length === 0}
         >
           <Plus className="w-4 h-4" />
-          Add Rule
+          添加规则
         </button>
       </div>
 
       {validations.length === 0 ? (
         <div className="text-center py-6 border-2 border-dashed border-border-light dark:border-border-dark rounded-lg">
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            No dependent validation rules. Standard validation applies.
+            没有条件验证规则。将应用标准验证。
           </p>
         </div>
       ) : (
@@ -117,13 +117,13 @@ export function DependentValidationEditor({
                 {/* Rule header */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-                    Rule {index + 1}
+                    规则 {index + 1}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleDeleteValidation(index)}
                     className="p-1 text-accent-red hover:bg-accent-red/10 rounded transition-colors"
-                    aria-label="Delete validation rule"
+                    aria-label="删除验证规则"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -132,7 +132,7 @@ export function DependentValidationEditor({
                 {/* Validation Type */}
                 <div>
                   <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                    Validation Type
+                    验证类型
                   </label>
                   <select
                     value={validation.type}
@@ -141,26 +141,26 @@ export function DependentValidationEditor({
                         type: e.target.value as DependentValidationType,
                       })
                     }
-                    className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-base dark:bg-surface-dark-base text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                   >
-                    <option value="require_if">Require if...</option>
-                    <option value="min_if">Minimum value if...</option>
-                    <option value="max_if">Maximum value if...</option>
-                    <option value="pattern_if">Pattern match if...</option>
+                    <option value="require_if">如果…则必填</option>
+                    <option value="min_if">如果…则最小值</option>
+                    <option value="max_if">如果…则最大值</option>
+                    <option value="pattern_if">如果…则匹配模式</option>
                   </select>
                 </div>
 
                 {/* Condition */}
-                <div className="space-y-3 p-3 bg-surface-light-base dark:bg-surface-dark-base rounded-lg border border-border-light dark:border-border-dark">
+                <div className="space-y-3 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark">
                   <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-                    Condition:
+                    条件：
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {/* Trigger field */}
                     <div>
                       <label className="block text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        When field
+                        当字段
                       </label>
                       <select
                         value={validation.condition.fieldId}
@@ -182,7 +182,7 @@ export function DependentValidationEditor({
                     {/* Operator */}
                     <div>
                       <label className="block text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        Operator
+                        运算符
                       </label>
                       <select
                         value={validation.condition.operator}
@@ -196,13 +196,13 @@ export function DependentValidationEditor({
                         }
                         className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                       >
-                        <option value="equals">Equals</option>
-                        <option value="not_equals">Not Equals</option>
-                        <option value="contains">Contains</option>
-                        <option value="greater_than">Greater Than</option>
-                        <option value="less_than">Less Than</option>
-                        <option value="is_answered">Is Answered</option>
-                        <option value="is_not_answered">Is Not Answered</option>
+                        <option value="equals">等于</option>
+                        <option value="not_equals">不等于</option>
+                        <option value="contains">包含</option>
+                        <option value="greater_than">大于</option>
+                        <option value="less_than">小于</option>
+                        <option value="is_answered">已填写</option>
+                        <option value="is_not_answered">未填写</option>
                       </select>
                     </div>
 
@@ -210,7 +210,7 @@ export function DependentValidationEditor({
                     {needsValue && (
                       <div className="md:col-span-2">
                         <label className="block text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                          Value
+                          值
                         </label>
                         {triggerField?.type === 'select' || triggerField?.type === 'radio' ? (
                           <select
@@ -222,7 +222,7 @@ export function DependentValidationEditor({
                             }
                             className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                           >
-                            <option value="">Select an option...</option>
+                            <option value="">请选择一个选项…</option>
                             {triggerField.options?.map((option) => (
                               <option key={option} value={option}>
                                 {option}
@@ -238,7 +238,7 @@ export function DependentValidationEditor({
                                 condition: { ...validation.condition, value: e.target.value },
                               })
                             }
-                            placeholder="Enter value..."
+                            placeholder="输入值…"
                             className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                           />
                         )}
@@ -254,10 +254,10 @@ export function DependentValidationEditor({
                     <div>
                       <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
                         {validation.type === 'min_if'
-                          ? 'Minimum Value'
+                          ? '最小值'
                           : validation.type === 'max_if'
-                          ? 'Maximum Value'
-                          : 'Regex Pattern'}
+                          ? '最大值'
+                          : '正则表达式模式'}
                       </label>
                       <input
                         type={validation.type === 'pattern_if' ? 'text' : 'number'}
@@ -272,8 +272,8 @@ export function DependentValidationEditor({
                         }
                         placeholder={
                           validation.type === 'pattern_if'
-                            ? 'e.g., ^[A-Z]{3}$'
-                            : 'Enter value...'
+                            ? '例如：^[A-Z]{3}$'
+                            : '输入值…'
                         }
                         className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                       />
@@ -283,7 +283,7 @@ export function DependentValidationEditor({
                   {/* Custom Error Message */}
                   <div>
                     <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                      Custom Error Message
+                      自定义错误消息
                     </label>
                     <input
                       type="text"
@@ -296,7 +296,7 @@ export function DependentValidationEditor({
                           },
                         })
                       }
-                      placeholder="Error message shown to user"
+                      placeholder="显示给用户的错误消息"
                       className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                     />
                   </div>
@@ -307,7 +307,7 @@ export function DependentValidationEditor({
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="w-4 h-4 text-accent-yellow shrink-0 mt-0.5" />
                     <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                      {getValidationSummary(validation, triggerField?.label || 'Unknown field')}
+                      {getValidationSummary(validation, triggerField?.label || '未知字段')}
                     </p>
                   </div>
                 </div>
@@ -334,14 +334,14 @@ function getValidationSummary(validation: DependentValidation, triggerFieldLabel
 
   const validationType =
     type === 'require_if'
-      ? 'Required'
+      ? '必填'
       : type === 'min_if'
-      ? `Min value: ${validationRule.value}`
+      ? `最小值：${validationRule.value}`
       : type === 'max_if'
-      ? `Max value: ${validationRule.value}`
-      : `Pattern: ${validationRule.value}`;
+      ? `最大值：${validationRule.value}`
+      : `模式：${validationRule.value}`;
 
-  return `${validationType} when ${triggerFieldLabel} ${operatorText}${valueText}`;
+  return `当 ${triggerFieldLabel} ${operatorText}${valueText} 时，${validationType}`;
 }
 
 /**
@@ -350,19 +350,19 @@ function getValidationSummary(validation: DependentValidation, triggerFieldLabel
 function getOperatorLabel(operator: ConditionalOperator): string {
   switch (operator) {
     case 'equals':
-      return 'equals';
+      return '等于';
     case 'not_equals':
-      return 'does not equal';
+      return '不等于';
     case 'contains':
-      return 'contains';
+      return '包含';
     case 'greater_than':
-      return 'is greater than';
+      return '大于';
     case 'less_than':
-      return 'is less than';
+      return '小于';
     case 'is_answered':
-      return 'is answered';
+      return '已填写';
     case 'is_not_answered':
-      return 'is not answered';
+      return '未填写';
     default:
       return operator;
   }

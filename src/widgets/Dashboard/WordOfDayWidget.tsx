@@ -39,12 +39,12 @@ export const WordOfDayWidget: React.FC = () => {
       const randomWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 
       const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${randomWord}`);
-      if (!response.ok) throw new Error('Failed to fetch word');
+      if (!response.ok) throw new Error('获取单词失败');
 
       const data = await response.json();
       setWordData(data[0]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load word');
+      setError(err instanceof Error ? err.message : '加载单词失败');
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ export const WordOfDayWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Word of the Day"
+      title="每日一词"
       icon="📖"
       loading={loading}
       error={error}

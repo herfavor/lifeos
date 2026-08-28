@@ -19,64 +19,64 @@ interface FormulaDefinition {
 /** All supported formulas with help info */
 const FORMULA_DEFINITIONS: FormulaDefinition[] = [
   // Math
-  { name: 'SUM', category: 'Math', syntax: 'SUM(range)', description: 'Adds all numbers in a range', example: '=SUM(A1:A10)' },
-  { name: 'AVERAGE', category: 'Math', syntax: 'AVERAGE(range)', description: 'Returns the average of numbers in a range', example: '=AVERAGE(B1:B20)' },
-  { name: 'MIN', category: 'Math', syntax: 'MIN(range)', description: 'Returns the smallest number in a range', example: '=MIN(A1:A50)' },
-  { name: 'MAX', category: 'Math', syntax: 'MAX(range)', description: 'Returns the largest number in a range', example: '=MAX(A1:A50)' },
-  { name: 'COUNT', category: 'Math', syntax: 'COUNT(range)', description: 'Counts cells containing numbers', example: '=COUNT(A1:A100)' },
-  { name: 'COUNTA', category: 'Math', syntax: 'COUNTA(range)', description: 'Counts non-empty cells', example: '=COUNTA(A1:A100)' },
-  { name: 'ROUND', category: 'Math', syntax: 'ROUND(number, digits)', description: 'Rounds a number to specified digits', example: '=ROUND(3.14159, 2)' },
-  { name: 'ABS', category: 'Math', syntax: 'ABS(number)', description: 'Returns the absolute value', example: '=ABS(-5)' },
-  { name: 'MEDIAN', category: 'Math', syntax: 'MEDIAN(range)', description: 'Returns the median value', example: '=MEDIAN(A1:A20)' },
-  { name: 'POWER', category: 'Math', syntax: 'POWER(base, exp)', description: 'Returns base raised to exponent', example: '=POWER(2, 8)' },
+  { name: 'SUM', category: '数学', syntax: 'SUM(range)', description: '将范围内的所有数字相加', example: '=SUM(A1:A10)' },
+  { name: 'AVERAGE', category: '数学', syntax: 'AVERAGE(range)', description: '返回范围内数字的平均值', example: '=AVERAGE(B1:B20)' },
+  { name: 'MIN', category: '数学', syntax: 'MIN(range)', description: '返回范围内最小的数字', example: '=MIN(A1:A50)' },
+  { name: 'MAX', category: '数学', syntax: 'MAX(range)', description: '返回范围内最大的数字', example: '=MAX(A1:A50)' },
+  { name: 'COUNT', category: '数学', syntax: 'COUNT(range)', description: '统计包含数字的单元格数量', example: '=COUNT(A1:A100)' },
+  { name: 'COUNTA', category: '数学', syntax: 'COUNTA(range)', description: '统计非空单元格数量', example: '=COUNTA(A1:A100)' },
+  { name: 'ROUND', category: '数学', syntax: 'ROUND(number, digits)', description: '将数字四舍五入到指定小数位数', example: '=ROUND(3.14159, 2)' },
+  { name: 'ABS', category: '数学', syntax: 'ABS(number)', description: '返回绝对值', example: '=ABS(-5)' },
+  { name: 'MEDIAN', category: '数学', syntax: 'MEDIAN(range)', description: '返回中位数', example: '=MEDIAN(A1:A20)' },
+  { name: 'POWER', category: '数学', syntax: 'POWER(base, exp)', description: '返回底数的指数次幂', example: '=POWER(2, 8)' },
 
   // Conditional
-  { name: 'SUMIF', category: 'Conditional', syntax: 'SUMIF(range, criteria, [sum_range])', description: 'Sums cells matching a criteria', example: '=SUMIF(A1:A10, ">5", B1:B10)' },
-  { name: 'COUNTIF', category: 'Conditional', syntax: 'COUNTIF(range, criteria)', description: 'Counts cells matching a criteria', example: '=COUNTIF(A1:A10, "Yes")' },
-  { name: 'AVERAGEIF', category: 'Conditional', syntax: 'AVERAGEIF(range, criteria, [avg_range])', description: 'Averages cells matching a criteria', example: '=AVERAGEIF(A1:A10, ">0", B1:B10)' },
+  { name: 'SUMIF', category: '条件', syntax: 'SUMIF(range, criteria, [sum_range])', description: '对符合条件的单元格求和', example: '=SUMIF(A1:A10, ">5", B1:B10)' },
+  { name: 'COUNTIF', category: '条件', syntax: 'COUNTIF(range, criteria)', description: '统计符合条件的单元格数量', example: '=COUNTIF(A1:A10, "Yes")' },
+  { name: 'AVERAGEIF', category: '条件', syntax: 'AVERAGEIF(range, criteria, [avg_range])', description: '计算符合条件的单元格的平均值', example: '=AVERAGEIF(A1:A10, ">0", B1:B10)' },
 
   // Lookup
-  { name: 'VLOOKUP', category: 'Lookup', syntax: 'VLOOKUP(value, range, col_index, [approx])', description: 'Searches the first column of a range and returns a value from another column', example: '=VLOOKUP("Apple", A1:C10, 3, FALSE)' },
-  { name: 'HLOOKUP', category: 'Lookup', syntax: 'HLOOKUP(value, range, row_index, [approx])', description: 'Searches the first row of a range and returns a value from another row', example: '=HLOOKUP("Q1", A1:D5, 3, FALSE)' },
-  { name: 'INDEX', category: 'Lookup', syntax: 'INDEX(range, row_num, [col_num])', description: 'Returns a value at a given row and column in a range', example: '=INDEX(A1:C10, 3, 2)' },
-  { name: 'MATCH', category: 'Lookup', syntax: 'MATCH(value, range, [type])', description: 'Returns the position of a value in a range', example: '=MATCH("Apple", A1:A10, 0)' },
+  { name: 'VLOOKUP', category: '查找', syntax: 'VLOOKUP(value, range, col_index, [approx])', description: '在范围的第一列中查找并返回另一列的值', example: '=VLOOKUP("Apple", A1:C10, 3, FALSE)' },
+  { name: 'HLOOKUP', category: '查找', syntax: 'HLOOKUP(value, range, row_index, [approx])', description: '在范围的第一行中查找并返回另一行的值', example: '=HLOOKUP("Q1", A1:D5, 3, FALSE)' },
+  { name: 'INDEX', category: '查找', syntax: 'INDEX(range, row_num, [col_num])', description: '返回范围内指定行和列的值', example: '=INDEX(A1:C10, 3, 2)' },
+  { name: 'MATCH', category: '查找', syntax: 'MATCH(value, range, [type])', description: '返回值在范围中的位置', example: '=MATCH("Apple", A1:A10, 0)' },
 
   // Logic
-  { name: 'IF', category: 'Logic', syntax: 'IF(condition, value_if_true, value_if_false)', description: 'Returns one value if true, another if false', example: '=IF(A1>10, "High", "Low")' },
-  { name: 'AND', category: 'Logic', syntax: 'AND(condition1, condition2, ...)', description: 'Returns TRUE if all conditions are true', example: '=AND(A1>0, B1<100)' },
-  { name: 'OR', category: 'Logic', syntax: 'OR(condition1, condition2, ...)', description: 'Returns TRUE if any condition is true', example: '=OR(A1="Yes", B1="Yes")' },
-  { name: 'NOT', category: 'Logic', syntax: 'NOT(condition)', description: 'Reverses the logic of a condition', example: '=NOT(A1>10)' },
-  { name: 'IFERROR', category: 'Logic', syntax: 'IFERROR(value, error_value)', description: 'Returns error_value if value is an error', example: '=IFERROR(A1/B1, 0)' },
+  { name: 'IF', category: '逻辑', syntax: 'IF(condition, value_if_true, value_if_false)', description: '条件为真时返回一个值，否则返回另一个值', example: '=IF(A1>10, "High", "Low")' },
+  { name: 'AND', category: '逻辑', syntax: 'AND(condition1, condition2, ...)', description: '所有条件为真时返回 TRUE', example: '=AND(A1>0, B1<100)' },
+  { name: 'OR', category: '逻辑', syntax: 'OR(condition1, condition2, ...)', description: '任一条件为真时返回 TRUE', example: '=OR(A1="Yes", B1="Yes")' },
+  { name: 'NOT', category: '逻辑', syntax: 'NOT(condition)', description: '反转条件的逻辑值', example: '=NOT(A1>10)' },
+  { name: 'IFERROR', category: '逻辑', syntax: 'IFERROR(value, error_value)', description: '当值为错误时返回指定值', example: '=IFERROR(A1/B1, 0)' },
 
   // Text
-  { name: 'CONCATENATE', category: 'Text', syntax: 'CONCATENATE(text1, text2, ...)', description: 'Joins text strings together', example: '=CONCATENATE(A1, " ", B1)' },
-  { name: 'LEFT', category: 'Text', syntax: 'LEFT(text, num_chars)', description: 'Returns leftmost characters', example: '=LEFT(A1, 3)' },
-  { name: 'RIGHT', category: 'Text', syntax: 'RIGHT(text, num_chars)', description: 'Returns rightmost characters', example: '=RIGHT(A1, 4)' },
-  { name: 'MID', category: 'Text', syntax: 'MID(text, start, num_chars)', description: 'Returns characters from the middle', example: '=MID(A1, 2, 5)' },
-  { name: 'LEN', category: 'Text', syntax: 'LEN(text)', description: 'Returns the length of text', example: '=LEN(A1)' },
-  { name: 'TRIM', category: 'Text', syntax: 'TRIM(text)', description: 'Removes extra spaces', example: '=TRIM(A1)' },
-  { name: 'UPPER', category: 'Text', syntax: 'UPPER(text)', description: 'Converts to uppercase', example: '=UPPER(A1)' },
-  { name: 'LOWER', category: 'Text', syntax: 'LOWER(text)', description: 'Converts to lowercase', example: '=LOWER(A1)' },
-  { name: 'SUBSTITUTE', category: 'Text', syntax: 'SUBSTITUTE(text, old, new)', description: 'Replaces occurrences of text', example: '=SUBSTITUTE(A1, "old", "new")' },
-  { name: 'TEXT', category: 'Text', syntax: 'TEXT(value, format)', description: 'Formats a number as text', example: '=TEXT(0.75, "0.0%")' },
+  { name: 'CONCATENATE', category: '文本', syntax: 'CONCATENATE(text1, text2, ...)', description: '将多个文本字符串连接起来', example: '=CONCATENATE(A1, " ", B1)' },
+  { name: 'LEFT', category: '文本', syntax: 'LEFT(text, num_chars)', description: '返回最左侧的字符', example: '=LEFT(A1, 3)' },
+  { name: 'RIGHT', category: '文本', syntax: 'RIGHT(text, num_chars)', description: '返回最右侧的字符', example: '=RIGHT(A1, 4)' },
+  { name: 'MID', category: '文本', syntax: 'MID(text, start, num_chars)', description: '返回从中间位置开始的字符', example: '=MID(A1, 2, 5)' },
+  { name: 'LEN', category: '文本', syntax: 'LEN(text)', description: '返回文本的长度', example: '=LEN(A1)' },
+  { name: 'TRIM', category: '文本', syntax: 'TRIM(text)', description: '移除多余的空格', example: '=TRIM(A1)' },
+  { name: 'UPPER', category: '文本', syntax: 'UPPER(text)', description: '转换为大写', example: '=UPPER(A1)' },
+  { name: 'LOWER', category: '文本', syntax: 'LOWER(text)', description: '转换为小写', example: '=LOWER(A1)' },
+  { name: 'SUBSTITUTE', category: '文本', syntax: 'SUBSTITUTE(text, old, new)', description: '替换文本中出现的字符串', example: '=SUBSTITUTE(A1, "old", "new")' },
+  { name: 'TEXT', category: '文本', syntax: 'TEXT(value, format)', description: '将数字格式化为文本', example: '=TEXT(0.75, "0.0%")' },
 
   // Date
-  { name: 'TODAY', category: 'Date', syntax: 'TODAY()', description: 'Returns the current date', example: '=TODAY()' },
-  { name: 'NOW', category: 'Date', syntax: 'NOW()', description: 'Returns the current date and time', example: '=NOW()' },
-  { name: 'DATE', category: 'Date', syntax: 'DATE(year, month, day)', description: 'Creates a date from components', example: '=DATE(2024, 1, 15)' },
-  { name: 'YEAR', category: 'Date', syntax: 'YEAR(date)', description: 'Returns the year from a date', example: '=YEAR(A1)' },
-  { name: 'MONTH', category: 'Date', syntax: 'MONTH(date)', description: 'Returns the month from a date', example: '=MONTH(A1)' },
-  { name: 'DAY', category: 'Date', syntax: 'DAY(date)', description: 'Returns the day from a date', example: '=DAY(A1)' },
+  { name: 'TODAY', category: '日期', syntax: 'TODAY()', description: '返回当前日期', example: '=TODAY()' },
+  { name: 'NOW', category: '日期', syntax: 'NOW()', description: '返回当前日期和时间', example: '=NOW()' },
+  { name: 'DATE', category: '日期', syntax: 'DATE(year, month, day)', description: '根据年、月、日创建日期', example: '=DATE(2024, 1, 15)' },
+  { name: 'YEAR', category: '日期', syntax: 'YEAR(date)', description: '从日期中返回年份', example: '=YEAR(A1)' },
+  { name: 'MONTH', category: '日期', syntax: 'MONTH(date)', description: '从日期中返回月份', example: '=MONTH(A1)' },
+  { name: 'DAY', category: '日期', syntax: 'DAY(date)', description: '从日期中返回日', example: '=DAY(A1)' },
 ];
 
 /** Category colors for visual grouping */
 const CATEGORY_COLORS: Record<string, string> = {
-  Math: 'text-blue-500',
-  Conditional: 'text-amber-500',
-  Lookup: 'text-green-500',
-  Logic: 'text-purple-500',
-  Text: 'text-pink-500',
-  Date: 'text-cyan-500',
+  数学: 'text-blue-500',
+  条件: 'text-amber-500',
+  查找: 'text-green-500',
+  逻辑: 'text-purple-500',
+  文本: 'text-pink-500',
+  日期: 'text-cyan-500',
 };
 
 interface FormulaAutocompletePanelProps {
@@ -246,7 +246,7 @@ export function FormulaHelpTooltip({
         {formula.description}
       </p>
       <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-        Example: <span className="font-mono">{formula.example}</span>
+        示例： <span className="font-mono">{formula.example}</span>
       </div>
     </div>
   );

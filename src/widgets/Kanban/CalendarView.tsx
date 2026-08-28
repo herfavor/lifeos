@@ -89,7 +89,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       // Default: create task in first column with pre-filled due date
       const firstColumn = columns[0];
       addTask({
-        title: 'New Task',
+        title: '新建任务',
         description: '',
         status: (firstColumn?.id || 'todo') as TaskStatus,
         priority: 'medium',
@@ -143,7 +143,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             className={`text-xs px-1.5 py-0.5 rounded text-left truncate transition-all hover:scale-105 hover:shadow-sm ${
               getColumnColor(task)
             } text-white`}
-            title={`${task.title} (${task.priority})`}
+            title={`${task.title}（${task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}）`}
           >
             <div className="flex items-center gap-1">
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${getPriorityColor(task.priority)}`} />
@@ -153,7 +153,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         ))}
         {dayTasks.length > 3 && (
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary px-1">
-            +{dayTasks.length - 3} more
+            +{dayTasks.length - 3} 更多
           </div>
         )}
       </div>
@@ -161,8 +161,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    '1月', '2月', '3月', '4月', '5月', '6月',
+    '7月', '8月', '9月', '10月', '11月', '12月'
   ];
 
   return (
@@ -170,29 +170,29 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       {/* Month Navigation */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          {monthNames[currentMonth]} {currentYear}
+          {currentYear}年{monthNames[currentMonth]}
         </h2>
         <div className="flex items-center gap-2">
           <button
             onClick={goToPreviousMonth}
             className="px-3 py-1.5 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
-            title="Previous Month"
+            title="上个月"
           >
-            ← Prev
+            ← 上月
           </button>
           <button
             onClick={goToToday}
             className="px-3 py-1.5 text-sm font-medium bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
-            title="Go to Today"
+            title="回到今天"
           >
-            Today
+            今天
           </button>
           <button
             onClick={goToNextMonth}
             className="px-3 py-1.5 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
-            title="Next Month"
+            title="下个月"
           >
-            Next →
+            下月 →
           </button>
         </div>
       </div>
@@ -201,7 +201,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       {tasksWithoutDueDate > 0 && (
         <div className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {tasksWithoutDueDate} task{tasksWithoutDueDate === 1 ? '' : 's'} without due date (hidden in calendar view)
+            {tasksWithoutDueDate} 个任务没有截止日期（在日历视图中隐藏）
           </span>
         </div>
       )}
@@ -217,7 +217,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       {/* Empty State */}
       {tasks.length === 0 && (
         <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
-          <p className="text-sm">No tasks to display. Create a task to get started!</p>
+          <p className="text-sm">暂无任务可显示。创建任务开始吧！</p>
         </div>
       )}
     </div>

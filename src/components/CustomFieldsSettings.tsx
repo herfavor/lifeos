@@ -49,12 +49,12 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
 
   const handleSave = () => {
     if (!name.trim()) {
-      toast.warning('Field name is required');
+      toast.warning('字段名称不能为空');
       return;
     }
 
     if ((type === 'select' || type === 'multi-select') && options.filter((opt) => opt.trim()).length === 0) {
-      toast.warning('Select fields must have at least one option');
+      toast.warning('选择类型字段至少需要一个选项');
       return;
     }
 
@@ -96,7 +96,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Create Custom Field ({target === 'tasks' ? 'Tasks' : 'Notes'})
+              创建自定义字段（{target === 'tasks' ? '任务' : '笔记'}）
             </h3>
             <button
               onClick={handleClose}
@@ -109,13 +109,13 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
           {/* Field Name */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Field Name *
+              字段名称 *
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Bug ID, Sprint, Client Name"
+              placeholder="例如：Bug ID、Sprint、客户名称"
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
               autoFocus
             />
@@ -124,21 +124,21 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
           {/* Field Type */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Field Type *
+              字段类型 *
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as FieldType)}
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
             >
-              <option value="text">Text (single line)</option>
-              <option value="number">Number</option>
-              <option value="date">Date</option>
-              <option value="select">Select (dropdown)</option>
-              <option value="multi-select">Multi-select (tags)</option>
-              <option value="checkbox">Checkbox</option>
-              <option value="url">URL (with open link)</option>
-              <option value="email">Email (with send button)</option>
+              <option value="text">文本（单行）</option>
+              <option value="number">数字</option>
+              <option value="date">日期</option>
+              <option value="select">选择（下拉菜单）</option>
+              <option value="multi-select">多选（标签）</option>
+              <option value="checkbox">复选框</option>
+              <option value="url">URL（带打开链接）</option>
+              <option value="email">邮箱（带发送按钮）</option>
             </select>
           </div>
 
@@ -146,7 +146,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
           {(type === 'select' || type === 'multi-select') && (
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Options *
+                选项 *
               </label>
               <div className="space-y-2">
                 {options.map((option, index) => (
@@ -155,7 +155,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
                       type="text"
                       value={option}
                       onChange={(e) => updateOption(index, e.target.value)}
-                      placeholder={`Option ${index + 1}`}
+                      placeholder={`选项 ${index + 1}`}
                       className="flex-1 px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                     {options.length > 1 && (
@@ -172,7 +172,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
                   onClick={addOption}
                   className="w-full px-3 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-lg font-medium transition-colors"
                 >
-                  + Add Option
+                  + 添加选项
                 </button>
               </div>
             </div>
@@ -181,12 +181,12 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Description (optional)
+              描述（可选）
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Optional help text for this field"
+              placeholder="此字段的可选帮助文本"
               rows={2}
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
             />
@@ -202,7 +202,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
               className="w-4 h-4 rounded border-border-light dark:border-border-dark focus:ring-2 focus:ring-accent-blue"
             />
             <label htmlFor="required" className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              Required field
+              必填字段
             </label>
           </div>
 
@@ -212,13 +212,13 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
               onClick={handleClose}
               className="flex-1 px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleSave}
               className="flex-1 px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium transition-colors"
             >
-              Create Field
+              创建字段
             </button>
           </div>
         </div>
@@ -267,21 +267,21 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
   const getFieldTypeLabel = (type: FieldType): string => {
     switch (type) {
       case 'text':
-        return 'Text';
+        return '文本';
       case 'number':
-        return 'Number';
+        return '数字';
       case 'date':
-        return 'Date';
+        return '日期';
       case 'select':
-        return 'Select';
+        return '选择';
       case 'multi-select':
-        return 'Multi-select';
+        return '多选';
       case 'checkbox':
-        return 'Checkbox';
+        return '复选框';
       case 'url':
         return 'URL';
       case 'email':
-        return 'Email';
+        return '邮箱';
       default:
         return type;
     }
@@ -299,7 +299,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
             </h4>
             {field.required && (
               <span className="px-2 py-0.5 bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark text-xs rounded-full">
-                Required
+                必填
               </span>
             )}
           </div>
@@ -308,7 +308,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
           <div className="flex items-center gap-2 text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
             <span className="font-medium">{getFieldTypeLabel(field.type)}</span>
             {(field.type === 'select' || field.type === 'multi-select') && field.options && (
-              <span>• {field.options.length} options</span>
+              <span>• {field.options.length} 个选项</span>
             )}
           </div>
 
@@ -347,7 +347,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
                 htmlFor={`${field.id}-visible-card`}
                 className="text-text-light-secondary dark:text-text-dark-secondary cursor-pointer select-none"
               >
-                Show in Card
+                在卡片中显示
               </label>
             </div>
             <div className="flex items-center gap-2">
@@ -362,7 +362,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
                 htmlFor={`${field.id}-visible-list`}
                 className="text-text-light-secondary dark:text-text-dark-secondary cursor-pointer select-none"
               >
-                Show in List
+                在列表中显示
               </label>
             </div>
           </div>
@@ -375,7 +375,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
               onClick={() => setShowDeleteConfirm(true)}
               className="px-3 py-1.5 text-sm text-status-error-text dark:text-status-error-text-dark hover:bg-status-error-bg dark:hover:bg-status-error-bg-dark rounded-lg transition-colors"
             >
-              Delete
+              删除
             </button>
           ) : (
             <div className="flex gap-2">
@@ -383,13 +383,13 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
                 onClick={() => setShowDeleteConfirm(false)}
                 className="px-2 py-1 text-xs bg-surface-light dark:bg-surface-dark rounded"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleDelete}
                 className="px-2 py-1 text-xs bg-status-error text-white rounded hover:opacity-80"
               >
-                Confirm
+                确认
               </button>
             </div>
           )}
@@ -427,8 +427,7 @@ export default function CustomFieldsSettings() {
       {/* Header */}
       <div>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-          Create custom fields to add structured metadata to your tasks and notes. Custom fields enable
-          powerful filtering, sorting, and analytics.
+          创建自定义字段，为任务和笔记添加结构化元数据。自定义字段支持强大的筛选、排序和分析。
         </p>
       </div>
 
@@ -442,7 +441,7 @@ export default function CustomFieldsSettings() {
               : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
           }`}
         >
-          Task Fields ({taskFields.length})
+          任务字段（{taskFields.length}）
         </button>
         <button
           onClick={() => setActiveTab('notes')}
@@ -452,7 +451,7 @@ export default function CustomFieldsSettings() {
               : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
           }`}
         >
-          Note Fields ({noteFields.length})
+          笔记字段（{noteFields.length}）
         </button>
       </div>
 
@@ -462,7 +461,7 @@ export default function CustomFieldsSettings() {
         className="w-full px-4 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200 flex items-center justify-center gap-2"
       >
         <span>➕</span>
-        <span>Create Custom Field</span>
+        <span>创建自定义字段</span>
       </button>
 
       {/* Field List */}
@@ -480,11 +479,10 @@ export default function CustomFieldsSettings() {
       ) : (
         <div className="p-8 text-center bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-dashed border-border-light dark:border-border-dark">
           <p className="text-lg text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            No custom fields yet
+            还没有自定义字段
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Click "Create Custom Field" above to add your first {activeTab === 'tasks' ? 'task' : 'note'}{' '}
-            field.
+            点击上方“创建自定义字段”添加你的第一个{activeTab === 'tasks' ? '任务' : '笔记'}字段。
           </p>
         </div>
       )}
@@ -492,9 +490,8 @@ export default function CustomFieldsSettings() {
       {/* Info Box */}
       <div className="mt-6 p-4 bg-status-info-bg dark:bg-status-info-bg-dark border border-status-info-border dark:border-status-info-border-dark rounded-lg">
         <p className="text-xs text-status-info-text dark:text-status-info-text-dark">
-          <strong>💡 Tip:</strong> Custom fields are great for tracking domain-specific metadata like Bug IDs,
-          Sprint numbers, Client names, Energy levels, and more. Field values can be set on individual{' '}
-          {activeTab === 'tasks' ? 'tasks' : 'notes'}.
+          <strong>💡 提示：</strong>自定义字段非常适合跟踪领域特定的元数据，如 Bug ID、Sprint 编号、客户名称、精力水平等。字段值可以在单个{' '}
+          {activeTab === 'tasks' ? '任务' : '笔记'}上设置。
         </p>
       </div>
 

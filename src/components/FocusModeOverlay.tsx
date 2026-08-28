@@ -116,11 +116,11 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
     } else if (taskId) {
       startTimer({
         taskId,
-        description: linkedTask?.title || 'Focus session',
+        description: linkedTask?.title || '专注时段',
       });
     } else {
       startTimer({
-        description: 'Focus session',
+        description: '专注时段',
       });
     }
   }, [activeEntry, taskId, linkedTask, startTimer, stopTimer]);
@@ -141,8 +141,8 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
       <button
         onClick={handleClose}
         className="absolute top-6 right-6 p-3 rounded-full bg-surface-dark-elevated hover:bg-surface-dark-elevated/80 text-text-dark-secondary hover:text-text-dark-primary transition-all"
-        title="Exit Focus Mode (Esc)"
-        aria-label="Exit Focus Mode"
+        title="退出专注模式（Esc）"
+        aria-label="退出专注模式"
       >
         <X className="w-6 h-6" />
       </button>
@@ -156,7 +156,7 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           </div>
           <div className="flex items-center justify-center gap-2 text-text-dark-secondary">
             <Clock className="w-4 h-4" />
-            <span className="text-sm uppercase tracking-wide">Focus Time</span>
+            <span className="text-sm uppercase tracking-wide">专注时间</span>
           </div>
         </div>
 
@@ -178,8 +178,8 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
           <button
             onClick={handleReset}
             className="p-4 rounded-full bg-surface-dark-elevated hover:bg-surface-dark-elevated/80 text-text-dark-secondary hover:text-text-dark-primary transition-all"
-            title="Reset Session (R)"
-            aria-label="Reset session"
+            title="重置时段（R）"
+            aria-label="重置时段"
           >
             <RotateCcw className="w-6 h-6" />
           </button>
@@ -191,8 +191,8 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
                 ? 'bg-accent-primary hover:bg-accent-primary/90 text-white'
                 : 'bg-accent-primary hover:bg-accent-primary/90 text-white'
             }`}
-            title={activeEntry ? 'Pause Timer (Space)' : 'Start Timer (Space)'}
-            aria-label={activeEntry ? 'Pause timer' : 'Start timer'}
+            title={activeEntry ? '暂停计时（空格键）' : '开始计时（空格键）'}
+            aria-label={activeEntry ? '暂停计时' : '开始计时'}
           >
             {activeEntry ? (
               <Pause className="w-10 h-10" />
@@ -208,30 +208,30 @@ export const FocusModeOverlay: React.FC<FocusModeOverlayProps> = ({
         {activeEntry && (
           <div className="flex items-center justify-center gap-2 text-accent-primary animate-pulse">
             <div className="w-2 h-2 rounded-full bg-accent-primary" />
-            <span className="text-sm font-medium uppercase tracking-wide">Recording</span>
+            <span className="text-sm font-medium uppercase tracking-wide">记录中</span>
           </div>
         )}
       </div>
 
       {/* Keyboard hints */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-6 text-text-dark-muted text-xs">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-6 text-text-dark-secondary text-xs">
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             Space
           </kbd>
-          <span>Timer</span>
+          <span>计时</span>
         </div>
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             R
           </kbd>
-          <span>Reset</span>
+          <span>重置</span>
         </div>
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             Esc
           </kbd>
-          <span>Exit</span>
+          <span>退出</span>
         </div>
       </div>
     </div>

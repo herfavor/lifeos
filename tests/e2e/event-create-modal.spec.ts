@@ -16,7 +16,7 @@ test.describe('Event Create Modal', () => {
   });
 
   async function openCreateEventModal(page: import('@playwright/test').Page) {
-    const addBtn = page.getByRole('button', { name: /add.*event|new.*event|create.*event|\+/i }).first();
+    const addBtn = page.getByRole('button', { name: /新建事件|创建事件|\+/i }).first();
     if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await addBtn.click();
       await page.waitForTimeout(500);
@@ -25,7 +25,7 @@ test.describe('Event Create Modal', () => {
 
   test('opens create event modal', async ({ page }) => {
     await openCreateEventModal(page);
-    const heading = page.getByText('Create Event');
+    const heading = page.getByText('创建事件');
     if (await heading.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -36,7 +36,7 @@ test.describe('Event Create Modal', () => {
     await openCreateEventModal(page);
     const titleInput = page.locator('#event-title');
     if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await expect(titleInput).toHaveAttribute('placeholder', /Meeting with team/);
+      await expect(titleInput).toHaveAttribute('placeholder', /团队会议、研讨会等/);
     }
     assertNoConsoleErrors(page);
   });
@@ -72,7 +72,7 @@ test.describe('Event Create Modal', () => {
 
   test('can toggle all-day event', async ({ page }) => {
     await openCreateEventModal(page);
-    const allDayCheckbox = page.getByText('All-day event').locator('..').locator('input[type="checkbox"]');
+    const allDayCheckbox = page.getByText('全天事件').locator('..').locator('input[type="checkbox"]');
     if (await allDayCheckbox.isVisible({ timeout: 2000 }).catch(() => false)) {
       await allDayCheckbox.check();
       await page.waitForTimeout(200);
@@ -92,7 +92,7 @@ test.describe('Event Create Modal', () => {
 
   test('can fill location', async ({ page }) => {
     await openCreateEventModal(page);
-    const locationInput = page.getByPlaceholder(/Meeting room, video call/);
+    const locationInput = page.getByPlaceholder(/会议室、视频会议链接、地址…/);
     if (await locationInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await locationInput.fill('Conference Room B');
       await expect(locationInput).toHaveValue('Conference Room B');
@@ -122,7 +122,7 @@ test.describe('Event Create Modal', () => {
 
   test('has reminder checkboxes', async ({ page }) => {
     await openCreateEventModal(page);
-    const reminder15 = page.getByText('15 minutes before');
+    const reminder15 = page.getByText('提前 15 分钟');
     if (await reminder15.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(reminder15).toBeVisible();
     }
@@ -131,7 +131,7 @@ test.describe('Event Create Modal', () => {
 
   test('can select reminders', async ({ page }) => {
     await openCreateEventModal(page);
-    const reminderLabel = page.getByText('30 minutes before');
+    const reminderLabel = page.getByText('提前 30 分钟');
     if (await reminderLabel.isVisible({ timeout: 2000 }).catch(() => false)) {
       const checkbox = reminderLabel.locator('..').locator('input[type="checkbox"]');
       if (await checkbox.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -144,8 +144,8 @@ test.describe('Event Create Modal', () => {
 
   test('has Cancel and Create Event buttons', async ({ page }) => {
     await openCreateEventModal(page);
-    const cancelBtn = page.getByRole('button', { name: 'Cancel', exact: true });
-    const createBtn = page.getByRole('button', { name: 'Create Event' });
+    const cancelBtn = page.getByRole('button', { name: '取消', exact: true });
+    const createBtn = page.getByRole('button', { name: '创建事件' });
     if (await cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(cancelBtn).toBeVisible();
     }
@@ -166,12 +166,12 @@ test.describe('Event Create Modal', () => {
         await descInput.fill('Full event with all fields');
       }
 
-      const locationInput = page.getByPlaceholder(/Meeting room/);
+      const locationInput = page.getByPlaceholder(/会议室、视频会议链接、地址…/);
       if (await locationInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await locationInput.fill('Room 42');
       }
 
-      const createBtn = page.getByRole('button', { name: 'Create Event' });
+      const createBtn = page.getByRole('button', { name: '创建事件' });
       if (await createBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
         await createBtn.click();
         await page.waitForTimeout(500);
@@ -182,7 +182,7 @@ test.describe('Event Create Modal', () => {
 
   test('can close modal with close button', async ({ page }) => {
     await openCreateEventModal(page);
-    const closeBtn = page.locator('[aria-label="Close modal"]');
+    const closeBtn = page.locator('[aria-label="关闭弹窗"]');
     if (await closeBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await closeBtn.click();
       await page.waitForTimeout(300);
@@ -195,7 +195,7 @@ test.describe('Event Create Modal', () => {
     const titleInput = page.locator('#event-title');
     if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await titleInput.fill('Should Not Be Created');
-      const cancelBtn = page.getByRole('button', { name: 'Cancel', exact: true });
+      const cancelBtn = page.getByRole('button', { name: '取消', exact: true });
       if (await cancelBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
         await cancelBtn.click();
         await page.waitForTimeout(300);

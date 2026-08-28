@@ -1,7 +1,7 @@
 /**
  * Synapse - Neural Search Interface
  *
- * Quick-access search and navigation for NeumanOS, accessible via Ctrl+K (Win/Linux) or Cmd+K (Mac).
+ * Quick-access search and navigation for LifeOS, accessible via Ctrl+K (Win/Linux) or Cmd+K (Mac).
  * Named after synapses - the connection points in the brain where signals fire rapidly.
  * Provides instant access to notes, tasks, events, settings, and web search.
  *
@@ -330,7 +330,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
       className="fixed inset-0 z-[10000] flex items-start justify-center pt-[15vh]"
       role="dialog"
       aria-modal="true"
-      aria-label="Synapse search"
+      aria-label="Synapse 搜索"
     >
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
@@ -355,10 +355,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
             }}
             onKeyDown={handleKeyDown}
             placeholder={
-              mode === 'command' ? 'Type a command...' :
-              mode === 'help' ? 'Search help topics...' :
-              mode === 'navigation' ? 'Go to page...' :
-              'Search your brain... (> for commands, ? for help)'
+              mode === 'command' ? '输入命令…' :
+              mode === 'help' ? '搜索帮助主题…' :
+              mode === 'navigation' ? '前往页面…' :
+              '搜索你的内容…（> 命令，? 帮助）'
             }
             className="flex-1 bg-transparent text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary outline-none text-base"
             autoComplete="off"
@@ -377,7 +377,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
           <button
             onClick={onClose}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            aria-label="Close Synapse"
+            aria-label="关闭 Synapse"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -428,7 +428,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                         setSelectedIndex(0);
                       }}
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs cursor-pointer hover:opacity-70 transition-opacity ${colorClass}`}
-                      title="Click to remove filter"
+                      title="点击移除筛选"
                     >
                       {label}
                       <X className="w-3 h-3" />
@@ -452,40 +452,40 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
             <div className="px-4 py-8 text-center text-text-light-secondary dark:text-text-dark-secondary">
               {mode === 'command' ? (
                 <>
-                  <p className="text-sm">Type a command name (e.g., "dark mode", "new note")</p>
+                  <p className="text-sm">输入命令名称（例如："dark mode"、"new note"）</p>
                   <p className="text-xs mt-2 opacity-70">
-                    Available: toggle theme, new note/task, start/stop timer, export
+                    可用命令：切换主题、新建笔记/任务、开始/停止计时器、导出
                   </p>
                 </>
               ) : mode === 'help' ? (
                 <>
-                  <p className="text-sm">Search help topics and FAQs</p>
+                  <p className="text-sm">搜索帮助主题和常见问题</p>
                   <p className="text-xs mt-2 opacity-70">
-                    Find answers about features, shortcuts, and more
+                    查找功能、快捷键等相关问题的答案
                   </p>
                 </>
               ) : mode === 'navigation' ? (
                 <>
-                  <p className="text-sm">Type a page name to navigate</p>
+                  <p className="text-sm">输入页面名称以跳转</p>
                   <p className="text-xs mt-2 opacity-70">
-                    Dashboard, Notes, Tasks, Schedule, Settings...
+                    首页、笔记、任务、日程、设置…
                   </p>
                 </>
               ) : (
                 <>
                   <Clock className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                  <p className="text-sm">Type to search notes, tasks, events, bookmarks...</p>
+                  <p className="text-sm">输入以搜索笔记、任务、事件、书签…</p>
                   <p className="text-xs mt-2 opacity-70">
-                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">&gt;</kbd> commands{' '}
-                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">?</kbd> help{' '}
-                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">/</kbd> navigate
+                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">&gt;</kbd> 命令{' '}
+                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">?</kbd> 帮助{' '}
+                    <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">/</kbd> 导航
                   </p>
                   <p className="text-xs mt-1 opacity-50">
-                    Tip: <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">tag:</kbd>{' '}
+                    提示：<kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">tag:</kbd>{' '}
                     <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">in:</kbd>{' '}
                     <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">status:</kbd>{' '}
                     <kbd className="px-1 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-xs">date:</kbd>{' '}
-                    for advanced filtering
+                    用于高级筛选
                   </p>
                 </>
               )}
@@ -494,8 +494,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
 
           {flatResults.length === 0 && query.trim() !== '' && (
             <div className="px-4 py-8 text-center text-text-light-secondary dark:text-text-dark-secondary">
-              <p className="text-sm">No results found for &ldquo;{query}&rdquo;</p>
-              <p className="text-xs mt-2 opacity-70">Try a different search term or search the web</p>
+              <p className="text-sm">未找到与&ldquo;{query}&rdquo;相关的结果</p>
+              <p className="text-xs mt-2 opacity-70">尝试其他搜索词，或直接在网页中搜索</p>
             </div>
           )}
 
@@ -519,20 +519,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
         <div className="flex items-center justify-between px-4 py-2 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-xs text-text-light-secondary dark:text-text-dark-secondary">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">↑↓</kbd> Navigate
+              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">↑↓</kbd> 导航
             </span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">Enter</kbd> Select
+              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">Enter</kbd> 选择
             </span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">Esc</kbd> Close
+              <kbd className="px-1.5 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated">Esc</kbd> 关闭
             </span>
             {flatResults.length > 0 && (
-              <span className="opacity-60">{flatResults.length} result{flatResults.length !== 1 ? 's' : ''}</span>
+              <span className="opacity-60">{flatResults.length} 个结果</span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="opacity-70">Web:</span>
+            <span className="opacity-70">网页：</span>
             {(() => {
               const engine = SEARCH_ENGINES.find((e) => e.id === preferredSearchEngine);
               return engine ? (
@@ -552,8 +552,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
             <button
               onClick={() => setShowSettings(true)}
               className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors ml-1"
-              aria-label="Synapse Settings"
-              title="Synapse Settings"
+              aria-label="Synapse 设置"
+              title="Synapse 设置"
             >
               <Settings className="w-4 h-4" />
             </button>

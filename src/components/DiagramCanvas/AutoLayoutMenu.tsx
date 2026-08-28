@@ -19,20 +19,20 @@ const layoutOptions: Array<{
 }> = [
   {
     algorithm: 'tree',
-    label: 'Tree Layout',
-    description: 'Hierarchical top-down arrangement',
+    label: '树形布局',
+    description: '自上而下的层级排列',
     icon: <GitBranch className="w-5 h-5" />,
   },
   {
     algorithm: 'force',
-    label: 'Force-Directed',
-    description: 'Organic, repulsion-based layout',
+    label: '力导向布局',
+    description: '基于排斥力的自然有机布局',
     icon: <Network className="w-5 h-5" />,
   },
   {
     algorithm: 'grid',
-    label: 'Grid Layout',
-    description: 'Uniform grid with even spacing',
+    label: '网格布局',
+    description: '间距均匀的网格排列',
     icon: <Grid3x3 className="w-5 h-5" />,
   },
 ];
@@ -50,12 +50,12 @@ export function AutoLayoutMenu({ onApplyLayout, disabled = false }: AutoLayoutMe
             ${
               disabled
                 ? 'opacity-50 cursor-not-allowed'
-                : 'hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                : 'hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }
           `}
-          title={disabled ? 'Select elements to apply layout' : option.description}
+          title={disabled ? '请先选择要应用布局的元素' : option.description}
         >
-          <div className="text-primary-light dark:text-primary-dark shrink-0 mt-0.5">
+          <div className="text-accent-primary shrink-0 mt-0.5">
             {option.icon}
           </div>
           <div className="flex-1 min-w-0">

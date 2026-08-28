@@ -43,20 +43,20 @@ const showNotification = (event: CalendarEvent, minutesBefore: number): void => 
   }
 
   const timeLabel = minutesBefore === 0
-    ? 'now'
+    ? '现在'
     : minutesBefore < 60
-      ? `in ${minutesBefore} minutes`
+      ? `${minutesBefore} 分钟后`
       : minutesBefore === 60
-        ? 'in 1 hour'
-        : `in ${Math.floor(minutesBefore / 60)} hours`;
+        ? '1 小时后'
+        : `${Math.floor(minutesBefore / 60)} 小时后`;
 
   const title = minutesBefore === 0
-    ? `Event starting: ${event.title}`
-    : `Reminder: ${event.title}`;
+    ? `活动即将开始：${event.title}`
+    : `提醒：${event.title}`;
 
   const body = minutesBefore === 0
-    ? `${event.title} is starting now`
-    : `${event.title} starts ${timeLabel}`;
+    ? `${event.title} 现在开始`
+    : `${event.title} 将于 ${timeLabel} 开始`;
 
   const options: NotificationOptions = {
     body,
@@ -217,29 +217,29 @@ export const rescheduleAllReminders = (
  * Get formatted reminder label for UI
  */
 export const getReminderLabel = (minutes: number): string => {
-  if (minutes === 0) return 'At time of event';
-  if (minutes === 5) return '5 minutes before';
-  if (minutes === 15) return '15 minutes before';
-  if (minutes === 30) return '30 minutes before';
-  if (minutes === 60) return '1 hour before';
-  if (minutes === 1440) return '1 day before';
-  if (minutes === 10080) return '1 week before';
+  if (minutes === 0) return '事件开始时';
+  if (minutes === 5) return '提前 5 分钟';
+  if (minutes === 15) return '提前 15 分钟';
+  if (minutes === 30) return '提前 30 分钟';
+  if (minutes === 60) return '提前 1 小时';
+  if (minutes === 1440) return '提前 1 天';
+  if (minutes === 10080) return '提前 1 周';
 
   // Custom minutes
-  if (minutes < 60) return `${minutes} minutes before`;
-  if (minutes < 1440) return `${Math.floor(minutes / 60)} hours before`;
-  return `${Math.floor(minutes / 1440)} days before`;
+  if (minutes < 60) return `提前 ${minutes} 分钟`;
+  if (minutes < 1440) return `提前 ${Math.floor(minutes / 60)} 小时`;
+  return `提前 ${Math.floor(minutes / 1440)} 天`;
 };
 
 /**
  * Common reminder options for UI
  */
 export const REMINDER_OPTIONS = [
-  { value: 0, label: 'At time of event' },
-  { value: 5, label: '5 minutes before' },
-  { value: 15, label: '15 minutes before' },
-  { value: 30, label: '30 minutes before' },
-  { value: 60, label: '1 hour before' },
-  { value: 1440, label: '1 day before' },
-  { value: 10080, label: '1 week before' },
+  { value: 0, label: '事件开始时' },
+  { value: 5, label: '提前 5 分钟' },
+  { value: 15, label: '提前 15 分钟' },
+  { value: 30, label: '提前 30 分钟' },
+  { value: 60, label: '提前 1 小时' },
+  { value: 1440, label: '提前 1 天' },
+  { value: 10080, label: '提前 1 周' },
 ];

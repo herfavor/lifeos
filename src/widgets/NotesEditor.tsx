@@ -15,9 +15,9 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
-import { CodeNode, CodeHighlightNode } from '@lexical/code';
+import { $createCodeNode, CodeNode, CodeHighlightNode } from '@lexical/code';
 import { LinkNode } from '@lexical/link';
-import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
+import { INSERT_TABLE_COMMAND, TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
@@ -34,7 +34,10 @@ import {
   $createParagraphNode,
   UNDO_COMMAND,
   REDO_COMMAND,
-  $isParagraphNode
+  $isParagraphNode,
+  $isTextNode,
+  COMMAND_PRIORITY_HIGH,
+  KEY_DOWN_COMMAND,
 } from 'lexical';
 import type { ElementFormatType } from 'lexical';
 import type { EditorState } from 'lexical';
@@ -56,6 +59,7 @@ import { registerCodeHighlighting } from '@lexical/code';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
+import { $patchStyleText } from '@lexical/selection';
 
 // URL matcher for AutoLinkPlugin
 const URL_MATCHER =
@@ -114,9 +118,9 @@ import { NoteAliasEditor } from '../components/notes/NoteAliasEditor';
 import OutlinePanelPlugin from '../components/editor/plugins/OutlinePanelPlugin';
 import type { OutlineHeading } from '../components/editor/plugins/OutlinePanelPlugin';
 import { NoteOutlinePanel } from '../components/editor/NoteOutlinePanel';
-import { AISummarizePlugin } from '../components/editor/plugins/AISummarizePlugin';
-import { List } from 'lucide-react';
+import { List, Settings2 } from 'lucide-react';
 import { useAnnounce } from '../hooks/useAnnounce';
+import { ensureLexicalContent } from '../utils/markdownToLexical';
 
 /**
  * Keyboard Shortcuts Plugin
@@ -280,9 +284,9 @@ const ImageUploadPlugin: React.FC<{ noteId: string }> = ({ noteId }) => {
   // Drag overlay
   if (isDragging) {
     return (
-      <div className="absolute inset-0 z-50 bg-accent-blue/10 border-2 border-dashed border-accent-blue rounded-lg flex items-center justify-center pointer-events-none">
+      <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center rounded-lg border-2 border-dashed border-accent-primary bg-accent-primary/10">
         <div className="bg-surface-light dark:bg-surface-dark px-6 py-4 rounded-lg shadow-elevated">
-          <p className="text-accent-blue text-lg font-semibold">Drop image here</p>
+          <p className="text-lg font-semibold text-accent-primary">将图片拖放到此处</p>
         </div>
       </div>
     );
@@ -300,19 +304,20 @@ const SlashCommandPlugin: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [query, setQuery] = useState('');
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const clearSlashCommand = useCallback(() => {
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
         const node = selection.anchor.getNode();
-        const text = node.getTextContent();
-        // Remove the /command text from the current node
-        const slashIndex = text.lastIndexOf('/');
-        if (slashIndex >= 0 && 'setTextContent' in node) {
-          (node as unknown as { setTextContent(t: string): void }).setTextContent(
-            text.slice(0, slashIndex)
-          );
+        if ($isTextNode(node)) {
+          const cursorOffset = selection.anchor.offset;
+          const slashIndex = node.getTextContent().slice(0, cursorOffset).lastIndexOf('/');
+          if (slashIndex >= 0) {
+            node.spliceText(slashIndex, cursorOffset - slashIndex, '', true);
+            node.select(slashIndex, slashIndex);
+          }
         }
       }
     });
@@ -386,33 +391,37 @@ const SlashCommandPlugin: React.FC = () => {
         const element = anchorNode.getKey() === 'root'
           ? anchorNode
           : anchorNode.getTopLevelElementOrThrow();
-        const codeNode = new CodeNode();
+        const codeNode = $createCodeNode();
         element.replace(codeNode, true);
       }
     });
   }, [editor, clearSlashCommand]);
 
   const commands = [
-    { label: 'Heading 1', icon: 'H1', action: () => formatAsHeading('h1') },
-    { label: 'Heading 2', icon: 'H2', action: () => formatAsHeading('h2') },
-    { label: 'Heading 3', icon: 'H3', action: () => formatAsHeading('h3') },
-    { label: 'Bullet List', icon: '•', action: () => {
+    { id: 'heading1', label: '标题 1', keywords: ['h1', 'heading', '一级标题'], icon: 'H1', action: () => formatAsHeading('h1') },
+    { id: 'heading2', label: '标题 2', keywords: ['h2', 'heading', '二级标题'], icon: 'H2', action: () => formatAsHeading('h2') },
+    { id: 'heading3', label: '标题 3', keywords: ['h3', 'heading', '三级标题'], icon: 'H3', action: () => formatAsHeading('h3') },
+    { id: 'bullet-list', label: '项目符号列表', keywords: ['bullet', 'list', 'ul', '列表'], icon: '•', action: () => {
       clearSlashCommand();
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
     }},
-    { label: 'Numbered List', icon: '1.', action: () => {
+    { id: 'number-list', label: '编号列表', keywords: ['number', 'list', 'ol', '有序列表'], icon: '1.', action: () => {
       clearSlashCommand();
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
     }},
-    { label: 'Code Block', icon: '</>', action: formatAsCodeBlock },
-    { label: 'Quote', icon: '"', action: formatAsQuote },
-    { label: 'Horizontal Rule', icon: '—', action: insertHR },
-    { label: 'Callout (Info)', icon: 'ℹ️', action: () => insertCallout('info') },
-    { label: 'Callout (Warning)', icon: '⚠️', action: () => insertCallout('warning') },
-    { label: 'Callout (Tip)', icon: '💡', action: () => insertCallout('tip') },
-    { label: 'Callout (Danger)', icon: '🚨', action: () => insertCallout('danger') },
-    { label: 'Toggle Block', icon: '▶', action: insertToggle },
-    { label: 'Table of Contents', icon: '📑', action: () => {
+    { id: 'code', label: '代码块', keywords: ['code', '代码', '代码块'], icon: '</>', action: formatAsCodeBlock },
+    { id: 'table', label: '表格', keywords: ['table', 'grid', '表格'], icon: '▦', action: () => {
+      clearSlashCommand();
+      editor.dispatchCommand(INSERT_TABLE_COMMAND, { rows: '3', columns: '3', includeHeaders: true });
+    }},
+    { id: 'quote', label: '引用', keywords: ['quote', 'blockquote', '引用'], icon: '"', action: formatAsQuote },
+    { id: 'divider', label: '分隔线', keywords: ['divider', 'hr', '分隔线'], icon: '—', action: insertHR },
+    { id: 'callout-info', label: '提示框（信息）', keywords: ['callout', 'info', '信息'], icon: 'ℹ️', action: () => insertCallout('info') },
+    { id: 'callout-warning', label: '提示框（警告）', keywords: ['callout', 'warning', '警告'], icon: '⚠️', action: () => insertCallout('warning') },
+    { id: 'callout-tip', label: '提示框（提示）', keywords: ['callout', 'tip', '提示'], icon: '💡', action: () => insertCallout('tip') },
+    { id: 'callout-danger', label: '提示框（危险）', keywords: ['callout', 'danger', '危险'], icon: '🚨', action: () => insertCallout('danger') },
+    { id: 'toggle', label: '折叠块', keywords: ['toggle', 'details', '折叠'], icon: '▶', action: insertToggle },
+    { id: 'toc', label: '目录', keywords: ['toc', 'contents', '目录'], icon: '📑', action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -422,7 +431,7 @@ const SlashCommandPlugin: React.FC = () => {
         }
       });
     }},
-    { label: 'Math Block', icon: '∑', action: () => {
+    { id: 'math', label: '数学公式', keywords: ['math', 'formula', '数学', '公式'], icon: '∑', action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -432,7 +441,7 @@ const SlashCommandPlugin: React.FC = () => {
         }
       });
     }},
-    { label: 'Mermaid Diagram', icon: '◇', action: () => {
+    { id: 'mermaid', label: 'Mermaid 图表', keywords: ['mermaid', 'diagram', '图表'], icon: '◇', action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -442,7 +451,7 @@ const SlashCommandPlugin: React.FC = () => {
         }
       });
     }},
-    { label: 'Video', icon: '▶', action: () => {
+    { id: 'video', label: '视频', keywords: ['video', 'embed', '视频'], icon: '▶', action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -454,32 +463,44 @@ const SlashCommandPlugin: React.FC = () => {
     }},
   ];
 
-  const filteredCommands = commands.filter(cmd =>
-    cmd.label.toLowerCase().includes(query.toLowerCase())
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filteredCommands = commands.filter((command) =>
+    [command.id, command.label, ...command.keywords]
+      .some((value) => value.toLocaleLowerCase().includes(normalizedQuery))
   );
+
+  useEffect(() => setSelectedIndex(0), [query]);
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        if (!selection) {
+        if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
           setShowMenu(false);
           return;
         }
 
-        const text = selection.getTextContent();
-        if (text.startsWith('/')) {
-          setQuery(text.slice(1));
+        const anchorNode = selection.anchor.getNode();
+        if (!$isTextNode(anchorNode)) {
+          setShowMenu(false);
+          return;
+        }
+
+        const textBeforeCursor = anchorNode
+          .getTextContent()
+          .slice(0, selection.anchor.offset);
+        const match = textBeforeCursor.match(/(?:^|\s)\/([^\s/]*)$/);
+        if (match) {
+          setQuery(match[1]);
           setShowMenu(true);
 
-          // Get cursor position for menu placement
           const nativeSelection = window.getSelection();
           if (nativeSelection && nativeSelection.rangeCount > 0) {
             const range = nativeSelection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
             setMenuPosition({
-              top: rect.bottom + window.scrollY + 5,
-              left: rect.left + window.scrollX,
+              top: rect.bottom + 6,
+              left: Math.max(8, Math.min(rect.left, window.innerWidth - 300)),
             });
           }
         } else {
@@ -489,6 +510,38 @@ const SlashCommandPlugin: React.FC = () => {
     });
   }, [editor]);
 
+  useEffect(() => {
+    return editor.registerCommand(
+      KEY_DOWN_COMMAND,
+      (event) => {
+        if (!showMenu || filteredCommands.length === 0) return false;
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          setSelectedIndex((index) => (index + 1) % filteredCommands.length);
+          return true;
+        }
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          setSelectedIndex((index) => (index - 1 + filteredCommands.length) % filteredCommands.length);
+          return true;
+        }
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          filteredCommands[selectedIndex]?.action();
+          setShowMenu(false);
+          return true;
+        }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          setShowMenu(false);
+          return true;
+        }
+        return false;
+      },
+      COMMAND_PRIORITY_HIGH
+    );
+  }, [editor, filteredCommands, selectedIndex, showMenu]);
+
   if (!showMenu || filteredCommands.length === 0) {
     return null;
   }
@@ -496,21 +549,29 @@ const SlashCommandPlugin: React.FC = () => {
   return (
     <div
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: `${menuPosition.top}px`,
         left: `${menuPosition.left}px`,
         zIndex: 1000,
       }}
-      className="bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg py-2 min-w-[200px]"
+      className="max-h-80 min-w-[260px] overflow-y-auto rounded-xl border border-border-light bg-surface-light py-2 shadow-elevated dark:border-border-dark dark:bg-surface-dark-elevated"
+      role="menu"
+      aria-label="插入内容"
     >
       {filteredCommands.map((cmd, index) => (
         <button
-          key={index}
+          key={cmd.id}
           onClick={() => {
             cmd.action();
             setShowMenu(false);
           }}
-          className="w-full px-4 py-2 text-left hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors flex items-center gap-3"
+          className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+            index === selectedIndex
+              ? 'bg-accent-primary/10 text-accent-primary'
+              : 'hover:bg-surface-light-elevated dark:hover:bg-surface-dark'
+          }`}
+          role="menuitem"
+          aria-current={index === selectedIndex ? 'true' : undefined}
         >
           <span className="text-text-light-secondary dark:text-text-dark-secondary font-mono">
             {cmd.icon}
@@ -544,27 +605,22 @@ const EditorToolbar: React.FC<{
   const [editor] = useLexicalComposerContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
+  const [showMoreFormatting, setShowMoreFormatting] = useState(false);
+  const [codeLanguage, setCodeLanguage] = useState('javascript');
 
   const HIGHLIGHT_COLORS = [
-    { label: 'Yellow', color: '#fef08a', darkColor: '#854d0e40' },
-    { label: 'Green', color: '#bbf7d0', darkColor: '#14532d40' },
-    { label: 'Blue', color: '#bfdbfe', darkColor: '#1e3a5f40' },
-    { label: 'Pink', color: '#fbcfe8', darkColor: '#831843a0' },
-    { label: 'Purple', color: '#e9d5ff', darkColor: '#581c87a0' },
+    { label: '黄色', color: '#fef08a', darkColor: '#854d0e40' },
+    { label: '绿色', color: '#bbf7d0', darkColor: '#14532d40' },
+    { label: '蓝色', color: '#bfdbfe', darkColor: '#1e3a5f40' },
+    { label: '粉色', color: '#fbcfe8', darkColor: '#831843a0' },
+    { label: '紫色', color: '#e9d5ff', darkColor: '#581c87a0' },
   ] as const;
 
   const applyHighlight = useCallback((color: string) => {
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        selection.formatText('highlight');
-        // Apply background color via style
-        const nodes = selection.getNodes();
-        nodes.forEach((node) => {
-          if ('setStyle' in node && typeof node.setStyle === 'function') {
-            node.setStyle(`background-color: ${color}`);
-          }
-        });
+        $patchStyleText(selection, { 'background-color': color });
       }
     });
     setShowHighlightPicker(false);
@@ -574,12 +630,7 @@ const EditorToolbar: React.FC<{
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        const nodes = selection.getNodes();
-        nodes.forEach((node) => {
-          if ('setStyle' in node && typeof node.setStyle === 'function') {
-            node.setStyle('');
-          }
-        });
+        $patchStyleText(selection, { 'background-color': null });
       }
     });
     setShowHighlightPicker(false);
@@ -665,6 +716,26 @@ const EditorToolbar: React.FC<{
     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment);
   };
 
+  const insertCodeBlock = () => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) return;
+      const anchorNode = selection.anchor.getNode();
+      const element = anchorNode.getKey() === 'root'
+        ? anchorNode
+        : anchorNode.getTopLevelElementOrThrow();
+      element.replace($createCodeNode(codeLanguage), true);
+    });
+  };
+
+  const insertTable = () => {
+    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+      rows: '3',
+      columns: '3',
+      includeHeaders: true,
+    });
+  };
+
   const undo = () => {
     editor.dispatchCommand(UNDO_COMMAND, undefined);
   };
@@ -712,190 +783,146 @@ const EditorToolbar: React.FC<{
     } catch (error) {
       console.error('Failed to upload image:', error);
       toast.error(
-        'Failed to upload image',
-        `${error instanceof Error ? error.message : 'Unknown error'}. Check file size (max 5MB) and storage quota.`
+        '上传图片失败',
+        `${error instanceof Error ? error.message : '未知错误'}。请检查文件大小（最大 5MB）和存储配额。`
       );
     }
   };
 
-  const btnClass = "p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all duration-standard text-text-light-primary dark:text-text-dark-primary";
-  const dividerClass = "w-px h-6 bg-border-light dark:bg-border-dark";
+  const btnClass = "shrink-0 rounded-md px-2 py-1.5 text-sm text-text-light-secondary transition-colors hover:bg-surface-light-elevated hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated dark:hover:text-text-dark-primary";
+  const dividerClass = "h-5 w-px bg-border-light dark:bg-border-dark";
 
   return (
-    <div className="border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark-elevated p-3 flex items-center gap-2 flex-wrap">
-      {/* Undo/Redo */}
-      <button onClick={undo} className={btnClass} title="Undo (Cmd+Z)">
-        ↶
-      </button>
-      <button onClick={redo} className={btnClass} title="Redo (Cmd+Shift+Z)">
-        ↷
-      </button>
+    <div className="border-b border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark" role="toolbar" aria-label="笔记编辑工具栏">
+      <div className="flex min-h-11 items-center gap-1 overflow-x-auto px-2">
+        <button onClick={undo} className={btnClass} title="撤销 (Cmd+Z)">↶</button>
+        <button onClick={redo} className={btnClass} title="重做 (Cmd+Shift+Z)">↷</button>
+        <div className={dividerClass} />
 
-      <div className={dividerClass} />
-
-      {/* Text Format */}
-      <button onClick={() => formatText('bold')} className={btnClass} title="Bold (Cmd+B)">
-        <span className="font-bold">B</span>
-      </button>
-      <button onClick={() => formatText('italic')} className={btnClass} title="Italic (Cmd+I)">
-        <span className="italic">I</span>
-      </button>
-      <button onClick={() => formatText('underline')} className={btnClass} title="Underline (Cmd+U)">
-        <span className="underline">U</span>
-      </button>
-      <button onClick={() => formatText('strikethrough')} className={btnClass} title="Strikethrough">
-        <span className="line-through">S</span>
-      </button>
-      <button onClick={() => formatText('code')} className={btnClass} title="Code">
-        <span className="font-mono text-sm">&lt;/&gt;</span>
-      </button>
-
-      {/* Highlight Color */}
-      <div className="relative">
-        <button
-          onClick={() => setShowHighlightPicker(!showHighlightPicker)}
-          className={btnClass}
-          title="Highlight Color"
-        >
-          <span className="text-sm" style={{ backgroundColor: HIGHLIGHT_COLORS[0].color, padding: '0 4px', borderRadius: '2px' }}>A</span>
+        <button onClick={() => formatText('bold')} className={btnClass} title="加粗 (Cmd+B)">
+          <span className="font-bold text-text-light-primary dark:text-text-dark-primary">B</span>
         </button>
-        {showHighlightPicker && (
-          <div className="absolute top-full left-0 mt-1 z-50 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg p-2 flex gap-1">
-            {HIGHLIGHT_COLORS.map((hc) => (
-              <button
-                key={hc.label}
-                onClick={() => applyHighlight(hc.color)}
-                className="w-6 h-6 rounded border border-border-light dark:border-border-dark hover:scale-110 transition-transform"
-                style={{ backgroundColor: hc.color }}
-                title={hc.label}
-              />
-            ))}
-            <button
-              onClick={removeHighlight}
-              className="w-6 h-6 rounded border border-border-light dark:border-border-dark hover:scale-110 transition-transform flex items-center justify-center text-xs text-text-light-secondary dark:text-text-dark-secondary"
-              title="Remove highlight"
+        <button onClick={() => formatText('italic')} className={btnClass} title="斜体 (Cmd+I)">
+          <span className="italic text-text-light-primary dark:text-text-dark-primary">I</span>
+        </button>
+        <button onClick={() => formatHeading('h2')} className={btnClass} title="二级标题">
+          <span className="font-semibold">H2</span>
+        </button>
+        <button onClick={formatBulletList} className={btnClass} title="项目符号列表">≡</button>
+        <button onClick={formatCheckList} className={btnClass} title="任务清单">☑</button>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+        <button onClick={() => fileInputRef.current?.click()} className={btnClass} title="插入图片">图片</button>
+
+        <button
+          type="button"
+          onClick={() => setShowMoreFormatting((value) => !value)}
+          className={`${btnClass} ${showMoreFormatting ? 'bg-accent-primary/10 text-accent-primary' : ''}`}
+          aria-expanded={showMoreFormatting}
+        >
+          更多
+        </button>
+
+        <div className="min-w-3 flex-1" />
+
+        <button
+          onClick={onToggleOutline}
+          className={`${btnClass} ${outlineOpen ? 'bg-accent-primary/10 text-accent-primary' : ''}`}
+          title="大纲"
+          aria-pressed={outlineOpen}
+        >
+          <List size={16} />
+        </button>
+
+        <div className="flex items-center rounded-lg border border-border-light p-0.5 dark:border-border-dark">
+          <button
+            onClick={() => onViewModeChange('edit')}
+            className={`rounded-md px-2 py-1 text-xs transition-colors ${viewMode === 'edit' ? 'bg-surface-light-elevated font-medium text-text-light-primary dark:bg-surface-dark-elevated dark:text-text-dark-primary' : 'text-text-light-secondary dark:text-text-dark-secondary'}`}
+            aria-pressed={viewMode === 'edit'}
+          >
+            编辑
+          </button>
+          <button
+            onClick={() => onViewModeChange('preview')}
+            className={`rounded-md px-2 py-1 text-xs transition-colors ${viewMode === 'preview' ? 'bg-surface-light-elevated font-medium text-text-light-primary dark:bg-surface-dark-elevated dark:text-text-dark-primary' : 'text-text-light-secondary dark:text-text-dark-secondary'}`}
+            aria-pressed={viewMode === 'preview'}
+          >
+            预览
+          </button>
+        </div>
+        <span className="whitespace-nowrap px-1 text-[11px] text-text-light-tertiary dark:text-text-dark-tertiary">
+          {wordCount} 词 · {charCount} 字
+        </span>
+      </div>
+
+      {showMoreFormatting && (
+        <div className="flex flex-wrap items-center gap-1 border-t border-border-light/70 px-2 py-2 dark:border-border-dark/70">
+          <button onClick={() => formatText('underline')} className={btnClass} title="下划线"><span className="underline">U</span></button>
+          <button onClick={() => formatText('strikethrough')} className={btnClass} title="删除线"><span className="line-through">S</span></button>
+          <button onClick={() => formatText('code')} className={btnClass} title="行内代码">&lt;/&gt;</button>
+
+          <div className="flex items-center rounded-lg border border-border-light dark:border-border-dark">
+            <button onClick={insertCodeBlock} className={btnClass} title="插入代码块">{'{ }'}</button>
+            <label htmlFor="code-block-language" className="sr-only">代码块语言</label>
+            <select
+              id="code-block-language"
+              value={codeLanguage}
+              onChange={(event) => setCodeLanguage(event.target.value)}
+              className="mr-1 max-w-24 bg-transparent py-1 text-xs text-text-light-secondary outline-none dark:text-text-dark-secondary"
             >
-              ✕
-            </button>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="bash">Bash</option>
+              <option value="json">JSON</option>
+              <option value="css">CSS</option>
+              <option value="markdown">Markdown</option>
+              <option value="">纯文本</option>
+            </select>
           </div>
-        )}
-      </div>
 
-      <div className={dividerClass} />
+          <div className="relative">
+            <button onClick={() => setShowHighlightPicker(!showHighlightPicker)} className={btnClass} title="高亮">高亮</button>
+            {showHighlightPicker && (
+              <div className="absolute left-0 top-full z-50 mt-1 flex gap-1 rounded-lg border border-border-light bg-surface-light p-2 shadow-lg dark:border-border-dark dark:bg-surface-dark-elevated">
+                {HIGHLIGHT_COLORS.map((hc) => (
+                  <button
+                    key={hc.label}
+                    onClick={() => applyHighlight(hc.color)}
+                    className="h-6 w-6 rounded border border-border-light transition-transform hover:scale-110 dark:border-border-dark"
+                    style={{ backgroundColor: hc.color }}
+                    title={hc.label}
+                  />
+                ))}
+                <button onClick={removeHighlight} className="h-6 w-6 rounded border border-border-light text-xs dark:border-border-dark" title="移除高亮">✕</button>
+              </div>
+            )}
+          </div>
 
-      {/* Headings */}
-      <button onClick={() => formatHeading('h1')} className={btnClass} title="Heading 1">
-        <span className="font-bold text-lg">H1</span>
-      </button>
-      <button onClick={() => formatHeading('h2')} className={btnClass} title="Heading 2">
-        <span className="font-bold">H2</span>
-      </button>
-      <button onClick={() => formatHeading('h3')} className={btnClass} title="Heading 3">
-        <span className="font-bold text-sm">H3</span>
-      </button>
-      <button onClick={formatParagraph} className={btnClass} title="Paragraph">
-        <span className="text-sm">P</span>
-      </button>
+          <div className={dividerClass} />
+          <button onClick={() => formatHeading('h1')} className={btnClass}>H1</button>
+          <button onClick={() => formatHeading('h2')} className={btnClass}>H2</button>
+          <button onClick={() => formatHeading('h3')} className={btnClass}>H3</button>
+          <button onClick={formatParagraph} className={btnClass}>正文</button>
 
-      <div className={dividerClass} />
+          <div className={dividerClass} />
+          <button onClick={formatNumberedList} className={btnClass} title="编号列表">1.</button>
+          <button onClick={formatQuote} className={btnClass} title="引用">引用</button>
+          <button onClick={insertTable} className={btnClass} title="插入表格">表格</button>
 
-      {/* Lists */}
-      <button onClick={formatBulletList} className={btnClass} title="Bullet List">
-        ≡
-      </button>
-      <button onClick={formatNumberedList} className={btnClass} title="Numbered List">
-        ⋮
-      </button>
-      <button onClick={formatCheckList} className={btnClass} title="Checklist ([] )">
-        ☑
-      </button>
-      <button onClick={formatQuote} className={btnClass} title="Quote">
-        &ldquo;
-      </button>
-
-      <div className={dividerClass} />
-
-      {/* Text Alignment */}
-      <button onClick={() => formatAlignment('left')} className={btnClass} title="Align Left">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" /><rect x="1" y="6" width="10" height="2" /><rect x="1" y="10" width="14" height="2" /><rect x="1" y="14" width="8" height="2" /></svg>
-      </button>
-      <button onClick={() => formatAlignment('center')} className={btnClass} title="Align Center">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" /><rect x="3" y="6" width="10" height="2" /><rect x="1" y="10" width="14" height="2" /><rect x="4" y="14" width="8" height="2" /></svg>
-      </button>
-      <button onClick={() => formatAlignment('right')} className={btnClass} title="Align Right">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" /><rect x="5" y="6" width="10" height="2" /><rect x="1" y="10" width="14" height="2" /><rect x="7" y="14" width="8" height="2" /></svg>
-      </button>
-      <button onClick={() => formatAlignment('justify')} className={btnClass} title="Justify">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" /><rect x="1" y="6" width="14" height="2" /><rect x="1" y="10" width="14" height="2" /><rect x="1" y="14" width="14" height="2" /></svg>
-      </button>
-
-      <div className={dividerClass} />
-
-      {/* Image Upload */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="hidden"
-      />
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        className={btnClass}
-        title="Insert Image"
-      >
-        🖼️
-      </button>
-
-      <div className={dividerClass} />
-
-      {/* AI Summarize */}
-      <AISummarizePlugin className={btnClass} />
-
-      <div className="flex-1" />
-
-      {/* Outline Toggle */}
-      <button
-        onClick={onToggleOutline}
-        className={`${btnClass} ${outlineOpen ? 'text-accent-primary bg-accent-primary/10' : ''}`}
-        title="Toggle Outline"
-        aria-pressed={outlineOpen}
-      >
-        <List size={16} />
-      </button>
-
-      {/* View Mode Toggle */}
-      <div className="flex items-center gap-1 mr-4">
-        <button
-          onClick={() => onViewModeChange('edit')}
-          className={`px-2 py-1 text-xs rounded transition-all duration-standard ${
-            viewMode === 'edit'
-              ? 'bg-accent-primary text-white'
-              : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-          }`}
-          title="Edit Mode (Cmd+E)"
-          aria-pressed={viewMode === 'edit'}
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => onViewModeChange('preview')}
-          className={`px-2 py-1 text-xs rounded transition-all duration-standard ${
-            viewMode === 'preview'
-              ? 'bg-accent-primary text-white'
-              : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-          }`}
-          title="Preview Mode (Cmd+E)"
-          aria-pressed={viewMode === 'preview'}
-        >
-          Preview
-        </button>
-      </div>
-
-      {/* Word count */}
-      <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-        {wordCount} {wordCount === 1 ? 'word' : 'words'} · {charCount} {charCount === 1 ? 'char' : 'chars'}
-      </span>
+          <div className={dividerClass} />
+          <button onClick={() => formatAlignment('left')} className={btnClass}>左对齐</button>
+          <button onClick={() => formatAlignment('center')} className={btnClass}>居中</button>
+          <button onClick={() => formatAlignment('right')} className={btnClass}>右对齐</button>
+          <button onClick={() => formatAlignment('justify')} className={btnClass}>两端</button>
+        </div>
+      )}
     </div>
   );
 };
@@ -923,14 +950,52 @@ const AutoSavePlugin: React.FC<{ noteId: string }> = ({ noteId }) => {
   const updateNote = useNotesStore((state) => state.updateNote);
   const announce = useAnnounce();
 
-  // Track timeout ID and last saved content to prevent redundant saves
+  const initialNote = useNotesStore.getState().notes[noteId];
   const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastContentRef = useRef<string>('');
-  const lastTextRef = useRef<string>('');
+  const lastContentRef = useRef<string>(initialNote?.content ?? '');
+  const lastTextRef = useRef<string>(initialNote?.contentText ?? '');
+  const pendingSaveRef = useRef<{ content: string; contentText: string } | null>(null);
   const lastVersionSaveRef = useRef<number>(0);
 
+  const flushPendingSave = useCallback((withFeedback: boolean) => {
+    const pending = pendingSaveRef.current;
+    if (!pending) return;
+    pendingSaveRef.current = null;
+
+    if (withFeedback) setIsSaving(true);
+    try {
+      updateNote(noteId, pending);
+      lastContentRef.current = pending.content;
+      lastTextRef.current = pending.contentText;
+
+      if (withFeedback) announce('笔记已保存到本地存储队列');
+
+      const now = Date.now();
+      const versionStore = useNoteVersionStore.getState();
+      if (
+        now - lastVersionSaveRef.current >= NOTE_CONSTANTS.VERSION_SAVE_INTERVAL_MS &&
+        versionStore.shouldSaveVersion(noteId, pending.contentText)
+      ) {
+        const note = useNotesStore.getState().notes[noteId];
+        if (note) {
+          versionStore.saveVersion({
+            noteId,
+            title: note.title,
+            content: pending.content,
+            contentText: pending.contentText,
+          });
+          lastVersionSaveRef.current = now;
+        }
+      }
+
+      if (withFeedback) window.setTimeout(() => setIsSaving(false), 300);
+    } catch (error) {
+      console.error('Failed to queue note save:', error);
+      if (withFeedback) setIsSaving(false);
+    }
+  }, [announce, noteId, updateNote]);
+
   const handleChange = useCallback((editorState: EditorState) => {
-    // Extract plain text for search
     editorState.read(() => {
       const root = $getRoot();
       const contentText = root.getTextContent();
@@ -946,74 +1011,61 @@ const AutoSavePlugin: React.FC<{ noteId: string }> = ({ noteId }) => {
         clearTimeout(timeoutIdRef.current);
       }
 
-      // Debounced save with error handling
+      pendingSaveRef.current = { content: contentJson, contentText };
       timeoutIdRef.current = setTimeout(() => {
-        setIsSaving(true);
-
-        try {
-          // Zustand is synchronous, but IndexedDB persistence could fail
-          updateNote(noteId, {
-            content: contentJson,
-            contentText,
-          });
-
-          // Update refs with saved content
-          lastContentRef.current = contentJson;
-          lastTextRef.current = contentText;
-
-          // Announce save to screen readers
-          announce('Note saved');
-
-          // Version history: save snapshot periodically when content changes significantly
-          const now = Date.now();
-          const versionStore = useNoteVersionStore.getState();
-          if (
-            now - lastVersionSaveRef.current >= NOTE_CONSTANTS.VERSION_SAVE_INTERVAL_MS &&
-            versionStore.shouldSaveVersion(noteId, contentText)
-          ) {
-            const note = useNotesStore.getState().notes[noteId];
-            if (note) {
-              versionStore.saveVersion({
-                noteId,
-                title: note.title,
-                content: contentJson,
-                contentText,
-              });
-              lastVersionSaveRef.current = now;
-            }
-          }
-
-          // Reset saving state after a brief delay
-          setTimeout(() => setIsSaving(false), 300);
-        } catch (error) {
-          console.error('❌ Failed to save note:', error);
-          setIsSaving(false);
-          // Error will be handled by IndexedDB quota monitoring system
-          // User will be alerted if quota is exceeded via Settings page
-        }
+        timeoutIdRef.current = null;
+        flushPendingSave(true);
       }, NOTE_CONSTANTS.AUTOSAVE_DEBOUNCE_MS);
     });
-  }, [noteId, updateNote, announce]);
+  }, [flushPendingSave]);
 
-  // Cleanup timeout on unmount
+  // Flush the last keystrokes when switching notes, navigating away or when
+  // the browser backgrounds the page. Clearing the timer alone lost up to two
+  // seconds of edits.
   useEffect(() => {
+    const handlePageHide = () => flushPendingSave(false);
+    window.addEventListener('pagehide', handlePageHide);
     return () => {
+      window.removeEventListener('pagehide', handlePageHide);
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
       }
+      flushPendingSave(false);
     };
-  }, []);
+  }, [flushPendingSave]);
 
   return (
     <>
       <OnChangePlugin onChange={handleChange} />
       {isSaving && (
         <div className="absolute top-2 right-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Saving...
+          保存中…
         </div>
       )}
     </>
   );
+};
+
+/** Keep version restores and other explicit store updates visible in-place. */
+const ExternalContentSyncPlugin: React.FC<{
+  content: string;
+  contentText: string;
+}> = ({ content, contentText }) => {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    const normalized = ensureLexicalContent(content, contentText);
+    const current = JSON.stringify(editor.getEditorState().toJSON());
+    if (normalized === current) return;
+
+    try {
+      editor.setEditorState(editor.parseEditorState(normalized));
+    } catch (error) {
+      console.error('Failed to apply external note content:', error);
+    }
+  }, [content, contentText, editor]);
+
+  return null;
 };
 
 /**
@@ -1161,7 +1213,7 @@ const NoteCustomFields: React.FC<{ noteId: string; note: ReturnType<typeof useNo
   return (
     <div className="mt-4 space-y-3">
       <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-        Custom Fields
+        自定义字段
       </div>
       {noteFields.map((field) => {
         const currentValue = note.customFields?.[field.id];
@@ -1203,11 +1255,15 @@ const NoteCustomFields: React.FC<{ noteId: string; note: ReturnType<typeof useNo
 export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => {
   const note = useNotesStore((state) => state.getNote(noteId));
   const notes = useNotesStore((state) => state.notes);
-  const notesArray = useMemo(() => Object.values(notes), [notes]);
+  const notesArray = useMemo(
+    () => Object.values(notes).filter((item) => !item.deletedAt),
+    [notes]
+  );
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>('edit');
   const [outlineOpen, setOutlineOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [outlineHeadings, setOutlineHeadings] = useState<OutlineHeading[]>([]);
 
   // Keyboard shortcut for toggling view mode (Cmd+E)
@@ -1225,7 +1281,7 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
   // Memoize editor config to prevent Lexical re-initialization
   // Only recreate when noteId changes, not when content changes
   const editorConfig = useMemo(
-    () => getEditorConfig(note?.content),
+    () => getEditorConfig(ensureLexicalContent(note?.content, note?.contentText)),
     [noteId] // Key on noteId only, not note.content
   );
 
@@ -1245,7 +1301,7 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
   if (!note) {
     return (
       <div className="flex-1 min-h-0 flex items-center justify-center text-text-light-secondary dark:text-text-dark-secondary">
-        Note not found
+        未找到笔记
       </div>
     );
   }
@@ -1258,26 +1314,42 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
       className="flex-1 flex flex-col min-h-0 bg-surface-light dark:bg-surface-dark"
     >
       {/* Note Title & Tags */}
-      <div className="border-b border-border-light dark:border-border-dark px-6 py-4 flex-shrink-0">
-        <input
-          type="text"
-          value={note.title}
-          onChange={(e) =>
-            useNotesStore.getState().updateNote(noteId, { title: e.target.value })
-          }
-          placeholder="Untitled Note"
-          className="w-full text-3xl font-bold bg-transparent border-none outline-none text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-        />
-        <TagsInput noteId={noteId} tags={note.tags} />
-        <NoteAliasEditor noteId={noteId} aliases={note.aliases ?? []} />
-
-        {/* Custom Fields (P2 #3) */}
-        <NoteCustomFields noteId={noteId} note={note} />
+      <div className="flex-shrink-0 border-b border-border-light px-5 py-3 dark:border-border-dark">
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={note.title}
+            onChange={(e) =>
+              useNotesStore.getState().updateNote(noteId, { title: e.target.value })
+            }
+            placeholder="无标题笔记"
+            className="min-w-0 flex-1 border-none bg-transparent text-2xl font-semibold text-text-light-primary outline-none placeholder-text-light-secondary dark:text-text-dark-primary dark:placeholder-text-dark-secondary"
+          />
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((value) => !value)}
+            className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              detailsOpen
+                ? 'bg-accent-primary/10 text-accent-primary'
+                : 'text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated'
+            }`}
+            aria-expanded={detailsOpen}
+          >
+            <Settings2 className="h-4 w-4" /> 详情
+          </button>
+        </div>
+        {detailsOpen && (
+          <div className="mt-3 rounded-xl bg-surface-light-elevated p-3 dark:bg-surface-dark-elevated">
+            <TagsInput noteId={noteId} tags={note.tags} />
+            <NoteAliasEditor noteId={noteId} aliases={note.aliases ?? []} />
+            <NoteCustomFields noteId={noteId} note={note} />
+          </div>
+        )}
       </div>
 
       {/* Lexical Editor */}
       <LexicalComposer key={noteId} initialConfig={editorConfig}>
-        <div className="flex-1 flex flex-col relative overflow-hidden shadow-card">
+        <div className="relative flex flex-1 flex-col overflow-hidden">
           {/* Toolbar */}
           <div className="flex-shrink-0">
             <EditorToolbar
@@ -1293,8 +1365,8 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
 
           {/* Editor Content + Outline Panel */}
           <div className="flex-1 flex min-h-0">
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className={`relative h-full border rounded-lg p-6 bg-surface-light dark:bg-surface-dark ${
+          <div className="flex-1 overflow-y-auto px-4 py-5">
+            <div className={`relative mx-auto min-h-full w-full max-w-[860px] rounded-xl border bg-surface-light px-7 py-6 dark:bg-surface-dark ${
               viewMode === 'preview'
                 ? 'border-accent-primary/30'
                 : 'border-border-light dark:border-border-dark'
@@ -1302,7 +1374,7 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
               {/* Preview mode indicator */}
               {viewMode === 'preview' && (
                 <div className="absolute top-2 right-2 px-2 py-0.5 text-xs bg-accent-primary/10 text-accent-primary rounded">
-                  Preview Mode
+                  预览模式
                 </div>
               )}
               <RichTextPlugin
@@ -1316,7 +1388,7 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
                 placeholder={
                   viewMode === 'edit' ? (
                     <div className="editor-placeholder absolute top-6 left-6 text-text-light-secondary dark:text-text-dark-secondary pointer-events-none opacity-60">
-                      Start writing...
+                      开始书写…
                     </div>
                   ) : null
                 }
@@ -1340,6 +1412,7 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
             <OutlinePanelPlugin onHeadingsChange={handleOutlineHeadingsChange} />
             {viewMode === 'edit' && <FileAttachmentPlugin noteId={noteId} />}
             <AutoSavePlugin noteId={noteId} />
+            <ExternalContentSyncPlugin content={note.content} contentText={note.contentText} />
             <WikiLinkAutocompletePlugin notes={notesArray} currentFolderId={note.folderId} />
             <WikiLinkTransformPlugin notes={notes} />
             <HoverPreviewPlugin notes={notes} />
@@ -1386,7 +1459,13 @@ export const NotesEditor: React.FC<NotesEditorProps> = ({ noteId, blockId }) => 
 /**
  * Empty State - No Note Selected
  */
-export const NotesEditorEmpty: React.FC = () => {
+interface NotesEditorEmptyProps {
+  hasNotes: boolean;
+  onCreate: () => void;
+  onCreateFromTemplate: () => void;
+}
+
+export const NotesEditorEmpty: React.FC<NotesEditorEmptyProps> = ({ hasNotes, onCreate, onCreateFromTemplate }) => {
   return (
     <div className="flex-1 min-h-0 flex items-center justify-center bg-surface-light-elevated dark:bg-surface-dark">
       <div className="text-center max-w-md px-8 animate-fade-in">
@@ -1396,19 +1475,29 @@ export const NotesEditorEmpty: React.FC = () => {
           </div>
         </div>
         <h2 className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4 tracking-tight">
-          Welcome to Notes
+          {hasNotes ? '选择一篇笔记' : '开始沉淀第一篇笔记'}
         </h2>
         <p className="text-text-light-secondary dark:text-text-dark-secondary mb-4 leading-relaxed">
-          Your private space for thoughts, ideas, and knowledge. Everything stays local and secure on your device.
+          {hasNotes
+            ? '从左侧选择内容继续编辑，或创建一篇新笔记。'
+            : '记录想法、过程和结论，内容会保存在本地设备上。'}
         </p>
+        <div className="mb-5 flex flex-wrap justify-center gap-2">
+          <button onClick={onCreate} className="rounded-lg bg-accent-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">
+            新建空白笔记
+          </button>
+          <button onClick={onCreateFromTemplate} className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-light-primary hover:border-accent-primary dark:border-border-dark dark:text-text-dark-primary">
+            从模板创建
+          </button>
+        </div>
         <div className="space-y-2 text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
           <p className="flex items-center justify-center gap-2">
-            <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded font-mono text-xs">Cmd+N</kbd>
-            Create new note
+            <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded font-mono text-xs">Ctrl/Cmd+N</kbd>
+            新建笔记
           </p>
           <p className="flex items-center justify-center gap-2">
-            <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded font-mono text-xs">Cmd+K</kbd>
-            Search notes
+            <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded font-mono text-xs">Ctrl/Cmd+K</kbd>
+            搜索笔记
           </p>
         </div>
       </div>

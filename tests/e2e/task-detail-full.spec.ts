@@ -42,7 +42,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Description ---
 
   test('can add a description', async ({ page }) => {
-    const descInput = page.getByPlaceholder('Add a description...');
+    const descInput = page.getByPlaceholder('添加描述…');
     if (await descInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await descInput.click();
       await descInput.fill('This is a detailed task description for testing.');
@@ -55,10 +55,10 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Tags ---
 
   test('can add a tag', async ({ page }) => {
-    const tagInput = page.getByPlaceholder('Add a tag...');
+    const tagInput = page.getByPlaceholder('添加标签…');
     if (await tagInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tagInput.fill('e2e-test');
-      const addBtn = page.getByRole('button', { name: 'Add', exact: true }).last();
+      const addBtn = page.getByRole('button', { name: '添加', exact: true }).last();
       await addBtn.click();
       await page.waitForTimeout(300);
       await expect(page.getByText('e2e-test')).toBeVisible();
@@ -68,14 +68,14 @@ test.describe('Task Detail Panel — Full Interactions', () => {
 
   test('can remove a tag', async ({ page }) => {
     // Add a tag first
-    const tagInput = page.getByPlaceholder('Add a tag...');
+    const tagInput = page.getByPlaceholder('添加标签…');
     if (await tagInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tagInput.fill('removable');
-      await page.getByRole('button', { name: 'Add', exact: true }).last().click();
+      await page.getByRole('button', { name: '添加', exact: true }).last().click();
       await page.waitForTimeout(300);
 
       // Remove it
-      const removeBtn = page.locator('[aria-label="Remove tag removable"]');
+      const removeBtn = page.locator('[aria-label="移除标签 removable"]');
       if (await removeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
         await removeBtn.click();
         await page.waitForTimeout(300);
@@ -128,7 +128,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Time Estimate ---
 
   test('can set time estimate', async ({ page }) => {
-    const timeInput = page.getByPlaceholder('e.g., 4.5');
+    const timeInput = page.getByPlaceholder('例如：4.5');
     if (await timeInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await timeInput.fill('3.5');
       await page.waitForTimeout(200);
@@ -151,12 +151,12 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Timer ---
 
   test('can start and stop timer', async ({ page }) => {
-    const startBtn = page.getByRole('button', { name: /Start Timer/ });
+    const startBtn = page.getByRole('button', { name: /开始计时/ });
     if (await startBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await startBtn.click();
       await page.waitForTimeout(500);
 
-      const stopBtn = page.getByRole('button', { name: /Stop Timer/ });
+      const stopBtn = page.getByRole('button', { name: /停止计时/ });
       if (await stopBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await stopBtn.click();
         await page.waitForTimeout(300);
@@ -168,7 +168,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Recurrence ---
 
   test('can add recurrence', async ({ page }) => {
-    const addRecurrenceBtn = page.getByRole('button', { name: /Add Recurrence/ });
+    const addRecurrenceBtn = page.getByRole('button', { name: /添加重复/ });
     if (await addRecurrenceBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addRecurrenceBtn.click();
       await page.waitForTimeout(300);
@@ -179,7 +179,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Save as Template ---
 
   test('has save as template button', async ({ page }) => {
-    const templateBtn = page.getByRole('button', { name: /Save as Template/ });
+    const templateBtn = page.getByRole('button', { name: /另存为模板/ });
     if (await templateBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(templateBtn).toBeVisible();
     }
@@ -189,7 +189,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   // --- Tabs ---
 
   test('can switch to Subtasks tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: /Subtasks/ });
+    const tab = page.getByRole('button', { name: /子任务/ });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);
@@ -198,7 +198,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   });
 
   test('can switch to Checklist tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: 'Checklist', exact: true });
+    const tab = page.getByRole('button', { name: '清单', exact: true });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);
@@ -207,7 +207,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   });
 
   test('can switch to Comments tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: 'Comments', exact: true });
+    const tab = page.getByRole('button', { name: '评论', exact: true });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);
@@ -216,7 +216,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   });
 
   test('can switch to Activity tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: 'Activity', exact: true });
+    const tab = page.getByRole('button', { name: '动态', exact: true });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);
@@ -225,7 +225,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   });
 
   test('can switch to Time tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: 'Time', exact: true });
+    const tab = page.getByRole('button', { name: '时间', exact: true });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);
@@ -234,7 +234,7 @@ test.describe('Task Detail Panel — Full Interactions', () => {
   });
 
   test('can switch to Attachments tab', async ({ page }) => {
-    const tab = page.getByRole('button', { name: /Attachments/ });
+    const tab = page.getByRole('button', { name: /附件/ });
     if (await tab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await tab.click();
       await page.waitForTimeout(300);

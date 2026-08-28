@@ -10,7 +10,7 @@ export interface ConfettiOptions {
 }
 
 /**
- * Brand colors for confetti (from NeumanOS design system)
+ * Brand colors for confetti (from LifeOS design system)
  */
 const BRAND_COLORS = [
   '#FF006E', // Magenta

@@ -10,8 +10,10 @@ interface YouTubeWidgetProps {
   widgetId?: string;
 }
 
+const EMPTY_CHANNELS: string[] = [];
+
 export const YouTubeWidget: React.FC<YouTubeWidgetProps> = ({ widgetId = 'youtube' }) => {
-  const channels = useWidgetStore((state) => state.widgetSettings[widgetId]?.channels) || [];
+  const channels = useWidgetStore((state) => state.widgetSettings[widgetId]?.channels ?? EMPTY_CHANNELS);
   const updateWidgetSettings = useWidgetStore((state) => state.updateWidgetSettings);
   const [input, setInput] = useState('');
 
@@ -39,7 +41,7 @@ export const YouTubeWidget: React.FC<YouTubeWidgetProps> = ({ widgetId = 'youtub
             className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
           />
           <button onClick={addChannel} className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth">
-            Add
+            添加
           </button>
         </div>
 
@@ -50,7 +52,7 @@ export const YouTubeWidget: React.FC<YouTubeWidgetProps> = ({ widgetId = 'youtub
                 {channel}
               </a>
               <button onClick={() => removeChannel(channel)} className="text-xs text-status-error hover:underline">
-                Remove
+                移除
               </button>
             </div>
           ))}
@@ -58,7 +60,7 @@ export const YouTubeWidget: React.FC<YouTubeWidgetProps> = ({ widgetId = 'youtub
 
         {channels.length === 0 && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Add YouTube channels to track
+            添加要关注的 YouTube 频道
           </p>
         )}
       </div>

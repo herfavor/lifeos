@@ -38,6 +38,16 @@ const elementTypeIcons: Record<string, React.ReactNode> = {
   shape: <Shapes className="w-4 h-4" />,
 };
 
+const elementTypeLabels: Record<string, string> = {
+  rectangle: '矩形',
+  circle: '圆形',
+  ellipse: '椭圆',
+  text: '文本',
+  line: '直线',
+  arrow: '箭头',
+  shape: '形状',
+};
+
 export function LayerPanel({
   elements,
   selectedElementIds,
@@ -163,7 +173,7 @@ export function LayerPanel({
     if (element.text) {
       return element.text.length > 20 ? element.text.substring(0, 20) + '...' : element.text;
     }
-    return `${element.type.charAt(0).toUpperCase() + element.type.slice(1)}`;
+    return elementTypeLabels[element.type] || element.type;
   };
 
   return (
@@ -183,12 +193,12 @@ export function LayerPanel({
           absolute top-3 z-10 p-1.5
           bg-surface-light dark:bg-surface-dark
           border border-border-light dark:border-border-dark
-          hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark
+          hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated
           rounded-l transition-all duration-300
           -left-8
         "
-        aria-label={isOpen ? 'Close layer panel' : 'Open layer panel'}
-        title={isOpen ? 'Close layers' : 'Open layers'}
+        aria-label={isOpen ? '关闭图层面板' : '打开图层面板'}
+        title={isOpen ? '关闭图层' : '打开图层'}
       >
         <ChevronRight className={`w-4 h-4 transition-transform ${isOpen ? '' : 'rotate-180'}`} />
       </button>
@@ -198,7 +208,7 @@ export function LayerPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark shrink-0">
           <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary whitespace-nowrap">
-            Layers
+            图层
           </h3>
         </div>
 
@@ -206,7 +216,7 @@ export function LayerPanel({
       <div className="flex-1 overflow-y-auto p-2">
         {sortedElements.length === 0 ? (
           <div className="text-center py-8 text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-            No layers
+            暂无图层
           </div>
         ) : (
           <div className="space-y-1">
@@ -222,11 +232,11 @@ export function LayerPanel({
                   group flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors
                   ${
                     selectedElementIds.includes(element.id)
-                      ? 'bg-primary-light/20 dark:bg-primary-dark/20 border-2 border-primary-light dark:border-primary-dark'
-                      : 'border-2 border-transparent hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                      ? 'bg-accent-primary/20 border-2 border-accent-primary'
+                      : 'border-2 border-transparent hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }
                   ${element.hidden ? 'opacity-50' : ''}
-                  ${dragOverElement === element.id ? 'ring-2 ring-primary-light dark:ring-primary-dark' : ''}
+                  ${dragOverElement === element.id ? 'ring-2 ring-accent-primary' : ''}
                 `}
               >
                 {/* Element Icon */}
@@ -245,15 +255,15 @@ export function LayerPanel({
                 </div>
 
                 {/* Controls (show on hover) */}
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity shrink-0">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleToggleVisibility(element.id);
                     }}
                     className="p-1 hover:bg-surface-light dark:hover:bg-surface-dark rounded"
-                    aria-label={element.hidden ? 'Show layer' : 'Hide layer'}
-                    title={element.hidden ? 'Show' : 'Hide'}
+                    aria-label={element.hidden ? '显示图层' : '隐藏图层'}
+                    title={element.hidden ? '显示' : '隐藏'}
                   >
                     {element.hidden ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -263,8 +273,8 @@ export function LayerPanel({
                       handleToggleLock(element.id);
                     }}
                     className="p-1 hover:bg-surface-light dark:hover:bg-surface-dark rounded"
-                    aria-label={element.locked ? 'Unlock layer' : 'Lock layer'}
-                    title={element.locked ? 'Unlock' : 'Lock'}
+                    aria-label={element.locked ? '解锁图层' : '锁定图层'}
+                    title={element.locked ? '解锁' : '锁定'}
                   >
                     {element.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
                   </button>
@@ -279,32 +289,32 @@ export function LayerPanel({
       {sortedElements.length > 0 && selectedElementIds.length > 0 && (
         <div className="p-2 border-t border-border-light dark:border-border-dark shrink-0">
           <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mb-2 px-1">
-            Z-Order Actions
+            层级顺序操作
           </div>
           <div className="grid grid-cols-2 gap-1">
             <button
               onClick={() => selectedElementIds.forEach(handleBringToFront)}
-              className="px-2 py-1.5 text-xs bg-surface-hover-light dark:bg-surface-hover-dark hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
+              className="px-2 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
             >
-              To Front
+              置顶
             </button>
             <button
               onClick={() => selectedElementIds.forEach(handleSendToBack)}
-              className="px-2 py-1.5 text-xs bg-surface-hover-light dark:bg-surface-hover-dark hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
+              className="px-2 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
             >
-              To Back
+              置底
             </button>
             <button
               onClick={() => selectedElementIds.forEach(handleMoveForward)}
-              className="px-2 py-1.5 text-xs bg-surface-hover-light dark:bg-surface-hover-dark hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
+              className="px-2 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
             >
-              Forward
+              前移
             </button>
             <button
               onClick={() => selectedElementIds.forEach(handleMoveBackward)}
-              className="px-2 py-1.5 text-xs bg-surface-hover-light dark:bg-surface-hover-dark hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
+              className="px-2 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded transition-colors"
             >
-              Backward
+              后移
             </button>
           </div>
         </div>

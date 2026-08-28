@@ -21,10 +21,10 @@ interface SpreadsheetChartDialogProps {
 }
 
 const CHART_TYPES: { type: SpreadsheetChartType; label: string; icon: typeof BarChart2 }[] = [
-  { type: 'bar', label: 'Bar Chart', icon: BarChart2 },
-  { type: 'line', label: 'Line Chart', icon: LineChart },
-  { type: 'pie', label: 'Pie Chart', icon: PieChart },
-  { type: 'scatter', label: 'Scatter Plot', icon: Activity },
+  { type: 'bar', label: '柱状图', icon: BarChart2 },
+  { type: 'line', label: '折线图', icon: LineChart },
+  { type: 'pie', label: '饼图', icon: PieChart },
+  { type: 'scatter', label: '散点图', icon: Activity },
 ];
 
 const DEFAULT_COLORS = [
@@ -45,7 +45,7 @@ export function SpreadsheetChartDialog({
   const [chartType, setChartType] = useState<SpreadsheetChartType>(
     editChart?.type || 'bar'
   );
-  const [title, setTitle] = useState(editChart?.title || 'Chart');
+  const [title, setTitle] = useState(editChart?.title || '图表');
   const [dataRange, setDataRange] = useState(
     editChart?.dataRange || selectionRange || 'A1:B10'
   );
@@ -81,7 +81,7 @@ export function SpreadsheetChartDialog({
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {editChart ? 'Edit Chart' : 'Insert Chart'}
+            {editChart ? '编辑图表' : '插入图表'}
           </h2>
           <button
             onClick={onCancel}
@@ -96,7 +96,7 @@ export function SpreadsheetChartDialog({
           {/* Chart Type Selection */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Chart Type
+              图表类型
             </label>
             <div className="grid grid-cols-4 gap-2">
               {CHART_TYPES.map(({ type, label, icon: Icon }) => (
@@ -119,13 +119,13 @@ export function SpreadsheetChartDialog({
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Chart Title
+              图表标题
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter chart title"
+              placeholder="输入图表标题"
               className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
             />
           </div>
@@ -133,24 +133,24 @@ export function SpreadsheetChartDialog({
           {/* Data Range */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Data Range
+              数据范围
             </label>
             <input
               type="text"
               value={dataRange}
               onChange={(e) => setDataRange(e.target.value.toUpperCase())}
-              placeholder="e.g., A1:C10"
+              placeholder="例如：A1:C10"
               className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary font-mono"
             />
             <p className="mt-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              Select cells containing your data (e.g., A1:C10)
+              选择包含数据的单元格（例如：A1:C10）
             </p>
           </div>
 
           {/* Label Column */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Label Column (optional)
+              标签列（可选）
             </label>
             <input
               type="number"
@@ -158,12 +158,12 @@ export function SpreadsheetChartDialog({
               onChange={(e) =>
                 setLabelColumn(e.target.value ? parseInt(e.target.value, 10) : undefined)
               }
-              placeholder="First column (0)"
+              placeholder="第一列 (0)"
               min={0}
               className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
             />
             <p className="mt-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              Column to use for chart labels (0 = first column)
+              用于图表标签的列（0 = 第一列）
             </p>
           </div>
 
@@ -177,7 +177,7 @@ export function SpreadsheetChartDialog({
                 className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-accent-primary"
               />
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Show Legend
+                显示图例
               </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -188,7 +188,7 @@ export function SpreadsheetChartDialog({
                 className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-accent-primary"
               />
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Show Grid
+                显示网格
               </span>
             </label>
           </div>
@@ -200,13 +200,13 @@ export function SpreadsheetChartDialog({
             onClick={onCancel}
             className="px-4 py-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleSave}
             className="px-4 py-2 text-sm font-medium text-white bg-accent-primary hover:bg-accent-primary/90 rounded-lg transition-colors"
           >
-            {editChart ? 'Save Changes' : 'Insert Chart'}
+            {editChart ? '保存更改' : '插入图表'}
           </button>
         </div>
       </div>

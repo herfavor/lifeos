@@ -1,76 +1,43 @@
 import React, { useState } from 'react';
 import { Modal } from './Modal';
 import { useThemeStore } from '../stores/useThemeStore';
+import { APP_NAME, APP_REPO_URL, APP_ISSUES_URL } from '../config/appInfo';
 
 interface PrivacyModalProps {
   onClose: () => void;
 }
 
-const PLATFORM_NAME = 'NeumanOS';
-const PLATFORM_URL = 'https://os.neuman.dev';
-
 const LINK_CLASS = 'text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth';
-
-/**
- * Renders content with platform name as a clickable link
- */
-function renderContentWithLinks(text: string): React.ReactNode {
-  const regex = new RegExp(`(${PLATFORM_NAME.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g');
-  const parts = text.split(regex);
-
-  return parts.map((part, index) => {
-    if (part === PLATFORM_NAME) {
-      return (
-        <a
-          key={index}
-          href={PLATFORM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={LINK_CLASS}
-        >
-          {PLATFORM_NAME}
-        </a>
-      );
-    }
-    return <React.Fragment key={index}>{part}</React.Fragment>;
-  });
-}
 
 /**
  * Privacy & Terms Modal
  * Displays Privacy Policy and Terms & Conditions in a modal format.
- * Matches the layout and styling of the About modal for consistency.
  */
 export const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
   const [selectedTab, setSelectedTab] = useState<'privacy' | 'terms'>('privacy');
   const mode = useThemeStore((s) => s.mode);
-  const logoSrc = mode === 'dark' ? '/images/logos/logo_white.png' : '/images/logos/logo_black.png';
+  const logoSrc = mode === 'dark' ? '/images/logos/lifeos-logo-white.svg' : '/images/logos/lifeos-logo.svg';
 
   return (
     <Modal
       isOpen={true}
-      title="Privacy & Terms"
+      title="隐私与条款"
       onClose={onClose}
       maxWidth="2xl"
     >
       <div className="space-y-4">
         {/* Logo Header */}
         <div className="flex flex-col items-center gap-2">
-          <div className="w-3/5 overflow-hidden">
+          <div className="w-3/5 max-w-[240px] overflow-hidden">
             <img
               src={logoSrc}
-              alt="NeumanOS Logo"
+              alt="LifeOS Logo"
               className="w-full h-auto object-contain"
             />
           </div>
-          <a
-            href={PLATFORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${LINK_CLASS} text-sm font-medium`}
-          >
-            {PLATFORM_NAME}
-          </a>
+          <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+            {APP_NAME}
+          </span>
         </div>
 
         {/* Tab Selector */}
@@ -83,8 +50,8 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
                 : 'bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }`}
           >
-            <span className="hidden sm:inline">Privacy Policy</span>
-            <span className="sm:hidden">Privacy</span>
+            <span className="hidden sm:inline">隐私政策</span>
+            <span className="sm:hidden">隐私</span>
           </button>
           <button
             onClick={() => setSelectedTab('terms')}
@@ -94,18 +61,18 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
                 : 'bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }`}
           >
-            <span className="hidden sm:inline">Terms & Conditions</span>
-            <span className="sm:hidden">Terms</span>
+            <span className="hidden sm:inline">条款与条件</span>
+            <span className="sm:hidden">条款</span>
           </button>
         </div>
 
         {/* Content Title */}
         <div className="text-center">
           <h3 className="text-base sm:text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {selectedTab === 'privacy' ? 'Privacy Policy' : 'Terms & Conditions'}
+            {selectedTab === 'privacy' ? '隐私政策' : '条款与条件'}
           </h3>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            {selectedTab === 'privacy' ? 'Last updated: November 16, 2025' : 'Coming Soon'}
+            {selectedTab === 'privacy' ? 'LifeOS 是一个无后端、零数据上传的本地应用' : '即将推出'}
           </p>
         </div>
 
@@ -122,18 +89,20 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
         <div className="border-t border-border-light dark:border-border-dark pt-3 mt-4">
           <div className="flex flex-wrap gap-3 justify-center text-xs">
             <a
-              href={PLATFORM_URL}
+              href={APP_ISSUES_URL}
               target="_blank"
               rel="noopener noreferrer"
               className={LINK_CLASS}
             >
-              Official Website
+              问题反馈（GitHub Issues）
             </a>
             <a
-              href="mailto:os@neuman.dev"
+              href={APP_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={LINK_CLASS}
             >
-              Contact
+              源代码
             </a>
           </div>
         </div>
@@ -152,161 +121,73 @@ const PrivacyContent: React.FC = () => (
       <h4 className="text-sm font-semibold mb-1">TL;DR</h4>
       <div className="bg-accent-blue/10 border-l-4 border-accent-blue rounded-r p-2">
         <p className="text-xs">
-          <strong>We respect your privacy.</strong> We use Cloudflare Web Analytics (privacy-focused, no cookies, no tracking)
-          to understand basic site usage. All your personal data stays on YOUR device. We never sell or share anything.
+          <strong>你的数据属于你。</strong>LifeOS 是一个完全运行在浏览器里的本地应用：
+          没有账户、没有服务器、没有分析统计、没有遥测。你创建的所有内容都只保存在你自己的设备上。
         </p>
       </div>
     </section>
 
     {/* Local-First Philosophy */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">🔒 Local-First Philosophy</h4>
+      <h4 className="text-sm font-semibold mb-1">🔒 本地优先理念</h4>
       <p className="mb-1 text-xs">
-        <strong>Your data belongs to you.</strong> Everything you create in {renderContentWithLinks('NeumanOS')} stays on your device:
+        <strong>你的数据属于你。</strong>你在 LifeOS 中创建的所有内容都保存在你的设备上：
       </p>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        <li>Notes, tasks, calendar events, kanban boards - all stored locally in IndexedDB</li>
-        <li>No cloud storage, no servers, no databases we control</li>
-        <li>Backups saved to YOUR computer (optional auto-save to folder you choose)</li>
-        <li>Export your data anytime (.brain file format) - you own it 100%</li>
+        <li>笔记、任务、日历事件、看板 - 全部存储在本地 IndexedDB 中</li>
+        <li>无云存储、无服务器、无远程数据库</li>
+        <li>备份保存到你的电脑（可选自动保存到你选择的文件夹）</li>
+        <li>随时导出你的数据（.brain 文件格式）- 100% 归你所有</li>
       </ul>
     </section>
 
-    {/* Analytics Section */}
+    {/* Zero Telemetry */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📊 Analytics (Cloudflare Web Analytics)</h4>
-      <p className="mb-2 text-xs">
-        We use <strong>Cloudflare Web Analytics</strong> to understand how our site is used.
-        This helps us improve the experience for everyone.
+      <h4 className="text-sm font-semibold mb-1">📵 零遥测承诺</h4>
+      <p className="mb-1 text-xs">LifeOS 不包含任何形式的统计或追踪：</p>
+      <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
+        <li>无网站分析（无 Google Analytics，无 Cloudflare Analytics）</li>
+        <li>无 Cookie 或追踪标识</li>
+        <li>无崩溃上报、无使用埋点</li>
+        <li>无广告网络、无会话录制</li>
+        <li>应用不向任何服务器发送你的个人数据</li>
+      </ul>
+      <p className="mt-1 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
+        唯一的例外是你主动启用的功能：例如天气组件会向你选择的公共服务（如 Open-Meteo）发起请求，
+        AI 功能直接连接你自己配置的 AI 服务商。这些请求由你的浏览器直接发出，不经过 LifeOS 的任何中间服务器。
       </p>
-
-      <div className="space-y-2">
-        <div className="bg-accent-green/10 border border-accent-green/30 rounded-lg p-2">
-          <h5 className="font-semibold text-accent-green mb-1 text-xs">
-            ✅ What we collect (aggregate data only):
-          </h5>
-          <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-            <li>Page views and session duration</li>
-            <li>Referrer information</li>
-            <li>Browser type and device category</li>
-            <li>Country-level geographic data (not city, not IP)</li>
-            <li>Page load performance metrics</li>
-          </ul>
-        </div>
-
-        <div className="bg-accent-red/10 border border-accent-red/30 rounded-lg p-2">
-          <h5 className="font-semibold text-accent-red mb-1 text-xs">
-            ❌ What we DON'T collect:
-          </h5>
-          <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-            <li>No cookies or tracking identifiers</li>
-            <li>No personal information (email, name, etc.)</li>
-            <li>No cross-site tracking</li>
-            <li>No individual user tracking or fingerprinting</li>
-            <li>No IP addresses (anonymized by Cloudflare)</li>
-          </ul>
-        </div>
-
-        <div className="bg-accent-blue/10 border border-accent-blue/30 rounded-lg p-2">
-          <h5 className="font-semibold text-accent-blue mb-1 text-xs">
-            Why Cloudflare Analytics?
-          </h5>
-          <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-            <li>Privacy-focused (no cookies, no fingerprinting)</li>
-            <li>GDPR/CCPA compliant</li>
-            <li>Minimal data collection (aggregate metrics only)</li>
-            <li>Helps us understand what content is valuable</li>
-          </ul>
-        </div>
-      </div>
     </section>
 
-    {/* Data Processing */}
+    {/* AI Keys */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">🔐 How Your Data is Processed</h4>
-      <p className="mb-1 text-xs">All analytics data collected is:</p>
+      <h4 className="text-sm font-semibold mb-1">🔑 AI 密钥的处理</h4>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        <li><strong>Anonymized</strong> at collection time (IP addresses never stored)</li>
-        <li><strong>Aggregated</strong> (no individual user profiles)</li>
-        <li><strong>Used solely for improving this site</strong></li>
-        <li><strong>Never sold or shared</strong> with third parties</li>
-        <li>
-          <strong>Processed by Cloudflare</strong> (
-          <a
-            href="https://www.cloudflare.com/privacypolicy/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={LINK_CLASS}
-          >
-            privacy policy
-          </a>
-          )
-        </li>
+        <li>API 密钥加密后仅存储在你的浏览器本地</li>
+        <li>请求由浏览器直接发送给你选择的服务商（OpenAI、Anthropic、Ollama 等）</li>
+        <li>LifeOS 没有服务器，因此永远看不到、存不到、也转不了你的对话内容</li>
       </ul>
     </section>
 
     {/* Your Rights */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">⚖️ Your Privacy Rights</h4>
-      <p className="mb-1 text-xs">You have full control:</p>
+      <h4 className="text-sm font-semibold mb-1">⚖️ 你的权利</h4>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        <li><strong>Block analytics:</strong> Use browser extensions like uBlock Origin or Privacy Badger</li>
-        <li><strong>Enhanced Tracking Protection:</strong> Firefox blocks Cloudflare Analytics by default with ETP</li>
-        <li><strong>No opt-out needed:</strong> No cookies means no consent banner required</li>
-        <li><strong>Export your data:</strong> Download all your personal data anytime (Settings → Export Backup)</li>
-        <li><strong>Delete your data:</strong> Clear browser storage (Settings → Clear All Data)</li>
+        <li><strong>导出数据：</strong>随时下载你的所有个人数据（设置 → 导出备份）</li>
+        <li><strong>删除数据：</strong>清除浏览器存储（设置 → 清除所有数据）</li>
+        <li><strong>审计源码：</strong>LifeOS 以 MIT 许可证开源，数据处理方式完全透明</li>
       </ul>
-    </section>
-
-    {/* No Third Parties */}
-    <section>
-      <h4 className="text-sm font-semibold mb-1">🚫 No Third-Party Trackers</h4>
-      <p className="mb-1 text-xs">We do <strong>NOT</strong> use:</p>
-      <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        <li>Google Analytics</li>
-        <li>Facebook Pixel</li>
-        <li>Ad networks (no ads, period)</li>
-        <li>Session recording tools</li>
-        <li>Marketing automation</li>
-      </ul>
-      <p className="mt-1 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        Just Cloudflare Web Analytics for basic, anonymous usage stats. That's it.
-      </p>
-    </section>
-
-    {/* Changes to Policy */}
-    <section>
-      <h4 className="text-sm font-semibold mb-1">📝 Changes to This Policy</h4>
-      <p className="text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        If we make material changes to this privacy policy, we'll update the "Last updated" date.
-        We'll never make changes that violate our privacy-first philosophy without prominently notifying you.
-      </p>
     </section>
 
     {/* Contact */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📧 Questions?</h4>
+      <h4 className="text-sm font-semibold mb-1">📧 有问题？</h4>
       <p className="text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        Have questions about privacy? Email us at{' '}
-        <a href="mailto:os@neuman.dev" className={LINK_CLASS}>
-          os@neuman.dev
+        对隐私有疑问？请前往{' '}
+        <a href={APP_ISSUES_URL} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
+          GitHub Issues
         </a>{' '}
-        or check the Settings page for data export/backup options.
+        提出问题，或前往设置页面查看数据导出/备份选项。
       </p>
-    </section>
-
-    {/* Philosophy Footer */}
-    <section className="border-t border-border-light dark:border-border-dark pt-3 mt-3">
-      <div className="bg-gradient-to-r from-accent-primary/10 to-accent-secondary/10 rounded-lg p-3">
-        <h5 className="font-semibold mb-1 text-xs">💡 Our Privacy Philosophy</h5>
-        <p className="italic text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-          "Your data is yours. We build tools that respect that. If we ever compromise on privacy,
-          we've lost our way."
-        </p>
-        <p className="mt-1 text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-          — Travis Neuman, Creator of {renderContentWithLinks('NeumanOS')}
-        </p>
-      </div>
     </section>
   </div>
 );
@@ -319,49 +200,49 @@ const TermsContent: React.FC = () => (
     {/* Coming Soon Notice */}
     <section>
       <div className="bg-accent-primary/10 border-l-4 border-accent-primary rounded-r p-3">
-        <h4 className="text-sm font-semibold mb-1">Terms & Conditions</h4>
+        <h4 className="text-sm font-semibold mb-1">条款与条件</h4>
         <p className="text-text-light-secondary dark:text-text-dark-secondary text-xs">
-          Our full Terms & Conditions and Licensing information is currently being drafted.
-          This section will be updated soon with complete details about:
+          完整条款与许可信息目前正在起草中。
+          本部分将很快更新，包含以下方面的完整详情：
         </p>
       </div>
     </section>
 
     {/* Upcoming Content */}
     <section>
-      <h4 className="text-sm font-semibold mb-2">📋 What to Expect</h4>
+      <h4 className="text-sm font-semibold mb-2">📋 你将看到的内容</h4>
       <ul className="list-disc ml-4 space-y-1 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        <li><strong>Terms of Service:</strong> Guidelines for using {renderContentWithLinks('NeumanOS')}</li>
-        <li><strong>Licensing:</strong> Software licensing terms and open-source attributions</li>
-        <li><strong>User Responsibilities:</strong> Your rights and responsibilities as a user</li>
-        <li><strong>Disclaimer:</strong> Warranty and liability information</li>
-        <li><strong>Data Ownership:</strong> Confirmation that your data belongs to you</li>
+        <li><strong>使用条款：</strong>使用 LifeOS 的指南</li>
+        <li><strong>许可：</strong>软件许可条款和开源声明（MIT License）</li>
+        <li><strong>用户责任：</strong>你作为用户的权利和责任</li>
+        <li><strong>免责声明：</strong>保修和责任信息</li>
+        <li><strong>数据所有权：</strong>确认你的数据归你所有</li>
       </ul>
     </section>
 
     {/* Core Principles Preview */}
     <section>
-      <h4 className="text-sm font-semibold mb-2">🎯 Our Guiding Principles</h4>
+      <h4 className="text-sm font-semibold mb-2">🎯 我们的指导原则</h4>
       <p className="mb-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-        While the full terms are being finalized, here are the core principles that will guide them:
+        在完整条款敲定之前，以下是指导这些条款的核心原则：
       </p>
       <div className="space-y-2">
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">🔒 Your Data, Your Control</p>
+          <p className="text-xs font-medium">🔒 你的数据，你的掌控</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            All data stays on your device. We cannot access, view, or sell your information.
+            所有数据都保存在你的设备上。LifeOS 没有服务器，无法访问、查看或出售你的信息。
           </p>
         </div>
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">📤 Full Portability</p>
+          <p className="text-xs font-medium">📤 完全可移植性</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            Export your data anytime in standard formats. No lock-in, ever.
+            随时以标准格式导出你的数据。绝无锁定。
           </p>
         </div>
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">🚫 No Hidden Agendas</p>
+          <p className="text-xs font-medium">🚫 无隐藏意图</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            No ads, no tracking, no selling your attention to the highest bidder.
+            无广告、无追踪、不把你的注意力卖给最高出价者。
           </p>
         </div>
       </div>
@@ -369,11 +250,11 @@ const TermsContent: React.FC = () => (
 
     {/* Contact for Questions */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📧 Questions?</h4>
+      <h4 className="text-sm font-semibold mb-1">📧 有问题？</h4>
       <p className="text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
-        Have questions about our terms or licensing? Email us at{' '}
-        <a href="mailto:os@neuman.dev" className={LINK_CLASS}>
-          os@neuman.dev
+        对我们的条款或许可存有疑问？请前往{' '}
+        <a href={APP_ISSUES_URL} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
+          GitHub Issues
         </a>
       </p>
     </section>

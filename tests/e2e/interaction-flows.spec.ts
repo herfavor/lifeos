@@ -23,14 +23,14 @@ test.describe('Task Lifecycle Flow', () => {
     await page.getByText('Lifecycle Test Task').click();
     await page.waitForTimeout(300);
 
-    const descInput = page.getByPlaceholder('Add a description...');
+    const descInput = page.getByPlaceholder('添加描述…');
     if (await descInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await descInput.fill('Added description during lifecycle test');
       await page.waitForTimeout(300);
     }
 
     // Set priority
-    const prioritySelect = page.locator('select').filter({ has: page.locator('option', { hasText: 'High' }) }).first();
+    const prioritySelect = page.locator('select').filter({ has: page.locator('option', { hasText: '高' }) }).first();
     if (await prioritySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
       await prioritySelect.selectOption('high');
       await page.waitForTimeout(200);
@@ -51,18 +51,18 @@ test.describe('Task Lifecycle Flow', () => {
     await page.waitForTimeout(300);
 
     // Switch to Subtasks tab
-    const subtasksTab = page.getByRole('tab', { name: 'Subtasks' });
+    const subtasksTab = page.getByRole('tab', { name: '子任务' });
     if (await subtasksTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await subtasksTab.click();
       await page.waitForTimeout(300);
 
       // Add a subtask
-      const addBtn = page.getByRole('button', { name: /add.*subtask|\+/i }).first();
+      const addBtn = page.getByRole('button', { name: /添加子任务|\+/i }).first();
       if (await addBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await addBtn.click();
         await page.waitForTimeout(200);
 
-        const input = page.getByPlaceholder(/subtask|title/i).first();
+        const input = page.getByPlaceholder(/子任务|标题/i).first();
         if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
           await input.fill('Child Subtask');
           await page.keyboard.press('Enter');
@@ -81,17 +81,17 @@ test.describe('Task Lifecycle Flow', () => {
     await page.getByText('Checklist Task').click();
     await page.waitForTimeout(300);
 
-    const checklistTab = page.getByRole('tab', { name: 'Checklist' });
+    const checklistTab = page.getByRole('tab', { name: '清单' });
     if (await checklistTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await checklistTab.click();
       await page.waitForTimeout(300);
 
-      const addBtn = page.getByRole('button', { name: /add.*item|\+/i }).first();
+      const addBtn = page.getByRole('button', { name: /添加|\+/i }).first();
       if (await addBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await addBtn.click();
         await page.waitForTimeout(200);
 
-        const input = page.getByPlaceholder(/item|checklist/i).first();
+        const input = page.getByPlaceholder(/项目/).first();
         if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
           await input.fill('First checklist item');
           await page.keyboard.press('Enter');
@@ -112,7 +112,7 @@ test.describe('Note Editor Flow', () => {
   });
 
   test('create note with formatting', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*note|create.*note|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建笔记|创建新笔记|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -140,7 +140,7 @@ test.describe('Note Editor Flow', () => {
 
   test('create note with wiki link', async ({ page }) => {
     // First create a target note
-    const newBtn = page.getByRole('button', { name: /new.*note|create.*note|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建笔记|创建新笔记|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -170,7 +170,7 @@ test.describe('Calendar Event Flow', () => {
   });
 
   test('create event with all fields', async ({ page }) => {
-    const createBtn = page.getByRole('button', { name: /create.*event|add.*event|new.*event|\+/i }).first();
+    const createBtn = page.getByRole('button', { name: /新建事件|\+/i }).first();
     if (await createBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createBtn.click();
       await page.waitForTimeout(300);
@@ -187,13 +187,13 @@ test.describe('Calendar Event Flow', () => {
         }
 
         // Fill location
-        const locationInput = page.getByPlaceholder(/meeting room|video call|location/i);
+        const locationInput = page.getByPlaceholder(/会议室|视频会议|地址/);
         if (await locationInput.isVisible({ timeout: 1000 }).catch(() => false)) {
           await locationInput.fill('Conference Room A');
         }
 
         // Submit
-        const submitBtn = page.getByRole('button', { name: /create.*event/i });
+        const submitBtn = page.getByRole('button', { name: /创建事件/ });
         if (await submitBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
           await submitBtn.click();
           await page.waitForTimeout(500);
@@ -204,7 +204,7 @@ test.describe('Calendar Event Flow', () => {
   });
 
   test('create all-day event', async ({ page }) => {
-    const createBtn = page.getByRole('button', { name: /create.*event|add.*event|new.*event|\+/i }).first();
+    const createBtn = page.getByRole('button', { name: /新建事件|\+/i }).first();
     if (await createBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createBtn.click();
       await page.waitForTimeout(300);
@@ -220,7 +220,7 @@ test.describe('Calendar Event Flow', () => {
           await page.waitForTimeout(200);
         }
 
-        const submitBtn = page.getByRole('button', { name: /create.*event/i });
+        const submitBtn = page.getByRole('button', { name: /创建事件/ });
         if (await submitBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
           await submitBtn.click();
           await page.waitForTimeout(500);
@@ -238,28 +238,28 @@ test.describe('Form Builder Flow', () => {
   });
 
   test('create form with multiple field types', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
 
       // Set form title
-      const titleInput = page.getByPlaceholder('Form Title');
+      const titleInput = page.getByPlaceholder('表单标题');
       if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await titleInput.fill('Multi-Field Test Form');
 
         // Add a text field
-        const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+        const addFieldBtn = page.getByRole('button', { name: '添加字段' });
         if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
           await addFieldBtn.click();
           await page.waitForTimeout(300);
 
-          const labelInput = page.getByPlaceholder(/How many hours/).first();
+          const labelInput = page.getByPlaceholder(/几个小时/).first();
           if (await labelInput.isVisible({ timeout: 2000 }).catch(() => false)) {
             await labelInput.fill('Name');
 
             // Submit field
-            const submitField = page.getByRole('button', { name: 'Add Field' }).last();
+            const submitField = page.getByRole('button', { name: '添加字段' }).last();
             if (await submitField.isVisible({ timeout: 1000 }).catch(() => false)) {
               await submitField.click();
               await page.waitForTimeout(300);
@@ -276,10 +276,10 @@ test.describe('Form Builder Flow', () => {
               await typeSelect.selectOption('number');
               await page.waitForTimeout(200);
 
-              const labelInput2 = page.getByPlaceholder(/How many hours/).first();
+              const labelInput2 = page.getByPlaceholder(/几个小时/).first();
               if (await labelInput2.isVisible({ timeout: 1000 }).catch(() => false)) {
                 await labelInput2.fill('Age');
-                const submitField2 = page.getByRole('button', { name: 'Add Field' }).last();
+                const submitField2 = page.getByRole('button', { name: '添加字段' }).last();
                 if (await submitField2.isVisible({ timeout: 1000 }).catch(() => false)) {
                   await submitField2.click();
                   await page.waitForTimeout(300);
@@ -290,7 +290,7 @@ test.describe('Form Builder Flow', () => {
         }
 
         // Save form
-        const saveBtn = page.getByRole('button', { name: 'Save', exact: true });
+        const saveBtn = page.getByRole('button', { name: '保存', exact: true });
         if (await saveBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
           await saveBtn.click();
           await page.waitForTimeout(300);
@@ -309,7 +309,7 @@ test.describe('Settings Full Flow', () => {
   test('change settings across all tabs without errors', async ({ page }) => {
     // General tab
     await navigateTo(page, '/settings');
-    const nameInput = page.getByPlaceholder('Enter your name');
+    const nameInput = page.getByPlaceholder('输入你的姓名');
     if (await nameInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await nameInput.clear();
       await nameInput.fill('Flow Test User');

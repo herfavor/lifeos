@@ -33,7 +33,7 @@ export function getWeatherDescription(code: number): string {
     99: 'Thunderstorm with heavy hail',
   };
 
-  return codes[code] || 'Unknown';
+  return codes[code] || '未知';
 }
 
 export function getWeatherIcon(code: number): string {

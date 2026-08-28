@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Plus, Pencil, Trash2, FolderOpen, Archive } from 'lucide-react';
 import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
+import { useProjectContextStore } from '../stores/useProjectContextStore';
 import { ConfirmDialog } from './ConfirmDialog';
 import type { TimeTrackingProject } from '../types';
 
@@ -34,7 +35,6 @@ export function ProjectManager() {
   const {
     projects,
     loadProjects,
-    addProject,
     updateProject,
     deleteProject,
   } = useTimeTrackingStore();
@@ -105,7 +105,7 @@ export function ProjectManager() {
 
     // Validation
     if (!formData.name.trim()) {
-      setFormError('Project name is required');
+      setFormError('项目名称是必填项');
       return;
     }
 
@@ -113,14 +113,23 @@ export function ProjectManager() {
       if (editingId) {
         await updateProject(editingId, formData);
       } else {
-        await addProject({ ...formData, archived: false });
+        // Create in the unified core project model: time tracking merges
+        // core projects automatically, so the new project appears active
+        // instead of becoming an archived legacy billing record.
+        useProjectContextStore.getState().createProject({
+          name: formData.name.trim(),
+          parentId: null,
+          color: formData.color,
+          icon: '📁',
+          description: formData.clientName ? `客户：${formData.clientName}` : undefined,
+        });
       }
 
       handleCloseForm();
       await loadProjects(); // Refresh list
     } catch (error) {
       console.error('Failed to save project:', error);
-      setFormError('Failed to save project. Please try again.');
+      setFormError('保存项目失败，请重试。');
     }
   };
 
@@ -145,7 +154,16 @@ export function ProjectManager() {
 
   const handleToggleActive = async (project: TimeTrackingProject) => {
     try {
-      await updateProject(project.id, { active: !project.active });
+      if (coreProjectIds.has(project.id)) {
+        // Unified model: core projects archive/restore through the core store.
+        if (project.archived || !project.active) {
+          useProjectContextStore.getState().restoreProject(project.id);
+        } else {
+          useProjectContextStore.getState().archiveProject(project.id);
+        }
+      } else {
+        await updateProject(project.id, { active: !project.active });
+      }
       await loadProjects(); // Refresh list
     } catch (error) {
       console.error('Failed to update project:', error);
@@ -155,11 +173,16 @@ export function ProjectManager() {
   const activeProjects = projects.filter(p => p.active && !p.archived);
   const archivedProjects = projects.filter(p => !p.active || p.archived);
 
+  // Projects living in the unified core model; legacy TT-only projects are
+  // historical records kept for old entries.
+  const coreProjects = useProjectContextStore((s) => s.projects);
+  const coreProjectIds = useMemo(() => new Set(coreProjects.map((p) => p.id)), [coreProjects]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading projects...
+          正在加载项目…
         </div>
       </div>
     );
@@ -171,18 +194,18 @@ export function ProjectManager() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            Projects
+            项目
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            Organize your time entries by project
+            按项目整理你的时间记录
           </p>
         </div>
         <button
           onClick={() => handleOpenForm()}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white dark:text-dark-background bg-accent-primary rounded-buttonhover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-primary rounded-button hover:opacity-90 transition-opacity"
         >
           <Plus className="w-4 h-4" />
-          New Project
+          新建项目
         </button>
       </div>
 
@@ -190,7 +213,7 @@ export function ProjectManager() {
       {showForm && (
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
           <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            {editingId ? 'Edit Project' : 'New Project'}
+            {editingId ? '编辑项目' : '新建项目'}
           </h3>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -206,15 +229,15 @@ export function ProjectManager() {
                 htmlFor="projectName"
                 className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2"
               >
-                Project Name *
+                项目名称 *
               </label>
               <input
                 id="projectName"
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttonfocus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                placeholder="e.g., NeumanOS, Client Work"
+                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
+                placeholder="例如：论文写作、客户项目"
                 autoFocus
               />
             </div>
@@ -222,7 +245,7 @@ export function ProjectManager() {
             {/* Project Color */}
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Color
+                颜色
               </label>
               <div className="grid grid-cols-10 gap-2">
                 {PROJECT_COLORS.map(color => (
@@ -246,15 +269,15 @@ export function ProjectManager() {
                 htmlFor="projectClientName"
                 className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2"
               >
-                Client Name <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">(optional)</span>
+                客户名称 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
               </label>
               <input
                 id="projectClientName"
                 type="text"
                 value={formData.clientName}
                 onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttonfocus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                placeholder="e.g., Acme Corp, John Doe"
+                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
+                placeholder="例如：Acme Corp、John Doe"
               />
             </div>
 
@@ -264,7 +287,7 @@ export function ProjectManager() {
                 htmlFor="projectHourlyRate"
                 className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2"
               >
-                Default Hourly Rate <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">(optional)</span>
+                默认小时费率 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary text-sm">
@@ -277,12 +300,12 @@ export function ProjectManager() {
                   step="0.01"
                   value={formData.hourlyRate || ''}
                   onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full pl-7 pr-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-buttonfocus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
+                  className="w-full pl-7 pr-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
                   placeholder="0.00"
                 />
               </div>
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                Used to calculate billable amounts for time entries
+                用于计算时间记录的可计费金额
               </p>
             </div>
 
@@ -293,13 +316,13 @@ export function ProjectManager() {
                 type="checkbox"
                 checked={formData.active}
                 onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-buttonfocus:ring-2 focus:ring-accent-primary"
+                className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded-button focus:ring-2 focus:ring-accent-primary"
               />
               <label
                 htmlFor="projectActive"
                 className="text-sm text-text-light-primary dark:text-text-dark-primary"
               >
-                Active (show in project selector)
+                启用（显示在项目选择器中）
               </label>
             </div>
 
@@ -310,13 +333,13 @@ export function ProjectManager() {
                 onClick={handleCloseForm}
                 className="px-4 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light dark:hover:bg-surface-dark transition-all duration-standard ease-smooth"
               >
-                Cancel
+                取消
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white dark:text-dark-background bg-accent-primary rounded-buttonhover:opacity-90 transition-opacity"
+                className="px-4 py-2 text-sm font-medium text-white bg-accent-primary rounded-button hover:opacity-90 transition-opacity"
               >
-                {editingId ? 'Update Project' : 'Create Project'}
+                {editingId ? '更新项目' : '创建项目'}
               </button>
             </div>
           </form>
@@ -327,16 +350,16 @@ export function ProjectManager() {
       <div>
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-3 flex items-center gap-2">
           <FolderOpen className="w-5 h-5" />
-          Active Projects ({activeProjects.length})
+          进行中的项目（{activeProjects.length}）
         </h3>
 
         {activeProjects.length === 0 ? (
           <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-8 text-center">
             <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              No active projects yet
+              暂无进行中的项目
             </p>
             <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-              Create your first project to organize time entries
+              创建你的第一个项目来整理时间记录
             </p>
           </div>
         ) : (
@@ -360,12 +383,12 @@ export function ProjectManager() {
                     <div className="space-y-1">
                       {project.clientName && (
                         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                          Client: {project.clientName}
+                          客户：{project.clientName}
                         </p>
                       )}
                       {project.hourlyRate && (
                         <p className="text-sm font-mono font-medium text-status-success-text">
-                          ${project.hourlyRate.toFixed(2)}/hr
+                          ${project.hourlyRate.toFixed(2)}/小时
                         </p>
                       )}
                     </div>
@@ -374,29 +397,31 @@ export function ProjectManager() {
                   <div className="flex items-center gap-2 ml-4">
                     <button
                       onClick={() => handleOpenForm(project)}
-                      className="p-2 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue dark:hover:text-accent-blue-hover transition-all duration-standard ease-smooth"
-                      title="Edit project"
-                      aria-label="Edit project"
+                      className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue dark:hover:text-accent-blue-hover transition-all duration-standard ease-smooth"
+                      title="编辑项目"
+                      aria-label="编辑项目"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleToggleActive(project)}
-                      className="p-2 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-status-warning transition-all duration-standard ease-smooth"
-                      title="Archive project"
-                      aria-label="Archive project"
+                      className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-status-warning transition-all duration-standard ease-smooth"
+                      title="归档项目"
+                      aria-label="归档项目"
                     >
                       <Archive className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => handleDelete(project.id)}
-                      disabled={deletingId === project.id}
-                      className="p-2 rounded-buttonhover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error transition-all duration-standard ease-smooth disabled:opacity-50"
-                      title="Delete project"
-                      aria-label="Delete project"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {!coreProjectIds.has(project.id) && (
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        disabled={deletingId === project.id}
+                        className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error transition-all duration-standard ease-smooth disabled:opacity-50"
+                        title="删除项目"
+                        aria-label="删除项目"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -410,7 +435,7 @@ export function ProjectManager() {
         <div>
           <h3 className="text-lg font-semibold text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
             <Archive className="w-5 h-5" />
-            Archived Projects ({archivedProjects.length})
+            已归档项目（{archivedProjects.length}）
           </h3>
 
           <div className="grid gap-3">
@@ -432,7 +457,7 @@ export function ProjectManager() {
                     </div>
                     {project.clientName && (
                       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                        Client: {project.clientName}
+                        客户：{project.clientName}
                       </p>
                     )}
                   </div>
@@ -441,20 +466,22 @@ export function ProjectManager() {
                     <button
                       onClick={() => handleToggleActive(project)}
                       className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-green transition-all duration-standard ease-smooth"
-                      title="Unarchive project"
-                      aria-label="Unarchive project"
+                      title="取消归档项目"
+                      aria-label="取消归档项目"
                     >
                       <FolderOpen className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => handleDelete(project.id)}
-                      disabled={deletingId === project.id}
-                      className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-all duration-standard ease-smooth disabled:opacity-50"
-                      title="Delete project"
-                      aria-label="Delete project"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {!coreProjectIds.has(project.id) && (
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        disabled={deletingId === project.id}
+                        className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-all duration-standard ease-smooth disabled:opacity-50"
+                        title="删除项目"
+                        aria-label="删除项目"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -467,9 +494,9 @@ export function ProjectManager() {
         isOpen={projectToDelete !== null}
         onClose={() => setProjectToDelete(null)}
         onConfirm={confirmDeleteProject}
-        title="Delete Project"
-        message="Delete this project? This action cannot be undone."
-        confirmText="Delete"
+        title="删除项目"
+        message="删除此项目？此操作无法撤销，该项目关联的时间记录也会一并删除；核心项目若要收回请使用“归档”。"
+        confirmText="删除"
         variant="danger"
       />
     </div>

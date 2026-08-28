@@ -250,22 +250,22 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Find..."
+          placeholder="查找…"
           className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-surface-light-alt dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-primary"
-          aria-label="Search text"
+          aria-label="搜索文本"
         />
 
         <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary whitespace-nowrap min-w-[60px] text-center">
           {matches.length > 0
-            ? `${activeMatchIndex + 1} of ${matches.length}`
+            ? `${activeMatchIndex + 1} / ${matches.length}`
             : searchTerm
-              ? 'No results'
+              ? '无结果'
               : ''}
         </span>
 
         <button
           onClick={() => setCaseSensitive(!caseSensitive)}
-          title="Case sensitive (Alt+C)"
+          title="区分大小写 (Alt+C)"
           className={`p-1.5 rounded transition-colors ${
             caseSensitive
               ? 'bg-accent-primary/10 text-accent-primary'
@@ -277,7 +277,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
         </button>
         <button
           onClick={() => setWholeWord(!wholeWord)}
-          title="Whole word (Alt+W)"
+          title="全字匹配 (Alt+W)"
           className={`p-1.5 rounded transition-colors ${
             wholeWord
               ? 'bg-accent-primary/10 text-accent-primary'
@@ -291,7 +291,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
         <button
           onClick={goToPrev}
           disabled={matches.length === 0}
-          title="Previous match (Shift+Enter)"
+          title="上一个匹配项 (Shift+Enter)"
           className="p-1.5 rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronUp className="w-4 h-4" />
@@ -299,7 +299,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
         <button
           onClick={goToNext}
           disabled={matches.length === 0}
-          title="Next match (Enter)"
+          title="下一个匹配项 (Enter)"
           className="p-1.5 rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronDown className="w-4 h-4" />
@@ -307,7 +307,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
 
         <button
           onClick={handleClose}
-          title="Close (Escape)"
+          title="关闭 (Escape)"
           className="p-1.5 rounded text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
         >
           <X className="w-4 h-4" />
@@ -322,15 +322,15 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
             value={replaceTerm}
             onChange={(e) => setReplaceTerm(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Replace..."
+            placeholder="替换…"
             className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-surface-light-alt dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-primary"
-            aria-label="Replace text"
+            aria-label="替换文本"
           />
 
           <button
             onClick={replaceOne}
             disabled={matches.length === 0}
-            title="Replace current match"
+            title="替换当前匹配项"
             className="p-1.5 rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Replace className="w-4 h-4" />
@@ -338,7 +338,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
           <button
             onClick={replaceAllMatches}
             disabled={matches.length === 0}
-            title="Replace all matches"
+            title="替换所有匹配项"
             className="p-1.5 rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <ReplaceAll className="w-4 h-4" />
@@ -346,10 +346,10 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
 
           <button
             onClick={() => setIsReplaceVisible(false)}
-            title="Hide replace"
+            title="隐藏替换"
             className="p-1.5 rounded text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors text-xs"
           >
-            Find only
+            仅查找
           </button>
         </div>
       )}
@@ -359,7 +359,7 @@ export function FindReplaceBar({ editor, showReplace, onClose }: FindReplaceBarP
           onClick={() => setIsReplaceVisible(true)}
           className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-primary transition-colors self-start"
         >
-          Show Replace
+          显示替换
         </button>
       )}
     </div>

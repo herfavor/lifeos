@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 type TimeOfDay = 'morning' | 'afternoon' | 'evening';
 
 const TIME_SLOTS: Array<{ id: TimeOfDay; label: string; icon: string }> = [
-  { id: 'morning', label: 'Morning', icon: '🌅' },
-  { id: 'afternoon', label: 'Afternoon', icon: '☀️' },
-  { id: 'evening', label: 'Evening', icon: '🌙' },
+  { id: 'morning', label: '上午', icon: '🌅' },
+  { id: 'afternoon', label: '下午', icon: '☀️' },
+  { id: 'evening', label: '晚上', icon: '🌙' },
 ];
 
 const ENERGY_FACES = ['😴', '😩', '😐', '😐', '🙂', '🙂', '😊', '😄', '💪', '⚡'];
@@ -77,9 +77,9 @@ export function EnergyTrackerWidget() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            How's your energy?
+            你的精力如何？
           </span>
-          <span className="text-lg" title={`Energy: ${sliderValue}/10`}>
+          <span className="text-lg" title={`精力：${sliderValue}/10`}>
             {face}
           </span>
         </div>
@@ -127,7 +127,7 @@ export function EnergyTrackerWidget() {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-transparent'
                 }
               `}
-              title={logged ? `Logged: ${logged.level}/10` : `Log ${slot.label} energy`}
+              title={logged ? `已记录：${logged.level}/10` : `记录${slot.label}精力`}
             >
               <span className="mr-1">{slot.icon}</span>
               {logged ? `${logged.level}` : slot.label.slice(0, 3)}
@@ -143,20 +143,20 @@ export function EnergyTrackerWidget() {
           bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30
           transition-colors duration-150"
       >
-        Log Energy
+        记录精力
       </button>
 
       {/* Weekly Sparkline */}
       <div className="pt-1 border-t border-border-light dark:border-border-dark">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            Last 7 days
+            最近 7 天
           </span>
           <Link
             to="/energy"
             className="text-xs text-accent-blue hover:underline"
           >
-            View all
+            查看全部
           </Link>
         </div>
         <div className="flex items-end gap-1 h-8">
@@ -175,7 +175,7 @@ export function EnergyTrackerWidget() {
                         ? 'bg-yellow-500'
                         : 'bg-red-500'
                 }`}
-                title={avg > 0 ? `${avg}/10` : 'No data'}
+                title={avg > 0 ? `${avg}/10` : '暂无数据'}
               />
             </div>
           ))}
@@ -186,7 +186,7 @@ export function EnergyTrackerWidget() {
             d.setDate(d.getDate() - (6 - i));
             return (
               <span key={i} className="flex-1 text-center">
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'][d.getDay()]}
+                {['日', '一', '二', '三', '四', '五', '六'][d.getDay()]}
               </span>
             );
           })}

@@ -19,10 +19,10 @@ export const TaskManagementSettings: React.FC = () => {
   return (
     <div className="bento-card p-6">
       <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-        Task Management
+        任务管理
       </h2>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-        Configure how tasks and dependencies behave in your projects.
+        配置任务和依赖在项目中的行为。
       </p>
 
       <div className="space-y-4">
@@ -40,10 +40,10 @@ export const TaskManagementSettings: React.FC = () => {
               htmlFor="auto-shift-tasks"
               className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
             >
-              Automatically shift dependent tasks when dates change
+              日期更改时自动调整依赖任务
             </label>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              When you move a task's dates, dependent tasks will be automatically shifted based on their dependency types (Finish-to-Start, Start-to-Start, etc.). A confirmation dialog will be shown before applying shifts.
+              当你移动任务的日期时，依赖任务将根据其依赖类型（结束-开始、开始-开始等）自动调整。应用调整前会显示确认对话框。
             </p>
           </div>
         </div>
@@ -62,10 +62,10 @@ export const TaskManagementSettings: React.FC = () => {
               htmlFor="enforce-wip-limits"
               className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
             >
-              Enforce WIP limits strictly (prevent moves into full columns)
+              严格执行 WIP 限制（阻止移入已满的列）
             </label>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              When enabled, you cannot drag tasks into columns that have reached their WIP (Work In Progress) limit. When disabled (default), warnings are shown but moves are allowed. Set WIP limits in Kanban board via column settings.
+              启用后，你无法将任务拖入已达到 WIP（进行中工作）限制的列。禁用（默认）时，会显示警告但仍允许移动。可在看板的列设置中设置 WIP 限制。
             </p>
           </div>
         </div>

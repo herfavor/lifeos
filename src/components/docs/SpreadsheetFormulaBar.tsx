@@ -122,7 +122,7 @@ export function SpreadsheetFormulaBar({
             ? 'bg-accent-primary/10 text-accent-primary'
             : 'text-text-light-tertiary dark:text-text-dark-tertiary'
         }`}
-        title={hasFormula ? 'This cell contains a formula' : 'Function'}
+        title={hasFormula ? '此单元格包含公式' : '函数'}
       >
         <FunctionSquare className="w-4 h-4" />
       </div>
@@ -143,7 +143,7 @@ export function SpreadsheetFormulaBar({
             }
           }, 150);
         }}
-        placeholder={selectedRow !== null ? 'Enter value or formula (=)' : 'Select a cell'}
+        placeholder={selectedRow !== null ? '输入值或公式 (=)' : '选择一个单元格'}
         disabled={selectedRow === null}
         className="flex-1 px-2 py-1 text-sm font-mono bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded focus:outline-none focus:ring-1 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary disabled:opacity-50"
       />

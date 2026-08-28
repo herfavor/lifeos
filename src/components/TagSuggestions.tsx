@@ -32,7 +32,7 @@ export function TagSuggestions({ suggestions, onAddTag, showEmptyState = false }
   if (suggestions.length === 0 && showEmptyState) {
     return (
       <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary text-center py-2">
-        No suggestions available
+        暂无建议
       </div>
     );
   }
@@ -42,7 +42,7 @@ export function TagSuggestions({ suggestions, onAddTag, showEmptyState = false }
       <div className="flex items-center gap-2">
         <Info className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
         <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Suggested tags
+          建议标签
         </span>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -72,7 +72,7 @@ export function TagSuggestions({ suggestions, onAddTag, showEmptyState = false }
                 text-xs whitespace-nowrap rounded
                 bg-surface-dark text-text-dark-primary
                 dark:bg-surface-light dark:text-text-light-primary
-                opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none
+                opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pointer-events-none
                 shadow-lg z-10
               ">
                 {getSuggestionReasonLabel(suggestion.reason)}

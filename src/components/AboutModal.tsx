@@ -1,195 +1,128 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
-import { aboutUsContent } from '../content/aboutUs';
 import { BUILD_HASH, formatBuildTimestamp } from '../utils/buildInfo';
 import { useThemeStore } from '../stores/useThemeStore';
+import {
+  APP_NAME,
+  APP_VERSION,
+  APP_TAGLINE,
+  APP_DESCRIPTION,
+  APP_REPO_URL,
+  APP_ISSUES_URL,
+  APP_LICENSE_URL,
+} from '../config/appInfo';
 
 interface AboutModalProps {
   onClose: () => void;
 }
 
 /**
- * About Modal Component
- * Shows the story of NeumanOS with 2 narrative versions:
- * 1. Platform & Principles - About the platform vision and core principles
- * 2. Values & Background - From the founder's perspective
+ * About Modal — LifeOS
  *
- * Responsive: Uses compact versions on mobile for better readability
+ * Shows the product identity: name, version, description, project links
+ * and license. Upstream source attribution is kept in the repository's
+ * LICENSE / NOTICE.md files rather than in the user interface.
  */
-const FOUNDER_NAME = 'Travis J. Neuman';
-const FOUNDER_URL = 'https://travisjneuman.com';
-const PLATFORM_NAME = 'NeumanOS';
-const PLATFORM_URL = 'https://os.neuman.dev';
-
-const LINK_CLASS = 'text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth';
-
-/**
- * Renders content with both founder name and platform name as clickable links
- */
-function renderContentWithLinks(text: string): React.ReactNode {
-  // First split by founder name, then by platform name
-  const linkPatterns = [
-    { name: FOUNDER_NAME, url: FOUNDER_URL },
-    { name: PLATFORM_NAME, url: PLATFORM_URL },
-  ];
-
-  // Create a regex that matches either name
-  const regex = new RegExp(`(${linkPatterns.map(p => p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
-  const parts = text.split(regex);
-
-  return parts.map((part, index) => {
-    const link = linkPatterns.find(p => p.name === part);
-    if (link) {
-      return (
-        <a
-          key={index}
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={LINK_CLASS}
-        >
-          {link.name}
-        </a>
-      );
-    }
-    return <React.Fragment key={index}>{part}</React.Fragment>;
-  });
-}
-
 export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
-  const [selectedNarrative, setSelectedNarrative] = useState<'platform' | 'founder'>('platform');
-  const [isMobile, setIsMobile] = useState(false);
   const mode = useThemeStore((s) => s.mode);
-  const logoSrc = mode === 'dark' ? '/images/logos/logo_white.png' : '/images/logos/logo_black.png';
+  const logoSrc = mode === 'dark' ? '/images/logos/lifeos-logo-white.svg' : '/images/logos/lifeos-logo.svg';
+  const [showPhilosophy, setShowPhilosophy] = useState(false);
 
-  // Detect mobile viewport
+  // Lock body scroll while modal content mounts (kept from previous behavior)
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    document.title = `关于 - ${APP_NAME}`;
+    return () => {
+      document.title = APP_NAME;
+    };
   }, []);
-
-  // Get appropriate content based on screen size
-  const getContent = () => {
-    if (isMobile) {
-      return selectedNarrative === 'platform'
-        ? aboutUsContent.compact.platform
-        : aboutUsContent.compact.founder;
-    }
-    return selectedNarrative === 'platform'
-      ? aboutUsContent.stories.platform
-      : aboutUsContent.stories.founder;
-  };
-
-  const content = getContent();
 
   return (
     <Modal
       isOpen={true}
-      title="About NeumanOS"
+      title={`关于 ${APP_NAME}`}
       onClose={onClose}
       maxWidth="2xl"
     >
       <div className="space-y-4">
-        {/* Logo or Founder Photo */}
+        {/* Logo */}
         <div className="flex flex-col items-center gap-2">
-          {selectedNarrative === 'platform' ? (
-            <div className="w-3/5 overflow-hidden">
-              <img
-                src={logoSrc}
-                alt="NeumanOS Logo"
-                className="w-full h-auto object-contain"
-              />
-            </div>
-          ) : (
-            <div className="w-36 h-36 sm:w-48 sm:h-48 rounded-button overflow-hidden">
-              <img
-                src="/images/founder.jpg"
-                alt="Travis J. Neuman"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-          <a
-            href={selectedNarrative === 'platform' ? PLATFORM_URL : FOUNDER_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${LINK_CLASS} text-sm font-medium`}
-          >
-            {selectedNarrative === 'platform' ? PLATFORM_NAME : FOUNDER_NAME}
-          </a>
-        </div>
-
-        {/* Narrative Selector */}
-        <div className="flex gap-2 justify-center">
-          <button
-            onClick={() => setSelectedNarrative('platform')}
-            className={`px-2 sm:px-3 py-1.5 rounded-button text-xs sm:text-sm font-medium transition-all duration-standard ease-smooth ${selectedNarrative === 'platform'
-                ? 'bg-accent-blue text-white'
-                : 'bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-              }`}
-          >
-            <span className="hidden sm:inline">Platform & Principles</span>
-            <span className="sm:hidden">Platform</span>
-          </button>
-          <button
-            onClick={() => setSelectedNarrative('founder')}
-            className={`px-2 sm:px-3 py-1.5 rounded-button text-xs sm:text-sm font-medium transition-all duration-standard ease-smooth ${selectedNarrative === 'founder'
-                ? 'bg-accent-primary text-white'
-                : 'bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-              }`}
-          >
-            <span className="hidden sm:inline">Values & Background</span>
-            <span className="sm:hidden">Founder</span>
-          </button>
-        </div>
-
-        {/* Content Title */}
-        <div className="text-center">
-          <h3 className="text-base sm:text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {content.title}
-          </h3>
-          {content.subtitle && (
-            <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-              {content.subtitle}
-            </p>
-          )}
-        </div>
-
-        {/* Selected Narrative */}
-        <div className="prose prose-sm max-w-none dark:prose-invert max-h-[35vh] sm:max-h-[45vh] overflow-y-auto pr-2">
-          <div className="text-text-light-primary dark:text-text-dark-primary whitespace-pre-line leading-relaxed text-xs sm:text-sm">
-            {renderContentWithLinks(content.content)}
+          <div className="w-3/5 max-w-[240px] overflow-hidden">
+            <img
+              src={logoSrc}
+              alt="LifeOS Logo"
+              className="w-full h-auto object-contain"
+            />
           </div>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary tracking-wide">
+            {APP_TAGLINE}
+          </p>
         </div>
 
-        {/* Build Info */}
-        <div className="text-center mt-4">
+        {/* Description */}
+        <p className="text-xs sm:text-sm text-text-light-primary dark:text-text-dark-primary leading-relaxed text-center px-2">
+          {APP_DESCRIPTION}
+        </p>
+
+        {/* Version & Build */}
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+            版本 {APP_VERSION}
+          </span>
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary font-mono">
-            Build: {BUILD_HASH} ({formatBuildTimestamp()})
+            构建：{BUILD_HASH}（{formatBuildTimestamp()}）
           </span>
         </div>
 
-        {/* Footer Links */}
+        {/* Project Links */}
         <div className="border-t border-border-light dark:border-border-dark pt-3 mt-2">
-          <div className="flex flex-wrap gap-3 justify-center text-xs">
+          <div className="flex flex-wrap gap-4 justify-center text-xs">
             <a
-              href="https://os.neuman.dev"
+              href={APP_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth"
             >
-              Official Website
+              GitHub 仓库
             </a>
             <a
-              href="mailto:travis@neuman.dev"
+              href={APP_ISSUES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth"
             >
-              Contact
+              问题反馈
             </a>
+            <a
+              href={APP_LICENSE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth"
+            >
+              MIT License
+            </a>
+            <button
+              onClick={() => setShowPhilosophy((v) => !v)}
+              className="text-accent-blue hover:text-accent-blue-hover hover:underline transition-all duration-standard ease-smooth"
+            >
+              {showPhilosophy ? '收起产品理念' : '产品理念'}
+            </button>
           </div>
         </div>
+
+        {/* Product Philosophy (collapsed by default) */}
+        {showPhilosophy && (
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 text-xs sm:text-sm text-text-light-secondary dark:text-text-dark-secondary leading-relaxed space-y-2">
+            <p>
+              LifeOS 的核心理念不是"功能越多越好"，而是<strong>方便、清晰、聚合、整理</strong>：
+              打开 LifeOS 就能看到自己的整体状态，知道今天做什么，了解项目进展，并快速进入正确的工具。
+            </p>
+            <p>
+              数据永远属于你：本地优先，离线可用，随时导出。AI 指挥中心遵循
+              "观察 → 理解 → 建议 → 用户确认 → 执行" 的原则，协助你整理与规范信息，
+              而不会在未经确认的情况下修改你的数据。
+            </p>
+          </div>
+        )}
       </div>
     </Modal>
   );

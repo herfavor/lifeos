@@ -15,7 +15,7 @@ test.describe('Habits', () => {
   });
 
   test('page loads', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: /Habits/i });
+    const heading = page.getByRole('heading', { name: /习惯/ });
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Habits', () => {
   });
 
   test('has add habit button', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /add.*habit|new.*habit|\+/i }).first();
+    const addBtn = page.getByRole('button', { name: /添加.*习惯|新建.*习惯|\+/i }).first();
     if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(addBtn).toBeVisible();
     }
@@ -31,12 +31,12 @@ test.describe('Habits', () => {
   });
 
   test('can open add habit form', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /add.*habit|new.*habit|\+/i }).first();
+    const addBtn = page.getByRole('button', { name: /添加.*习惯|新建.*习惯|\+/i }).first();
     if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await addBtn.click();
       await page.waitForTimeout(300);
 
-      const nameInput = page.getByPlaceholder(/habit.*name|name/i).first();
+      const nameInput = page.getByPlaceholder(/例如：冥想|名称|标题/).first();
       if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(nameInput).toBeVisible();
       }
@@ -45,16 +45,16 @@ test.describe('Habits', () => {
   });
 
   test('can create a habit', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /add.*habit|new.*habit|\+/i }).first();
+    const addBtn = page.getByRole('button', { name: /添加.*习惯|新建.*习惯|\+/i }).first();
     if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await addBtn.click();
       await page.waitForTimeout(300);
 
-      const nameInput = page.getByPlaceholder(/habit.*name|name/i).first();
+      const nameInput = page.getByPlaceholder(/例如：冥想|名称|标题/).first();
       if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await nameInput.fill('E2E Test Habit');
 
-        const saveBtn = page.getByRole('button', { name: /save|create|add/i }).first();
+        const saveBtn = page.getByRole('button', { name: /保存|创建|添加/ }).first();
         if (await saveBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveBtn.click();
           await page.waitForTimeout(300);
@@ -75,7 +75,7 @@ test.describe('Habits', () => {
   });
 
   test('has streak display', async ({ page }) => {
-    const streak = page.getByText(/streak|day/i).first();
+    const streak = page.getByText(/连续|天/).first();
     if (await streak.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(streak).toBeVisible();
     }
@@ -83,7 +83,7 @@ test.describe('Habits', () => {
   });
 
   test('has archive/active filter', async ({ page }) => {
-    const archiveBtn = page.getByRole('button', { name: /archive/i });
+    const archiveBtn = page.getByRole('button', { name: /归档/ });
     if (await archiveBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(archiveBtn).toBeVisible();
     }
@@ -91,12 +91,12 @@ test.describe('Habits', () => {
   });
 
   test('has frequency options', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /add.*habit|new.*habit|\+/i }).first();
+    const addBtn = page.getByRole('button', { name: /添加.*习惯|新建.*习惯|\+/i }).first();
     if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await addBtn.click();
       await page.waitForTimeout(300);
 
-      const frequencySelect = page.locator('select').filter({ has: page.locator('option', { hasText: /daily/i }) });
+      const frequencySelect = page.locator('select').filter({ has: page.locator('option', { hasText: /每天/ }) });
       if (await frequencySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(frequencySelect).toBeVisible();
       }

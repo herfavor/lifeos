@@ -22,8 +22,8 @@ export const PomodoroWidget: React.FC = () => {
           setIsRunning(false);
           // Notification
           if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Pomodoro Complete!', {
-              body: 'Time for a break!',
+            new Notification('番茄钟完成！', {
+              body: '该休息一下了！',
             });
           }
           return (settings.duration ?? 25) * 60;
@@ -51,7 +51,7 @@ export const PomodoroWidget: React.FC = () => {
   const progress = ((timeLeft / ((settings.duration || 25) * 60)) * 100);
 
   return (
-    <BaseWidget title="Pomodoro Timer" icon="⏱️">
+    <BaseWidget title="番茄钟" icon="⏱️">
       <div className="flex flex-col items-center justify-center h-full gap-4">
         {/* Timer Display */}
         <div className="relative w-32 h-32">
@@ -91,21 +91,21 @@ export const PomodoroWidget: React.FC = () => {
               onClick={handleStart}
               className="px-4 py-2 bg-accent-blue text-white rounded-button hover:bg-accent-blue-hover transition-all duration-standard ease-smooth"
             >
-              Start
+              开始
             </button>
           ) : (
             <button
               onClick={handlePause}
               className="px-4 py-2 bg-accent-yellow text-white rounded-button hover:bg-accent-yellow-hover transition-all duration-standard ease-smooth"
             >
-              Pause
+              暂停
             </button>
           )}
           <button
             onClick={handleReset}
             className="px-4 py-2 bg-surface-dark text-white rounded-button hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth"
           >
-            Reset
+            重置
           </button>
         </div>
       </div>

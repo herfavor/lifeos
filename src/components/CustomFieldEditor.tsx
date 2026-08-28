@@ -46,7 +46,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     // Validate
     const validation = validateFieldValue(field, newValue);
     if (!validation.valid) {
-      setError(validation.error || 'Invalid value');
+      setError(validation.error || '无效值');
     } else {
       setError(null);
       onChange(newValue);
@@ -57,7 +57,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     // Final validation on blur
     const validation = validateFieldValue(field, localValue);
     if (!validation.valid) {
-      setError(validation.error || 'Invalid value');
+      setError(validation.error || '无效值');
     } else {
       setError(null);
     }
@@ -72,7 +72,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
           value={localValue || ''}
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
-          placeholder={field.description || `Enter ${field.name.toLowerCase()}`}
+          placeholder={field.description || `输入 ${field.name}`}
           className={`w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border ${
             error
               ? 'border-status-error dark:border-status-error'
@@ -106,7 +106,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
             handleChange(val);
           }}
           onBlur={handleBlur}
-          placeholder={field.description || `Enter ${field.name.toLowerCase()}`}
+          placeholder={field.description || `输入 ${field.name}`}
           step="any"
           className={`w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border ${
             error
@@ -189,7 +189,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${field.id}-error` : undefined}
         >
-          <option value="">-- Select {field.name} --</option>
+          <option value="">-- 选择 {field.name} --</option>
           {field.options?.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -238,7 +238,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
           })}
           {(!field.options || field.options.length === 0) && (
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary italic">
-              No options defined
+              未定义选项
             </span>
           )}
         </div>
@@ -281,7 +281,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
               rel="noopener noreferrer"
               className="px-3 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
             >
-              Open
+              打开
             </a>
           )}
         </div>
@@ -322,7 +322,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
               href={`mailto:${localValue}`}
               className="px-3 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
             >
-              Send
+              发送
             </a>
           )}
         </div>
@@ -371,7 +371,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
           value={localValue}
           allowMultiple={field.allowMultiple || false}
           onChange={handleChange}
-          placeholder={field.description || 'Select person...'}
+          placeholder={field.description || '选择人员…'}
         />
         {error && (
           <p id={`${field.id}-error`} className="mt-1 text-xs text-status-error-text dark:text-status-error-text-dark">
@@ -390,7 +390,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
           value={localValue || ''}
           statusOptions={field.statusOptions || []}
           onChange={handleChange}
-          placeholder={field.description || 'Select status...'}
+          placeholder={field.description || '选择状态…'}
         />
         {error && (
           <p id={`${field.id}-error`} className="mt-1 text-xs text-status-error-text dark:text-status-error-text-dark">
@@ -423,10 +423,10 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     return (
       <div className={className}>
         <div className="px-3 py-2 bg-surface-light-elevated/50 dark:bg-surface-dark-elevated/50 border border-border-light dark:border-border-dark rounded-lg text-text-light-secondary dark:text-text-dark-secondary italic">
-          {localValue !== null && localValue !== undefined ? String(localValue) : 'Not calculated'}
+          {localValue !== null && localValue !== undefined ? String(localValue) : '未计算'}
         </div>
         <p className="mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Computed field (read-only)
+          计算字段（只读）
         </p>
       </div>
     );
@@ -436,7 +436,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
   return (
     <div className={className}>
       <p className="text-sm text-status-error-text dark:text-status-error-text-dark">
-        Unknown field type: {field.type}
+        未知字段类型：{field.type}
       </p>
     </div>
   );

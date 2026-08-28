@@ -31,8 +31,8 @@ export const DailyNotesSettingsComponent: React.FC = () => {
     const day = today.getDate();
 
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      '一月', '二月', '三月', '四月', '五月', '六月',
+      '七月', '八月', '九月', '十月', '十一月', '十二月'
     ];
 
     switch (dailyNotes.dateFormat) {
@@ -71,10 +71,10 @@ export const DailyNotesSettingsComponent: React.FC = () => {
       <div>
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
-          Daily Notes
+          每日笔记
         </h3>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          Automatic daily notes inspired by Obsidian, Roam Research, and Logseq. Quick-capture thoughts, events, and learnings with a single click.
+          受 Obsidian、Roam Research 和 Logseq 启发的自动每日笔记。一键快速捕捉想法、事件与心得。
         </p>
       </div>
 
@@ -82,10 +82,10 @@ export const DailyNotesSettingsComponent: React.FC = () => {
       <div className="flex items-center justify-between p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
         <div>
           <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Enable Daily Notes
+            启用每日笔记
           </label>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            Quick access to today's note (Ctrl/Cmd + D)
+            快速访问今日笔记（Ctrl/Cmd + D）
           </p>
         </div>
         <button
@@ -111,7 +111,7 @@ export const DailyNotesSettingsComponent: React.FC = () => {
           {/* Date Format Selection */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Date Format
+              日期格式
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -122,7 +122,7 @@ export const DailyNotesSettingsComponent: React.FC = () => {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
                 }`}
               >
-                Long
+                长格式
               </button>
               <button
                 onClick={() => handleDateFormatChange('iso')}
@@ -142,11 +142,11 @@ export const DailyNotesSettingsComponent: React.FC = () => {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
                 }`}
               >
-                Short
+                短格式
               </button>
             </div>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-2">
-              Preview: <span className="font-medium text-accent-primary">{datePreview}</span>
+              预览：<span className="font-medium text-accent-primary">{datePreview}</span>
             </p>
           </div>
 
@@ -154,14 +154,14 @@ export const DailyNotesSettingsComponent: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
-              Daily Notes Folder
+              每日笔记文件夹
             </label>
             <select
               value={dailyNotes.folderId ?? 'null'}
               onChange={(e) => handleFolderChange(e.target.value)}
               className="w-full px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
             >
-              <option value="null">Root (No folder)</option>
+              <option value="null">根目录（无文件夹）</option>
               {Object.values(folders).map((folder) => (
                 <option key={folder.id} value={folder.id}>
                   {folder.name}
@@ -169,7 +169,7 @@ export const DailyNotesSettingsComponent: React.FC = () => {
               ))}
             </select>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-2">
-              Where daily notes will be created
+              每日笔记的创建位置
             </p>
           </div>
 
@@ -177,7 +177,7 @@ export const DailyNotesSettingsComponent: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4" />
-              Note Template
+              笔记模板
             </label>
             <textarea
               value={templateDraft}
@@ -185,36 +185,36 @@ export const DailyNotesSettingsComponent: React.FC = () => {
               onBlur={handleTemplateBlur}
               rows={12}
               className="w-full px-4 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary font-mono text-sm resize-y"
-              placeholder="Enter your daily note template..."
+              placeholder="输入你的每日笔记模板..."
             />
             <div className="mt-2 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark">
               <p className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                Available template variables:
+                可用的模板变量：
               </p>
               <div className="grid grid-cols-2 gap-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
                 <div>
                   <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                     {'{date}'}
                   </code>
-                  {' '}Full date
+                  {' '}完整日期
                 </div>
                 <div>
                   <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                     {'{yesterday}'}
                   </code>
-                  {' '}Yesterday's note link
+                  {' '}昨日笔记链接
                 </div>
                 <div>
                   <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                     {'{tomorrow}'}
                   </code>
-                  {' '}Tomorrow's note link
+                  {' '}明日笔记链接
                 </div>
                 <div>
                   <code className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple rounded">
                     {'{weekday}'}
                   </code>
-                  {' '}Day of week
+                  {' '}星期几
                 </div>
               </div>
             </div>
@@ -223,15 +223,15 @@ export const DailyNotesSettingsComponent: React.FC = () => {
           {/* Keyboard Shortcut Info */}
           <div className="p-4 bg-accent-primary/10 rounded-lg">
             <p className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              <span className="font-semibold">Tip:</span> Press{' '}
+              <span className="font-semibold">提示：</span> 按{' '}
               <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark rounded text-xs font-mono">
                 Ctrl+D
               </kbd>{' '}
-              (or{' '}
+              （或{' '}
               <kbd className="px-2 py-1 bg-surface-light dark:bg-surface-dark rounded text-xs font-mono">
                 Cmd+D
               </kbd>{' '}
-              on Mac) to quickly open today's daily note from anywhere.
+              在 Mac 上）即可从任意位置快速打开今日每日笔记。
             </p>
           </div>
         </>

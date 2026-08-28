@@ -103,6 +103,7 @@ vi.mock('../../services/indexedDB', () => ({
 
 // Import after mocking
 import { useNotesStore } from '../useNotesStore';
+import { isValidLexicalJson, lexicalToMarkdown } from '../../utils/markdownToLexical';
 
 describe('useNotesStore', () => {
   beforeEach(() => {
@@ -123,8 +124,8 @@ describe('useNotesStore', () => {
 
         expect(note).toBeDefined();
         expect(note.id).toBeDefined();
-        expect(note.title).toBe('Untitled Note');
-        expect(note.content).toBe('');
+        expect(note.title).toBe('未命名笔记');
+        expect(isValidLexicalJson(note.content)).toBe(true);
         expect(note.tags).toEqual([]);
         expect(note.isPinned).toBe(false);
         expect(note.isArchived).toBe(false);
@@ -143,7 +144,8 @@ describe('useNotesStore', () => {
         });
 
         expect(note.title).toBe('Test Note');
-        expect(note.content).toBe('Test content');
+        expect(isValidLexicalJson(note.content)).toBe(true);
+        expect(lexicalToMarkdown(note.content)).toContain('Test content');
         expect(note.tags).toEqual(['test', 'example']);
         expect(note.folderId).toBe('folder-1');
       });
@@ -201,8 +203,55 @@ describe('useNotesStore', () => {
 
         const updated = store.getNote(note.id);
         expect(updated?.title).toBe('Updated Title');
-        expect(updated?.content).toBe('New content');
+        expect(isValidLexicalJson(updated?.content ?? '')).toBe(true);
+        expect(lexicalToMarkdown(updated?.content ?? '')).toContain('New content');
         expect(updated?.tags).toEqual(['updated']);
+      });
+
+      it('repairs an empty Lexical root when content is updated', () => {
+        const store = useNotesStore.getState();
+        const note = store.createNote({ title: 'Original' });
+        const legacyEmptyRoot = JSON.stringify({
+          root: { children: [], direction: null, format: '', indent: 0, type: 'root', version: 1 },
+        });
+
+        store.updateNote(note.id, { content: legacyEmptyRoot });
+
+        const updated = store.getNote(note.id);
+        const content = JSON.parse(updated?.content ?? '{}');
+        expect(content.root.children).toHaveLength(1);
+        expect(content.root.children[0].type).toBe('paragraph');
+      });
+
+      it('preserves already-valid rich content byte-for-byte', () => {
+        const store = useNotesStore.getState();
+        const note = store.createNote({ title: 'Original' });
+        const richContent = JSON.stringify({
+          root: {
+            children: [{ type: 'callout', version: 1, calloutType: 'info', children: [] }],
+            direction: null,
+            format: '',
+            indent: 0,
+            type: 'root',
+            version: 1,
+          },
+        });
+
+        store.updateNote(note.id, { content: richContent });
+
+        expect(store.getNote(note.id)?.content).toBe(richContent);
+      });
+
+      it('does not rewrite rich content for a contentText-only update', () => {
+        const store = useNotesStore.getState();
+        const note = store.createNote({ title: 'Original', content: 'rich content' });
+
+        store.updateNote(note.id, { contentText: '新索引文本' });
+
+        expect(store.getNote(note.id)).toMatchObject({
+          content: note.content,
+          contentText: '新索引文本',
+        });
       });
 
       it('should update updatedAt timestamp', async () => {
@@ -231,14 +280,15 @@ describe('useNotesStore', () => {
     });
 
     describe('deleteNote', () => {
-      it('should remove note from store', () => {
+      it('should move a note to the recoverable trash', () => {
         const store = useNotesStore.getState();
         const note = store.createNote({ title: 'To Delete' });
 
         store.deleteNote(note.id);
 
-        const deleted = store.getNote(note.id);
-        expect(deleted).toBeUndefined();
+        const deleted = useNotesStore.getState().getNote(note.id);
+        expect(deleted?.deletedAt).toBeInstanceOf(Date);
+        expect(useNotesStore.getState().getAllNotes()).not.toContainEqual(deleted);
       });
 
       it('should not throw when deleting non-existent note', () => {
@@ -258,6 +308,42 @@ describe('useNotesStore', () => {
 
         expect(useNotesStore.getState().activeNoteId).toBeNull();
       });
+
+      it('should restore and permanently delete a trashed note', () => {
+        const store = useNotesStore.getState();
+        const note = store.createNote({ title: 'Recoverable' });
+
+        store.deleteNote(note.id);
+        useNotesStore.getState().restoreNote(note.id);
+        expect(useNotesStore.getState().getNote(note.id)?.deletedAt).toBeUndefined();
+
+        useNotesStore.getState().deleteNote(note.id);
+        useNotesStore.getState().permanentlyDeleteNote(note.id);
+        expect(useNotesStore.getState().getNote(note.id)).toBeUndefined();
+      });
+
+      it('should keep trashed notes out of every active query surface', () => {
+        const store = useNotesStore.getState();
+        const note = store.createNote({
+          title: 'Hidden trashed note',
+          contentText: 'private trash search token',
+          folderId: 'folder-1',
+          tags: ['trash-only-tag'],
+        });
+
+        store.deleteNote(note.id);
+        const state = useNotesStore.getState();
+
+        expect(state.getAllNotes()).toEqual([]);
+        expect(state.getNotesBy(() => true)).toEqual([]);
+        expect(state.getNotesByFolder('folder-1')).toEqual([]);
+        expect(state.getNotesInFolder('folder-1')).toEqual([]);
+        expect(state.searchNotes('private trash search token')).toEqual([]);
+        expect(state.getAllTags()).not.toContain('trash-only-tag');
+        expect(state.getTagUsageCounts().has('trash-only-tag')).toBe(false);
+        expect(state.getNoteCount()).toBe(0);
+        expect(state.exportNotes()).toEqual([]);
+      });
     });
 
     describe('duplicateNote', () => {
@@ -273,8 +359,8 @@ describe('useNotesStore', () => {
 
         expect(duplicate).toBeDefined();
         expect(duplicate?.id).not.toBe(original.id);
-        expect(duplicate?.title).toBe('Original (Copy)');
-        expect(duplicate?.content).toBe('Test content');
+        expect(duplicate?.title).toBe('Original 的副本');
+        expect(duplicate?.content).toBe(original.content);
         expect(duplicate?.tags).toEqual(['test']);
       });
 
@@ -290,7 +376,7 @@ describe('useNotesStore', () => {
 
   describe('Bulk Operations', () => {
     describe('deleteNotes', () => {
-      it('should delete multiple notes', () => {
+      it('should move multiple notes to trash', () => {
         const store = useNotesStore.getState();
         const note1 = store.createNote({ title: 'Note 1' });
         const note2 = store.createNote({ title: 'Note 2' });
@@ -298,9 +384,21 @@ describe('useNotesStore', () => {
 
         store.deleteNotes([note1.id, note2.id]);
 
-        expect(store.getNote(note1.id)).toBeUndefined();
-        expect(store.getNote(note2.id)).toBeUndefined();
-        expect(store.getNote(note3.id)).toBeDefined();
+        expect(useNotesStore.getState().getNote(note1.id)?.deletedAt).toBeInstanceOf(Date);
+        expect(useNotesStore.getState().getNote(note2.id)?.deletedAt).toBeInstanceOf(Date);
+        expect(useNotesStore.getState().getNote(note3.id)?.deletedAt).toBeUndefined();
+      });
+
+      it('should permanently clear only notes already in trash', () => {
+        const store = useNotesStore.getState();
+        const trashed = store.createNote({ title: 'Trashed' });
+        const active = store.createNote({ title: 'Active' });
+        store.deleteNote(trashed.id);
+
+        useNotesStore.getState().permanentlyDeleteNotes([trashed.id, active.id]);
+
+        expect(useNotesStore.getState().getNote(trashed.id)).toBeUndefined();
+        expect(useNotesStore.getState().getNote(active.id)).toBeDefined();
       });
     });
 
@@ -697,7 +795,7 @@ describe('useNotesStore', () => {
 
         expect(note).toBeDefined();
         // Template description is stored in contentText (plain text for indexing)
-        expect(note?.contentText).toContain('Meeting Notes');
+        expect(note?.contentText).toContain('会议记录');
         expect(note?.tags).toContain('meeting');
       });
 

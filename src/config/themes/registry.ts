@@ -55,10 +55,10 @@ export const THEME_REGISTRY: Record<ThemeId, ThemeDefinition> = {
 };
 
 export const THEME_CATEGORIES: ThemeCategoryInfo[] = [
-  { id: 'vibrant', label: 'Fun & Vibrant', description: 'Bold, expressive palettes' },
-  { id: 'professional', label: 'Professional', description: 'Clean, refined palettes' },
-  { id: 'minimal', label: 'Minimal', description: 'Stripped-back, focused palettes' },
-  { id: 'tech', label: 'Tech', description: 'Developer-inspired palettes' },
+  { id: 'vibrant', label: '活泼鲜艳', description: '大胆、富有表现力的配色' },
+  { id: 'professional', label: '专业', description: '干净精致的配色' },
+  { id: 'minimal', label: '极简', description: '精简专注的配色' },
+  { id: 'tech', label: '科技', description: '开发者风格配色' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -67,6 +67,10 @@ export const THEME_CATEGORIES: ThemeCategoryInfo[] = [
 
 export function getTheme(id: ThemeId): ThemeDefinition {
   return THEME_REGISTRY[id] ?? THEME_REGISTRY['default'];
+}
+
+export function hasTheme(id: string): id is ThemeId {
+  return Object.prototype.hasOwnProperty.call(THEME_REGISTRY, id);
 }
 
 export function getThemesByCategory(): { category: ThemeCategoryInfo; themes: ThemeDefinition[] }[] {
@@ -92,19 +96,11 @@ const STYLE_ELEMENT_ID = 'neumanos-theme-vars';
  * Inject theme CSS variables as a single <style> block.
  * Triggers one style recalc instead of 31 individual setProperty calls.
  *
- * For the default theme, removes the injected style element entirely
- * so index.css :root values take effect.
+ * Every named theme, including the legacy default, is injected explicitly so
+ * the picker preview and the rendered palette cannot drift apart.
  */
 export function injectThemeVariables(themeId: ThemeId, isDark: boolean): void {
   const existing = document.getElementById(STYLE_ELEMENT_ID);
-
-  // Default theme: remove overrides, fall back to index.css
-  if (themeId === 'default') {
-    if (existing) {
-      existing.remove();
-    }
-    return;
-  }
 
   const theme = getTheme(themeId);
   const vars = isDark ? theme.dark : theme.light;

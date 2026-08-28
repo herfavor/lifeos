@@ -16,6 +16,7 @@ import { BaseWidget } from './BaseWidget';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useCalendarStore } from '../../stores/useCalendarStore';
 import { useNavigate } from 'react-router-dom';
+import { getTodayTasks } from '../../utils/todayTasks';
 
 export const MyDayWidget: React.FC = () => {
   const { tasks, updateTask } = useKanbanStore();
@@ -28,30 +29,17 @@ export const MyDayWidget: React.FC = () => {
     const now = new Date();
     return {
       date: now,
-      dateString: now.toDateString(),
       // Date key in YYYY-M-D format (matches Calendar Events)
       dateKey: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
-      dayName: now.toLocaleDateString('en-US', { weekday: 'long' }),
-      monthDay: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      dayName: now.toLocaleDateString('zh-CN', { weekday: 'long' }),
+      monthDay: now.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
     };
   }, []);
 
-  // Today's tasks (due today OR in progress/review status)
+  // Today's tasks — shared Today Query (overdue + due today + in-progress/review,
+  // excludes archived; done tasks only when completed today).
   const todayTasks = useMemo(() => {
-    return tasks.filter((t) => {
-      // Include if due today
-      if (t.dueDate) {
-        const due = new Date(t.dueDate);
-        if (due.toDateString() === today.dateString) {
-          return true;
-        }
-      }
-      // Include if actively being worked on (but not done)
-      if (t.status === 'inprogress' || t.status === 'review') {
-        return true;
-      }
-      return false;
-    }).sort((a, b) => {
+    return getTodayTasks(tasks, today.date, { includeCompleted: true }).sort((a, b) => {
       // Sort: priority (high first), then by due date, then by creation
       const priorityOrder = { high: 0, medium: 1, low: 2 };
       const aPriority = priorityOrder[a.priority || 'medium'];
@@ -67,7 +55,7 @@ export const MyDayWidget: React.FC = () => {
 
       return 0;
     });
-  }, [tasks, today.dateString]);
+  }, [tasks, today.date]);
 
   // Split into active and completed
   const activeTasks = todayTasks.filter(t => t.status !== 'done');
@@ -119,7 +107,7 @@ export const MyDayWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="My Day"
+      title="我的一天"
       icon="☀️"
       subtitle={`${today.dayName}, ${today.monthDay}`}
     >
@@ -129,14 +117,14 @@ export const MyDayWidget: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-accent-blue">{totalTasks}</span>
             <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {totalTasks === 1 ? 'task' : 'tasks'}
+              {totalTasks === 1 ? '任务' : '任务'}
             </span>
           </div>
           <div className="w-px h-6 bg-border-light dark:border-border-dark" />
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-accent-primary">{totalEvents}</span>
             <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {totalEvents === 1 ? 'event' : 'events'}
+              {totalEvents === 1 ? '日程' : '日程'}
             </span>
           </div>
         </div>
@@ -148,7 +136,7 @@ export const MyDayWidget: React.FC = () => {
             {activeTasks.length > 0 && (
               <div>
                 <h3 className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-2">
-                  Tasks
+                  任务
                 </h3>
                 <div className="space-y-1.5">
                   {activeTasks.map((task) => (
@@ -160,7 +148,7 @@ export const MyDayWidget: React.FC = () => {
                       <button
                         onClick={() => handleCompleteTask(task.id)}
                         className="flex-shrink-0 mt-0.5 w-4 h-4 rounded border-2 border-accent-blue hover:bg-accent-blue/10 transition-colors"
-                        aria-label="Complete task"
+                        aria-label="完成任务"
                       />
 
                       {/* Task Content */}
@@ -173,7 +161,7 @@ export const MyDayWidget: React.FC = () => {
                         </div>
                         {task.dueDate && (
                           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-                            Due today
+                            今天截止
                           </div>
                         )}
                       </div>
@@ -181,9 +169,9 @@ export const MyDayWidget: React.FC = () => {
                       {/* Quick Actions (show on hover) */}
                       <button
                         onClick={() => navigate('/tasks')}
-                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-xs text-accent-blue hover:underline transition-opacity"
+                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-xs text-accent-blue hover:underline transition-opacity"
                       >
-                        View
+                        查看
                       </button>
                     </div>
                   ))}
@@ -199,7 +187,7 @@ export const MyDayWidget: React.FC = () => {
                   className="w-full text-left flex items-center gap-2 text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-2 hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
                 >
                   <span className={`transition-transform ${showCompleted ? 'rotate-90' : ''}`}>▶</span>
-                  Completed ({completedTasks.length})
+                  已完成 ({completedTasks.length})
                 </button>
                 {showCompleted && (
                   <div className="space-y-1.5">
@@ -227,7 +215,7 @@ export const MyDayWidget: React.FC = () => {
             {todayEvents.length > 0 && (
               <div>
                 <h3 className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-2">
-                  Events
+                  日程
                 </h3>
                 <div className="space-y-1.5">
                   {todayEvents.map((event) => (
@@ -263,10 +251,10 @@ export const MyDayWidget: React.FC = () => {
           <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
             <div className="text-5xl mb-3">🎉</div>
             <p className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              You're all clear!
+              今天一切就绪！
             </p>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              No tasks or events for today
+              今天没有任务或日程
             </p>
           </div>
         )}
@@ -277,13 +265,13 @@ export const MyDayWidget: React.FC = () => {
             onClick={() => navigate('/tasks')}
             className="px-3 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
           >
-            + Add Task
+            + 添加任务
           </button>
           <button
             onClick={() => navigate('/schedule')}
             className="px-3 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
           >
-            + Add Event
+            + 添加日程
           </button>
         </div>
       </div>

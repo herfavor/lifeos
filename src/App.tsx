@@ -12,7 +12,9 @@ const OnboardingModal = lazy(() => import('./components/OnboardingModal').then(m
 
 // Lazy load all pages for code splitting (including Dashboard)
 const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })));
+const AICommandCenterPage = lazy(() => import('./pages/AICommandCenterPage').then((m) => ({ default: m.AICommandCenterPage })));
 const Tasks = lazy(() => import('./pages/Tasks').then((m) => ({ default: m.Tasks })));
+const InboxPage = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
 const Notes = lazy(() => import('./pages/Notes').then((m) => ({ default: m.Notes })));
 // GraphView is now rendered as a tab within Notes page, redirect handles /graph route
@@ -36,13 +38,16 @@ const Energy = lazy(() => import('./pages/Energy').then((m) => ({ default: m.Ene
 const Portfolio = lazy(() => import('./pages/Portfolio').then((m) => ({ default: m.Portfolio })));
 const WeeklyRetrospective = lazy(() => import('./pages/WeeklyRetrospective').then((m) => ({ default: m.WeeklyRetrospective })));
 const Availability = lazy(() => import('./pages/Availability'));
+const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })));
+const Privacy = lazy(() => import('./pages/Privacy').then((m) => ({ default: m.Privacy })));
+const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })));
 
 // Loading fallback component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
     <div className="text-center">
-      <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary-cyan border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-      <p className="mt-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">Loading...</p>
+      <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-accent-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+      <p className="mt-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">加载中…</p>
     </div>
   </div>
 );
@@ -91,6 +96,7 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/ai" element={<AICommandCenterPage />} />
             <Route
               path="/today"
               element={
@@ -155,6 +161,14 @@ function App() {
               }
             />
             <Route
+              path="/inbox"
+              element={
+                <StoreErrorBoundary storeName="kanban">
+                  <InboxPage />
+                </StoreErrorBoundary>
+              }
+            />
+            <Route
               path="/tasks"
               element={
                 <StoreErrorBoundary storeName="kanban">
@@ -180,7 +194,14 @@ function App() {
                 </StoreErrorBoundary>
               }
             />
-            <Route path="/links" element={<LinkLibrary />} />
+            <Route
+              path="/links"
+              element={
+                <StoreErrorBoundary storeName="links">
+                  <LinkLibrary />
+                </StoreErrorBoundary>
+              }
+            />
             <Route
               path="/automations"
               element={
@@ -190,21 +211,58 @@ function App() {
               }
             />
             {/* Activity Feed */}
-            <Route path="/activity" element={<ActivityFeed />} />
+            <Route
+              path="/activity"
+              element={
+                <StoreErrorBoundary storeName="activity">
+                  <ActivityFeed />
+                </StoreErrorBoundary>
+              }
+            />
             {/* Portfolio */}
-            <Route path="/portfolio" element={<Portfolio />} />
+            <Route
+              path="/portfolio"
+              element={
+                <StoreErrorBoundary storeName="portfolio">
+                  <Portfolio />
+                </StoreErrorBoundary>
+              }
+            />
             {/* Energy Tracking */}
-            <Route path="/energy" element={<Energy />} />
+            <Route
+              path="/energy"
+              element={
+                <StoreErrorBoundary storeName="energy">
+                  <Energy />
+                </StoreErrorBoundary>
+              }
+            />
             {/* Weekly Retrospective */}
-            <Route path="/retrospective" element={<WeeklyRetrospective />} />
+            <Route
+              path="/retrospective"
+              element={
+                <StoreErrorBoundary storeName="retrospective">
+                  <WeeklyRetrospective />
+                </StoreErrorBoundary>
+              }
+            />
             {/* Availability sharing */}
             <Route path="/availability" element={<Availability />} />
-            {/* Focus mode - full-screen, no layout wrapper */}
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<Privacy />} />
+            {/* Focus mode - rendered inside Layout, which swaps to a bare standalone shell */}
             <Route path="/focus" element={<Focus />} />
             {/* Phase 5: Redirect /habits to /tasks?tab=habits */}
             <Route
               path="/habits"
               element={<Navigate to="/tasks?tab=habits" replace />}
+            />
+            {/* Dedicated auxiliary tools; schedule remains focused on calendar planning. */}
+            <Route path="/time" element={<Navigate to="/schedule?tab=timer&section=timer" replace />} />
+            {/* Legacy calendar path used by older embeds and bookmarks */}
+            <Route
+              path="/calendar"
+              element={<Navigate to="/schedule" replace />}
             />
             {/* Phase 5: Redirect /docs to /create */}
             <Route
@@ -236,6 +294,7 @@ function App() {
                 </StoreErrorBoundary>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </Layout>

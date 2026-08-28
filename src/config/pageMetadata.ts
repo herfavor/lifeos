@@ -3,125 +3,124 @@
  *
  * Centralized configuration for page headers across the application.
  * This ensures consistency and makes it easy to update headers in one place.
- *
- * Usage:
- * - PageHeader component auto-detects current route and uses this registry
- * - Pages can still override by passing explicit title/subtitle props
- *
- * Future extensions:
- * - Page icons
- * - Breadcrumbs
- * - SEO meta tags
- * - Page-specific actions
  */
 
 export interface PageMetadata {
   title: string;
   subtitle?: string;
-  // Future: icon, breadcrumbs, actions, seoTitle, seoDescription
 }
 
-/**
- * Registry of page metadata indexed by route path
- *
- * Note: Add new pages here when created. The PageHeader component
- * will automatically pick up the correct title/subtitle.
- */
 export const PAGE_METADATA: Record<string, PageMetadata> = {
   '/': {
-    title: 'Dashboard',
-    subtitle: 'Your personal management overview',
+    title: '首页',
+    subtitle: '看清全局，继续最重要的下一步',
+  },
+  '/ai': {
+    title: 'AI',
+    subtitle: '直接说你想完成什么，我来查询、安排和整理',
   },
   '/today': {
-    title: 'Today',
-    subtitle: 'Plan your day with intention',
+    title: '今天',
+    subtitle: '有意识地规划你的一天',
+  },
+  '/inbox': {
+    title: '收件箱',
+    subtitle: '先看清未决定的内容，再安排下一步',
   },
   '/tasks': {
-    title: 'Task Management',
-    subtitle: 'Organize and track your tasks with Kanban board',
+    title: '任务',
+    subtitle: '管理清晰、可执行的下一步',
   },
   '/notes': {
-    title: 'Notes',
-    subtitle: 'Your brain for ideas, thoughts, and knowledge',
+    title: '笔记',
+    subtitle: '承载你的想法、思考与知识的第二大脑',
   },
   '/schedule': {
-    title: 'Time & Planning',
-    subtitle: 'Track your time, plan your events, and manage your schedule—all in one place.',
+    title: '日程',
+    subtitle: '管理有具体时间承诺的事件和时间块',
   },
   '/settings': {
-    title: 'Settings',
-    subtitle: 'Manage your data, backups, and preferences',
+    title: '设置',
+    subtitle: '管理你的数据、备份与偏好',
   },
   '/links': {
-    title: 'Link Library',
-    subtitle: 'Manage your bookmarks and collections',
+    title: '收藏',
+    subtitle: '保存以后还想看的内容，并把它变成可用资料',
   },
   '/habits': {
-    title: 'Habits',
-    subtitle: 'Build positive routines through daily tracking',
+    title: '习惯',
+    subtitle: '通过每日打卡养成积极习惯',
   },
   '/graph': {
-    title: 'Knowledge Graph',
-    subtitle: 'Visualize connections between your notes',
+    title: '知识图谱',
+    subtitle: '可视化笔记之间的关联',
   },
   '/diagrams': {
-    title: 'Diagrams',
-    subtitle: 'Create visual diagrams and flowcharts',
+    title: '绘图',
+    subtitle: '创建可视化图表与流程图',
   },
   '/forms': {
-    title: 'Forms',
-    subtitle: 'Build and manage custom forms',
+    title: '表单',
+    subtitle: '构建并管理自定义表单',
   },
   '/focus': {
-    title: 'Focus Mode',
-    subtitle: 'Distraction-free work environment',
+    title: '专注模式',
+    subtitle: '无干扰的工作环境',
   },
   '/automations': {
-    title: 'Automations',
-    subtitle: 'Create rules to automate your workflow',
+    title: '自动化',
+    subtitle: '创建规则来自动化你的工作流',
+  },
+  '/activity': {
+    title: '回顾',
+    subtitle: '回看你的工作记录与变化',
+  },
+  '/retrospective': {
+    title: '每周回顾',
+    subtitle: '总结本周进展并规划下一步',
   },
   '/docs': {
-    title: 'Documents',
-    subtitle: 'Professional documents, spreadsheets, and presentations',
+    title: '文档',
+    subtitle: '专业的文档、电子表格与演示文稿',
   },
   '/create': {
-    title: 'Create',
-    subtitle: 'Documents, diagrams, and forms',
+    title: '文档',
+    subtitle: '创建并整理本地文档',
   },
   '/pm': {
-    title: 'Project Management',
-    subtitle: 'Track projects, milestones, and team progress',
+    title: '项目',
+    subtitle: '围绕结果、下一步和里程碑推进工作',
   },
   '/portfolio': {
-    title: 'Portfolio',
-    subtitle: 'Cross-project overview and health tracking',
+    title: '项目组合',
+    subtitle: '跨项目总览与健康度跟踪',
   },
   '/energy': {
-    title: 'Energy',
-    subtitle: 'Track energy levels and optimize your schedule',
+    title: '精力',
+    subtitle: '跟踪精力水平并优化你的日程',
   },
   '/availability': {
-    title: 'Availability',
-    subtitle: 'Share your free time blocks with others',
+    title: '空闲时间',
+    subtitle: '查看并复制未来七天的空闲时段',
+  },
+  '/about': {
+    title: '关于 LifeOS',
+    subtitle: '了解产品理念、版本与开源信息',
+  },
+  '/privacy': {
+    title: '隐私政策',
+    subtitle: '了解数据在本机如何保存、使用与导出',
   },
 };
 
-/**
- * Get page metadata for a given pathname
- *
- * @param pathname - The current route path (e.g., '/', '/tasks')
- * @returns PageMetadata or null if not found
- */
 export function getPageMetadata(pathname: string): PageMetadata | null {
-  return PAGE_METADATA[pathname] || null;
+  if (PAGE_METADATA[pathname]) return PAGE_METADATA[pathname];
+  if (pathname.startsWith('/diagrams/')) return PAGE_METADATA['/diagrams'];
+  if (pathname.startsWith('/forms/')) return PAGE_METADATA['/forms'];
+  if (pathname.startsWith('/create/')) return PAGE_METADATA['/create'];
+  return null;
 }
 
-/**
- * Get page title for a given pathname (convenience function)
- *
- * @param pathname - The current route path
- * @returns Page title or 'NeumanOS' as fallback
- */
 export function getPageTitle(pathname: string): string {
-  return PAGE_METADATA[pathname]?.title || 'NeumanOS';
+  return getPageMetadata(pathname)?.title || 'LifeOS';
 }

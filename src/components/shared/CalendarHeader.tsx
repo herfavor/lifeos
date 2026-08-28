@@ -45,12 +45,12 @@ export function CalendarHeader({
   viewMode,
   onViewModeChange,
   onCreate,
-  createButtonText = 'New Event',
+  createButtonText = '新建事件',
   onPrint,
   onExport,
-  exportTooltip = 'Export to .ics file',
+  exportTooltip = '导出为 .ics 文件',
   onImport,
-  importTooltip = 'Import from .ics file',
+  importTooltip = '从 .ics 文件导入',
   importAccept = '.ics',
   statusMessage,
 }: CalendarHeaderProps) {
@@ -66,14 +66,14 @@ export function CalendarHeader({
               <button
                 onClick={onPrevious}
                 className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
-                aria-label="Previous"
+                aria-label="上一个"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={onNext}
                 className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-all duration-standard ease-smooth"
-                aria-label="Next"
+                aria-label="下一个"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -93,7 +93,7 @@ export function CalendarHeader({
             onClick={onToday}
             className="px-3 py-1 text-sm font-medium text-accent-primary hover:bg-accent-primary/10 rounded-button transition-all duration-standard ease-smooth"
           >
-            Today
+            今天
           </button>
           {onCreate && (
             <button
@@ -108,8 +108,8 @@ export function CalendarHeader({
             <button
               onClick={onPrint}
               className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-all duration-standard ease-smooth no-print"
-              title="Print calendar"
-              aria-label="Print calendar"
+              title="打印日历"
+              aria-label="打印日历"
             >
               <Printer className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -119,7 +119,7 @@ export function CalendarHeader({
               onClick={onExport}
               className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-all duration-standard ease-smooth no-print"
               title={exportTooltip}
-              aria-label="Export"
+              aria-label="导出"
             >
               <Download className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -130,7 +130,7 @@ export function CalendarHeader({
                 onClick={() => fileInputRef.current?.click()}
                 className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-all duration-standard ease-smooth no-print"
                 title={importTooltip}
-                aria-label="Import"
+                aria-label="导入"
               >
                 <Upload className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
               </button>
@@ -170,7 +170,7 @@ export function CalendarHeader({
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              Month
+              月
             </button>
             <button
               onClick={() => onViewModeChange('weekly')}
@@ -180,7 +180,7 @@ export function CalendarHeader({
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              Week
+              周
             </button>
             <button
               onClick={() => onViewModeChange('daily')}
@@ -190,7 +190,7 @@ export function CalendarHeader({
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              Day
+              日
             </button>
             <button
               onClick={() => onViewModeChange('agenda')}
@@ -200,7 +200,7 @@ export function CalendarHeader({
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              List
+              议程
             </button>
           </div>
         </div>

@@ -1,0 +1,220 @@
+/*
+ * LifeOS UX polish layer
+ *
+ * Cross-page rules only: quieter surfaces, tighter density, readable notes,
+ * calmer AI/status presentation, and consistent scrolling. Product structure
+ * stays in React components.
+ */
+
+:root {
+  --lifeos-readable-width: 860px;
+  --lifeos-section-radius: 12px;
+}
+
+/* ─────────────────────────────── shared surface discipline */
+.bento-card {
+  border-radius: var(--lifeos-section-radius) !important;
+  box-shadow: none !important;
+}
+
+.settings-page .bento-card {
+  padding: 16px !important;
+}
+
+.settings-page .bento-card h2,
+.settings-page .bento-card h3 {
+  font-size: 15px !important;
+  line-height: 22px !important;
+}
+
+.settings-page .bento-card p,
+.settings-page .bento-card label,
+.settings-page .bento-card button,
+.settings-page .bento-card input,
+.settings-page .bento-card select,
+.settings-page .bento-card textarea {
+  font-size: 14px;
+}
+
+.settings-page .bento-card input:not([type='checkbox']):not([type='radio']),
+.settings-page .bento-card select,
+.settings-page .bento-card textarea {
+  min-height: 38px;
+}
+
+.settings-page .bento-card + .bento-card {
+  margin-top: 12px;
+}
+
+/* ─────────────────────────────── task / kanban calmness */
+.kanban-card,
+.kanban-column {
+  box-shadow: none !important;
+}
+
+.tasks-page .kanban-card:hover {
+  transform: translateY(-1px);
+}
+
+.tasks-page .kanban-board {
+  scrollbar-width: thin;
+}
+
+/* Backlog is the Inbox now. Keep persisted data for compatibility, but do not
+ * render it on the committed-work board. */
+.tasks-page .kanban-board > .kanban-column[data-column-id='backlog'] {
+  display: none;
+}
+
+/* ─────────────────────────────── notes reading rhythm */
+.editor-content {
+  font-size: 15px;
+  line-height: 1.78;
+  letter-spacing: 0.002em;
+}
+
+.editor-content p,
+.editor-content li {
+  max-width: 78ch;
+}
+
+.editor-content h1,
+.editor-content h2,
+.editor-content h3 {
+  letter-spacing: -0.015em;
+}
+
+.notes-page .editor-content {
+  font-size: 16px;
+  line-height: 1.72;
+  letter-spacing: -0.005em;
+}
+
+.notes-page .editor-content h1 {
+  margin-top: 1.4em;
+  margin-bottom: 0.55em;
+}
+
+.notes-page .editor-content h2,
+.notes-page .editor-content h3 {
+  margin-top: 1.25em;
+  margin-bottom: 0.45em;
+}
+
+.notes-page .editor-content p,
+.notes-page .editor-content ul,
+.notes-page .editor-content ol,
+.notes-page .editor-content blockquote {
+  margin-top: 0.65em;
+  margin-bottom: 0.65em;
+}
+
+/* ─────────────────────────────── graph */
+.graph-page svg {
+  box-shadow: none !important;
+}
+
+.graph-page .prose,
+.graph-page button,
+.graph-page select,
+.graph-page input {
+  font-size: 14px;
+}
+
+/* ─────────────────────────────── bookmarks */
+.links-page button,
+.links-page select,
+.links-page input {
+  font-size: 14px;
+}
+
+.links-page [class*='shadow-card'] {
+  box-shadow: none !important;
+}
+
+/* Normal bookmark cards keep only the two decisions people make repeatedly:
+ * favorite and More. Archive/delete remain available in the existing context
+ * menu, but no longer turn every saved item into a row of admin controls. */
+.links-page button[title='归档'],
+.links-page button[title='取消归档'],
+.links-page button[title='删除链接'] {
+  display: none;
+}
+
+/* Destructive controls remain visible in the dedicated Trash surface. */
+.links-page button[title='永久删除'] {
+  display: inline-flex;
+}
+
+/* ─────────────────────────────── AI */
+[data-testid^='agent-action-'],
+[data-testid='ai-command-center'] [data-testid^='agent-action-'] {
+  box-shadow: none !important;
+}
+
+[data-testid='ai-command-center'] [data-testid='agent-action-executed'] {
+  background: var(--surface-light) !important;
+  border-color: var(--border-light) !important;
+}
+
+.dark [data-testid='ai-command-center'] [data-testid='agent-action-executed'] {
+  background: var(--surface-dark) !important;
+  border-color: var(--border-dark) !important;
+}
+
+[data-testid='ai-command-center'] .prose {
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────── projects */
+.pm-dashboard-page .bento-card {
+  background: var(--surface-light) !important;
+}
+
+.dark .pm-dashboard-page .bento-card {
+  background: var(--surface-dark) !important;
+}
+
+/* ─────────────────────────────── quiet, discoverable scrollbars */
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, currentColor 18%, transparent) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, currentColor 24%, transparent);
+    background-clip: padding-box;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .tasks-page .kanban-card:hover {
+    transform: none;
+  }
+}

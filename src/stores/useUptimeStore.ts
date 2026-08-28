@@ -211,7 +211,7 @@ export function getResponseTimeSparklineData(
  * Format relative time (e.g., "2m ago", "1h ago")
  */
 export function formatRelativeTime(timestamp: number | null): string {
-  if (!timestamp) return 'Never';
+  if (!timestamp) return '从未';
 
   const diff = Date.now() - timestamp;
   const seconds = Math.floor(diff / 1000);
@@ -219,8 +219,8 @@ export function formatRelativeTime(timestamp: number | null): string {
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'Just now';
+  if (days > 0) return `${days} 天前`;
+  if (hours > 0) return `${hours} 小时前`;
+  if (minutes > 0) return `${minutes} 分钟前`;
+  return '刚刚';
 }

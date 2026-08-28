@@ -1,379 +1,330 @@
 /**
- * Provider Settings Modal
- * Configure AI provider API keys with encryption
+ * Provider Settings Modal (simplified)
  *
- * Features:
- * - Configure all 8 AI providers (OpenRouter, Groq, HuggingFace, Mistral, Gemini, OpenAI, Anthropic, xAI)
- * - Encrypted API key storage
- * - Visual provider status (configured/unconfigured)
- * - Test API key validation
- * - Provider documentation links
- * - Free vs paid tier indicators
- * - CORS compatibility warnings
+ * Dead-simple AI provider configuration:
+ * - Blank fields: type your API key, type your model id, hit 保存. Done —
+ *   the provider becomes active immediately.
+ * - Model suggestions load in the background via datalist, but any custom
+ *   model id can be typed directly.
+ * - Every configured provider has a visible 删除 button.
+ * - No passwords: keys are encrypted at rest with a device-managed local
+ *   key (services/deviceKey) and persist across reloads.
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal } from './Modal';
-import { PasswordPrompt } from './PasswordPrompt';
 import { ConfirmDialog } from './ConfirmDialog';
 import { useTerminalStore } from '../stores/useTerminalStore';
 import { AIProviderRouter, PROVIDER_METADATA } from '../services/ai/providerRouter';
 import { toast } from '../stores/useToastStore';
+import { ChevronDown } from 'lucide-react';
 
 interface ProviderSettingsProps {
-  isOpen: boolean;
-  onClose: () => void;
+  /** Existing modal API. Omitted for the inline settings surface. */
+  isOpen?: boolean;
+  onClose?: () => void;
   router: AIProviderRouter;
+  /** Render inside the current page instead of opening a body-level portal. */
+  inline?: boolean;
 }
 
-export function ProviderSettings({ isOpen, onClose, router }: ProviderSettingsProps) {
-  const {
-    // providers is unused (using router.getAllProviders() instead)
-    encryptionPassword,
-    passwordHash,
-    isPasswordExpired,
-    setProviderApiKey,
-    clearProviderApiKey,
-    setEncryptionPassword,
-    setActiveProvider,
-    enableCrossModuleContext,
-    setEnableCrossModuleContext,
-  } = useTerminalStore();
+export function ProviderSettings({
+  isOpen = true,
+  onClose = () => undefined,
+  router,
+  inline = false,
+}: ProviderSettingsProps) {
+  const visible = inline || isOpen;
+  const setProviderApiKey = useTerminalStore((s) => s.setProviderApiKey);
+  const clearProviderApiKey = useTerminalStore((s) => s.clearProviderApiKey);
+  const clearRouterKey = router.clearProviderApiKey.bind(router);
+  const setActiveProvider = useTerminalStore((s) => s.setActiveProvider);
+  const activeProvider = useTerminalStore((s) => s.activeProvider);
+  const activeModel = useTerminalStore((s) => s.activeModel);
+  const storedProviders = useTerminalStore((s) => s.providers);
+  const enableCrossModuleContext = useTerminalStore((s) => s.enableCrossModuleContext);
+  const setEnableCrossModuleContext = useTerminalStore((s) => s.setEnableCrossModuleContext);
 
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+  // Local draft inputs
   const [apiKeyInputs, setApiKeyInputs] = useState<Record<string, string>>({});
-  const [showApiKeys, setShowApiKeys] = useState<Record<string, boolean>>({});
-  const [validating, setValidating] = useState<Record<string, boolean>>({});
-  const [validationResults, setValidationResults] = useState<Record<string, boolean | null>>({});
+  const [modelInputs, setModelInputs] = useState<Record<string, string>>({});
+  const [showKey, setShowKey] = useState<Record<string, boolean>>({});
+  const [expandedProvider, setExpandedProvider] = useState<string | null>(() => activeProvider);
+  const [modelOptions, setModelOptions] = useState<Record<string, string[]>>({});
+  const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [providerToClear, setProviderToClear] = useState<string | null>(null);
+  const loadedModelsRef = useRef<Set<string>>(new Set());
 
-  // Get provider metadata (sync - no SDK loading needed for display)
-  const providerMetadataList = PROVIDER_METADATA;
-  const providerStatus = router.getProviderStatus();
-
-  // Check if password is needed
+  // Seed the model field of the active provider so "只填密钥也能保存"
   useEffect(() => {
-    if (!encryptionPassword || isPasswordExpired()) {
-      // Password needed but don't show prompt automatically
-      // User will trigger it when trying to save an API key
-    }
-  }, [encryptionPassword, isPasswordExpired]);
+    if (!visible) return;
+    setModelInputs((prev) => {
+      if (prev[activeProvider]) return prev;
+      return { ...prev, [activeProvider]: activeModel };
+    });
+  }, [visible, activeProvider, activeModel]);
 
-  const handlePasswordSubmit = (password: string, hash: string, duration: 'daily' | 'weekly' | 'monthly') => {
-    setEncryptionPassword(password, hash, duration);
-    setShowPasswordPrompt(false);
-
-    // If user was trying to save a provider, save it now
-    if (selectedProvider && apiKeyInputs[selectedProvider]) {
-      saveProviderKey(selectedProvider, apiKeyInputs[selectedProvider], password);
-    }
-  };
-
-  const saveProviderKey = async (providerId: string, apiKey: string, password: string) => {
-    try {
-      await setProviderApiKey(providerId, apiKey, password);
-      setApiKeyInputs((prev) => ({ ...prev, [providerId]: '' }));
-      setValidationResults((prev) => ({ ...prev, [providerId]: null }));
-
-      // Store API key in router (will be applied when provider loads)
-      router.setProviderApiKey(providerId, apiKey);
-
-      // Try to load provider and set as active
-      const provider = await router.getProvider(providerId);
-      if (provider) {
-        // Auto-switch to this provider after saving
-        const defaultModel = provider.getDefaultModel();
-        if (defaultModel) {
-          setActiveProvider(providerId, defaultModel.id);
+  // Lazily load model suggestions (dynamic SDK import; failures are fine)
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    const loadSuggestions = async () => {
+      for (const providerId of Object.keys(PROVIDER_METADATA)) {
+        if (cancelled || loadedModelsRef.current.has(providerId)) continue;
+        loadedModelsRef.current.add(providerId);
+        try {
+          const provider = await router.getProvider(providerId);
+          if (!cancelled && provider && provider.models.length > 0) {
+            setModelOptions((prev) => ({
+              ...prev,
+              [providerId]: provider.models.map((m) => m.id),
+            }));
+          }
+        } catch {
+          // Suggestions are optional; free-text input always works.
         }
       }
+    };
+    loadSuggestions();
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, router]);
+
+  const handleSave = async (providerId: string) => {
+    const apiKey = apiKeyInputs[providerId]?.trim();
+    if (!apiKey || saving[providerId]) return;
+
+    setSaving((prev) => ({ ...prev, [providerId]: true }));
+    try {
+      await setProviderApiKey(providerId, apiKey); // encrypt + persist
+      router.setProviderApiKey(providerId, apiKey); // hot-load into session
+
+      // Model: user-entered wins; otherwise the provider's default.
+      let modelId = modelInputs[providerId]?.trim();
+      if (!modelId) {
+        try {
+          const provider = await router.getProvider(providerId);
+          modelId = provider?.getDefaultModel().id ?? '';
+        } catch {
+          modelId = '';
+        }
+      }
+      if (modelId) {
+        setActiveProvider(providerId, modelId);
+      }
+
+      setApiKeyInputs((prev) => ({ ...prev, [providerId]: '' }));
+      toast.success(
+        '已保存',
+        `${PROVIDER_METADATA[providerId]?.displayName ?? providerId} 配置完成${modelId ? `，当前模型 ${modelId}` : ''}。`
+      );
     } catch (error) {
       console.error('Failed to save API key:', error);
-      toast.error('Failed to save API key', 'Please try again.');
-    }
-  };
-
-  const handleSaveApiKey = (providerId: string) => {
-    const apiKey = apiKeyInputs[providerId];
-    if (!apiKey || !apiKey.trim()) return;
-
-    // Check if password is needed
-    if (!encryptionPassword || isPasswordExpired()) {
-      setSelectedProvider(providerId);
-      setShowPasswordPrompt(true);
-      return;
-    }
-
-    saveProviderKey(providerId, apiKey, encryptionPassword);
-  };
-
-  const handleClearApiKey = (providerId: string) => {
-    setProviderToClear(providerId);
-  };
-
-  const confirmClearApiKey = () => {
-    if (providerToClear) {
-      clearProviderApiKey(providerToClear);
-      setApiKeyInputs((prev) => ({ ...prev, [providerToClear]: '' }));
-      setValidationResults((prev) => ({ ...prev, [providerToClear]: null }));
-      setProviderToClear(null);
-    }
-  };
-
-  const handleTestApiKey = async (providerId: string) => {
-    const apiKey = apiKeyInputs[providerId];
-    if (!apiKey || !apiKey.trim()) {
-      toast.warning('Please enter an API key first');
-      return;
-    }
-
-    setValidating((prev) => ({ ...prev, [providerId]: true }));
-
-    try {
-      // Load provider SDK on-demand for validation
-      const provider = await router.getProvider(providerId);
-      if (!provider) {
-        throw new Error('Provider not found');
-      }
-
-      const isValid = await provider.validateApiKey(apiKey);
-      setValidationResults((prev) => ({ ...prev, [providerId]: isValid }));
-
-      if (isValid) {
-        toast.success('API key valid', `${providerStatus[providerId]?.name} is ready to use.`);
-      } else {
-        toast.error('API key invalid', `Please check your ${providerStatus[providerId]?.name} key.`);
-      }
-    } catch (error: unknown) {
-      console.error('API key validation error:', error);
-      setValidationResults((prev) => ({ ...prev, [providerId]: false }));
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Validation error', message);
+      toast.error('保存失败', '请重试。');
     } finally {
-      setValidating((prev) => ({ ...prev, [providerId]: false }));
+      setSaving((prev) => ({ ...prev, [providerId]: false }));
     }
   };
 
-  const toggleShowApiKey = (providerId: string) => {
-    setShowApiKeys((prev) => ({ ...prev, [providerId]: !prev[providerId] }));
+  const confirmClear = () => {
+    if (!providerToClear) return;
+    clearProviderApiKey(providerToClear); // remove persisted config
+    clearRouterKey(providerToClear); // drop any in-session copy
+    setModelInputs((prev) => ({ ...prev, [providerToClear]: '' }));
+    setApiKeyInputs((prev) => ({ ...prev, [providerToClear]: '' }));
+    toast.success('已删除', '该提供商的 API 密钥与配置已清除。');
+    setProviderToClear(null);
   };
 
-  return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        title="AI Provider Settings"
-        maxWidth="2xl"
-      >
-        <div className="space-y-3">
-          {/* Header Description */}
+  const settingsContent = (
+    <div className="space-y-3" data-testid="provider-settings-content">
+          {inline && (
+            <div className="border-b border-border-light pb-3 dark:border-border-dark">
+              <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
+                提供商配置
+              </h3>
+              <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                选择一个服务并填入你自己的 API 密钥。配置完成后，AI 指挥中心会立即使用它。
+              </p>
+            </div>
+          )}
+
+          {/* Header */}
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            <p className="mb-1">
-              Configure API keys for AI providers. Your keys are encrypted with AES-256-CBC and stored locally.
-            </p>
-            <p className="text-[10px]">
-              <span className="text-accent-green">🟢 Free</span> models available
-              {' • '}
-              <span className="text-accent-blue">🔵 Paid</span> BYOK (Bring Your Own Key)
-              {' • '}
-              <span className="text-accent-yellow">⚠️</span> Requires backend proxy (CORS)
+            <p>
+              填入 <strong>API 密钥</strong> 和 <strong>模型 ID</strong>，点「保存」即可使用。
+              密钥在本机加密存储（无需密码），刷新后依然有效。
             </p>
           </div>
 
-          {/* Provider List */}
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {Object.entries(providerMetadataList).map(([providerId, metadata]) => {
-              const status = providerStatus[providerId];
-              const isConfigured = status?.configured || false;
+          {/* Provider rows */}
+          <div
+            className={
+              inline
+                ? 'grid gap-3 xl:grid-cols-2'
+                : 'max-h-[60vh] space-y-2 overflow-y-auto pr-1'
+            }
+          >
+            {Object.entries(PROVIDER_METADATA).map(([providerId, metadata]) => {
+              const isConfigured = Boolean(storedProviders[providerId]?.isConfigured);
+              const isActive = activeProvider === providerId;
 
               return (
                 <div
                   key={providerId}
-                  className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button"
+                  data-testid={`provider-row-${providerId}`}
+                  className={`rounded-button border p-3 ${
+                    isActive
+                      ? 'border-accent-primary/50 bg-accent-primary/5'
+                      : 'border-border-light bg-surface-light-elevated dark:border-border-dark dark:bg-surface-dark-elevated'
+                  }`}
                 >
-                  {/* Provider Header */}
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-start gap-2.5 flex-1">
-                      {/* Provider Favicon */}
-                      {metadata.websiteUrl && (
-                        <img
-                          src={`https://www.google.com/s2/favicons?domain=${new URL(metadata.websiteUrl).hostname}&sz=32`}
-                          alt=""
-                          className="w-5 h-5 mt-0.5 rounded-sm flex-shrink-0"
-                          onError={(e) => {
-                            // Hide on error - fall back to no icon
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      )}
-                      <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                          {metadata.displayName}
-                        </h3>
-                        {metadata.hasFreeModels && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-accent-green/10 text-accent-green rounded">
-                            Free Models
-                          </span>
-                        )}
-                        {!metadata.supportsCORS && metadata.requiresProxy && (
-                          <span
-                            className="text-[10px] px-1.5 py-0.5 bg-accent-yellow/10 text-accent-yellow rounded cursor-help"
-                            title="This provider blocks direct browser requests (CORS). Use OpenRouter instead - it can access this provider's models and works directly in your browser."
-                          >
-                            ⚠️ Proxy Required
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                        {metadata.description}
-                      </p>
-                      <div className="mt-0.5 flex items-center gap-2 text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-                        <span>{status?.modelCount || 0} models</span>
-                        {metadata.apiKeyUrl && (
-                          <>
-                            <span>•</span>
-                            <a
-                              href={metadata.apiKeyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-accent-blue hover:text-accent-blue-hover"
-                            >
-                              Get API Key →
-                            </a>
-                          </>
-                        )}
-                        {metadata.docsUrl && (
-                          <>
-                            <span>•</span>
-                            <a
-                              href={metadata.docsUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-accent-blue hover:text-accent-blue-hover"
-                            >
-                              Documentation →
-                            </a>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                    {/* Status Badge */}
-                    <div className="flex items-center gap-1.5">
-                      {isConfigured ? (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-accent-green/10 text-accent-green rounded">
-                          ✓ Configured
-                        </span>
-                      ) : (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded">
-                          Not Configured
+                  {/* Row header */}
+                  <div className={`${!inline || expandedProvider === providerId ? 'mb-2' : ''} flex items-center justify-between gap-2`}>
+                    <button
+                      type="button"
+                      onClick={() => inline && setExpandedProvider((current) => current === providerId ? null : providerId)}
+                      className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                      aria-expanded={!inline || expandedProvider === providerId}
+                    >
+                      <span
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent-primary/10 text-xs font-semibold uppercase text-accent-primary"
+                        aria-hidden="true"
+                      >
+                        {metadata.displayName.slice(0, 2)}
+                      </span>
+                      <span className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+                        {metadata.displayName}
+                      </span>
+                      {metadata.hasFreeModels && (
+                        <span className="rounded bg-accent-green/10 px-1.5 py-0.5 text-xs text-accent-green">
+                          免费模型
                         </span>
                       )}
-                    </div>
-                  </div>
-
-                  {/* API Key Input */}
-                  <div className="space-y-1.5">
-                    <div className="flex gap-1.5">
-                      <div className="flex-1 relative">
-                        <input
-                          type={showApiKeys[providerId] ? 'text' : 'password'}
-                          value={apiKeyInputs[providerId] || ''}
-                          onChange={(e) =>
-                            setApiKeyInputs((prev) => ({ ...prev, [providerId]: e.target.value }))
-                          }
-                          placeholder={
-                            isConfigured
-                              ? 'Enter new API key to replace existing'
-                              : `Enter your ${metadata.apiKeyLabel || 'API key'}`
-                          }
-                          className="w-full px-2.5 py-1.5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-blue text-text-light-primary dark:text-text-dark-primary text-xs"
-                          autoComplete="off"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => toggleShowApiKey(providerId)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary text-[10px]"
+                      {!metadata.supportsCORS && metadata.requiresProxy && (
+                        <span
+                          className="cursor-help rounded bg-accent-yellow/10 px-1.5 py-0.5 text-xs text-accent-yellow"
+                          title="该提供商阻止浏览器直连（CORS）。推荐用 OpenRouter——一个密钥可访问其模型。"
                         >
-                          {showApiKeys[providerId] ? 'Hide' : 'Show'}
-                        </button>
-                      </div>
+                          ⚠️ 需代理
+                        </span>
+                      )}
+                      {isConfigured ? (
+                        <span className="rounded bg-accent-green/10 px-1.5 py-0.5 text-xs text-accent-green">
+                          ✓ 已配置{isActive ? ' · 使用中' : ''}
+                        </span>
+                      ) : null}
+                      {inline && (
+                        <ChevronDown className={`ml-auto h-4 w-4 shrink-0 text-text-light-tertiary transition-transform dark:text-text-dark-tertiary ${expandedProvider === providerId ? 'rotate-180' : ''}`} />
+                      )}
+                    </button>
+                    {metadata.apiKeyUrl && (
+                      <a
+                        href={metadata.apiKeyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-xs text-accent-primary hover:opacity-80"
+                      >
+                        获取密钥 →
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Inputs */}
+                  {(!inline || expandedProvider === providerId) && <div className="space-y-2">
+                    <input
+                      type={showKey[providerId] ? 'text' : 'password'}
+                      value={apiKeyInputs[providerId] ?? ''}
+                      onChange={(e) =>
+                        setApiKeyInputs((prev) => ({ ...prev, [providerId]: e.target.value }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSave(providerId);
+                      }}
+                      placeholder={
+                        isConfigured
+                          ? '已保存密钥（输入新密钥可替换）'
+                          : `粘贴你的 ${metadata.apiKeyLabel ?? 'API 密钥'}`
+                      }
+                      autoComplete="off"
+                      className="w-full rounded-button border border-border-light bg-surface-light px-3 py-2 text-sm text-text-light-primary focus:outline-none focus:ring-2 focus:ring-accent-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+                    />
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-9 shrink-0 text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                        模型
+                      </span>
+                      <input
+                        list={`models-${providerId}`}
+                        value={modelInputs[providerId] ?? ''}
+                        onChange={(e) =>
+                          setModelInputs((prev) => ({ ...prev, [providerId]: e.target.value }))
+                        }
+                        placeholder="留空则使用默认模型，或输入任意模型 ID"
+                        className="min-w-0 flex-1 rounded-button border border-border-light bg-surface-light px-2.5 py-1.5 text-sm text-text-light-primary placeholder-text-light-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary dark:placeholder-text-dark-tertiary"
+                      />
+                      <datalist id={`models-${providerId}`}>
+                        {(modelOptions[providerId] ?? []).map((m) => (
+                          <option key={m} value={m} />
+                        ))}
+                      </datalist>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowKey((prev) => ({ ...prev, [providerId]: !prev[providerId] }))
+                        }
+                        className="shrink-0 text-xs text-text-light-secondary hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary"
+                      >
+                        {showKey[providerId] ? '隐藏' : '显示'}
+                      </button>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-1.5">
+                    {/* Actions */}
+                    <div className="flex items-center gap-1.5 pt-0.5">
                       <button
-                        onClick={() => handleSaveApiKey(providerId)}
-                        disabled={!apiKeyInputs[providerId]?.trim()}
-                        className="px-2.5 py-1 bg-accent-blue hover:bg-accent-blue-hover disabled:bg-surface-light-elevated dark:disabled:bg-surface-dark-elevated disabled:text-text-light-tertiary dark:disabled:text-text-dark-tertiary disabled:cursor-not-allowed text-white rounded-button text-xs transition-all duration-standard ease-smooth"
+                        onClick={() => handleSave(providerId)}
+                        disabled={!apiKeyInputs[providerId]?.trim() || saving[providerId]}
+                        className="rounded-button bg-accent-primary px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-light-elevated disabled:text-text-light-tertiary dark:disabled:bg-surface-dark-elevated dark:disabled:text-text-dark-tertiary"
                       >
-                        {isConfigured ? 'Update' : 'Save'}
+                        {saving[providerId] ? '保存中…' : isConfigured ? '更新并启用' : '保存并启用'}
                       </button>
-
-                      <button
-                        onClick={() => handleTestApiKey(providerId)}
-                        disabled={!apiKeyInputs[providerId]?.trim() || validating[providerId]}
-                        className="px-2.5 py-1 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark disabled:opacity-50 disabled:cursor-not-allowed border border-border-light dark:border-border-dark rounded-button text-xs text-text-light-primary dark:text-text-dark-primary transition-all duration-standard ease-smooth"
-                      >
-                        {validating[providerId] ? 'Testing...' : 'Test Key'}
-                      </button>
-
                       {isConfigured && (
                         <button
-                          onClick={() => handleClearApiKey(providerId)}
-                          className="px-2.5 py-1 bg-accent-red/10 hover:bg-accent-red/20 border border-accent-red/20 rounded-button text-xs text-accent-red transition-all duration-standard ease-smooth"
+                          onClick={() => setProviderToClear(providerId)}
+                          className="rounded-button border border-accent-red/20 bg-accent-red/10 px-3 py-1.5 text-sm text-accent-red transition-colors hover:bg-accent-red/20"
                         >
-                          Remove
+                          删除配置
                         </button>
                       )}
-
-                      {/* Validation Result */}
-                      {validationResults[providerId] !== null && (
-                        <span
-                          className={`px-1.5 py-1 text-[10px] rounded-button ${
-                            validationResults[providerId]
-                              ? 'bg-accent-green/10 text-accent-green'
-                              : 'bg-accent-red/10 text-accent-red'
-                          }`}
-                        >
-                          {validationResults[providerId] ? '✓ Valid' : '✗ Invalid'}
-                        </span>
-                      )}
                     </div>
-                  </div>
+                  </div>}
                 </div>
               );
             })}
           </div>
 
-          {/* AI Context Settings */}
-          <div className="pt-3 border-t border-border-light dark:border-border-dark space-y-2">
-            <h3 className="text-xs font-semibold text-text-light-primary dark:text-text-dark-primary">
-              AI Context
-            </h3>
-            <div className="flex items-start justify-between gap-4 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button">
-              <div className="flex-1 min-w-0">
+          {/* Cross-module context toggle */}
+          <div className="space-y-2 border-t border-border-light pt-3 dark:border-border-dark">
+            <div className="flex items-start justify-between gap-4 rounded-button border border-border-light bg-surface-light-elevated p-3 dark:border-border-dark dark:bg-surface-dark-elevated">
+              <div className="min-w-0 flex-1">
                 <div className="text-xs font-medium text-text-light-primary dark:text-text-dark-primary">
-                  Cross-module context
+                  跨模块上下文
                 </div>
-                <div className="text-[11px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-                  Include data from notes, tasks, calendar, and habits in AI conversations
+                <div className="mt-0.5 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                  在 AI 对话中包含笔记、任务、日历和习惯的数据
                 </div>
               </div>
               <button
                 role="switch"
                 aria-checked={enableCrossModuleContext}
                 onClick={() => setEnableCrossModuleContext(!enableCrossModuleContext)}
-                className={`flex-shrink-0 relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue ${
+                className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
                   enableCrossModuleContext
-                    ? 'bg-accent-blue'
-                    : 'bg-surface-dark dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark'
+                    ? 'bg-accent-primary'
+                    : 'border border-border-light bg-surface-dark dark:border-border-dark'
                 }`}
-                aria-label="Toggle cross-module context"
+                aria-label="切换跨模块上下文"
               >
                 <span
                   className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform duration-200 ${
@@ -384,38 +335,49 @@ export function ProviderSettings({ isOpen, onClose, router }: ProviderSettingsPr
             </div>
           </div>
 
-          {/* Footer Actions */}
-          <div className="flex justify-end pt-3 border-t border-border-light dark:border-border-dark">
-            <button
-              onClick={onClose}
-              className="px-3 py-1.5 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-xs transition-all duration-standard ease-smooth"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      </Modal>
+          {/* Footer for the legacy modal presentation */}
+          {!inline && (
+            <div className="flex justify-end border-t border-border-light pt-3 dark:border-border-dark">
+              <button
+                onClick={onClose}
+                className="rounded-button bg-accent-primary px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90"
+              >
+                完成
+              </button>
+            </div>
+          )}
+    </div>
+  );
 
-      {/* Password Prompt Modal */}
-      <PasswordPrompt
-        isOpen={showPasswordPrompt}
-        onSubmit={handlePasswordSubmit}
-        onCancel={() => {
-          setShowPasswordPrompt(false);
-          setSelectedProvider(null);
-        }}
-        mode={passwordHash ? 'unlock' : 'setup'}
-        existingPasswordHash={passwordHash || undefined}
-      />
+  return (
+    <>
+      {inline ? (
+        <section
+          aria-label="AI 提供商设置"
+          className="rounded-xl border border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark"
+        >
+          {settingsContent}
+        </section>
+      ) : (
+        <Modal isOpen={isOpen} onClose={onClose} title="AI 提供商设置" maxWidth="2xl">
+          {settingsContent}
+        </Modal>
+      )}
 
-      {/* Confirm Clear API Key Dialog */}
+      {/* Delete confirmation */}
       <ConfirmDialog
         isOpen={providerToClear !== null}
         onClose={() => setProviderToClear(null)}
-        onConfirm={confirmClearApiKey}
-        title="Remove API Key"
-        message={providerToClear ? `Remove the API key for ${providerStatus[providerToClear]?.name || providerToClear}? You will need to re-enter it to use this provider.` : ''}
-        confirmText="Remove"
+        onConfirm={confirmClear}
+        title="删除提供商配置"
+        message={
+          providerToClear
+            ? `确定删除 ${
+                PROVIDER_METADATA[providerToClear]?.displayName ?? providerToClear
+              } 的 API 密钥与配置？之后可随时重新填写。`
+            : ''
+        }
+        confirmText="删除"
         variant="danger"
       />
     </>

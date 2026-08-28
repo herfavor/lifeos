@@ -95,7 +95,7 @@ export default function HoverPreviewPlugin({ notes }: HoverPreviewPluginProps) {
       if (!linkTitle) return;
 
       // Find target note
-      const notesArray = Object.values(notes);
+      const notesArray = Object.values(notes).filter((note) => !note.deletedAt);
       const linkTitleLower = linkTitle.toLowerCase();
       const targetNote = notesArray.find(
         (note) =>

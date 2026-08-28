@@ -50,7 +50,7 @@ describe('KanbanCard', () => {
       </DndContext>
     );
 
-    expect(screen.getByText('High')).toBeInTheDocument();
+    expect(screen.getByText('高')).toBeInTheDocument();
   });
 
   it('should display due date', () => {
@@ -61,7 +61,7 @@ describe('KanbanCard', () => {
     );
 
     // Due date formatted as "Nov XX" (may vary by timezone, so just check month)
-    expect(screen.getByText(/Nov \d+/)).toBeInTheDocument();
+    expect(screen.getByText(/11月/)).toBeInTheDocument();
   });
 
   it('should display tags', () => {

@@ -404,7 +404,7 @@ export const useHabitStore = create<HabitStore>()(
             // Toast XP earned
             if (xpEarned > 0) {
               const multiplier = getStreakMultiplier(newStreak);
-              const bonusText = multiplier > 1 ? ` (${multiplier.toFixed(1)}x streak bonus)` : '';
+              const bonusText = multiplier > 1 ? ` (${multiplier.toFixed(1)}x 连续加成)` : '';
               toast.success(`+${xpEarned} XP${bonusText}`, habit.title);
             }
 
@@ -414,17 +414,17 @@ export const useHabitStore = create<HabitStore>()(
               newAchievements.forEach((achievement) => {
                 const label =
                   achievement.type === 'streak'
-                    ? `${achievement.value}-day streak!`
-                    : `${achievement.value} completions!`;
-                toast.success(`Achievement Unlocked: ${label}`, habit.title);
+                    ? `${achievement.value} 天连续达成！`
+                    : `${achievement.value} 次完成！`;
+                toast.success(`成就已解锁：${label}`, habit.title);
               });
             }
 
             // Toast for streak milestones
             if (newStreak > 0 && STREAK_MILESTONES.includes(newStreak)) {
               toast.success(
-                `${newStreak}-day streak!`,
-                `Keep going with "${habit.title}"!`
+                `${newStreak} 天连续达成！`,
+                `继续坚持“${habit.title}”！`
               );
             }
 
@@ -677,7 +677,7 @@ export const useHabitStore = create<HabitStore>()(
         }
         return habit.requiredHabitIds
           .filter((reqId) => !state.completions.some((c) => c.habitId === reqId && c.date === dateKey))
-          .map((reqId) => state.habits.find((h) => h.id === reqId)?.title ?? 'Unknown')
+          .map((reqId) => state.habits.find((h) => h.id === reqId)?.title ?? '未知')
           .filter(Boolean);
       },
 
@@ -761,7 +761,7 @@ export const useHabitStore = create<HabitStore>()(
           // Only auto-freeze if the habit had an active streak
           if (habit.currentStreak > 0) {
             get().applyStreakFreeze(habit.id, yesterdayKey);
-            toast.info('Streak freeze applied', `"${habit.title}" streak preserved`);
+            toast.info('已应用连续冻结', `“${habit.title}”的连续记录已保留`);
           }
         }
       },
@@ -775,7 +775,7 @@ export const useHabitStore = create<HabitStore>()(
           .filter((c) => c.notes && c.notes.toLowerCase().includes(lowerQuery))
           .map((c) => {
             const habit = state.habits.find((h) => h.id === c.habitId);
-            return { ...c, habitTitle: habit?.title ?? 'Unknown' };
+            return { ...c, habitTitle: habit?.title ?? '未知' };
           });
       },
 
@@ -814,7 +814,7 @@ export const useHabitStore = create<HabitStore>()(
               habitId: '',
               value: 7,
               unlockedAt: new Date().toISOString(),
-              label: `${cat} Master`,
+              label: `${cat} 大师`,
               icon: 'crown',
             });
           }
@@ -828,7 +828,7 @@ export const useHabitStore = create<HabitStore>()(
             habitId: '',
             value: 5,
             unlockedAt: new Date().toISOString(),
-            label: 'Explorer',
+            label: '探索者',
             icon: 'compass',
           });
         }
@@ -845,7 +845,7 @@ export const useHabitStore = create<HabitStore>()(
               habitId: '',
               value: milestone,
               unlockedAt: new Date().toISOString(),
-              label: `${milestone}-Day Perfect`,
+              label: `${milestone} 天全勤`,
               icon: 'check-circle',
             });
           }
@@ -870,7 +870,7 @@ export const useHabitStore = create<HabitStore>()(
             habitId: '',
             value: 10,
             unlockedAt: new Date().toISOString(),
-            label: 'Early Bird',
+            label: '早鸟',
             icon: 'sunrise',
           });
         }
@@ -887,7 +887,7 @@ export const useHabitStore = create<HabitStore>()(
             habitId: '',
             value: 10,
             unlockedAt: new Date().toISOString(),
-            label: 'Night Owl',
+            label: '夜猫子',
             icon: 'moon',
           });
         }
@@ -897,7 +897,7 @@ export const useHabitStore = create<HabitStore>()(
             achievements: [...s.achievements, ...newAchievements],
           }));
           newAchievements.forEach((a) => {
-            toast.success(`Achievement Unlocked: ${a.label ?? a.type}`, '');
+            toast.success(`成就已解锁：${a.label ?? a.type}`, '');
           });
         }
 

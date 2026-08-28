@@ -38,13 +38,13 @@ export function OrphanPanel({
   ): string => {
     switch (reason) {
       case 'similar-title':
-        return 'Similar title';
+        return '标题相似';
       case 'same-folder':
-        return 'Same folder';
+        return '同一文件夹';
       case 'recent-edit':
-        return 'Edited recently';
+        return '近期编辑过';
       case 'similar-content':
-        return 'Similar content';
+        return '内容相似';
     }
   };
 
@@ -65,15 +65,15 @@ export function OrphanPanel({
 
   if (orphans.length === 0) {
     return (
-      <div className="flex flex-col h-full bg-surface-light-base dark:bg-surface-dark-base border-l border-border-light dark:border-border-dark">
+      <div className="flex flex-col h-full bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark">
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Orphan Nodes
+            孤立节点
           </h3>
           <button
             onClick={onClose}
             className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded"
-            aria-label="Close orphan panel"
+            aria-label="关闭孤立节点面板"
           >
             <X className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           </button>
@@ -82,10 +82,10 @@ export function OrphanPanel({
           <div className="text-center">
             <AlertCircle className="w-12 h-12 mx-auto mb-3 text-accent-primary opacity-50" />
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              No orphan nodes found
+              未找到孤立节点
             </p>
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-              All notes are connected!
+              所有笔记均已连接！
             </p>
           </div>
         </div>
@@ -94,13 +94,13 @@ export function OrphanPanel({
   }
 
   return (
-    <div className="flex flex-col h-full bg-surface-light-base dark:bg-surface-dark-base border-l border-border-light dark:border-border-dark w-80">
+    <div className="flex flex-col h-full bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark w-80">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
         <div className="flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-accent-primary" />
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Orphan Nodes
+            孤立节点
           </h3>
           <span className="px-2 py-0.5 text-xs rounded-full bg-accent-primary/10 text-accent-primary">
             {orphans.length}
@@ -109,7 +109,7 @@ export function OrphanPanel({
         <button
           onClick={onClose}
           className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-          aria-label="Close orphan panel"
+          aria-label="关闭孤立节点面板"
         >
           <X className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
         </button>
@@ -133,7 +133,7 @@ export function OrphanPanel({
                     <button
                       onClick={() => toggleExpanded(orphan.nodeId)}
                       className="mt-0.5 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary"
-                      aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                      aria-label={isExpanded ? '折叠' : '展开'}
                     >
                       {isExpanded ? (
                         <ChevronDown className="w-4 h-4" />
@@ -153,13 +153,12 @@ export function OrphanPanel({
                     </button>
                     {hasSuggestions && (
                       <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-0.5">
-                        {orphan.suggestions.length} suggestion
-                        {orphan.suggestions.length !== 1 ? 's' : ''}
+                        {orphan.suggestions.length} 条建议
                       </p>
                     )}
                     {!hasSuggestions && (
                       <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-0.5">
-                        No suggestions available
+                        暂无可用建议
                       </p>
                     )}
                   </div>
@@ -196,7 +195,7 @@ export function OrphanPanel({
                             className="flex items-center gap-1.5 px-2 py-1 text-xs rounded bg-accent-primary/10 text-accent-primary hover:bg-accent-primary/20 transition-colors"
                           >
                             <Tag className="w-3 h-3" />
-                            <span>Add tag: {suggestion.suggestedTag}</span>
+                            <span>添加标签：{suggestion.suggestedTag}</span>
                           </button>
                         ) : (
                           <button
@@ -209,7 +208,7 @@ export function OrphanPanel({
                             className="flex items-center gap-1.5 px-2 py-1 text-xs rounded bg-accent-primary/10 text-accent-primary hover:bg-accent-primary/20 transition-colors"
                           >
                             <LinkIcon className="w-3 h-3" />
-                            <span>Create link</span>
+                            <span>创建链接</span>
                           </button>
                         )}
                       </div>
@@ -225,7 +224,7 @@ export function OrphanPanel({
       {/* Footer */}
       <div className="p-3 border-t border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated">
         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          Orphan nodes have no connections. Click suggestions to add links or tags.
+          孤立节点没有任何连接。点击建议可添加链接或标签。
         </p>
       </div>
     </div>

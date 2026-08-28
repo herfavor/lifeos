@@ -70,7 +70,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   const gridRef = useRef<HTMLDivElement>(null);
   const [resizeState, setResizeState] = useState<ResizeState | null>(null);
 
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
   const hours = showTimeSlots ? Array.from({ length: 24 }, (_, i) => i) : [];
 
   // Get start of week (Sunday) — must be before callbacks that reference weekDays
@@ -392,7 +392,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                   ))}
                   {overlappingTasks.length > 2 && (
                     <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                      +{overlappingTasks.length - 2} more
+                      +{overlappingTasks.length - 2} 更多
                     </div>
                   )}
                 </div>

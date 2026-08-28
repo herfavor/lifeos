@@ -89,21 +89,21 @@ export function IdlePrompt({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-lg bg-surface-elevated p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-6 shadow-xl">
         {/* Header */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-text-primary">
-            You were idle
+          <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
+            您已空闲一段时间
           </h2>
-          <p className="mt-1 text-sm text-text-secondary">
-            No activity detected for <span className="font-medium text-text-primary">{formatDuration(idleDuration)}</span>
+          <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+            已超过 <span className="font-medium text-text-light-primary dark:text-text-dark-primary">{formatDuration(idleDuration)}</span> 未检测到活动
           </p>
         </div>
 
         {/* Timer info */}
-        <div className="mb-6 rounded-md bg-surface-base p-3">
-          <p className="text-sm font-medium text-text-primary">Active timer:</p>
-          <p className="mt-1 text-sm text-text-secondary">{timerDescription}</p>
+        <div className="mb-6 rounded-md bg-surface-light dark:bg-surface-dark p-3">
+          <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">当前计时器：</p>
+          <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">{timerDescription}</p>
         </div>
 
         {/* Actions */}
@@ -113,7 +113,7 @@ export function IdlePrompt({
             onClick={onKeep}
             className="w-full rounded-md bg-accent-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-primary/90"
           >
-            Keep tracking (include idle time)
+            继续计时（包含空闲时间）
           </button>
 
           {/* Discard */}
@@ -121,13 +121,13 @@ export function IdlePrompt({
             onClick={onDiscard}
             className="w-full rounded-md bg-status-error/10 px-4 py-2 text-sm font-medium text-status-error transition-colors hover:bg-status-error/20"
           >
-            Discard idle time (stop at {new Date(idleStartTime).toLocaleTimeString()})
+            丢弃空闲时间（停止于 {new Date(idleStartTime).toLocaleTimeString()}）
           </button>
 
           {/* Adjust */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-text-primary">
-              Or adjust the idle time:
+            <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+              或调整空闲时间：
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -138,15 +138,15 @@ export function IdlePrompt({
                 onChange={(e) => setAdjustedMinutes(Number(e.target.value))}
                 className="flex-1"
               />
-              <span className="min-w-[60px] text-sm text-text-secondary">
+              <span className="min-w-[60px] text-sm text-text-light-secondary dark:text-text-dark-secondary">
                 {adjustedMinutes}m
               </span>
             </div>
             <button
               onClick={handleAdjust}
-              className="w-full rounded-md bg-surface-base px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover"
+              className="w-full rounded-md bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
             >
-              Stop timer {adjustedMinutes} minutes after idle started
+              在空闲开始后 {adjustedMinutes} 分钟停止计时器
             </button>
           </div>
         </div>
@@ -154,9 +154,9 @@ export function IdlePrompt({
         {/* Dismiss */}
         <button
           onClick={onDismiss}
-          className="mt-4 w-full text-sm text-text-tertiary transition-colors hover:text-text-secondary"
+          className="mt-4 w-full text-sm text-text-light-tertiary dark:text-text-dark-tertiary transition-colors hover:text-text-light-secondary dark:text-text-dark-secondary"
         >
-          Decide later
+          稍后决定
         </button>
       </div>
     </div>

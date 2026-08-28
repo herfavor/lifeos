@@ -250,7 +250,7 @@ export class AIProviderRouter {
     if (!navigator.onLine) {
       throw new ProviderError(
         ProviderErrorType.NETWORK_ERROR,
-        'You are offline. AI features require an internet connection.',
+        '你当前处于离线状态。AI 功能需要互联网连接。',
         this.config.primaryProvider,
         false
       );
@@ -260,7 +260,7 @@ export class AIProviderRouter {
 
     if (!primaryProvider) {
       throw new Error(
-        `Primary provider "${this.config.primaryProvider}" not found or not configured.`
+        `主提供商“${this.config.primaryProvider}”未找到或未配置。`
       );
     }
 
@@ -331,7 +331,7 @@ export class AIProviderRouter {
 
         // All providers failed
         throw new Error(
-          `All providers failed. Primary: ${error.message}. No working fallback found.`
+          `所有提供商均失败。主提供商错误：${error.message}。未找到可用的备用提供商。`
         );
       }
 
@@ -352,7 +352,7 @@ export class AIProviderRouter {
     if (!navigator.onLine) {
       throw new ProviderError(
         ProviderErrorType.NETWORK_ERROR,
-        'You are offline. AI features require an internet connection.',
+        '你当前处于离线状态。AI 功能需要互联网连接。',
         providerId,
         false
       );
@@ -361,12 +361,12 @@ export class AIProviderRouter {
     const provider = await this.getProvider(providerId);
 
     if (!provider) {
-      throw new Error(`Provider "${providerId}" not found.`);
+      throw new Error(`提供商“${providerId}”未找到。`);
     }
 
     if (!provider.isConfigured()) {
       throw new Error(
-        `Provider "${providerId}" is not configured. Please add an API key.`
+        `提供商“${providerId}”未配置。请添加 API 密钥。`
       );
     }
 

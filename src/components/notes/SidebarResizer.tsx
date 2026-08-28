@@ -147,7 +147,7 @@ export const SidebarResizer: React.FC<SidebarResizerProps> = ({
       aria-valuenow={valuePercent}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label="Resize sidebar"
+      aria-label="调整侧边栏大小"
       tabIndex={0}
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
@@ -161,7 +161,7 @@ export const SidebarResizer: React.FC<SidebarResizerProps> = ({
         transition-colors duration-100
         ${isFocused ? 'outline-2 outline-accent-primary outline-offset-2' : ''}
       `}
-      title="Drag to resize, double-click to reset"
+      title="拖动调整大小，双击重置"
     >
       {/* 8px hit area with 2px visible line */}
       <div
@@ -180,7 +180,7 @@ export const SidebarResizer: React.FC<SidebarResizerProps> = ({
       {/* Grip dots - visible on hover for affordance */}
       <div
         className={`
-          absolute opacity-0 group-hover:opacity-100 transition-opacity duration-100
+          absolute opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-100
           ${
             isVertical
               ? 'right-0 top-1/2 -translate-y-1/2 flex flex-col gap-0.5 pr-0.5'

@@ -34,7 +34,7 @@ export const WikipediaWidget: React.FC = () => {
         url: data.content_urls.desktop.page,
       });
     } catch (err) {
-      setError('Failed to load article');
+      setError('加载文章失败');
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ export const WikipediaWidget: React.FC = () => {
             rel="noopener noreferrer"
             className="inline-block text-sm text-accent-blue hover:underline"
           >
-            Read more →
+            阅读更多 →
           </a>
         </div>
       )}

@@ -110,20 +110,22 @@ describe('useThemeStore', () => {
       expect(style?.textContent).toContain('--accent-green');
     });
 
-    it('should remove injected styles for default theme', () => {
+    it('should inject the declared default palette so preview and UI match', () => {
       // First set a non-default theme
       useThemeStore.getState().setBrandTheme('matrix');
       expect(document.getElementById('neumanos-theme-vars')).toBeTruthy();
 
       // Switch back to default
       useThemeStore.getState().setBrandTheme('default');
-      expect(document.getElementById('neumanos-theme-vars')).toBeNull();
+      const style = document.getElementById('neumanos-theme-vars');
+      expect(style).toBeTruthy();
+      expect(style?.textContent).toContain('--accent-primary: #F74EAE');
     });
 
-    it('should not crash for invalid theme id', () => {
-      // getTheme falls back to default for unknown IDs
+    it('should ignore an invalid theme id', () => {
+      const before = useThemeStore.getState().brandTheme;
       useThemeStore.getState().setBrandTheme('nonexistent-theme');
-      // Should not throw
+      expect(useThemeStore.getState().brandTheme).toBe(before);
     });
   });
 
@@ -180,7 +182,7 @@ describe('useThemeStore', () => {
           autoSaveEnabled: false,
           saveInterval: 30000,
           versionsToKeep: 7,
-          customFileName: 'NeumanOS',
+          customFileName: 'LifeOS',
           reminderPreference: 'every-session',
           nextReminderDate: null,
         },

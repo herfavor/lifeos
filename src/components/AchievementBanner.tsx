@@ -77,7 +77,7 @@ export function AchievementBanner({ achievement, onClose }: AchievementBannerPro
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold uppercase tracking-wider opacity-90 mb-1">
-                Achievement Unlocked!
+                成就已解锁！
               </div>
               <div className="text-xl font-bold mb-1">{achievement.name}</div>
               <div className="text-sm opacity-90">{achievement.description}</div>
@@ -85,7 +85,7 @@ export function AchievementBanner({ achievement, onClose }: AchievementBannerPro
               {/* Progress to next */}
               {progress && progress.percentage < 100 && (
                 <div className="mt-2 text-xs opacity-75">
-                  {progress.next - progress.current} more {achievement.category === 'tasks' ? 'tasks' : achievement.category === 'notes' ? 'notes' : achievement.category === 'time' ? 'hours' : 'days'} until "{getNextAchievementName(achievement.category)}"
+                  距离解锁「{getNextAchievementName(achievement.category)}」还需 {progress.next - progress.current} {achievement.category === 'tasks' ? '个任务' : achievement.category === 'notes' ? '个笔记' : achievement.category === 'time' ? '小时' : '天'}
                 </div>
               )}
             </div>
@@ -94,7 +94,7 @@ export function AchievementBanner({ achievement, onClose }: AchievementBannerPro
             <button
               onClick={handleDismiss}
               className="text-white hover:text-white/80 transition-colors p-2 -m-2"
-              aria-label="Dismiss achievement"
+              aria-label="关闭成就"
             >
               <svg
                 className="w-5 h-5"
@@ -132,5 +132,5 @@ function getNextAchievementName(category: Achievement['category']): string {
     (a) => !unlocked.includes(a.id)
   );
 
-  return nextAchievement?.name || 'Max Achievement';
+  return nextAchievement?.name || '最高成就';
 }

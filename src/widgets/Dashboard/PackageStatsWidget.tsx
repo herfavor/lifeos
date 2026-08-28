@@ -29,16 +29,16 @@ export const PackageStatsWidget: React.FC = () => {
       const response = await fetch(
         `https://api.npmjs.org/downloads/point/last-week/${pkg}`
       );
-      if (!response.ok) throw new Error('Package not found');
+      if (!response.ok) throw new Error('未找到该包');
 
       const data = await response.json();
       setStats({
         package: data.package,
         downloads: data.downloads,
-        period: 'Last 7 days',
+        period: '最近 7 天',
       });
     } catch (err) {
-      setError('Package not found');
+      setError('未找到该包');
     } finally {
       setLoading(false);
     }
@@ -56,21 +56,21 @@ export const PackageStatsWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="NPM Stats" icon="📦" loading={loading} error={error}>
+    <BaseWidget title="NPM 统计" icon="📦" loading={loading} error={error}>
       <div className="space-y-3">
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
             value={packageName}
             onChange={(e) => setPackageName(e.target.value)}
-            placeholder="Package name..."
+            placeholder="包名称…"
             className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
           />
           <button
             type="submit"
             className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
           >
-            Check
+            查询
           </button>
         </form>
 
@@ -81,19 +81,19 @@ export const PackageStatsWidget: React.FC = () => {
                 {formatNumber(stats.downloads)}
               </div>
               <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                downloads
+                次下载
               </div>
             </div>
 
             <div className="text-sm space-y-1">
               <div className="flex justify-between">
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">Package:</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">包：</span>
                 <span className="text-text-light-primary dark:text-text-dark-primary font-mono">
                   {stats.package}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-text-light-secondary dark:text-text-dark-secondary">Period:</span>
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">周期：</span>
                 <span className="text-text-light-primary dark:text-text-dark-primary">
                   {stats.period}
                 </span>
@@ -106,14 +106,14 @@ export const PackageStatsWidget: React.FC = () => {
               rel="noopener noreferrer"
               className="inline-block text-sm text-accent-blue hover:underline"
             >
-              View on NPM →
+              在 NPM 上查看 →
             </a>
           </div>
         )}
 
         {!stats && !loading && !error && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Enter a package name to see stats
+            输入包名称以查看统计
           </p>
         )}
       </div>

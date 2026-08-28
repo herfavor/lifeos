@@ -72,7 +72,7 @@ export function parseNetscapeBookmarks(htmlContent: string): ParseResult {
 
   // Root folder structure
   const folderStructure: FolderNode = {
-    name: 'Bookmarks',
+    name: '书签',
     path: '',
     children: [],
     bookmarkCount: 0,
@@ -96,7 +96,7 @@ export function parseNetscapeBookmarks(htmlContent: string): ParseResult {
 
         if (h3) {
           // It's a folder
-          const folderName = h3.textContent?.trim() || 'Untitled Folder';
+          const folderName = h3.textContent?.trim() || '未命名文件夹';
           folderStack.push(folderName);
 
           const newFolder: FolderNode = {

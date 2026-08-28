@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const sunsetDriftTheme: ThemeDefinition = {
   id: 'sunset-drift',
   name: 'Sunset Drift',
-  description: 'Warm amber and terracotta with retro warmth',
+  description: '温暖琥珀与赤陶色的复古暖意',
   category: 'vibrant',
   preview: {
     primary: '#F56B15',

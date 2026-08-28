@@ -24,11 +24,11 @@ const METADATA: AIProviderMetadata = {
   id: 'gemini',
   name: 'Google Gemini',
   displayName: 'Google Gemini',
-  description: 'Google\'s AI models with 1M token context. Commercial use allowed on free tier.',
+  description: 'Google 的 AI 模型，支持 100 万 token 上下文。免费层级允许商用。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://aistudio.google.com/apikey',
-  apiKeyLabel: 'Google AI API Key',
+  apiKeyLabel: 'Google AI API 密钥',
 
   hasFreeModels: true,
   freeModelIds: [
@@ -40,7 +40,7 @@ const METADATA: AIProviderMetadata = {
     requestsPerMinute: 15,
     tokensPerMinute: 250000,
     requestsPerDay: 250,
-    description: 'Free tier: 10-15 RPM, 250K TPM, 250 RPD. Resets daily at midnight Pacific.',
+    description: '免费层级：10-15 RPM、250K TPM、250 RPD。每日太平洋时间午夜重置。',
   },
 
   supportsCORS: false,
@@ -68,7 +68,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'creative', 'multimodal'],
-    description: 'Google\'s fastest model with 1M token context. Great for long documents.',
+    description: 'Google 最快的模型，支持 100 万 token 上下文。非常适合长文档。',
   },
   {
     id: 'gemini-1.5-pro',
@@ -84,7 +84,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['reasoning', 'analysis', 'code', 'multimodal'],
-    description: 'Google\'s most capable model. Best for complex reasoning and analysis.',
+    description: 'Google 能力最强的模型。最适合复杂推理和分析。',
   },
 ];
 
@@ -187,7 +187,7 @@ export class GeminiProvider implements AIProvider {
     if (!this.genAI) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Gemini provider not configured. Please add your Google AI API key.',
+        'Gemini 提供商尚未配置。请添加你的 Google AI API 密钥。',
         'gemini'
       );
     }
@@ -254,32 +254,32 @@ export class GeminiProvider implements AIProvider {
       if (err?.message?.includes('API_KEY_INVALID') || err?.message?.includes('API key not valid')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid Google AI API key. Please check your API key and try again.',
+          'Google AI API 密钥无效。请检查你的 API 密钥后重试。',
           'gemini'
         );
       } else if (err?.message?.includes('RATE_LIMIT_EXCEEDED') || err?.message?.includes('429')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'Gemini rate limit exceeded (10-15 RPM). Please wait a moment and try again.',
+          '已超出 Gemini 速率限制（10-15 RPM）。请稍等片刻后重试。',
           'gemini',
           true // retryable
         );
       } else if (err?.message?.includes('QUOTA_EXCEEDED') || err?.message?.includes('quota')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'Gemini quota exceeded. Daily limit reached (resets at midnight Pacific).',
+          'Gemini 配额已用尽。已达到每日限制（太平洋时间午夜重置）。',
           'gemini'
         );
       } else if (err?.message?.includes('Model not found')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on Gemini.`,
+          `Gemini 上未找到模型“${model}”。`,
           'gemini'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `Gemini error: ${err?.message || 'Unknown error occurred'}`,
+          `Gemini 错误：${err?.message || '发生未知错误'}`,
           'gemini'
         );
       }

@@ -80,7 +80,7 @@ export function exportTimeEntriesToCSV(
     }
 
     if (filteredEntries.length === 0) {
-      return { success: false, error: 'No entries to export' };
+      return { success: false, error: '没有可导出的条目' };
     }
 
     // Create project lookup maps
@@ -287,7 +287,7 @@ export function importTimeEntriesFromCSV(
     const lines = csvContent.split('\n').filter(line => line.trim());
 
     if (lines.length < 2) {
-      return { success: false, error: 'CSV file must have headers and at least one data row' };
+      return { success: false, error: 'CSV 文件必须包含表头且至少有一行数据' };
     }
 
     // Parse headers
@@ -304,7 +304,7 @@ export function importTimeEntriesFromCSV(
     const notesIdx = headers.findIndex(h => h.includes('note'));
 
     if (dateIdx === -1) {
-      return { success: false, error: 'CSV must have a Date column' };
+      return { success: false, error: 'CSV 必须包含日期（Date）列' };
     }
 
     // Create project lookup map (name -> id)
@@ -394,7 +394,7 @@ export function importTimeEntriesFromCSV(
     }
 
     if (entries.length === 0) {
-      return { success: false, error: 'No valid entries found in CSV', skipped };
+      return { success: false, error: 'CSV 中未找到有效条目', skipped };
     }
 
     return { success: true, entries, skipped };
@@ -428,7 +428,7 @@ export function readCSVFile(file: File): Promise<string> {
       const content = e.target?.result as string;
       resolve(content);
     };
-    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.onerror = () => reject(new Error('读取文件失败'));
     reader.readAsText(file);
   });
 }

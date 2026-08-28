@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Note } from '../types/notes';
 import { formatDateLong, getStandardDateKey } from '../utils/dateUtils';
 import { logger } from './logger';
+import { markdownToLexical } from '../utils/markdownToLexical';
 
 const log = logger.module('DailyNotesService');
 
@@ -31,20 +32,20 @@ export interface DailyNotesSettings {
  */
 export const DEFAULT_DAILY_NOTE_TEMPLATE = `# {date}
 
-## 📅 Tasks
+## 📅 任务
 - [ ]
 
-## 🎯 Goals for today
+## 🎯 今日目标
 
 
-## 📝 Notes
+## 📝 笔记
 
 
-## 🔗 Related
+## 🔗 相关
 - [[{yesterday}]]
 - [[{tomorrow}]]
 
-## ✨ Highlights
+## ✨ 亮点
 
 
 #daily-note`;
@@ -69,7 +70,7 @@ export function formatDailyNoteDate(date: Date, format: DailyNotesSettings['date
     case 'iso':
       return getStandardDateKey(date).split('-').join('-').replace(/(\d{4})-(\d{1,2})-(\d{1,2})/, '$1-$2-$3'); // "2025-11-26"
     case 'short':
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); // "Nov 26, 2025"
+      return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' }); // "Nov 26, 2025"
     default:
       return formatDateLong(date);
   }
@@ -95,7 +96,7 @@ export function applyDailyNoteTemplate(
   const tomorrowTitle = formatDailyNoteDate(tomorrow, dateFormat);
 
   // Calculate weekday name
-  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const weekday = date.toLocaleDateString('zh-CN', { weekday: 'long' });
 
   // Replace placeholders
   return template
@@ -137,6 +138,7 @@ export function getDailyNote(
   const dailyNote = Object.values(allNotes).find(
     (note) =>
       note.title === targetTitle &&
+      !note.deletedAt &&
       note.folderId === settings.folderId &&
       note.tags.includes('daily-note')
   );
@@ -161,7 +163,7 @@ export function createDailyNote(
     id: uuidv4(),
     folderId: folderId || settings.folderId,
     title,
-    content: '', // Empty Lexical state (will be populated by editor)
+    content: markdownToLexical(contentText),
     contentText,
     tags,
     projectIds: [],
@@ -214,6 +216,7 @@ export function getDailyNotesCalendar(
   // Get all notes in the daily notes folder with daily-note tag
   const dailyNotes = Object.values(allNotes).filter(
     (note) =>
+      !note.deletedAt &&
       note.folderId === settings.folderId &&
       note.tags.includes('daily-note')
   );

@@ -11,8 +11,10 @@ interface TwitchWidgetProps {
   widgetId?: string;
 }
 
+const EMPTY_STREAMERS: string[] = [];
+
 export const TwitchWidget: React.FC<TwitchWidgetProps> = ({ widgetId = 'twitch' }) => {
-  const streamers = useWidgetStore((state) => state.widgetSettings[widgetId]?.streamers) || [];
+  const streamers = useWidgetStore((state) => state.widgetSettings[widgetId]?.streamers ?? EMPTY_STREAMERS);
   const updateWidgetSettings = useWidgetStore((state) => state.updateWidgetSettings);
   const [input, setInput] = useState('');
 
@@ -36,11 +38,11 @@ export const TwitchWidget: React.FC<TwitchWidgetProps> = ({ widgetId = 'twitch' 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addStreamer()}
-            placeholder="Streamer name..."
+            placeholder="主播名称…"
             className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
           />
           <button onClick={addStreamer} className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth">
-            Add
+            添加
           </button>
         </div>
 
@@ -51,7 +53,7 @@ export const TwitchWidget: React.FC<TwitchWidgetProps> = ({ widgetId = 'twitch' 
                 {streamer}
               </a>
               <button onClick={() => removeStreamer(streamer)} className="text-xs text-status-error hover:underline">
-                Remove
+                移除
               </button>
             </div>
           ))}
@@ -59,7 +61,7 @@ export const TwitchWidget: React.FC<TwitchWidgetProps> = ({ widgetId = 'twitch' 
 
         {streamers.length === 0 && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Add streamers to track
+            添加要关注的主播
           </p>
         )}
       </div>

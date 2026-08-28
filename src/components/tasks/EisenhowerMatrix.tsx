@@ -30,29 +30,29 @@ function classifyTask(task: Task): Quadrant {
 
 const QUADRANT_CONFIG: Record<Quadrant, { title: string; subtitle: string; color: string; bgColor: string; borderColor: string }> = {
   'do-first': {
-    title: 'Do First',
-    subtitle: 'Urgent & Important',
+    title: '立即行动',
+    subtitle: '紧急且重要',
     color: 'text-status-error',
     bgColor: 'bg-status-error/5 dark:bg-status-error/10',
     borderColor: 'border-status-error/30',
   },
   'schedule': {
-    title: 'Schedule',
-    subtitle: 'Important, Not Urgent',
+    title: '安排计划',
+    subtitle: '重要但不紧急',
     color: 'text-accent-blue',
     bgColor: 'bg-accent-blue/5 dark:bg-accent-blue/10',
     borderColor: 'border-accent-blue/30',
   },
   'delegate': {
-    title: 'Delegate',
-    subtitle: 'Urgent, Not Important',
+    title: '委托他人',
+    subtitle: '紧急但不重要',
     color: 'text-status-warning-text dark:text-status-warning-text-dark',
     bgColor: 'bg-status-warning/5 dark:bg-status-warning/10',
     borderColor: 'border-status-warning/30',
   },
   'eliminate': {
-    title: 'Eliminate',
-    subtitle: 'Neither',
+    title: '消除',
+    subtitle: '两者皆非',
     color: 'text-text-light-secondary dark:text-text-dark-secondary',
     bgColor: 'bg-surface-light-elevated/50 dark:bg-surface-dark-elevated/50',
     borderColor: 'border-border-light dark:border-border-dark',
@@ -95,9 +95,8 @@ const QuadrantCell: React.FC<{
       <div className="flex-1 space-y-2 overflow-y-auto max-h-[300px]">
         {tasks.length === 0 && (
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary italic text-center py-4">
-            No tasks
-          </p>
-        )}
+            暂无任务
+          </p>        )}
         {tasks.map((task) => (
           <div
             key={task.id}
@@ -114,7 +113,7 @@ const QuadrantCell: React.FC<{
             <div className="flex items-center gap-2 mt-1">
               {task.dueDate && (
                 <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {new Date(task.dueDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
                 </span>
               )}
               <span className={`text-xs px-1.5 py-0.5 rounded ${
@@ -122,14 +121,14 @@ const QuadrantCell: React.FC<{
                 task.priority === 'medium' ? 'bg-status-warning/10 text-status-warning-text dark:text-status-warning-text-dark' :
                 'bg-status-info/10 text-status-info'
               }`}>
-                {task.priority}
+                {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
               </span>
             </div>
           </div>
         ))}
       </div>
       <div className="mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary text-right">
-        {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
+        {tasks.length} 个任务
       </div>
     </div>
   );
@@ -190,13 +189,13 @@ export const EisenhowerMatrix: React.FC<EisenhowerMatrixProps> = ({ tasks, onTas
       {/* Axis Labels */}
       <div className="flex items-center justify-center gap-2 mb-2">
         <span className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide">
-          Urgent
+          紧急
         </span>
         <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
           ---
         </span>
         <span className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide">
-          Not Urgent
+          不紧急
         </span>
       </div>
 
@@ -212,10 +211,10 @@ export const EisenhowerMatrix: React.FC<EisenhowerMatrixProps> = ({ tasks, onTas
 
       <div className="flex items-center justify-between mt-2 px-1">
         <span className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide">
-          Important
+          重要
         </span>
         <span className="text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide">
-          Not Important
+          不重要
         </span>
       </div>
     </div>

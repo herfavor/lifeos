@@ -166,7 +166,7 @@ export function ModelSelector({
             onChange={(e) => setSelectedProvider(e.target.value)}
             className="flex-1 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button text-xs text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-1 focus:ring-accent-blue"
           >
-            <option value="all">All Providers</option>
+            <option value="all">全部提供商</option>
             {configuredProviders.map(([providerId, status]) => (
               <option key={providerId} value={providerId}>
                 {status.name}
@@ -180,7 +180,7 @@ export function ModelSelector({
             onChange={(e) => setSelectedUseCase(e.target.value)}
             className="flex-1 px-2 py-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button text-xs text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-1 focus:ring-accent-blue"
           >
-            <option value="all">All Uses</option>
+            <option value="all">全部用途</option>
             {useCases.map((useCase) => (
               <option key={useCase} value={useCase}>
                 {useCase.replace(/-/g, ' ')}
@@ -198,10 +198,10 @@ export function ModelSelector({
               onChange={(e) => setShowOnlyFree(e.target.checked)}
               className="accent-accent-blue w-3 h-3"
             />
-            <span>Free Only</span>
+            <span>仅免费</span>
           </label>
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            {filteredModels.length} model{filteredModels.length !== 1 ? 's' : ''}
+            {filteredModels.length} 个模型
           </span>
         </div>
       </div>
@@ -210,12 +210,12 @@ export function ModelSelector({
       <div className="space-y-1.5">
         {isLoading ? (
           <div className="p-4 text-center text-text-light-secondary dark:text-text-dark-secondary">
-            <p className="text-sm">Loading models...</p>
+            <p className="text-sm">正在加载模型…</p>
           </div>
         ) : filteredModels.length === 0 ? (
           <div className="p-4 text-center text-text-light-secondary dark:text-text-dark-secondary">
-            <p className="text-sm mb-1">No models found</p>
-            <p className="text-xs">Adjust filters or add more providers.</p>
+            <p className="text-sm mb-1">未找到模型</p>
+            <p className="text-xs">请调整筛选条件或添加更多提供商。</p>
           </div>
         ) : (
           filteredModels.map(({ providerId, providerName, model }) => {
@@ -240,7 +240,7 @@ export function ModelSelector({
                     </h4>
                     {model.isFree && (
                       <span className="text-[10px] px-1 py-0.5 bg-accent-green/10 text-accent-green rounded flex-shrink-0">
-                        FREE
+                        免费
                       </span>
                     )}
                   </div>
@@ -269,7 +269,7 @@ export function ModelSelector({
                     {formatContextWindow(model.contextWindow)}
                   </span>
                   <span className="text-text-light-primary dark:text-text-dark-primary font-medium">
-                    {model.isFree ? 'Free' : `$${model.costPer1MTokens?.toFixed(2)}`}
+                    {model.isFree ? '免费' : `$${model.costPer1MTokens?.toFixed(2)}`}
                   </span>
                 </div>
 
@@ -278,12 +278,12 @@ export function ModelSelector({
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {model.supportsVision && (
                       <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded">
-                        👁 Vision
+                        👁 视觉
                       </span>
                     )}
                     {model.supportsFunctionCalling && (
                       <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded">
-                        🔧 Fn
+                        🔧 函数
                       </span>
                     )}
                   </div>
@@ -297,8 +297,8 @@ export function ModelSelector({
       {/* Compact Legend */}
       <div className="pt-2 border-t border-border-light dark:border-border-dark">
         <div className="flex items-center gap-4 text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-          <span><span className="text-accent-primary">━</span> Speed</span>
-          <span><span className="text-accent-primary">━</span> Quality</span>
+          <span><span className="text-accent-primary">━</span> 速度</span>
+          <span><span className="text-accent-primary">━</span> 质量</span>
         </div>
       </div>
     </div>

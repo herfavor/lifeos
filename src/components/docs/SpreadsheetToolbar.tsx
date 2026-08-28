@@ -77,10 +77,10 @@ const PRESET_COLORS = [
 
 // Number format presets
 const NUMBER_FORMATS = [
-  { id: 'general', label: 'General', format: undefined, icon: Hash },
-  { id: 'currency', label: 'Currency', format: '$#,##0.00', icon: DollarSign },
-  { id: 'percent', label: 'Percent', format: '0%', icon: Percent },
-  { id: 'number', label: 'Number', format: '#,##0.00', icon: Hash },
+  { id: 'general', label: '通用', format: undefined, icon: Hash },
+  { id: 'currency', label: '货币', format: '$#,##0.00', icon: DollarSign },
+  { id: 'percent', label: '百分比', format: '0%', icon: Percent },
+  { id: 'number', label: '数字', format: '#,##0.00', icon: Hash },
 ];
 
 // Border presets
@@ -96,7 +96,7 @@ interface BorderPreset {
 const BORDER_PRESETS: BorderPreset[] = [
   {
     id: 'all',
-    label: 'All Borders',
+    label: '所有边框',
     icon: Grid3X3,
     apply: () => ({
       borderTop: DEFAULT_BORDER,
@@ -107,7 +107,7 @@ const BORDER_PRESETS: BorderPreset[] = [
   },
   {
     id: 'outer',
-    label: 'Outer Borders',
+    label: '外边框',
     icon: Square,
     apply: () => ({
       borderTop: DEFAULT_BORDER,
@@ -118,7 +118,7 @@ const BORDER_PRESETS: BorderPreset[] = [
   },
   {
     id: 'bottom',
-    label: 'Bottom Border',
+    label: '下边框',
     icon: Minus,
     apply: () => ({
       borderTop: undefined,
@@ -129,7 +129,7 @@ const BORDER_PRESETS: BorderPreset[] = [
   },
   {
     id: 'none',
-    label: 'No Borders',
+    label: '无边框',
     icon: Rows3,
     apply: () => ({
       borderTop: undefined,
@@ -198,7 +198,7 @@ export function SpreadsheetToolbar({
           onClick={toggleBold}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.bold)}
-          title="Bold (Ctrl+B)"
+          title="加粗 (Ctrl+B)"
         >
           <Bold className="w-4 h-4" />
         </button>
@@ -206,7 +206,7 @@ export function SpreadsheetToolbar({
           onClick={toggleItalic}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.italic)}
-          title="Italic (Ctrl+I)"
+          title="斜体 (Ctrl+I)"
         >
           <Italic className="w-4 h-4" />
         </button>
@@ -214,7 +214,7 @@ export function SpreadsheetToolbar({
           onClick={toggleUnderline}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.underline)}
-          title="Underline (Ctrl+U)"
+          title="下划线 (Ctrl+U)"
         >
           <Underline className="w-4 h-4" />
         </button>
@@ -226,7 +226,7 @@ export function SpreadsheetToolbar({
           onClick={() => setAlignment('left')}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.alignment === 'left')}
-          title="Align Left"
+          title="左对齐"
         >
           <AlignLeft className="w-4 h-4" />
         </button>
@@ -234,7 +234,7 @@ export function SpreadsheetToolbar({
           onClick={() => setAlignment('center')}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.alignment === 'center')}
-          title="Align Center"
+          title="居中对齐"
         >
           <AlignCenter className="w-4 h-4" />
         </button>
@@ -242,7 +242,7 @@ export function SpreadsheetToolbar({
           onClick={() => setAlignment('right')}
           disabled={!hasSelection}
           className={buttonClass(currentStyle.alignment === 'right')}
-          title="Align Right"
+          title="右对齐"
         >
           <AlignRight className="w-4 h-4" />
         </button>
@@ -256,7 +256,7 @@ export function SpreadsheetToolbar({
             onClick={() => setShowTextColorPicker(!showTextColorPicker)}
             disabled={!hasSelection}
             className={buttonClass()}
-            title="Text Color"
+            title="文字颜色"
           >
             <Type className="w-4 h-4" />
             <div
@@ -291,7 +291,7 @@ export function SpreadsheetToolbar({
             onClick={() => setShowBgColorPicker(!showBgColorPicker)}
             disabled={!hasSelection}
             className={buttonClass()}
-            title="Fill Color"
+            title="填充颜色"
           >
             <Paintbrush className="w-4 h-4" />
             <div
@@ -328,7 +328,7 @@ export function SpreadsheetToolbar({
             onClick={() => setShowBorderPicker(!showBorderPicker)}
             disabled={!hasSelection}
             className={buttonClass(!!currentStyle.borderTop || !!currentStyle.borderBottom)}
-            title="Borders"
+            title="边框"
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
@@ -379,7 +379,7 @@ export function SpreadsheetToolbar({
           <button
             onClick={onSort}
             className={buttonClass(hasSortRules)}
-            title="Sort"
+            title="排序"
           >
             <ArrowUpDown className="w-4 h-4" />
           </button>
@@ -388,7 +388,7 @@ export function SpreadsheetToolbar({
           <button
             onClick={onFilter}
             className={buttonClass(hasFilterRules)}
-            title="Filter"
+            title="筛选"
           >
             <Filter className="w-4 h-4" />
           </button>
@@ -397,7 +397,7 @@ export function SpreadsheetToolbar({
           <button
             onClick={onConditionalFormat}
             className={buttonClass(hasConditionalFormats)}
-            title="Conditional Formatting"
+            title="条件格式"
           >
             <Palette className="w-4 h-4" />
           </button>
@@ -406,7 +406,7 @@ export function SpreadsheetToolbar({
           <button
             onClick={onPivotTable}
             className="p-1.5 rounded transition-colors text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated hover:text-accent-primary"
-            title="Pivot Table"
+            title="数据透视表"
           >
             <TableProperties className="w-4 h-4" />
           </button>
@@ -421,8 +421,8 @@ export function SpreadsheetToolbar({
             disabled={!hasSelection}
             className={buttonClass(frozenRows > 0 || frozenCols > 0)}
             title={frozenRows > 0 || frozenCols > 0
-              ? `Frozen: ${frozenRows} rows, ${frozenCols} cols (click to unfreeze)`
-              : 'Freeze panes at selection'}
+              ? `已冻结：${frozenRows} 行，${frozenCols} 列（点击取消冻结）`
+              : '在选中处冻结窗格'}
           >
             <Rows3 className="w-4 h-4" />
             {(frozenRows > 0 || frozenCols > 0) && (
@@ -438,7 +438,7 @@ export function SpreadsheetToolbar({
           <button
             onClick={onInsertChart}
             className="p-1.5 rounded transition-colors text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated hover:text-accent-primary"
-            title="Insert Chart"
+            title="插入图表"
           >
             <BarChart2 className="w-4 h-4" />
           </button>
@@ -452,7 +452,7 @@ export function SpreadsheetToolbar({
             <button
               onClick={onImport}
               className="p-1.5 rounded transition-colors text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated hover:text-accent-primary"
-              title="Import from file"
+              title="从文件导入"
             >
               <Upload className="w-4 h-4" />
             </button>
@@ -462,7 +462,7 @@ export function SpreadsheetToolbar({
               <button
                 onClick={() => onExport('xlsx')}
                 className="p-1.5 rounded transition-colors text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated hover:text-accent-primary"
-                title="Export as XLSX"
+                title="导出为 XLSX"
               >
                 <Download className="w-4 h-4" />
               </button>

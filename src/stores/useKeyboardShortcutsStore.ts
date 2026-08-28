@@ -36,18 +36,18 @@ interface KeyboardShortcutsState {
 // Build a combined list of all known shortcuts for conflict detection
 // (DEFAULT_SHORTCUTS from shortcuts.ts + extended shortcuts)
 const EXTENDED_SHORTCUT_DEFS: Array<{ id: string; keys: string[]; label: string }> = [
-  { id: 'go-dashboard', keys: ['g', 'd'], label: 'Go to Dashboard' },
-  { id: 'go-tasks', keys: ['g', 't'], label: 'Go to Tasks' },
-  { id: 'go-notes', keys: ['g', 'n'], label: 'Go to Notes' },
-  { id: 'go-calendar', keys: ['g', 'c'], label: 'Go to Calendar' },
-  { id: 'go-settings', keys: ['g', 's'], label: 'Go to Settings' },
-  { id: 'new-task', keys: ['n'], label: 'Create new task' },
-  { id: 'search-tasks', keys: ['/'], label: 'Search tasks' },
-  { id: 'new-event', keys: ['n'], label: 'Create new event' },
-  { id: 'today-view', keys: ['t'], label: 'Go to today' },
-  { id: 'bold', keys: ['mod', 'b'], label: 'Bold text' },
-  { id: 'italic', keys: ['mod', 'i'], label: 'Italic text' },
-  { id: 'underline', keys: ['mod', 'u'], label: 'Underline text' },
+  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往首页' },
+  { id: 'go-tasks', keys: ['g', 't'], label: '前往任务' },
+  { id: 'go-notes', keys: ['g', 'n'], label: '前往笔记' },
+  { id: 'go-calendar', keys: ['g', 'c'], label: '前往日历' },
+  { id: 'go-settings', keys: ['g', 's'], label: '前往设置' },
+  { id: 'new-task', keys: ['n'], label: '新建任务' },
+  { id: 'search-tasks', keys: ['/'], label: '搜索任务' },
+  { id: 'new-event', keys: ['n'], label: '新建事件' },
+  { id: 'today-view', keys: ['t'], label: '前往今日' },
+  { id: 'bold', keys: ['mod', 'b'], label: '加粗文本' },
+  { id: 'italic', keys: ['mod', 'i'], label: '斜体文本' },
+  { id: 'underline', keys: ['mod', 'u'], label: '下划线文本' },
 ];
 
 const ALL_KNOWN_SHORTCUTS = [

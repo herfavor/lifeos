@@ -26,7 +26,7 @@ test.describe('Visual Regression - Page Rendering', () => {
     expect(hasStyles).toBe(true);
 
     // Sidebar should have background styling
-    const sidebar = page.locator('aside[aria-label="Main navigation sidebar"]');
+    const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
     const sidebarBg = await sidebar.evaluate(el =>
       window.getComputedStyle(el).backgroundColor
     );
@@ -45,7 +45,7 @@ test.describe('Visual Regression - Page Rendering', () => {
 
     if (!isDark) {
       // Toggle to dark
-      await page.getByRole('button', { name: /Light Mode|Dark Mode/ }).click();
+      await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
       await page.waitForTimeout(300);
     }
 
@@ -86,7 +86,7 @@ test.describe('Visual Regression - Page Rendering', () => {
     );
 
     if (isDark) {
-      await page.getByRole('button', { name: /Light Mode|Dark Mode/ }).click();
+      await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
       await page.waitForTimeout(300);
     }
 
@@ -199,7 +199,7 @@ test.describe('Visual Regression - Tailwind 4 Specific', () => {
     );
 
     // Toggle theme
-    await page.getByRole('button', { name: /Light Mode|Dark Mode/ }).click();
+    await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
     await page.waitForTimeout(300);
 
     // Surface colors should be defined in both modes

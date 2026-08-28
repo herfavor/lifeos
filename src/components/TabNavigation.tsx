@@ -58,7 +58,7 @@ export function TabNavigation({
   activeTab,
   onTabChange,
   className = '',
-  ariaLabel = 'Page navigation',
+  ariaLabel = '页面导航',
 }: TabNavigationProps) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useKanbanStore } from '../../stores/useKanbanStore';
+import { useProjectContextStore } from '../../stores/useProjectContextStore';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { NaturalLanguageDateInput } from '../../components/NaturalLanguageDateInput';
 import type { TaskPriority, TaskStatus } from '../../types';
@@ -9,6 +10,8 @@ interface QuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultColumn?: string;
+  /** Project selected by a deep link such as a project's “add next step” action. */
+  defaultProjectId?: string;
 }
 
 /**
@@ -21,8 +24,12 @@ interface QuickAddModalProps {
  * - Minimal UI (title + optional details)
  * - Instant creation (no detail panel needed)
  */
-export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalProps) {
+export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultProjectId }: QuickAddModalProps) {
   const { addTask, columns, getCardTemplates } = useKanbanStore();
+  const defaultProject = useProjectContextStore((state) =>
+    defaultProjectId ? state.projects.find((project) => project.id === defaultProjectId) : undefined
+  );
+  const confirmedProject = defaultProject && !defaultProject.archivedAt ? defaultProject : undefined;
   const cardTemplates = getCardTemplates();
 
   // Form state
@@ -99,7 +106,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, title, column, priority, description, dueDate]);
+  }, [isOpen, title, column, priority, description, dueDate, confirmedProject]);
 
   const handleSubmit = useCallback(() => {
     if (!title.trim()) return;
@@ -112,11 +119,11 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
       startDate: null,
       dueDate: dueDate || null,
       tags,
-      projectIds: [],
+      projectIds: confirmedProject ? [confirmedProject.id] : [],
     });
 
     onClose();
-  }, [title, description, column, priority, dueDate, tags, addTask, onClose]);
+  }, [title, description, column, priority, dueDate, tags, confirmedProject, addTask, onClose]);
 
   if (!isOpen) return null;
 
@@ -144,13 +151,13 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
             <div className="flex items-center gap-2">
               <span className="text-base">⚡</span>
               <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-                Quick Add Task
+                快速添加任务
               </h2>
             </div>
             <button
               onClick={onClose}
               className="p-1.5 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-              aria-label="Close"
+              aria-label="关闭"
             >
               <span className="text-lg text-text-light-secondary dark:text-text-dark-secondary">×</span>
             </button>
@@ -158,10 +165,16 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
 
           {/* Form */}
           <div className="p-4 space-y-3 flex-1 overflow-y-auto">
+            {confirmedProject && (
+              <p className="rounded-lg bg-accent-primary/10 px-3 py-2 text-xs text-accent-primary">
+                将归入项目：{confirmedProject.name}
+              </p>
+            )}
+
             {/* Template Selector */}
             <div>
               <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                Template (optional)
+                模板（可选）
               </label>
               <div className="flex flex-wrap gap-1.5">
                 <button
@@ -173,7 +186,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
                       : 'border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }`}
                 >
-                  Blank
+                  空白
                 </button>
                 {cardTemplates.map((template) => (
                   <button
@@ -196,13 +209,13 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
             {/* Title (auto-focused) */}
             <div>
               <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                Task Title *
+                任务标题 *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="What needs to be done?"
+                placeholder="需要做什么？"
                 className="w-full px-2.5 py-1.5 text-xs border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 autoFocus
               />
@@ -212,7 +225,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                  Column
+                  列
                 </label>
                 <select
                   value={column}
@@ -229,16 +242,16 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
 
               <div>
                 <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                  Priority
+                  优先级
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TaskPriority)}
                   className="w-full px-2.5 py-1.5 text-xs border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
+                  <option value="low">低</option>
+                  <option value="medium">中</option>
+                  <option value="high">高</option>
                 </select>
               </div>
             </div>
@@ -248,20 +261,20 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
               <NaturalLanguageDateInput
                 value={dueDate}
                 onChange={(date) => setDueDate(date || '')}
-                label="Due Date (optional)"
-                placeholder="Type 'tomorrow', 'next Friday', 'in 2 weeks'..."
+                label="截止日期（可选）"
+                placeholder="输入日期（例如 “tomorrow”、“next Friday”、“in 2 weeks”）"
               />
             </div>
 
             {/* Description (optional, collapsible) */}
             <div>
               <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                Description (optional)
+                描述（可选）
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Add more details..."
+                placeholder="添加更多详情…"
                 rows={2}
                 className="w-full px-2.5 py-1.5 text-xs border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
               />
@@ -271,7 +284,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
             {tags.length > 0 && (
               <div>
                 <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-                  Tags
+                  标签
                 </label>
                 <div className="flex flex-wrap gap-1.5">
                   {tags.map((tag) => (
@@ -297,21 +310,21 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn }: QuickAddModalP
               <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">
                 Enter
               </kbd>
-              {' '}to create
+              {' '}创建
             </div>
             <div className="flex gap-2">
               <button
                 onClick={onClose}
                 className="px-3 py-1.5 text-xs font-medium bg-surface-light dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={!title.trim()}
                 className="px-3 py-1.5 text-xs font-medium bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create Task
+                创建任务
               </button>
             </div>
           </div>

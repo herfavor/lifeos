@@ -28,7 +28,13 @@ import { FolderContextMenu } from './FolderContextMenu';
 import { NoteContextMenu } from './NoteContextMenu';
 import { FolderPickerModal } from './FolderPickerModal';
 import { ConfirmDialog } from '../ConfirmDialog';
+import {
+  downloadBlob,
+  exportNoteToMarkdown,
+  getMarkdownFilename,
+} from '../../utils/markdownExport';
 import type { Note } from '../../types/notes';
+import { exportNoteToPDFWithFeedback } from './notePdfExportHandler';
 
 export interface ThreeColumnLayoutProps {
   /** Content to render in the editor pane */
@@ -135,6 +141,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   // Delete confirmation state
   const [folderToDelete, setFolderToDelete] = useState<{ id: string; name: string } | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<{ id: string; title: string } | null>(null);
+  const exportingNoteIdsRef = useRef(new Set<string>());
 
   // Store actions for context menus
   const foldersObj = useFoldersStore((state) => state.folders);
@@ -306,18 +313,15 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   );
 
   const handleNoteExportMarkdown = useCallback((note: Note) => {
-    const content = `# ${note.title}\n\n${note.content}`;
-    const blob = new Blob([content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${note.title || 'Untitled'}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
+    const content = exportNoteToMarkdown(note, notesObj, Object.values(foldersObj));
+    downloadBlob(
+      new Blob([content], { type: 'text/markdown;charset=utf-8' }),
+      getMarkdownFilename(note)
+    );
+  }, [foldersObj, notesObj]);
 
-  const handleNoteExportPDF = useCallback((_note: Note) => {
-    toast.info('PDF export coming soon!');
+  const handleNoteExportPDF = useCallback((note: Note) => {
+    void exportNoteToPDFWithFeedback(note, exportingNoteIdsRef.current);
   }, []);
 
   const handleNoteTogglePin = useCallback(
@@ -344,7 +348,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
     (noteId: string) => {
       const note = notesObj[noteId];
       if (note) {
-        setNoteToDelete({ id: noteId, title: note.title || 'Untitled Note' });
+        setNoteToDelete({ id: noteId, title: note.title || '未命名笔记' });
       }
     },
     [notesObj]
@@ -362,12 +366,12 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   const handleSaveAsTemplate = useCallback(
     (note: Note) => {
       createNoteTemplate({
-        name: note.title || 'Untitled Template',
+        name: note.title || '未命名模板',
         description: note.contentText,
         icon: note.icon,
         defaultTags: note.tags,
       });
-      toast.success('Template created from note');
+      toast.success('已从笔记创建模板');
     },
     [createNoteTemplate]
   );
@@ -410,15 +414,15 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             {/* Folder header with controls */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark flex-shrink-0">
               <span className="text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary">
-                Folders
+                文件夹
               </span>
               <div className="flex items-center gap-1">
                 {onOpenLayoutSettings && (
                   <button
                     onClick={onOpenLayoutSettings}
                     className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                    title="Layout settings"
-                    aria-label="Open layout settings"
+                    title="布局设置"
+                    aria-label="打开布局设置"
                   >
                     <Settings2 className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                   </button>
@@ -426,8 +430,8 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
                 <button
                   onClick={toggleFolderColumn}
                   className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                  title="Collapse folders"
-                  aria-label="Collapse folder column"
+                  title="折叠文件夹"
+                  aria-label="折叠文件夹列"
                 >
                   <PanelLeftClose className="w-3.5 h-3.5 text-text-light-primary dark:text-text-dark-primary" />
                 </button>
@@ -464,8 +468,8 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           <button
             onClick={toggleFolderColumn}
             className="p-2 m-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Expand folders"
-            aria-label="Expand folder column"
+            title="展开文件夹"
+            aria-label="展开文件夹列"
           >
             <PanelLeftOpen className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -487,13 +491,13 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             {/* Notes header with controls */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark flex-shrink-0">
               <span className="text-xs font-medium uppercase tracking-wide text-text-light-tertiary dark:text-text-dark-tertiary">
-                Notes
+                笔记
               </span>
               <button
                 onClick={toggleNotesColumn}
                 className="p-1.5 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-                title="Collapse notes list"
-                aria-label="Collapse notes column"
+                title="折叠笔记列表"
+                aria-label="折叠笔记列"
               >
                 <PanelLeftClose className="w-3.5 h-3.5 text-text-light-primary dark:text-text-dark-primary" />
               </button>
@@ -527,8 +531,8 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           <button
             onClick={toggleNotesColumn}
             className="p-2 m-1 rounded-md hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Expand notes list"
-            aria-label="Expand notes column"
+            title="展开笔记列表"
+            aria-label="展开笔记列"
           >
             <PanelLeftOpen className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -567,6 +571,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           onExportPDF={handleNoteExportPDF}
           onTogglePin={handleNoteTogglePin}
           onToggleFavorite={handleNoteToggleFavorite}
+          onArchive={(noteId) => updateNote(noteId, { isArchived: !noteContextMenu.note.isArchived })}
           onDelete={handleNoteDelete}
           onSaveAsTemplate={handleSaveAsTemplate}
         />
@@ -578,7 +583,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           isOpen={folderPickerState.isOpen}
           onClose={handleFolderPickerClose}
           onSelect={handleFolderPickerSelect}
-          title={folderPickerState.itemType === 'folder' ? 'Move Folder to...' : 'Move Note to...'}
+          title={folderPickerState.itemType === 'folder' ? '将文件夹移动到…' : '将笔记移动到…'}
           currentFolderId={folderPickerState.currentFolderId}
           excludeFolderId={folderPickerState.excludeFolderId}
           itemType={folderPickerState.itemType}
@@ -590,18 +595,18 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         isOpen={!!folderToDelete}
         onClose={() => setFolderToDelete(null)}
         onConfirm={confirmFolderDelete}
-        title="Delete Folder"
-        message={`Delete folder "${folderToDelete?.name}" and all its contents? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除文件夹"
+        message={`确定删除文件夹“${folderToDelete?.name}”吗？其中的笔记会移到上级文件夹，不会被删除。`}
+        confirmText="删除"
         variant="danger"
       />
       <ConfirmDialog
         isOpen={!!noteToDelete}
         onClose={() => setNoteToDelete(null)}
         onConfirm={confirmNoteDelete}
-        title="Delete Note"
-        message={`Delete "${noteToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        title="删除笔记"
+        message={`确定将“${noteToDelete?.title}”移到回收站吗？可在笔记回收站恢复。`}
+        confirmText="移到回收站"
         variant="danger"
       />
     </div>

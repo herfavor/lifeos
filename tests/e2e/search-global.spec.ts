@@ -15,7 +15,7 @@ test.describe('Global Search', () => {
   });
 
   test('has search input in header', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(searchInput).toBeVisible();
     }
@@ -27,7 +27,7 @@ test.describe('Global Search', () => {
     await page.keyboard.press('Control+k');
     await page.waitForTimeout(300);
 
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(searchInput).toBeVisible();
     }
@@ -35,7 +35,7 @@ test.describe('Global Search', () => {
   });
 
   test('can type in search', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await searchInput.click();
       await searchInput.fill('test query');
@@ -46,14 +46,14 @@ test.describe('Global Search', () => {
   });
 
   test('search shows results or empty state', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await searchInput.click();
       await searchInput.fill('nonexistent item xyz');
       await page.waitForTimeout(500);
 
       // Should show either results or empty state
-      const results = page.getByText(/no.*results|no.*found|results/i).first();
+      const results = page.getByText(/未找到|结果/i).first();
       if (await results.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(results).toBeVisible();
       }
@@ -65,7 +65,7 @@ test.describe('Global Search', () => {
     await page.keyboard.press('Control+k');
     await page.waitForTimeout(300);
 
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await page.keyboard.press('Escape');
       await page.waitForTimeout(200);

@@ -20,12 +20,12 @@ export const AirQualityWidget: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const getAQICategory = (aqi: number) => {
-    if (aqi <= 50) return { category: 'Good', color: 'text-accent-green' };
-    if (aqi <= 100) return { category: 'Moderate', color: 'text-accent-yellow' };
-    if (aqi <= 150) return { category: 'Unhealthy for Sensitive Groups', color: 'text-accent-orange' };
-    if (aqi <= 200) return { category: 'Unhealthy', color: 'text-accent-red' };
-    if (aqi <= 300) return { category: 'Very Unhealthy', color: 'text-accent-purple' };
-    return { category: 'Hazardous', color: 'text-accent-red' };
+    if (aqi <= 50) return { category: '优', color: 'text-accent-green' };
+    if (aqi <= 100) return { category: '良', color: 'text-accent-yellow' };
+    if (aqi <= 150) return { category: '对敏感人群不健康', color: 'text-accent-orange' };
+    if (aqi <= 200) return { category: '不健康', color: 'text-accent-red' };
+    if (aqi <= 300) return { category: '非常不健康', color: 'text-accent-purple' };
+    return { category: '危险', color: 'text-accent-red' };
   };
 
   const fetchAirQuality = useCallback(async () => {
@@ -60,9 +60,9 @@ export const AirQualityWidget: React.FC = () => {
       });
     } catch (err) {
       if (err instanceof GeolocationPositionError) {
-        setError('Location permission denied');
+        setError('已拒绝位置权限');
       } else {
-        setError('Failed to load air quality');
+        setError('加载空气质量失败');
       }
     } finally {
       setLoading(false);
@@ -75,7 +75,7 @@ export const AirQualityWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Air Quality"
+      title="空气质量"
       icon="🌫️"
       loading={loading}
       error={error}
@@ -95,7 +95,7 @@ export const AirQualityWidget: React.FC = () => {
 
           <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 transition-all duration-standard ease-smooth">
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Dominant Pollutant
+              主要污染物
             </div>
             <div className="text-sm text-text-light-primary dark:text-text-dark-primary font-medium uppercase">
               {airQuality.dominant}
@@ -105,19 +105,19 @@ export const AirQualityWidget: React.FC = () => {
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary space-y-1">
             <div className="flex justify-between">
               <span>0-50:</span>
-              <span className="text-accent-green">Good</span>
+              <span className="text-accent-green">优</span>
             </div>
             <div className="flex justify-between">
               <span>51-100:</span>
-              <span className="text-accent-yellow">Moderate</span>
+              <span className="text-accent-yellow">良</span>
             </div>
             <div className="flex justify-between">
               <span>101-150:</span>
-              <span className="text-accent-orange">Unhealthy (Sensitive)</span>
+              <span className="text-accent-orange">不健康（敏感人群）</span>
             </div>
             <div className="flex justify-between">
               <span>151+:</span>
-              <span className="text-accent-red">Unhealthy</span>
+              <span className="text-accent-red">不健康</span>
             </div>
           </div>
         </div>

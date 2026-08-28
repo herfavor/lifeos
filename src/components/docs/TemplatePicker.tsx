@@ -67,12 +67,12 @@ export function TemplatePicker({ onSelect, onClose }: TemplatePickerProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Choose a Template
+            选择模板
           </h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-alt dark:hover:bg-surface-dark transition-colors"
-            aria-label="Close template picker"
+            aria-label="关闭模板选择器"
           >
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +88,7 @@ export function TemplatePicker({ onSelect, onClose }: TemplatePickerProps) {
                 : 'bg-surface-light-alt dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark-elevated'
             }`}
           >
-            All ({DOCUMENT_TEMPLATES.length})
+            全部（{DOCUMENT_TEMPLATES.length}）
           </button>
           {categories.map(({ category, label, count }) => (
             <button
@@ -129,7 +129,7 @@ export function TemplatePicker({ onSelect, onClose }: TemplatePickerProps) {
                     {template.description}
                   </p>
                   <span className="mt-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary capitalize bg-surface-light-alt dark:bg-surface-dark-elevated px-2 py-0.5 rounded">
-                    {template.category}
+                    {categories.find((c) => c.category === template.category)?.label ?? template.category}
                   </span>
                 </button>
               );
@@ -140,7 +140,7 @@ export function TemplatePicker({ onSelect, onClose }: TemplatePickerProps) {
         {/* Footer */}
         <div className="px-6 py-3 border-t border-border-light dark:border-border-dark bg-surface-light-alt dark:bg-surface-dark">
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-            Select a template to get started, or choose "Blank Document" for an empty page
+            选择一个模板开始，或选择“空白文档”创建空白页面
           </p>
         </div>
       </div>

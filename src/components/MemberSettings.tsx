@@ -79,7 +79,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
 
   const handleSave = () => {
     if (!name.trim()) {
-      toast.warning('Member name is required');
+      toast.warning('成员名称是必填项');
       return;
     }
 
@@ -105,7 +105,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Add Team Member
+              添加团队成员
             </h3>
             <button
               onClick={handleClose}
@@ -118,19 +118,19 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
           {/* Member Name */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Name *
+              名称 *
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., John Doe"
+              placeholder="例如：John Doe"
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
               autoFocus
             />
             {name.trim() && (
               <p className="mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Initials: {generateInitials(name)}
+                首字母：{generateInitials(name)}
               </p>
             )}
           </div>
@@ -138,7 +138,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
           {/* Email (Optional) */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Email (Optional)
+              邮箱（可选）
             </label>
             <input
               type="email"
@@ -152,7 +152,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
           {/* Avatar Color Picker */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Avatar Color *
+              头像颜色 *
             </label>
             <div className="flex gap-2 flex-wrap">
               {AVATAR_COLORS.map((color) => (
@@ -166,7 +166,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
                       : 'border-transparent hover:scale-105'
                   }`}
                   style={{ backgroundColor: color }}
-                  aria-label={`Select color ${color}`}
+                  aria-label={`选择颜色 ${color}`}
                 />
               ))}
             </div>
@@ -180,7 +180,7 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
                   {generateInitials(name)}
                 </div>
                 <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  Avatar Preview
+                  头像预览
                 </span>
               </div>
             )}
@@ -192,13 +192,13 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
               onClick={handleClose}
               className="flex-1 px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-lg hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleSave}
               className="flex-1 px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
             >
-              Add Member
+              添加成员
             </button>
           </div>
         </div>
@@ -230,17 +230,17 @@ export default function MemberSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Team Members
+            团队成员
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            Manage team members for task assignment. Members are local metadata, not authenticated users.
+            管理用于任务分配的团队成员。成员仅为本地元数据，并非经过认证的用户。
           </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors text-sm font-medium"
         >
-          + Add Member
+          + 添加成员
         </button>
       </div>
 
@@ -248,13 +248,13 @@ export default function MemberSettings() {
       {members.length === 0 ? (
         <div className="text-center py-12 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
           <p className="text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            No team members yet
+            暂无团队成员
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors text-sm"
           >
-            Add Your First Member
+            添加你的第一位成员
           </button>
         </div>
       ) : (
@@ -289,9 +289,9 @@ export default function MemberSettings() {
               <button
                 onClick={() => setDeleteConfirmId(member.id)}
                 className="px-3 py-1.5 text-sm text-status-error-text dark:text-status-error-text-dark hover:bg-status-error-bg dark:hover:bg-status-error-bg-dark rounded-lg transition-colors shrink-0"
-                aria-label={`Delete ${member.name}`}
+                aria-label={`删除 ${member.name}`}
               >
-                Delete
+                删除
               </button>
             </div>
           ))}
@@ -310,23 +310,23 @@ export default function MemberSettings() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-lg w-full max-w-md p-6">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-              Delete Team Member?
+              删除团队成员？
             </h3>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-              This will remove this member from all assigned tasks. This action cannot be undone.
+              这将把该成员从所有已分配的任务中移除，此操作无法撤销。
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setDeleteConfirmId(null)}
                 className="flex-1 px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-lg hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={() => handleDeleteMember(deleteConfirmId)}
                 className="flex-1 px-4 py-2 bg-accent-red/10 text-accent-red rounded-lg hover:bg-accent-red hover:text-white transition-colors"
               >
-                Delete
+                删除
               </button>
             </div>
           </div>

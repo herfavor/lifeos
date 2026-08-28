@@ -10,6 +10,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { createSyncedStorage } from '../lib/syncedStorage';
 import { logger } from '../services/logger';
@@ -48,7 +49,7 @@ export type LinkFolderUpdate = Partial<Omit<LinkFolder, 'id' | 'createdAt'>>;
 
 const LINK_FOLDER_CONSTANTS = {
   MAX_DEPTH: 20, // Allow deep nesting for browser bookmark imports
-  DEFAULT_NAME: 'New Folder',
+  DEFAULT_NAME: '新建文件夹',
 };
 
 // ============================================================================
@@ -268,7 +269,7 @@ export const useLinkFoldersStore = create<LinkFoldersStore>()(
 
         const duplicate = createDefaultFolder({
           ...original,
-          name: `${original.name} (Copy)`,
+          name: `${original.name} 的副本`,
         });
 
         set((state) => ({
@@ -626,11 +627,20 @@ export const useActiveLinkFolder = () =>
     return activeId ? state.folders[activeId] : null;
   });
 
-export const useLinkFolderTree = () =>
-  useLinkFoldersStore((state) => state.getTree());
+export const useLinkFolderTree = () => {
+  // getTree() builds a fresh array; calling it inside the selector would give
+  // React an unstable snapshot ("Maximum update depth exceeded"). Derive with
+  // useMemo from the stable raw state instead.
+  const folders = useLinkFoldersStore((state) => state.folders);
+  const getTree = useLinkFoldersStore((state) => state.getTree);
+  return useMemo(() => getTree(), [folders, getTree]);
+};
 
-export const useLinkFolderPath = (folderId: string) =>
-  useLinkFoldersStore((state) => state.getPath(folderId));
+export const useLinkFolderPath = (folderId: string) => {
+  const folders = useLinkFoldersStore((state) => state.folders);
+  const getPath = useLinkFoldersStore((state) => state.getPath);
+  return useMemo(() => getPath(folderId), [folders, getPath, folderId]);
+};
 
 export const useIsLinkFolderExpanded = (folderId: string) =>
   useLinkFoldersStore((state) => state.expandedFolderIds.has(folderId));

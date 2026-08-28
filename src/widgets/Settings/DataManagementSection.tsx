@@ -44,13 +44,13 @@ interface ModuleInfo {
 }
 
 const MODULE_CONFIG: Record<string, { label: string; icon: React.FC<{ className?: string }> }> = {
-  'notes-storage': { label: 'Notes', icon: FileText },
-  'kanban-tasks': { label: 'Tasks', icon: CheckSquare },
-  'calendar-events': { label: 'Calendar Events', icon: Calendar },
-  'time-tracking': { label: 'Time Tracking', icon: Clock },
-  'settings-storage': { label: 'Settings', icon: Database },
-  'theme-storage': { label: 'Theme', icon: Database },
-  'habits-storage': { label: 'Habits', icon: BarChart3 },
+  'notes-storage': { label: '笔记', icon: FileText },
+  'kanban-tasks': { label: '任务', icon: CheckSquare },
+  'calendar-events': { label: '日历事件', icon: Calendar },
+  'time-tracking': { label: '时间记录', icon: Clock },
+  'settings-storage': { label: '设置', icon: Database },
+  'theme-storage': { label: '主题', icon: Database },
+  'habits-storage': { label: '习惯', icon: BarChart3 },
 };
 
 /**
@@ -154,10 +154,10 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
       const result = await exportBrainFile({ compressed: true });
       onMessage({
         type: 'success',
-        text: `All data exported successfully. File: ${result.filename} (${formatFileSize(result.size)})`,
+        text: `所有数据已成功导出。文件：${result.filename}（${formatFileSize(result.size)}）`,
       });
     } catch (error) {
-      onMessage({ type: 'error', text: `Export failed: ${error}` });
+      onMessage({ type: 'error', text: `导出失败：${error}` });
     } finally {
       setIsExporting(false);
     }
@@ -182,12 +182,12 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
 
       onMessage({
         type: 'success',
-        text: 'All data cleared. The page will reload in 2 seconds.',
+        text: '所有数据已清除。页面将在 2 秒后重新加载。',
       });
 
       setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
-      onMessage({ type: 'error', text: `Clear failed: ${error}` });
+      onMessage({ type: 'error', text: `清除失败：${error}` });
     } finally {
       setIsClearing(false);
       setShowClearConfirm(false);
@@ -201,18 +201,18 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
     <div className="bento-card p-6">
       <div className="flex items-center justify-between mb-1">
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Data Management
+          数据管理
         </h2>
         <button
           onClick={loadStorageInfo}
           className="p-2 rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-          title="Refresh"
+          title="刷新"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        View storage usage breakdown and manage your data
+        查看存储使用明细并管理你的数据
       </p>
 
       {/* Total Storage */}
@@ -220,7 +220,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
         <HardDrive className="w-5 h-5 text-accent-primary flex-shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Total Storage Used
+            已用存储总量
           </p>
           <p className="text-2xl font-bold text-accent-primary">
             {formatFileSize(totalSize)}
@@ -228,10 +228,10 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
         </div>
         <div className="text-right">
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {modules.length} stores
+            {modules.length} 个存储
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {modules.reduce((sum, m) => sum + m.itemCount, 0)} total items
+            共 {modules.reduce((sum, m) => sum + m.itemCount, 0)} 个项目
           </p>
         </div>
       </div>
@@ -239,7 +239,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
       {/* Module Breakdown */}
       {loading ? (
         <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
-          Loading storage data...
+          正在加载存储数据...
         </div>
       ) : (
         <div className="space-y-3 mb-6">
@@ -259,7 +259,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
                     </span>
                     <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-2 flex-shrink-0">
                       {formatFileSize(mod.sizeBytes)}
-                      {mod.itemCount > 0 && ` (${mod.itemCount} items)`}
+                      {mod.itemCount > 0 && `（${mod.itemCount} 个项目）`}
                     </span>
                   </div>
                   <div className="w-full bg-border-light dark:bg-border-dark rounded-full h-1.5 overflow-hidden">
@@ -285,7 +285,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
           className="flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium transition-colors disabled:opacity-50"
         >
           <Download className="w-4 h-4" />
-          {isExporting ? 'Exporting...' : 'Export All Data'}
+          {isExporting ? '正在导出...' : '导出所有数据'}
         </button>
 
         <button
@@ -293,7 +293,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
           className="flex items-center gap-2 px-4 py-2.5 bg-accent-red/10 text-accent-red hover:bg-accent-red/20 rounded-lg font-medium transition-colors"
         >
           <Trash2 className="w-4 h-4" />
-          Clear All Data
+          清除所有数据
         </button>
       </div>
 
@@ -321,17 +321,17 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
                   <AlertTriangle className="w-6 h-6 text-accent-red" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                  Clear All Data
+                  清除所有数据
                 </h3>
               </div>
 
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-                This will permanently delete all your notes, tasks, calendar events, time entries, and settings.
-                This action cannot be undone. We recommend exporting a backup first.
+                这将永久删除你的所有笔记、任务、日历事件、时间记录和设置。
+                此操作无法撤销。建议先导出备份。
               </p>
 
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Type <span className="font-mono text-accent-red">DELETE ALL DATA</span> to confirm:
+                输入 <span className="font-mono text-accent-red">DELETE ALL DATA</span> 以确认：
               </p>
 
               <input
@@ -350,14 +350,14 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
                   }}
                   className="flex-1 px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
                 >
-                  Cancel
+                  取消
                 </button>
                 <button
                   onClick={handleClearAll}
                   disabled={clearConfirmText !== 'DELETE ALL DATA' || isClearing}
                   className="flex-1 px-4 py-2.5 bg-accent-red hover:bg-accent-red-hover text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isClearing ? 'Clearing...' : 'Clear Everything'}
+                  {isClearing ? '正在清除...' : '全部清除'}
                 </button>
               </div>
             </motion.div>

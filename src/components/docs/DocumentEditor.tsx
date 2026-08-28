@@ -119,7 +119,7 @@ export function DocumentEditor({
         types: ['heading', 'paragraph'],
       }),
       Placeholder.configure({
-        placeholder: 'Start typing your document...',
+        placeholder: '开始输入您的文档…',
       }),
       Image.configure({
         HTMLAttributes: {
@@ -164,7 +164,7 @@ export function DocumentEditor({
     editorProps: {
       attributes: {
         class: 'prose prose-slate dark:prose-invert max-w-none focus:outline-none min-h-[500px] p-6',
-        'aria-label': `Document editor for ${title}`,
+        'aria-label': `文档编辑器：${title}`,
       },
     },
     onUpdate: ({ editor }) => {
@@ -182,7 +182,7 @@ export function DocumentEditor({
 
   // Handle image insertion via URL
   const addImage = useCallback(() => {
-    const url = window.prompt('Enter image URL:');
+    const url = window.prompt('输入图片 URL：');
     if (url && editor) {
       editor.chain().focus().setImage({ src: url }).run();
     }
@@ -193,7 +193,7 @@ export function DocumentEditor({
     if (!editor) return;
 
     const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter URL:', previousUrl);
+    const url = window.prompt('输入 URL：', previousUrl);
 
     if (url === null) return;
 
@@ -222,7 +222,7 @@ export function DocumentEditor({
     const { from, to } = editor.state.selection;
     if (from === to) return; // No text selected
 
-    const commentText = window.prompt('Add a comment:');
+    const commentText = window.prompt('添加评论：');
     if (!commentText?.trim()) return;
 
     const commentId = crypto.randomUUID();
@@ -254,7 +254,7 @@ export function DocumentEditor({
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-pulse text-text-light-tertiary dark:text-text-dark-tertiary">
-          Loading editor...
+          正在加载编辑器…
         </div>
       </div>
     );
@@ -280,14 +280,14 @@ export function DocumentEditor({
             <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={addCommentToSelection}
-                title="Add comment to selection"
+                title="为所选内容添加评论"
                 className="p-1.5 rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated transition-colors"
               >
                 <MessageSquare className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setShowComments(!showComments)}
-                title="Toggle comments panel"
+                title="切换评论面板"
                 className={`p-1.5 rounded transition-colors ${
                   showComments
                     ? 'bg-accent-primary/10 text-accent-primary'
@@ -303,7 +303,7 @@ export function DocumentEditor({
           <div className="flex items-center gap-1 px-2 py-1.5 shrink-0 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg">
             <button
               onClick={() => setIsPageView(false)}
-              title="Continuous scroll"
+              title="连续滚动"
               className={`p-1.5 rounded transition-colors ${
                 !isPageView
                   ? 'bg-accent-primary/10 text-accent-primary'
@@ -315,7 +315,7 @@ export function DocumentEditor({
             </button>
             <button
               onClick={() => setIsPageView(true)}
-              title="Page view"
+              title="页面视图"
               className={`p-1.5 rounded transition-colors ${
                 isPageView
                   ? 'bg-accent-primary/10 text-accent-primary'
@@ -332,7 +332,7 @@ export function DocumentEditor({
                 value={currentPageSize}
                 onChange={(e) => setCurrentPageSize(e.target.value as PageSize)}
                 className="ml-1 px-2 py-1 text-xs bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded text-text-light-secondary dark:text-text-dark-secondary focus:outline-none focus:ring-1 focus:ring-accent-primary"
-                aria-label="Page size"
+                aria-label="页面大小"
               >
                 {Object.entries(PAGE_SIZES).map(([key, { label }]) => (
                   <option key={key} value={key}>

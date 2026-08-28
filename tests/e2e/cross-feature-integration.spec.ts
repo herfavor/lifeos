@@ -35,8 +35,7 @@ test.describe('Cross-Feature Integration', () => {
 
   // ==================== TEST 1: TASK → CALENDAR → TIMER ====================
 
-  // SKIP: Task doesn't appear on calendar - calendar integration not implemented yet
-  test.skip('recurring task appears on calendar and can start timer', async ({ page }) => {
+  test('recurring task appears on calendar and can start timer', async ({ page }) => {
     const taskTitle = 'Weekly Standup Meeting';
     const today = getTodayKey();
 
@@ -45,11 +44,11 @@ test.describe('Cross-Feature Integration', () => {
     await waitForAppLoaded(page);
 
     // Click add task (opens inline form in first column)
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务/i }).first();
     await addButton.click();
 
     // Fill in task title and submit with Enter key
-    const titleInput = page.getByPlaceholder('Task title...');
+    const titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(taskTitle);
     await titleInput.press('Enter');
 
@@ -72,7 +71,7 @@ test.describe('Cross-Feature Integration', () => {
 
     // Step 4: Start timer from task detail
     const startTimerButton = page.getByRole('button', {
-      name: /start.*timer|track.*time/i,
+      name: /开始计时|时间跟踪/i,
     });
 
     if (await startTimerButton.isVisible()) {
@@ -81,7 +80,7 @@ test.describe('Cross-Feature Integration', () => {
 
       // Verify timer is running (look for timer UI)
       await expect(
-        page.getByText(/timer.*running|tracking.*time/i)
+        page.getByText(/计时中|时间跟踪/i)
       ).toBeVisible();
 
       // Verify time entry created in store
@@ -92,8 +91,7 @@ test.describe('Cross-Feature Integration', () => {
 
   // ==================== TEST 2: AUTOMATION RULE EXECUTION ====================
 
-  // SKIP: Automation engine not triggering on task completion - needs investigation
-  test.skip('automation rule triggers when task completes', async ({ page }) => {
+  test('automation rule triggers when task completes', async ({ page }) => {
     // Step 1: Create an automation rule
     // Rule: "When task status → Done, create follow-up task"
     const ruleName = 'Auto-create follow-up';
@@ -120,9 +118,9 @@ test.describe('Cross-Feature Integration', () => {
 
     const taskTitle = 'Trigger Automation Task';
 
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务/i }).first();
     await addButton.click();
-    const titleInput = page.getByPlaceholder('Task title...');
+    const titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(taskTitle);
     await titleInput.press('Enter');
     await expect(titleInput).not.toBeVisible({ timeout: 2000 });
@@ -138,7 +136,7 @@ test.describe('Cross-Feature Integration', () => {
 
     // Look for complete/done button or checkbox
     const completeButton = taskCard.getByRole('button', {
-      name: /complete|done|mark.*complete/i,
+      name: /完成|已完成|标记.*完成/i,
     });
 
     if (await completeButton.isVisible()) {
@@ -164,18 +162,17 @@ test.describe('Cross-Feature Integration', () => {
 
   // ==================== TEST 3: NOTE WIKILINKS → GRAPH ====================
 
-  // SKIP: Note creation UI not accessible - textareas are disabled
-  test.skip('wikilink in note updates graph view', async ({ page }) => {
+  test('wikilink in note updates graph view', async ({ page }) => {
     // Step 1: Create first note
     await page.goto('/notes');
     await waitForAppLoaded(page);
 
     const note1Title = 'Project Overview';
 
-    const newNoteButton = page.getByRole('button', { name: /new note/i });
+    const newNoteButton = page.getByRole('button', { name: /新建笔记/i });
     await newNoteButton.click();
 
-    const titleInput = page.getByPlaceholder(/title/i);
+    const titleInput = page.getByPlaceholder(/无标题笔记/);
     if (await titleInput.isVisible()) {
       await titleInput.fill(note1Title);
     }
@@ -187,7 +184,7 @@ test.describe('Cross-Feature Integration', () => {
 
     const note2Title = 'Implementation Details';
 
-    const titleInput2 = page.getByPlaceholder(/title/i);
+    const titleInput2 = page.getByPlaceholder(/无标题笔记/);
     if (await titleInput2.isVisible()) {
       await titleInput2.fill(note2Title);
     }
@@ -229,29 +226,28 @@ test.describe('Cross-Feature Integration', () => {
 
   // ==================== TEST 4: CUSTOM FIELDS → CSV EXPORT ====================
 
-  // SKIP: Custom fields not supported in inline form - need full task modal UI
-  test.skip('custom field data exports correctly to CSV', async ({ page }) => {
+  test('custom field data exports correctly to CSV', async ({ page }) => {
     // Step 1: Create a custom field definition
     await page.goto('/settings');
     await waitForAppLoaded(page);
 
     // Look for Custom Fields section
     const customFieldsButton = page.getByRole('button', {
-      name: /custom.*field|add.*field/i,
+      name: /自定义字段|添加字段/i,
     });
 
     if (await customFieldsButton.isVisible()) {
       await customFieldsButton.click();
 
       // Add a custom field
-      await page.getByPlaceholder(/field.*name/i).fill('Client Name');
+      await page.getByPlaceholder(/例如：Bug ID、Sprint、客户名称/).fill('Client Name');
 
-      const fieldTypeSelect = page.getByLabel(/field.*type|type/i);
+      const fieldTypeSelect = page.getByLabel(/字段类型|类型/i);
       if (await fieldTypeSelect.isVisible()) {
         await fieldTypeSelect.selectOption('text');
       }
 
-      await page.getByRole('button', { name: /save|add/i }).click();
+      await page.getByRole('button', { name: /保存|添加/i }).click();
       await waitForIndexedDB(page);
     }
 
@@ -259,11 +255,11 @@ test.describe('Cross-Feature Integration', () => {
     await page.goto('/tasks');
     await waitForAppLoaded(page);
 
-    const addButton = page.getByRole('button', { name: /add.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务/i }).first();
     await addButton.click();
 
     const taskTitle = 'Client Project Task';
-    const titleInput = page.getByPlaceholder('Task title...');
+    const titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(taskTitle);
 
     // NOTE: Custom fields not available in inline form - would need full task modal
@@ -273,7 +269,7 @@ test.describe('Cross-Feature Integration', () => {
     await waitForIndexedDB(page);
 
     // Step 3: Export to CSV
-    const exportButton = page.getByRole('button', { name: /export|download/i });
+    const exportButton = page.getByRole('button', { name: /导出/i });
 
     if (await exportButton.isVisible()) {
       // Listen for download
@@ -299,8 +295,7 @@ test.describe('Cross-Feature Integration', () => {
 
   // ==================== TEST 5: TASK DEPENDENCIES → BLOCKER COMPLETION ====================
 
-  // SKIP: Task dependencies not implemented in UI yet
-  test.skip('completing blocker task unblocks dependent task', async ({ page }) => {
+  test('completing blocker task unblocks dependent task', async ({ page }) => {
     // Step 1: Create two tasks
     await page.goto('/tasks');
     await waitForAppLoaded(page);
@@ -309,18 +304,18 @@ test.describe('Cross-Feature Integration', () => {
     const blockedTitle = 'Implement UI';
 
     // Create blocker task
-    let addButton = page.getByRole('button', { name: /add.*task/i }).first();
+    let addButton = page.getByRole('button', { name: /添加任务/i }).first();
     await addButton.click();
-    let titleInput = page.getByPlaceholder('Task title...');
+    let titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(blockerTitle);
     await titleInput.press('Enter');
     await expect(titleInput).not.toBeVisible({ timeout: 2000 });
     await waitForIndexedDB(page);
 
     // Create blocked task
-    addButton = page.getByRole('button', { name: /add.*task/i }).first();
+    addButton = page.getByRole('button', { name: /添加任务/i }).first();
     await addButton.click();
-    titleInput = page.getByPlaceholder('Task title...');
+    titleInput = page.getByPlaceholder('任务标题…');
     await titleInput.fill(blockedTitle);
     await titleInput.press('Enter');
     await expect(titleInput).not.toBeVisible({ timeout: 2000 });
@@ -332,28 +327,28 @@ test.describe('Cross-Feature Integration', () => {
 
     // Look for dependencies section
     const addDependencyButton = page.getByRole('button', {
-      name: /add.*dependency|blocked.*by/i,
+      name: /添加依赖|被.*阻塞/i,
     });
 
     if (await addDependencyButton.isVisible()) {
       await addDependencyButton.click();
 
       // Select the blocker task
-      const taskSelect = page.getByLabel(/task|select/i);
+      const taskSelect = page.getByLabel(/任务|选择/i);
       if (await taskSelect.isVisible()) {
         await taskSelect.selectOption({ label: blockerTitle });
       }
 
-      await page.getByRole('button', { name: /save|add/i }).click();
+      await page.getByRole('button', { name: /保存|添加/i }).click();
       await waitForIndexedDB(page);
 
       // Verify blocked indicator appears
-      await expect(page.getByText(/blocked/i)).toBeVisible();
+      await expect(page.getByText(/被阻塞/i)).toBeVisible();
     }
 
     // Step 3: Complete the blocker task
     // Close modal first
-    const closeButton = page.getByRole('button', { name: /close|cancel/i });
+    const closeButton = page.getByRole('button', { name: /关闭|取消/i });
     if (await closeButton.isVisible()) {
       await closeButton.click();
     }
@@ -363,7 +358,7 @@ test.describe('Cross-Feature Integration', () => {
     await blockerCard.click();
 
     const completeButton = page.getByRole('button', {
-      name: /complete|done|mark.*done/i,
+      name: /完成|已完成|标记.*完成/i,
     });
 
     if (await completeButton.isVisible()) {
@@ -376,14 +371,13 @@ test.describe('Cross-Feature Integration', () => {
     await page.getByText(blockedTitle).click();
 
     // Should NOT show blocked indicator anymore
-    const blockedIndicator = page.getByText(/blocked/i);
+    const blockedIndicator = page.getByText(/被阻塞/i);
     await expect(blockedIndicator).not.toBeVisible();
   });
 
   // ==================== TEST 6: TAGS → FILTER → BULK OPERATIONS ====================
 
-  // SKIP: Tags not supported in inline form - need full task modal UI
-  test.skip('tag filtering and bulk operations work together', async ({ page }) => {
+  test('tag filtering and bulk operations work together', async ({ page }) => {
     // Step 1: Create tasks with different tags
     await page.goto('/tasks');
     await waitForAppLoaded(page);
@@ -392,10 +386,10 @@ test.describe('Cross-Feature Integration', () => {
     const tags = ['bug', 'bug', 'feature'];
 
     for (let i = 0; i < taskTitles.length; i++) {
-      const addButton = page.getByRole('button', { name: /add.*task/i }).first();
+      const addButton = page.getByRole('button', { name: /添加任务/i }).first();
       await addButton.click();
 
-      const titleInput = page.getByPlaceholder('Task title...');
+      const titleInput = page.getByPlaceholder('任务标题…');
       await titleInput.fill(taskTitles[i]);
 
       // NOTE: Inline form doesn't support tags - would need full task modal
@@ -407,7 +401,7 @@ test.describe('Cross-Feature Integration', () => {
 
     // Step 2: Filter by 'bug' tag
     const tagFilterButton = page.getByRole('button', {
-      name: /filter.*tag|tag.*filter/i,
+      name: /按标签筛选|标签.*筛选/i,
     });
 
     if (await tagFilterButton.isVisible()) {
@@ -427,25 +421,25 @@ test.describe('Cross-Feature Integration', () => {
     }
 
     // Step 3: Bulk select visible tasks
-    const selectAllCheckbox = page.getByRole('checkbox', { name: /select.*all/i });
+    const selectAllCheckbox = page.getByRole('checkbox', { name: /全选/i });
 
     if (await selectAllCheckbox.isVisible()) {
       await selectAllCheckbox.check();
 
       // Step 4: Bulk change priority
       const bulkActionButton = page.getByRole('button', {
-        name: /bulk.*action|change.*priority/i,
+        name: /更改优先级/i,
       });
 
       if (await bulkActionButton.isVisible()) {
         await bulkActionButton.click();
 
-        const prioritySelect = page.getByLabel(/priority/i);
+        const prioritySelect = page.getByLabel(/优先级/i);
         if (await prioritySelect.isVisible()) {
           await prioritySelect.selectOption('high');
         }
 
-        await page.getByRole('button', { name: /apply|save/i }).click();
+        await page.getByRole('button', { name: /应用|保存/i }).click();
         await waitForIndexedDB(page);
 
         // Verify both bug tasks now have high priority

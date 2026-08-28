@@ -40,7 +40,7 @@ export function onPomodoroComplete(totalSessionsToday: number): void {
     if (store.isCompletedOnDate(habit.id, dateKey)) continue;
 
     // Auto-complete the habit
-    store.toggleCompletion(habit.id, dateKey, `Auto-tracked via Pomodoro (${totalSessionsToday} sessions)`);
-    toast.success(`Habit "${habit.title}" tracked`, 'Pomodoro session completed');
+    store.toggleCompletion(habit.id, dateKey, `通过番茄钟自动记录（${totalSessionsToday} 次会话）`);
+    toast.success(`习惯“${habit.title}”已记录`, '番茄钟会话已完成');
   }
 }

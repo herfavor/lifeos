@@ -11,10 +11,10 @@ export function AnalyticsPeriodSelector() {
   const setPeriod = useAnalyticsStore((state) => state.setPeriod);
 
   const periods: Array<{ value: AnalyticsPeriod; label: string }> = [
-    { value: 'today', label: 'Today' },
-    { value: 'week', label: 'This Week' },
-    { value: 'month', label: 'This Month' },
-    { value: 'year', label: 'This Year' },
+    { value: 'today', label: '今天' },
+    { value: 'week', label: '本周' },
+    { value: 'month', label: '本月' },
+    { value: 'year', label: '今年' },
   ];
 
   return (

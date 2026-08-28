@@ -28,37 +28,37 @@ interface ColumnManagerProps {
 
 // Predefined color options for columns
 const COLOR_OPTIONS = [
-  { label: 'Gray', class: 'bg-text-light-secondary dark:bg-text-dark-secondary', preview: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
-  { label: 'Blue', class: 'bg-status-info', preview: 'bg-accent-blue' },
-  { label: 'Yellow', class: 'bg-status-warning', preview: 'bg-accent-yellow' },
-  { label: 'Cyan', class: 'bg-accent-blue', preview: 'bg-accent-cyan' },
-  { label: 'Green', class: 'bg-status-success', preview: 'bg-accent-green' },
-  { label: 'Red', class: 'bg-status-error', preview: 'bg-accent-red' },
-  { label: 'Magenta', class: 'bg-accent-magenta', preview: 'bg-accent-magenta' },
+  { label: '灰色', class: 'bg-text-light-secondary dark:bg-text-dark-secondary', preview: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
+  { label: '蓝色', class: 'bg-status-info', preview: 'bg-accent-blue' },
+  { label: '黄色', class: 'bg-status-warning', preview: 'bg-accent-yellow' },
+  { label: '青色', class: 'bg-accent-blue', preview: 'bg-accent-cyan' },
+  { label: '绿色', class: 'bg-status-success', preview: 'bg-accent-green' },
+  { label: '红色', class: 'bg-status-error', preview: 'bg-accent-red' },
+  { label: '品红', class: 'bg-accent-magenta', preview: 'bg-accent-magenta' },
 ];
 
 // Column templates
 const TEMPLATES = {
   dev: [
-    { title: 'Backlog', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
-    { title: 'To Do', color: 'bg-status-info' },
-    { title: 'In Progress', color: 'bg-status-warning' },
-    { title: 'In Review', color: 'bg-accent-blue' },
-    { title: 'Done', color: 'bg-status-success' },
+    { title: '待办池', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
+    { title: '待办', color: 'bg-status-info' },
+    { title: '进行中', color: 'bg-status-warning' },
+    { title: '评审中', color: 'bg-accent-blue' },
+    { title: '已完成', color: 'bg-status-success' },
   ],
   pm: [
-    { title: 'Ideas', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
-    { title: 'Planned', color: 'bg-status-info' },
-    { title: 'Active', color: 'bg-status-warning' },
-    { title: 'Blocked', color: 'bg-status-error' },
-    { title: 'Complete', color: 'bg-status-success' },
+    { title: '想法', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
+    { title: '已计划', color: 'bg-status-info' },
+    { title: '进行中', color: 'bg-status-warning' },
+    { title: '已阻塞', color: 'bg-status-error' },
+    { title: '已完成', color: 'bg-status-success' },
   ],
   marketing: [
-    { title: 'Ideation', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
-    { title: 'Draft', color: 'bg-status-info' },
-    { title: 'Review', color: 'bg-status-warning' },
-    { title: 'Scheduled', color: 'bg-accent-blue' },
-    { title: 'Published', color: 'bg-status-success' },
+    { title: '构思', color: 'bg-text-light-secondary dark:bg-text-dark-secondary' },
+    { title: '草稿', color: 'bg-status-info' },
+    { title: '评审', color: 'bg-status-warning' },
+    { title: '已排期', color: 'bg-accent-blue' },
+    { title: '已发布', color: 'bg-status-success' },
   ],
 };
 
@@ -101,7 +101,7 @@ const SortableColumnItem: React.FC<SortableColumnItemProps> = ({
         {...attributes}
         {...listeners}
         className="cursor-grab active:cursor-grabbing text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
-        aria-label="Drag to reorder"
+        aria-label="拖动以排序"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
@@ -118,7 +118,7 @@ const SortableColumnItem: React.FC<SortableColumnItemProps> = ({
         </div>
         {column.wipLimit && (
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            WIP Limit: {column.wipLimit}
+            WIP 上限：{column.wipLimit}
           </div>
         )}
       </div>
@@ -128,7 +128,7 @@ const SortableColumnItem: React.FC<SortableColumnItemProps> = ({
         <button
           onClick={() => onEdit(column)}
           className="p-1.5 text-text-light-secondary hover:text-accent-blue dark:text-text-dark-secondary dark:hover:text-accent-blue transition-colors"
-          aria-label="Edit column"
+          aria-label="编辑列"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -137,7 +137,7 @@ const SortableColumnItem: React.FC<SortableColumnItemProps> = ({
         <button
           onClick={() => onDelete(column.id)}
           className="p-1.5 text-text-light-secondary hover:text-status-error dark:text-text-dark-secondary dark:hover:text-status-error transition-colors"
-          aria-label="Delete column"
+          aria-label="删除列"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -223,7 +223,7 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
 
   const handleDelete = (id: string) => {
     if (columns.length <= 1) {
-      setError('Cannot delete the last column. You must have at least one column.');
+      setError('无法删除最后一列。至少需要保留一个列。');
       return;
     }
 
@@ -299,31 +299,31 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
   const activeColumn = columns.find((col) => col.id === activeId);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Manage Columns" maxWidth="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title="管理列" maxWidth="lg">
       <div className="space-y-6">
         {/* Templates */}
         <div>
           <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-            Templates
+            模板
           </h4>
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => applyTemplate('dev')}
               className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg hover:border-accent-blue transition-colors text-text-light-primary dark:text-text-dark-primary"
             >
-              Development
+              开发
             </button>
             <button
               onClick={() => applyTemplate('pm')}
               className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg hover:border-accent-blue transition-colors text-text-light-primary dark:text-text-dark-primary"
             >
-              Project Management
+              项目管理
             </button>
             <button
               onClick={() => applyTemplate('marketing')}
               className="px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg hover:border-accent-blue transition-colors text-text-light-primary dark:text-text-dark-primary"
             >
-              Marketing
+              营销
             </button>
           </div>
         </div>
@@ -332,14 +332,14 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
         <div>
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Columns ({columns.length})
+              列（{columns.length}）
             </h4>
             {!showAddForm && (
               <button
                 onClick={() => setShowAddForm(true)}
                 className="text-sm text-accent-blue hover:text-accent-blue-hover"
               >
-                + Add Column
+                + 添加列
               </button>
             )}
           </div>
@@ -349,13 +349,13 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
             <form onSubmit={handleSubmit} className="mb-4 p-4 bg-surface-light dark:bg-surface-dark rounded-lg border-2 border-accent-blue space-y-3">
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Column Name
+                  列名称
                 </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., In Progress"
+                  placeholder="例如：进行中"
                   className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue focus:outline-none"
                   autoFocus
                 />
@@ -363,7 +363,7 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
 
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Color
+                  颜色
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {COLOR_OPTIONS.map((option) => (
@@ -384,7 +384,7 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
 
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  WIP Limit (Optional)
+                  WIP 上限（可选）
                 </label>
                 <input
                   type="number"
@@ -395,12 +395,12 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
                       wipLimit: e.target.value ? parseInt(e.target.value) : undefined,
                     })
                   }
-                  placeholder="e.g., 5"
+                  placeholder="例如：5"
                   min="1"
                   className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue focus:outline-none"
                 />
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  Maximum number of tasks allowed in this column
+                  该列允许的最大任务数
                 </p>
               </div>
 
@@ -409,14 +409,14 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
                   type="submit"
                   className="flex-1 px-4 py-2 text-sm bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
                 >
-                  {editingColumn ? 'Update Column' : 'Add Column'}
+                  {editingColumn ? '更新列' : '添加列'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCancel}
                   className="px-4 py-2 text-sm bg-text-light-secondary dark:bg-text-dark-secondary text-white rounded-lg hover:opacity-80 transition-opacity"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </form>
@@ -464,12 +464,12 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
 
         {/* Help Text */}
         <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary bg-surface-light-elevated dark:bg-surface-dark-elevated p-3 rounded-lg">
-          <p className="font-medium mb-1">Tips:</p>
+          <p className="font-medium mb-1">提示：</p>
           <ul className="space-y-1 list-disc list-inside">
-            <li>Drag columns to reorder them on the board</li>
-            <li>Set WIP limits to prevent overload in any column</li>
-            <li>Deleting a column moves all tasks to Backlog</li>
-            <li>Templates replace all current columns</li>
+            <li>拖动列以在看板上排序</li>
+            <li>设置 WIP 上限以避免列中任务过载</li>
+            <li>删除列会将其中所有任务移至待办池</li>
+            <li>应用模板将替换当前所有列</li>
           </ul>
         </div>
       </div>
@@ -480,10 +480,10 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
           isOpen={true}
           onClose={cancelDelete}
           onConfirm={confirmDelete}
-          title="Delete Column"
-          message={`Are you sure you want to delete "${pendingDeleteColumn.title}"? All tasks in this column will be moved to Backlog.`}
-          confirmText="Delete"
-          cancelText="Cancel"
+          title="删除列"
+          message={`确定要删除“${pendingDeleteColumn.title}”吗？该列中的所有任务将被移至待办池。`}
+          confirmText="删除"
+          cancelText="取消"
           variant="danger"
         />
       )}
@@ -494,10 +494,10 @@ export const ColumnManager: React.FC<ColumnManagerProps> = ({ isOpen, onClose, i
           isOpen={true}
           onClose={cancelTemplate}
           onConfirm={confirmTemplate}
-          title="Apply Template"
-          message={`This will replace all current columns with the ${pendingTemplate === 'dev' ? 'Development' : pendingTemplate === 'pm' ? 'Project Management' : 'Marketing'} template. This action cannot be undone.`}
-          confirmText="Apply Template"
-          cancelText="Cancel"
+          title="应用模板"
+          message={`这将用${pendingTemplate === 'dev' ? '开发' : pendingTemplate === 'pm' ? '项目管理' : '营销'}模板替换当前所有列。此操作无法撤销。`}
+          confirmText="应用模板"
+          cancelText="取消"
           variant="warning"
         />
       )}

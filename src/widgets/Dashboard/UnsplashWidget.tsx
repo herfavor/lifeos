@@ -27,7 +27,7 @@ export const UnsplashWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Photo of the Day"
+      title="每日图片"
       icon="📸"
       loading={loading}
       onRefresh={fetchRandomImage}
@@ -35,7 +35,7 @@ export const UnsplashWidget: React.FC = () => {
       <div className="h-full flex flex-col gap-2">
         <img
           src={imageUrl}
-          alt="Random photo"
+          alt="随机图片"
           className="w-full h-48 object-cover rounded-button transition-all duration-standard ease-smooth"
           onLoad={() => setLoading(false)}
           onError={() => {
@@ -44,7 +44,7 @@ export const UnsplashWidget: React.FC = () => {
           }}
         />
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary text-center">
-          Photo by Lorem Picsum
+          照片由 Lorem Picsum 提供
         </p>
       </div>
     </BaseWidget>

@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const monochromeTheme: ThemeDefinition = {
   id: 'monochrome',
   name: 'Monochrome',
-  description: 'Crisp black and white with subtle accents',
+  description: '清爽黑白配以细腻点缀',
   category: 'minimal',
   preview: {
     primary: '#171717',

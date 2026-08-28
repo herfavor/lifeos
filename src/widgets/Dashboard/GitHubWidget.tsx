@@ -32,7 +32,7 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
 
   const fetchGitHub = useCallback(async () => {
     if (!username) {
-      setError('Please set your GitHub username in settings');
+      setError('请先在设置中填写你的 GitHub 用户名');
       setLoading(false);
       return;
     }
@@ -42,12 +42,12 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
 
     try {
       const response = await fetch(`https://api.github.com/users/${username}`);
-      if (!response.ok) throw new Error('User not found');
+      if (!response.ok) throw new Error('未找到该用户');
 
       const data = await response.json();
       setUser(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load GitHub data');
+      setError(err instanceof Error ? err.message : '无法加载 GitHub 数据');
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
 
   return (
     <BaseWidget
-      title={username ? `GitHub: @${username}` : 'GitHub Activity'}
+      title={username ? `GitHub: @${username}` : 'GitHub 动态'}
       icon="🐙"
       loading={loading}
       error={error}
@@ -108,7 +108,7 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
                 {user.public_repos}
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Repos
+                仓库
               </p>
             </div>
             <div className="text-center p-2 bg-surface-light-elevated dark:bg-surface-dark rounded">
@@ -116,7 +116,7 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
                 {user.followers}
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Followers
+                关注者
               </p>
             </div>
             <div className="text-center p-2 bg-surface-light-elevated dark:bg-surface-dark rounded">
@@ -124,7 +124,7 @@ export const GitHubWidget: React.FC<GitHubWidgetProps> = ({ widgetId = 'github' 
                 {user.following}
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Following
+                正在关注
               </p>
             </div>
           </div>

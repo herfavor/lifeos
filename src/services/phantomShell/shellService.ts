@@ -47,56 +47,56 @@ const BUILTIN_COMMANDS = new Set([
 // These require OS-level access that WebContainer cannot provide
 const UNSUPPORTED_COMMANDS: Record<string, string> = {
   // Network commands requiring raw sockets
-  ping: 'Raw network sockets are not available in browsers',
-  traceroute: 'Raw network sockets are not available in browsers',
-  tracert: 'Raw network sockets are not available in browsers',
-  netstat: 'Network stack access is not available in browsers',
-  ifconfig: 'Network interface access is not available in browsers',
-  ipconfig: 'Network interface access is not available in browsers',
-  nslookup: 'DNS lookups require native network access',
-  dig: 'DNS lookups require native network access',
+  ping: '浏览器中无法使用原始网络套接字',
+  traceroute: '浏览器中无法使用原始网络套接字',
+  tracert: '浏览器中无法使用原始网络套接字',
+  netstat: '浏览器中无法访问网络协议栈',
+  ifconfig: '浏览器中无法访问网络接口',
+  ipconfig: '浏览器中无法访问网络接口',
+  nslookup: 'DNS 查询需要原生网络访问',
+  dig: 'DNS 查询需要原生网络访问',
 
   // External tool commands (require native binaries)
-  curl: 'Use fetch() in JavaScript instead, or try "npx node-fetch"',
-  wget: 'Use fetch() in JavaScript instead',
-  ssh: 'SSH requires native socket access',
-  scp: 'SCP requires native socket access',
-  sftp: 'SFTP requires native socket access',
-  telnet: 'Telnet requires native socket access',
-  ftp: 'FTP requires native socket access',
+  curl: '请在 JavaScript 中使用 fetch()，或尝试 "npx node-fetch"',
+  wget: '请在 JavaScript 中使用 fetch()',
+  ssh: 'SSH 需要原生套接字访问',
+  scp: 'SCP 需要原生套接字访问',
+  sftp: 'SFTP 需要原生套接字访问',
+  telnet: 'Telnet 需要原生套接字访问',
+  ftp: 'FTP 需要原生套接字访问',
 
   // Version control (requires git binary)
-  git: 'Git CLI is not available. Use a git library like isomorphic-git instead',
-  svn: 'SVN is not available in browser environment',
+  git: 'Git CLI 不可用。请改用 isomorphic-git 等 git 库',
+  svn: '浏览器环境中无法使用 SVN',
 
   // Container/VM commands
-  docker: 'Docker requires a daemon running on the host OS',
-  'docker-compose': 'Docker requires a daemon running on the host OS',
-  podman: 'Container runtimes are not available in browsers',
-  kubectl: 'Kubernetes CLI requires cluster access',
+  docker: 'Docker 需要在宿主机上运行守护进程',
+  'docker-compose': 'Docker 需要在宿主机上运行守护进程',
+  podman: '浏览器中无法使用容器运行时',
+  kubectl: 'Kubernetes CLI 需要访问集群',
 
   // Language runtimes (not available in WebContainer)
-  python: 'Python is not available. Use Pyodide for Python in browser',
-  python3: 'Python is not available. Use Pyodide for Python in browser',
-  pip: 'Python/pip is not available. Use Pyodide for Python in browser',
-  ruby: 'Ruby runtime is not available in WebContainer',
-  gem: 'Ruby/gem is not available in WebContainer',
-  php: 'PHP runtime is not available in WebContainer',
-  go: 'Go runtime is not available in WebContainer',
-  rustc: 'Rust compiler is not available in WebContainer',
-  cargo: 'Cargo/Rust is not available in WebContainer',
-  java: 'Java runtime is not available in WebContainer',
-  javac: 'Java compiler is not available in WebContainer',
+  python: 'Python 不可用。请在浏览器中使用 Pyodide 运行 Python',
+  python3: 'Python 不可用。请在浏览器中使用 Pyodide 运行 Python',
+  pip: 'Python/pip 不可用。请在浏览器中使用 Pyodide 运行 Python',
+  ruby: 'WebContainer 中没有 Ruby 运行时',
+  gem: 'WebContainer 中没有 Ruby/gem',
+  php: 'WebContainer 中没有 PHP 运行时',
+  go: 'WebContainer 中没有 Go 运行时',
+  rustc: 'WebContainer 中没有 Rust 编译器',
+  cargo: 'WebContainer 中没有 Cargo/Rust',
+  java: 'WebContainer 中没有 Java 运行时',
+  javac: 'WebContainer 中没有 Java 编译器',
 
   // System-level commands
-  sudo: 'Root access is not available in browser environment',
-  su: 'User switching is not available in browser environment',
-  apt: 'Package managers require OS-level access',
-  'apt-get': 'Package managers require OS-level access',
-  yum: 'Package managers require OS-level access',
-  brew: 'Homebrew requires macOS system access',
-  systemctl: 'Systemd is not available in browser environment',
-  service: 'System services are not available in browser environment',
+  sudo: '浏览器环境中无法获得 root 权限',
+  su: '浏览器环境中无法切换用户',
+  apt: '包管理器需要操作系统级访问权限',
+  'apt-get': '包管理器需要操作系统级访问权限',
+  yum: '包管理器需要操作系统级访问权限',
+  brew: 'Homebrew 需要 macOS 系统访问权限',
+  systemctl: '浏览器环境中没有 Systemd',
+  service: '浏览器环境中无法使用系统服务',
 };
 
 // ==================== COMMAND PARSER ====================
@@ -142,32 +142,32 @@ export const parseCommand = (input: string): ShellCommand => {
 // ==================== BUILTIN COMMAND HANDLERS ====================
 
 export const builtinHandlers: Record<string, (args: string[], context: ShellContext) => string> = {
-  help: () => `\x1b[1;36mPhantom Shell Commands\x1b[0m
+  help: () => `\x1b[1;36mPhantom Shell 命令\x1b[0m
 
-\x1b[33mBuilt-in:\x1b[0m
-  /help      Show this help
-  /clear     Clear terminal
-  /history   Command history
-  /version   Boot WebContainer & show status
-  /about     About Phantom Shell
+\x1b[33m内置命令：\x1b[0m
+  /help      显示此帮助
+  /clear     清空终端
+  /history   命令历史
+  /version   启动 WebContainer 并显示状态
+  /about     关于 Phantom Shell
 
-\x1b[33mProjects:\x1b[0m
-  /projects  List all projects
-  /new name  Create new project
-  /open name Open existing project
-  /close     Close current project
+\x1b[33m项目：\x1b[0m
+  /projects  列出所有项目
+  /new name  创建新项目
+  /open name 打开已有项目
+  /close     关闭当前项目
 
-\x1b[33mAI:\x1b[0m
-  /ai <msg>  Ask AI for help (e.g., /ai create react app)
+\x1b[33mAI：\x1b[0m
+  /ai <msg>  向 AI 求助（例如：/ai create react app）
 
-\x1b[33mSystem Commands:\x1b[0m (requires WebContainer)
+\x1b[33m系统命令：\x1b[0m（需要 WebContainer）
   npm install, npm run dev, node script.js
   npx, ls, cd, cat, mkdir, rm, mv, cp
 
-\x1b[32m✓ Works:\x1b[0m npm, node, npx, ls, cd, cat, mkdir, touch
-\x1b[31m✗ Doesn't work:\x1b[0m git, docker, python, ping, curl, ssh
+\x1b[32m✓ 可用：\x1b[0m npm, node, npx, ls, cd, cat, mkdir, touch
+\x1b[31m✗ 不可用：\x1b[0m git, docker, python, ping, curl, ssh
 
-\x1b[90mTip: Run /version to boot WebContainer (takes 2-5 sec)\x1b[0m
+\x1b[90m提示：运行 /version 启动 WebContainer（约需 2-5 秒）\x1b[0m
 `,
 
   clear: (_args, context) => {
@@ -178,7 +178,7 @@ export const builtinHandlers: Record<string, (args: string[], context: ShellCont
   history: (_args, context) => {
     const history = context.getHistory();
     if (history.length === 0) {
-      return '\x1b[90mNo command history\x1b[0m';
+      return '\x1b[90m暂无命令历史\x1b[0m';
     }
     return history
       .slice(-20)
@@ -189,12 +189,12 @@ export const builtinHandlers: Record<string, (args: string[], context: ShellCont
   version: () => {
     const support = isWebContainerSupported();
     const wcStatus = support.supported
-      ? '\x1b[32m✓ available\x1b[0m'
+      ? '\x1b[32m✓ 可用\x1b[0m'
       : `\x1b[31m✗ ${support.reason}\x1b[0m`;
 
     return `
 \x1b[1;35mPhantom Shell\x1b[0m v1.0.0
-\x1b[90mNeumanOS Dashboard\x1b[0m v1.0.0
+\x1b[90mLifeOS Dashboard\x1b[0m v1.0.0
 \x1b[90mWebContainer API\x1b[0m v1.5.1 ${wcStatus}
 \x1b[90mxterm.js\x1b[0m v5.5.0
 `;
@@ -203,7 +203,7 @@ export const builtinHandlers: Record<string, (args: string[], context: ShellCont
   projects: (_args, context) => {
     const projects = context.getProjects();
     if (projects.length === 0) {
-      return '\x1b[90mNo projects yet. Use \x1b[33m/new <name>\x1b[90m to create one.\x1b[0m';
+      return '\x1b[90m还没有项目。使用 \x1b[33m/new <名称>\x1b[90m 创建一个。\x1b[0m';
     }
 
     return projects
@@ -218,72 +218,72 @@ export const builtinHandlers: Record<string, (args: string[], context: ShellCont
   new: (args, context) => {
     const name = args.join(' ').trim();
     if (!name) {
-      return '\x1b[31mError: Project name required\x1b[0m\nUsage: /new <project-name>';
+      return '\x1b[31m错误：需要项目名称\x1b[0m\n用法：/new <项目名称>';
     }
 
     // Validate name
     if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-      return '\x1b[31mError: Invalid project name\x1b[0m\nUse only letters, numbers, hyphens, and underscores.';
+      return '\x1b[31m错误：项目名称无效\x1b[0m\n只能使用字母、数字、连字符和下划线。';
     }
 
     const id = context.createProject(name);
-    return `\x1b[32m✓ Created project:\x1b[0m ${name}\n\x1b[90mProject ID: ${id}\x1b[0m`;
+    return `\x1b[32m✓ 已创建项目：\x1b[0m ${name}\n\x1b[90m项目 ID：${id}\x1b[0m`;
   },
 
   about: () => `\x1b[1;35m╔════════════════════════════╗
 ║     PHANTOM SHELL          ║
 ╚════════════════════════════╝\x1b[0m
 
-Browser-native dev environment.
-No install, no servers, no cloud.
+浏览器原生的开发环境。
+无需安装、无需服务器、无需云端。
 
-\x1b[36mFeatures:\x1b[0m
- • Node.js in browser
- • Real terminal (xterm.js)
- • AI-assisted (/ai)
- • IndexedDB persistence
- • .brain file export
+\x1b[36m功能：\x1b[0m
+ • 浏览器中的 Node.js
+ • 真正的终端（xterm.js）
+ • AI 辅助（/ai）
+ • IndexedDB 持久化
+ • .brain 文件导出
 
-\x1b[90mNeumanOS Dashboard\x1b[0m
-\x1b[90mPrivacy-first\x1b[0m
+\x1b[90mLifeOS Dashboard\x1b[0m
+\x1b[90m隐私优先\x1b[0m
 `,
 
   open: (args, context) => {
     const name = args.join(' ').trim();
     if (!name) {
-      return '\x1b[31mError: Project name required\x1b[0m\nUsage: /open <project-name>';
+      return '\x1b[31m错误：需要项目名称\x1b[0m\n用法：/open <项目名称>';
     }
 
     const projects = context.getProjects();
     const project = projects.find(p => p.name.toLowerCase() === name.toLowerCase());
 
     if (!project) {
-      return `\x1b[31mError: Project "${name}" not found\x1b[0m\nUse /projects to see available projects.`;
+      return `\x1b[31m错误：找不到项目“${name}”\x1b[0m\n使用 /projects 查看可用项目。`;
     }
 
-    return `\x1b[32m✓ Opened project:\x1b[0m ${project.name}`;
+    return `\x1b[32m✓ 已打开项目：\x1b[0m ${project.name}`;
   },
 
   close: (_args, context) => {
     if (!context.activeProjectId) {
-      return '\x1b[90mNo project is currently open\x1b[0m';
+      return '\x1b[90m当前没有打开的项目\x1b[0m';
     }
-    return '\x1b[32m✓ Project closed\x1b[0m';
+    return '\x1b[32m✓ 项目已关闭\x1b[0m';
   },
 
   export: (_args, context) => {
     if (!context.activeProjectId) {
-      return '\x1b[31mError: No project is currently open\x1b[0m\nOpen a project with /open <name> first.';
+      return '\x1b[31m错误：当前没有打开的项目\x1b[0m\n请先用 /open <名称> 打开一个项目。';
     }
-    return '\x1b[33m⚠ Export functionality coming in Phase 3\x1b[0m';
+    return '\x1b[33m⚠ 导出功能将在第 3 阶段推出\x1b[0m';
   },
 
   import: () => {
-    return '\x1b[33m⚠ Import functionality coming in Phase 3\x1b[0m';
+    return '\x1b[33m⚠ 导入功能将在第 3 阶段推出\x1b[0m';
   },
 
   theme: () => {
-    return '\x1b[33m⚠ Theme customization coming soon\x1b[0m';
+    return '\x1b[33m⚠ 主题自定义即将推出\x1b[0m';
   },
 };
 
@@ -298,7 +298,7 @@ export class ShellExecutor {
   ): Promise<string> {
     const handler = builtinHandlers[command.name];
     if (!handler) {
-      return `\x1b[31mUnknown command: /${command.name}\x1b[0m\nType /help for available commands.`;
+      return `\x1b[31m未知命令：/${command.name}\x1b[0m\n输入 /help 查看可用命令。`;
     }
     return handler(command.args, context);
   }
@@ -311,11 +311,11 @@ export class ShellExecutor {
     // Check for unsupported commands FIRST, before even checking WebContainer
     const unsupportedReason = UNSUPPORTED_COMMANDS[command.name.toLowerCase()];
     if (unsupportedReason) {
-      onStderr(`\x1b[31m✗ Command not supported: ${command.name}\x1b[0m\n`);
-      onStderr(`\x1b[90m  Reason: ${unsupportedReason}\x1b[0m\n`);
-      onStderr(`\x1b[90m  Phantom Shell runs in a browser sandbox (WebContainer).\x1b[0m\n`);
-      onStderr(`\x1b[90m  It supports: npm, node, npx, ls, cd, cat, mkdir, touch, etc.\x1b[0m\n`);
-      onStderr(`\x1b[36m  Type /help for list of supported commands.\x1b[0m\n`);
+      onStderr(`\x1b[31m✗ 不支持的命令：${command.name}\x1b[0m\n`);
+      onStderr(`\x1b[90m  原因：${unsupportedReason}\x1b[0m\n`);
+      onStderr(`\x1b[90m  Phantom Shell 运行在浏览器沙箱（WebContainer）中。\x1b[0m\n`);
+      onStderr(`\x1b[90m  支持：npm、node、npx、ls、cd、cat、mkdir、touch 等。\x1b[0m\n`);
+      onStderr(`\x1b[36m  输入 /help 查看支持的命令列表。\x1b[0m\n`);
       return 1;
     }
 
@@ -324,11 +324,11 @@ export class ShellExecutor {
     if (!webcontainer) {
       const support = isWebContainerSupported();
       if (!support.supported) {
-        onStderr(`\x1b[31mError: ${support.reason}\x1b[0m\n`);
+        onStderr(`\x1b[31m错误：${support.reason}\x1b[0m\n`);
         return 1;
       }
-      onStderr('\x1b[33m⚠ WebContainer not ready. Boot it first with /version\x1b[0m\n');
-      onStderr('\x1b[90mHint: WebContainer is still booting. Please wait...\x1b[0m\n');
+      onStderr('\x1b[33m⚠ WebContainer 尚未就绪。请先用 /version 启动\x1b[0m\n');
+      onStderr('\x1b[90m提示：WebContainer 仍在启动中，请稍候…\x1b[0m\n');
       return 1;
     }
 
@@ -359,7 +359,7 @@ export class ShellExecutor {
       return exitCode;
     } catch (error) {
       log.error('Command execution failed', { command: command.raw, error });
-      onStderr(`\x1b[31mError: ${error}\x1b[0m\n`);
+      onStderr(`\x1b[31m错误：${error}\x1b[0m\n`);
       this.currentProcess = null;
       return 1;
     }
@@ -373,7 +373,7 @@ export class ShellExecutor {
     log.info('AI command', { prompt: prompt.substring(0, 100) });
 
     // Show thinking indicator
-    onOutput('\x1b[36m⏳ Thinking...\x1b[0m\n');
+    onOutput('\x1b[36m⏳ 思考中…\x1b[0m\n');
 
     try {
       const result = await processAICommand(prompt);
@@ -394,26 +394,26 @@ export class ShellExecutor {
 
       // Show commands
       if (result.commands.length === 0) {
-        onOutput('\x1b[33mNo commands generated.\x1b[0m\n');
+        onOutput('\x1b[33m未生成任何命令。\x1b[0m\n');
         return 0;
       }
 
       // Display generated commands
-      onOutput('\x1b[32m📋 Generated commands:\x1b[0m\n');
+      onOutput('\x1b[32m📋 已生成命令：\x1b[0m\n');
       for (const cmd of result.commands) {
         onOutput(`  \x1b[36m$ ${cmd}\x1b[0m\n`);
       }
       onOutput('\n');
 
       // Ask user to confirm (for now, just show them)
-      onOutput('\x1b[90mCopy and paste to execute,\x1b[0m\n');
-      onOutput('\x1b[90mor type the command manually.\x1b[0m\n');
+      onOutput('\x1b[90m复制并粘贴以执行，\x1b[0m\n');
+      onOutput('\x1b[90m或手动输入命令。\x1b[0m\n');
 
       return 0;
     } catch (error) {
       log.error('AI command execution failed', { error });
       onOutput('\x1b[1A\x1b[2K'); // Clear thinking indicator
-      onOutput(`\x1b[31mAI Error: ${error}\x1b[0m\n`);
+      onOutput(`\x1b[31mAI 错误：${error}\x1b[0m\n`);
       return 1;
     }
   }
@@ -463,7 +463,7 @@ export const runCommand = async (
     }
 
     default:
-      onOutput('\x1b[31mUnknown command type\x1b[0m\n');
+      onOutput('\x1b[31m未知的命令类型\x1b[0m\n');
       return 1;
   }
 };

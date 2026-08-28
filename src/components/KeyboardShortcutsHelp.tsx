@@ -16,92 +16,92 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
 }) => {
   const shortcuts = [
     {
-      category: 'Global',
+      category: '全局',
       items: [
-        { keys: ['Ctrl+K'], description: 'Open Synapse (command palette)' },
-        { keys: ['F1'], description: 'Open help & support' },
-        { keys: ['Ctrl+/'], description: 'Open help' },
-        { keys: ['Ctrl+B'], description: 'Toggle sidebar' },
-        { keys: ['Ctrl+Shift+A'], description: 'Toggle AI Terminal' },
-        { keys: ['Ctrl+Shift+P'], description: 'Toggle project context' },
-        { keys: ['Esc'], description: 'Close modal / clear selection' },
+        { keys: ['Ctrl+K'], description: '打开 Synapse（命令面板）' },
+        { keys: ['F1'], description: '打开帮助与支持' },
+        { keys: ['Ctrl+/'], description: '打开帮助' },
+        { keys: ['Ctrl+B'], description: '切换侧边栏' },
+        { keys: ['Ctrl+Shift+A'], description: '前往 AI 指挥中心' },
+        { keys: ['Ctrl+Shift+P'], description: '切换项目上下文' },
+        { keys: ['Esc'], description: '关闭弹窗 / 清除选择' },
       ],
     },
     {
-      category: 'Navigation (Ctrl+Number)',
+      category: '导航（Ctrl+数字键）',
       items: [
-        { keys: ['Ctrl+1'], description: 'Dashboard' },
-        { keys: ['Ctrl+2'], description: 'Today' },
-        { keys: ['Ctrl+3'], description: 'Notes' },
-        { keys: ['Ctrl+4'], description: 'Tasks' },
-        { keys: ['Ctrl+5'], description: 'Schedule' },
-        { keys: ['Ctrl+6'], description: 'Create (Docs)' },
-        { keys: ['Ctrl+7'], description: 'Link Library' },
-        { keys: ['Ctrl+8'], description: 'Settings' },
+        { keys: ['Ctrl+1'], description: '首页' },
+        { keys: ['Ctrl+2'], description: '今日' },
+        { keys: ['Ctrl+3'], description: '笔记' },
+        { keys: ['Ctrl+4'], description: '任务' },
+        { keys: ['Ctrl+5'], description: '日程' },
+        { keys: ['Ctrl+6'], description: '创建（文档）' },
+        { keys: ['Ctrl+7'], description: '链接库' },
+        { keys: ['Ctrl+8'], description: '设置' },
       ],
     },
     {
-      category: 'Go To (G then key)',
+      category: '跳转（先按 G 再按按键）',
       items: [
-        { keys: ['G', 'D'], description: 'Go to Dashboard' },
-        { keys: ['G', 'T'], description: 'Go to Tasks' },
-        { keys: ['G', 'N'], description: 'Go to Notes' },
-        { keys: ['G', 'H'], description: 'Go to Habits' },
-        { keys: ['G', 'C'], description: 'Go to Calendar' },
-        { keys: ['G', 'S'], description: 'Go to Settings' },
-        { keys: ['G', 'O'], description: 'Go to Today' },
-        { keys: ['G', 'L'], description: 'Go to Links' },
-        { keys: ['G', 'F'], description: 'Go to Focus' },
+        { keys: ['G', 'D'], description: '前往首页' },
+        { keys: ['G', 'T'], description: '前往任务' },
+        { keys: ['G', 'N'], description: '前往笔记' },
+        { keys: ['G', 'H'], description: '前往习惯' },
+        { keys: ['G', 'C'], description: '前往日历' },
+        { keys: ['G', 'S'], description: '前往设置' },
+        { keys: ['G', 'O'], description: '前往今日' },
+        { keys: ['G', 'L'], description: '前往链接' },
+        { keys: ['G', 'F'], description: '前往专注' },
       ],
     },
     {
-      category: 'Quick Create',
+      category: '快速创建',
       items: [
-        { keys: ['C'], description: 'Quick add task' },
-        { keys: ['Ctrl+N'], description: 'New note' },
-        { keys: ['Ctrl+T'], description: 'New task' },
-        { keys: ['Ctrl+E'], description: 'New event (go to calendar)' },
-        { keys: ['Ctrl+Shift+T'], description: 'Smart Templates' },
+        { keys: ['C'], description: '快速添加任务' },
+        { keys: ['Ctrl+N'], description: '新建笔记' },
+        { keys: ['Ctrl+T'], description: '新建任务' },
+        { keys: ['Ctrl+E'], description: '新建事件（前往日历）' },
+        { keys: ['Ctrl+Shift+T'], description: '智能模板' },
       ],
     },
     {
-      category: 'Kanban Board',
+      category: '看板',
       items: [
-        { keys: ['J'], description: 'Move down to next task' },
-        { keys: ['K'], description: 'Move up to previous task' },
-        { keys: ['H'], description: 'Move left to previous column' },
-        { keys: ['L'], description: 'Move right to next column' },
-        { keys: ['N'], description: 'Create new task in current column' },
-        { keys: ['E'], description: 'Edit selected task' },
-        { keys: ['D'], description: 'Delete selected task' },
+        { keys: ['J'], description: '向下移动到下一个任务' },
+        { keys: ['K'], description: '向上移动到上一个任务' },
+        { keys: ['H'], description: '向左移动到上一列' },
+        { keys: ['L'], description: '向右移动到下一列' },
+        { keys: ['N'], description: '在当前列新建任务' },
+        { keys: ['E'], description: '编辑所选任务' },
+        { keys: ['D'], description: '删除所选任务' },
       ],
     },
     {
-      category: 'Notes Editor',
+      category: '笔记编辑器',
       items: [
-        { keys: ['Ctrl+D'], description: 'Create daily note' },
-        { keys: ['Ctrl+Shift+E'], description: 'Export notes' },
-        { keys: ['Ctrl+B'], description: 'Bold text' },
-        { keys: ['Ctrl+I'], description: 'Italic text' },
-        { keys: ['Ctrl+U'], description: 'Underline text' },
-        { keys: ['/'], description: 'Open slash commands' },
-        { keys: ['[['], description: 'Insert wiki link' },
+        { keys: ['Ctrl+D'], description: '创建每日笔记' },
+        { keys: ['Ctrl+Shift+E'], description: '导出笔记' },
+        { keys: ['Ctrl+B'], description: '加粗文本' },
+        { keys: ['Ctrl+I'], description: '斜体文本' },
+        { keys: ['Ctrl+U'], description: '下划线文本' },
+        { keys: ['/'], description: '打开斜杠命令' },
+        { keys: ['[['], description: '插入 wiki 链接' },
       ],
     },
     {
-      category: 'Synapse (Command Palette)',
+      category: 'Synapse（命令面板）',
       items: [
-        { keys: ['>'], description: 'Enter command mode' },
-        { keys: ['?'], description: 'Enter help mode' },
-        { keys: ['/'], description: 'Enter navigation mode' },
-        { keys: ['tag:name'], description: 'Filter by tag' },
-        { keys: ['date:today'], description: 'Filter by date' },
+        { keys: ['>'], description: '进入命令模式' },
+        { keys: ['?'], description: '进入帮助模式' },
+        { keys: ['/'], description: '进入导航模式' },
+        { keys: ['tag:name'], description: '按标签筛选' },
+        { keys: ['date:today'], description: '按日期筛选' },
       ],
     },
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Keyboard Shortcuts">
+    <Modal isOpen={isOpen} onClose={onClose} title="键盘快捷键">
       <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-1">
         {shortcuts.map((section) => (
           <div key={section.category}>
@@ -135,7 +135,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
 
         <div className="pt-3 border-t border-border-light dark:border-border-dark">
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            Tip: Single-key shortcuts (C, G, J, K, H, L) only work when not typing in an input field. On Mac, use Cmd instead of Ctrl.
+            提示：单键快捷键（C、G、J、K、H、L）仅在未在输入框中输入时生效。在 Mac 上请使用 Cmd 代替 Ctrl。
           </p>
         </div>
       </div>

@@ -46,7 +46,7 @@ export function SessionDurationChart({ entries, dateRange }: SessionDurationChar
           <YAxis
             tick={{ fontSize: 12 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
-            label={{ value: 'Minutes', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
+            label={{ value: '分钟', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
           />
           <Tooltip
             contentStyle={{
@@ -58,7 +58,7 @@ export function SessionDurationChart({ entries, dateRange }: SessionDurationChar
               const d = new Date(date);
               return d.toLocaleDateString();
             }}
-            formatter={(value) => [`${value ?? 0} min`, 'Avg Session']}
+            formatter={(value) => [`${value ?? 0} 分钟`, '平均会话时长']}
           />
           <Line
             type="monotone"

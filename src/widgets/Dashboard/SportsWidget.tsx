@@ -34,12 +34,12 @@ export const SportsWidget: React.FC = () => {
         awayTeam: event.competitions[0].competitors.find((c: any) => c.homeAway === 'away')?.team.displayName || 'TBD',
         homeScore: parseInt(event.competitions[0].competitors.find((c: any) => c.homeAway === 'home')?.score || '0'),
         awayScore: parseInt(event.competitions[0].competitors.find((c: any) => c.homeAway === 'away')?.score || '0'),
-        status: event.status.type.shortDetail || 'Scheduled',
+        status: event.status.type.shortDetail || '未开始',
       }));
 
       setGames(gameList);
     } catch (err) {
-      setError('Failed to load scores. Using demo data.');
+      setError('加载比分失败，正在使用演示数据。');
       // Fallback demo data
       setGames([
         { homeTeam: 'Lakers', awayTeam: 'Celtics', homeScore: 108, awayScore: 102, status: 'Final' },
@@ -55,7 +55,7 @@ export const SportsWidget: React.FC = () => {
   }, [fetchScores]);
 
   return (
-    <BaseWidget title="NBA Scores" icon="🏀" loading={loading} error={error} onRefresh={fetchScores}>
+    <BaseWidget title="NBA 比分" icon="🏀" loading={loading} error={error} onRefresh={fetchScores}>
       <div className="space-y-2">
         {games.map((game, idx) => (
           <div key={idx} className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 transition-all duration-standard ease-smooth">

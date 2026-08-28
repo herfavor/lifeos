@@ -1,5 +1,5 @@
 /**
- * Default Theme — NeumanOS Original
+ * Default Theme — LifeOS Classic
  *
  * These values match the :root declarations in index.css.
  * When this theme is active, the injected <style> is removed
@@ -49,7 +49,7 @@ const sharedVariables = {
 export const defaultTheme: ThemeDefinition = {
   id: 'default',
   name: 'Default',
-  description: 'The original NeumanOS palette — magenta and cyan accents',
+  description: 'LifeOS 经典配色——品红与青色点缀',
   category: null,
   preview: {
     primary: '#E91E8C',

@@ -4,6 +4,7 @@
  */
 
 import { useMemo } from 'react';
+import { isWithinInterval } from 'date-fns';
 import { BaseWidget } from './BaseWidget';
 import { AnalyticsPeriodSelector } from '../../components/Analytics/AnalyticsPeriodSelector';
 import { MetricCard } from '../../components/Analytics/MetricCard';
@@ -54,7 +55,16 @@ export default function AnalyticsWidget() {
     const totalTimeSeconds = calculateTotalTimeTracked(timeEntries, dateRange);
     const totalTimeHours = Math.round(totalTimeSeconds / 3600);
     const eventCount = getEventCount(calendarEvents, dateRange);
-    const notesCount = getNotesCreatedCount(notes, dateRange);
+    const activeNotes = Object.fromEntries(
+      Object.entries(notes).filter(([, note]) => !note.deletedAt)
+    );
+    const notesCount = getNotesCreatedCount(activeNotes, dateRange);
+    // Count non-archived tasks created in the range for honest zero-sample display
+    const taskCount = tasks.filter((task) => {
+      if (task.archivedAt) return false;
+      const createdAt = new Date(task.created);
+      return !Number.isNaN(createdAt.getTime()) && isWithinInterval(createdAt, dateRange);
+    }).length;
 
     return {
       completionRate: Math.round(completionRate),
@@ -62,11 +72,12 @@ export default function AnalyticsWidget() {
       totalTimeHours,
       eventCount,
       notesCount,
+      taskCount,
     };
   }, [tasks, timeEntries, calendarEvents, notes, dateRange]);
 
   return (
-    <BaseWidget title="Personal Analytics" icon="📊">
+    <BaseWidget title="个人分析" icon="📊">
       <div className="flex flex-col h-full">
         {/* Period Selector */}
         <div className="mb-4">
@@ -76,64 +87,64 @@ export default function AnalyticsWidget() {
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <MetricCard
-            title="Completion Rate"
-            value={`${metrics.completionRate}%`}
+            title="完成率"
+            value={metrics.taskCount === 0 ? '—' : `${metrics.completionRate}%`}
             icon={CheckCircle2}
             color="success"
-            subtitle="Tasks completed"
+            subtitle={metrics.taskCount === 0 ? '暂无任务样本' : '已完成任务'}
           />
 
           <MetricCard
-            title="Time Tracked"
-            value={`${metrics.totalTimeHours}h`}
+            title="计时时长"
+            value={`${metrics.totalTimeHours} 小时`}
             icon={Clock}
             color="info"
-            subtitle="Total hours"
+            subtitle="总时长"
           />
 
           <MetricCard
-            title="Events"
+            title="事件"
             value={metrics.eventCount}
             icon={CalendarIcon}
             color="cyan"
-            subtitle="Calendar events"
+            subtitle="日历事件"
           />
 
           <MetricCard
-            title="Notes Created"
+            title="新建笔记"
             value={metrics.notesCount}
             icon={FileText}
             color="magenta"
-            subtitle="New notes"
+            subtitle="新笔记"
           />
 
           <MetricCard
-            title="Overdue Tasks"
+            title="逾期任务"
             value={metrics.overdueCount}
             icon={AlertCircle}
             color="warning"
-            subtitle="Need attention"
+            subtitle="需要关注"
           />
 
           <MetricCard
-            title="Productivity"
+            title="生产力"
             value="--"
             icon={TrendingUp}
             color="success"
-            subtitle="Coming soon"
+            subtitle="即将推出"
           />
         </div>
 
         {/* Task Analytics Charts */}
         <div className="mt-6">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Task Analytics
+            任务分析
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Completion Rate Trend */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Completion Rate Trend
+                完成率趋势
               </h4>
               <CompletionRateChart tasks={tasks} dateRange={dateRange} />
             </div>
@@ -141,7 +152,7 @@ export default function AnalyticsWidget() {
             {/* Priority Distribution */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Priority Distribution
+                优先级分布
               </h4>
               <PriorityDistribution tasks={tasks} dateRange={dateRange} />
             </div>
@@ -149,7 +160,7 @@ export default function AnalyticsWidget() {
             {/* Status Breakdown */}
             <div className="bento-card p-4 lg:col-span-2">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Status Breakdown
+                状态分布
               </h4>
               <StatusBreakdown tasks={tasks} dateRange={dateRange} />
             </div>
@@ -159,13 +170,13 @@ export default function AnalyticsWidget() {
         {/* Time Tracking Analytics Charts */}
         <div className="mt-6">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Time Tracking Analytics
+            计时分析
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Time by Project */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Time by Project
+                按项目计时
               </h4>
               <TimeByProjectChart entries={timeEntries} dateRange={dateRange} />
             </div>
@@ -173,7 +184,7 @@ export default function AnalyticsWidget() {
             {/* Hourly Distribution Heatmap */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Hourly Distribution
+                时段分布
               </h4>
               <HourlyHeatmap entries={timeEntries} dateRange={dateRange} />
             </div>
@@ -181,7 +192,7 @@ export default function AnalyticsWidget() {
             {/* Session Duration Trend */}
             <div className="bento-card p-4 lg:col-span-2">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Average Session Duration Trend
+                平均专注时长趋势
               </h4>
               <SessionDurationChart entries={timeEntries} dateRange={dateRange} />
             </div>
@@ -191,13 +202,13 @@ export default function AnalyticsWidget() {
         {/* Calendar & Notes Analytics Charts */}
         <div className="mt-6">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Calendar & Notes Analytics
+            日历与笔记分析
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Meeting vs Focus Time */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Meeting vs Focus Time
+                会议与专注时间
               </h4>
               <MeetingVsFocusChart events={calendarEvents} dateRange={dateRange} />
             </div>
@@ -205,7 +216,7 @@ export default function AnalyticsWidget() {
             {/* Tag Frequency */}
             <div className="bento-card p-4">
               <h4 className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wide mb-3">
-                Most Used Tags
+                常用标签
               </h4>
               <TagFrequencyChart notes={notes} dateRange={dateRange} limit={10} />
             </div>

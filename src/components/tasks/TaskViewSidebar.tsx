@@ -63,8 +63,8 @@ export const TaskViewSidebar: React.FC = () => {
             {!view.isBuiltIn && (
               <button
                 onClick={() => deleteView(view.id)}
-                className="opacity-0 group-hover:opacity-100 p-1 text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error transition-all"
-                title="Delete view"
+                className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 p-1 text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error transition-all"
+                title="删除视图"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -88,7 +88,7 @@ export const TaskViewSidebar: React.FC = () => {
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              placeholder="View name..."
+              placeholder="视图名称…"
               className="flex-1 px-2 py-1 text-sm border border-border-light dark:border-border-dark rounded bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
               autoFocus
               onKeyDown={(e) => {
@@ -112,7 +112,7 @@ export const TaskViewSidebar: React.FC = () => {
             onClick={handleAddFilter}
             className="w-full text-xs text-accent-blue hover:text-accent-blue-hover py-1"
           >
-            + Add Filter
+            + 添加筛选
           </button>
 
           <div className="flex gap-2">
@@ -121,7 +121,7 @@ export const TaskViewSidebar: React.FC = () => {
               disabled={!newName.trim()}
               className="flex-1 px-3 py-1.5 text-xs font-medium bg-accent-blue text-white rounded hover:bg-accent-blue-hover transition-colors disabled:opacity-50"
             >
-              <Check className="w-3 h-3 inline mr-1" /> Save
+              <Check className="w-3 h-3 inline mr-1" /> 保存
             </button>
             <button
               onClick={() => setIsCreating(false)}
@@ -137,7 +137,7 @@ export const TaskViewSidebar: React.FC = () => {
           className="mt-3 w-full flex items-center gap-2 px-3 py-2 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
-          New View
+          新建视图
         </button>
       )}
     </div>
@@ -152,19 +152,19 @@ const FilterRow: React.FC<{
   onRemove: () => void;
 }> = ({ filter, onChange, onRemove }) => {
   const fieldOptions: { value: TaskFilterField; label: string }[] = [
-    { value: 'priority', label: 'Priority' },
-    { value: 'status', label: 'Status' },
-    { value: 'tag', label: 'Tag' },
-    { value: 'whenTag', label: 'When' },
-    { value: 'dueDate', label: 'Due Date' },
+    { value: 'priority', label: '优先级' },
+    { value: 'status', label: '状态' },
+    { value: 'tag', label: '标签' },
+    { value: 'whenTag', label: '何时' },
+    { value: 'dueDate', label: '截止日期' },
   ];
 
   const operatorOptions: { value: TaskFilterOperator; label: string }[] = [
-    { value: 'eq', label: 'is' },
-    { value: 'neq', label: 'is not' },
+    { value: 'eq', label: '是' },
+    { value: 'neq', label: '不是' },
     { value: 'gt', label: '>' },
     { value: 'lt', label: '<' },
-    { value: 'contains', label: 'contains' },
+    { value: 'contains', label: '包含' },
   ];
 
   return (
@@ -192,7 +192,7 @@ const FilterRow: React.FC<{
         value={filter.value}
         onChange={(e) => onChange({ value: e.target.value })}
         className="flex-1 px-1.5 py-1 text-xs border border-border-light dark:border-border-dark rounded bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
-        placeholder="Value..."
+        placeholder="值…"
       />
       <button onClick={onRemove} className="p-0.5 text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error">
         <X className="w-3 h-3" />

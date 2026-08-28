@@ -21,20 +21,20 @@ interface FieldEditorProps {
 }
 
 const FIELD_TYPES: { value: FieldType; label: string }[] = [
-  { value: 'text', label: 'Text' },
-  { value: 'textarea', label: 'Text Area' },
-  { value: 'number', label: 'Number' },
-  { value: 'date', label: 'Date' },
-  { value: 'time', label: 'Time' },
-  { value: 'select', label: 'Select (Dropdown)' },
-  { value: 'multiselect', label: 'Multi-Select' },
-  { value: 'radio', label: 'Radio Buttons' },
-  { value: 'checkbox', label: 'Checkbox' },
-  { value: 'rating', label: 'Rating (1-5)' },
-  { value: 'scale', label: 'Scale (1-10)' },
-  { value: 'file', label: 'File Upload' }, // P0: File upload field type
-  { value: 'calculation', label: 'Calculation' }, // P2: Calculated field type
-  { value: 'hidden', label: 'Hidden (URL Parameters)' }, // P1: Hidden field type
+  { value: 'text', label: '文本' },
+  { value: 'textarea', label: '多行文本' },
+  { value: 'number', label: '数字' },
+  { value: 'date', label: '日期' },
+  { value: 'time', label: '时间' },
+  { value: 'select', label: '选择（下拉）' },
+  { value: 'multiselect', label: '多选' },
+  { value: 'radio', label: '单选按钮' },
+  { value: 'checkbox', label: '复选框' },
+  { value: 'rating', label: '评分（1-5）' },
+  { value: 'scale', label: '量表（1-10）' },
+  { value: 'file', label: '文件上传' }, // P0: File upload field type
+  { value: 'calculation', label: '计算' }, // P2: Calculated field type
+  { value: 'hidden', label: '隐藏（URL 参数）' }, // P1: Hidden field type
 ];
 
 export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldEditorProps) {
@@ -67,12 +67,12 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
     e.preventDefault();
 
     if (!formData.label.trim()) {
-      toast.warning('Field label is required');
+      toast.warning('字段标签为必填项');
       return;
     }
 
     if (needsOptions && !optionsText.trim()) {
-      toast.warning('Options are required for this field type');
+      toast.warning('此字段类型需要提供选项');
       return;
     }
 
@@ -92,12 +92,12 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark sticky top-0 bg-surface-light dark:bg-surface-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {field ? 'Edit Field' : 'Add Field'}
+            {field ? '编辑字段' : '添加字段'}
           </h2>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded"
-            aria-label="Close"
+            className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded"
+            aria-label="关闭"
           >
             <X className="w-5 h-5" />
           </button>
@@ -108,7 +108,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
           {/* Field Type */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Field Type *
+              字段类型 *
             </label>
             <select
               value={formData.type}
@@ -126,13 +126,13 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
           {/* Label */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Label *
+              标签 *
             </label>
             <input
               type="text"
               value={formData.label}
               onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-              placeholder="e.g., 'How many hours did you sleep?'"
+              placeholder="例如：'你昨晚睡了几个小时？'"
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
               required
             />
@@ -141,22 +141,22 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Description (Optional)
+              描述（可选）
             </label>
             <textarea
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder={
                 formData.type === 'hidden'
-                  ? 'Internal note (not shown to users). E.g., "Campaign source tracking"'
-                  : 'Help text for this field'
+                  ? '内部备注（不显示给用户）。例如："活动来源追踪"'
+                  : '此字段的帮助文本'
               }
               rows={2}
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
             />
             {formData.type === 'hidden' && (
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                Hidden fields are populated via URL parameters (e.g., ?{formData.label || 'field_name'}=value)
+                隐藏字段通过 URL 参数填充（例如：?{formData.label || 'field_name'}=value）
               </p>
             )}
           </div>
@@ -165,12 +165,12 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
           {needsOptions && (
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Options (one per line) *
+                选项（每行一个）*
               </label>
               <textarea
                 value={optionsText}
                 onChange={(e) => setOptionsText(e.target.value)}
-                placeholder="Option 1&#10;Option 2&#10;Option 3"
+                placeholder="选项 1&#10;选项 2&#10;选项 3"
                 rows={5}
                 className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary font-mono text-sm"
                 required
@@ -183,7 +183,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  Min Value (Optional)
+                  最小值（可选）
                 </label>
                 <input
                   type="number"
@@ -202,7 +202,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
               </div>
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  Max Value (Optional)
+                  最大值（可选）
                 </label>
                 <input
                   type="number"
@@ -226,13 +226,13 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
           {formData.type === 'file' && (
             <div className="space-y-4 p-4 border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated">
               <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                File Upload Settings
+                文件上传设置
               </h4>
 
               {/* Max File Size */}
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  Max File Size (MB)
+                  最大文件大小（MB）
                 </label>
                 <input
                   type="number"
@@ -257,7 +257,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
               {/* Allowed File Types */}
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  Allowed File Types
+                  允许的文件类型
                 </label>
                 <div className="space-y-2">
                   {['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'].map((type) => (
@@ -283,11 +283,11 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
                         className="w-4 h-4"
                       />
                       <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                        {type === 'image/*' ? 'Images (PNG, JPG, GIF, etc.)' :
+                        {type === 'image/*' ? '图片（PNG、JPG、GIF 等）' :
                          type === 'application/pdf' ? 'PDF' :
                          type === 'application/msword' ? 'Word (.doc)' :
                          type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? 'Word (.docx)' :
-                         type === 'text/plain' ? 'Text files' : type}
+                         type === 'text/plain' ? '文本文件' : type}
                       </span>
                     </label>
                   ))}
@@ -313,7 +313,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
                   className="w-4 h-4"
                 />
                 <label htmlFor="multiple-files" className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                  Allow multiple files
+                  允许多个文件
                 </label>
               </div>
             </div>
@@ -329,7 +329,7 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
               className="w-4 h-4"
             />
             <label htmlFor="required" className="text-sm text-text-light-primary dark:text-text-dark-primary">
-              Required field
+              必填字段
             </label>
           </div>
 
@@ -338,9 +338,9 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
             <button
               type="button"
               onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
-              className="flex items-center gap-2 text-sm font-medium text-primary-light dark:text-primary-dark hover:underline"
+              className="flex items-center gap-2 text-sm font-medium text-accent-primary hover:underline"
             >
-              {showAdvancedOptions ? '▼' : '▶'} Advanced Options
+              {showAdvancedOptions ? '▼' : '▶'} 高级选项
             </button>
           </div>
 
@@ -401,15 +401,15 @@ export function FieldEditor({ field, allFields, form, onSave, onCancel }: FieldE
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg hover:bg-border-light dark:hover:bg-border-dark"
+              className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg hover:bg-border-light dark:hover:bg-border-dark"
             >
-              Cancel
+              取消
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+              className="px-4 py-2 bg-accent-primary text-white rounded-lg hover:opacity-90"
             >
-              {field ? 'Save Changes' : 'Add Field'}
+              {field ? '保存更改' : '添加字段'}
             </button>
           </div>
         </form>

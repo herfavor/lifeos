@@ -1,73 +1,41 @@
 /**
- * BacklinksPanel Component
- * Displays notes that link TO the current note (backlinks)
- * Uses [[Note Title]] wiki-style linking syntax
- * P1: Also shows unlinked mentions (implicit references)
+ * BacklinksPanel
+ *
+ * Relationship data is useful context, but it should not compete with the
+ * note body. The whole panel is therefore collapsed by default and expands
+ * only when the user wants to inspect references, mentions or broken links.
  */
 
-import { useMemo, useState } from 'react';
-import { Link2, ChevronRight, ChevronDown, AlertTriangle, Plus } from 'lucide-react';
+import { useMemo } from 'react';
+import { AlertTriangle, ChevronRight, Link2, Plus } from 'lucide-react';
 import { useNotesStore } from '../stores/useNotesStore';
 import { findUnlinkedMentions, findBrokenLinks } from '../utils/backlinks';
 
-/**
- * Extract a context snippet from content that contains the wiki-link reference
- * Shows the sentence or paragraph around the link for inline context
- */
 function getBacklinkContext(content: string, targetTitle: string): string | null {
   if (!content || !targetTitle) return null;
 
-  // Escape special regex characters in the title
   const escaped = targetTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-  // Look for [[targetTitle]] pattern first
   const wikiLinkPattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'i');
   let match = wikiLinkPattern.exec(content);
 
-  // Fallback: look for plain text mention
   if (!match) {
     const plainPattern = new RegExp('\\b' + escaped + '\\b', 'i');
     match = plainPattern.exec(content);
   }
-
   if (!match) return null;
 
   const position = match.index;
+  let start = Math.max(0, position - 90);
+  let end = Math.min(content.length, position + match[0].length + 110);
 
-  // Find the surrounding sentence/paragraph boundaries
-  let start = position;
-  const searchBack = Math.max(0, position - 100);
-  for (let i = position - 1; i >= searchBack; i--) {
-    const char = content[i];
-    if (char === '\n' || (char === '.' && i < position - 2)) {
-      start = i + 1;
-      break;
-    }
-    if (i === searchBack) {
-      start = searchBack;
-    }
-  }
-
-  // Find the end of the sentence
-  let end = position + match[0].length;
-  const searchForward = Math.min(content.length, position + match[0].length + 100);
-  for (let i = position + match[0].length; i < searchForward; i++) {
-    const char = content[i];
-    if (char === '\n' || char === '.') {
-      end = i + (char === '.' ? 1 : 0);
-      break;
-    }
-    if (i === searchForward - 1) {
-      end = searchForward;
-    }
-  }
+  const previousBreak = content.lastIndexOf('\n', position);
+  if (previousBreak >= 0 && previousBreak > start) start = previousBreak + 1;
+  const nextBreak = content.indexOf('\n', position + match[0].length);
+  if (nextBreak >= 0 && nextBreak < end) end = nextBreak;
 
   let snippet = content.substring(start, end).trim();
-
-  // Add ellipsis if truncated
-  if (start > 0) snippet = '...' + snippet;
-  if (end < content.length) snippet = snippet + '...';
-
+  if (start > 0) snippet = `…${snippet}`;
+  if (end < content.length) snippet = `${snippet}…`;
   return snippet || null;
 }
 
@@ -78,215 +46,140 @@ interface BacklinksPanelProps {
 
 export function BacklinksPanel({ noteId, onNoteClick }: BacklinksPanelProps) {
   const { getBacklinks, setActiveNote, notes, createNote, convertToWikiLink } = useNotesStore();
-  const [showUnlinkedMentions, setShowUnlinkedMentions] = useState(true);
-  const [showBrokenLinks, setShowBrokenLinks] = useState(true);
-
   const currentNote = notes[noteId];
 
-  const backlinks = useMemo(() => {
-    return getBacklinks(noteId);
-  }, [noteId, getBacklinks]);
+  const backlinks = useMemo(() => getBacklinks(noteId), [noteId, getBacklinks]);
+  const unlinkedMentions = useMemo(
+    () => (currentNote ? findUnlinkedMentions(noteId, currentNote.title, notes) : []),
+    [noteId, currentNote, notes]
+  );
+  const brokenLinks = useMemo(
+    () => (currentNote ? findBrokenLinks(currentNote.contentText, notes) : []),
+    [currentNote, notes]
+  );
 
-  // P1: Find unlinked mentions
-  const unlinkedMentions = useMemo(() => {
-    if (!currentNote) return [];
-    return findUnlinkedMentions(noteId, currentNote.title, notes);
-  }, [noteId, currentNote, notes]);
-
-  // P1: Find broken links
-  const brokenLinks = useMemo(() => {
-    if (!currentNote) return [];
-    return findBrokenLinks(currentNote.contentText, notes);
-  }, [currentNote, notes]);
+  const relatedCount = backlinks.length + unlinkedMentions.length + brokenLinks.length;
 
   const handleNoteClick = (id: string) => {
-    if (onNoteClick) {
-      onNoteClick(id);
-    } else {
-      setActiveNote(id);
-    }
+    if (onNoteClick) onNoteClick(id);
+    else setActiveNote(id);
   };
 
   const handleCreateNote = (title: string) => {
-    const newNote = createNote({
+    const note = createNote({
       title,
       content: '',
       folderId: currentNote?.folderId || null,
     });
-    handleNoteClick(newNote.id);
+    handleNoteClick(note.id);
   };
-
-  const handleConvertToLink = (mentionNoteId: string, position: number, targetTitle: string) => {
-    convertToWikiLink(mentionNoteId, position, targetTitle);
-  };
-
-  const hasBacklinks = backlinks.length > 0;
-  const hasUnlinkedMentions = unlinkedMentions.length > 0;
-  const hasBrokenLinks = brokenLinks.length > 0;
-
-  if (!hasBacklinks && !hasUnlinkedMentions && !hasBrokenLinks) {
-    return (
-      <div className="p-4 border-t border-border-light dark:border-border-dark">
-        <div className="flex items-center gap-2 text-sm text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          <Link2 className="w-4 h-4" />
-          <span className="font-medium">Backlinks</span>
-        </div>
-        <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          No notes link to this note yet. Use [[Note Title]] to create links.
-        </p>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-4 border-t border-border-light dark:border-border-dark">
-      {/* Linked References */}
-      {hasBacklinks && (
-        <div className="mb-4">
-          <div className="flex items-center gap-2 text-sm text-text-light-secondary dark:text-text-dark-secondary mb-3">
-            <Link2 className="w-4 h-4" />
-            <span className="font-medium">Linked References</span>
-            <span className="px-1.5 py-0.5 text-xs bg-accent-blue/10 text-accent-blue rounded">
-              {backlinks.length}
-            </span>
-          </div>
+    <details className="border-t border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark">
+      <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-2.5 text-sm text-text-light-secondary transition-colors hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary [&::-webkit-details-marker]:hidden">
+        <Link2 className="h-4 w-4" />
+        <span className="font-medium">关联与提及</span>
+        <span className="rounded-full bg-surface-light-elevated px-2 py-0.5 text-[11px] text-text-light-tertiary dark:bg-surface-dark-elevated dark:text-text-dark-tertiary">
+          {relatedCount}
+        </span>
+        <span className="ml-auto text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+          展开查看
+        </span>
+      </summary>
 
-          <div className="space-y-2">
-            {backlinks.map((note) => {
-              // Extract context snippet showing the paragraph containing the link
-              const contextSnippet = getBacklinkContext(note.contentText, currentNote?.title || '');
-              return (
-                <button
-                  key={note.id}
-                  onClick={() => handleNoteClick(note.id)}
-                  className="w-full text-left p-2 text-sm rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors group"
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{note.icon || '📄'}</span>
-                    <span className="flex-1 truncate font-medium text-text-light-primary dark:text-text-dark-primary">
-                      {note.title}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                  </div>
-                  {contextSnippet && (
-                    <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-8 line-clamp-2">
-                      {contextSnippet}
-                    </p>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <div className="space-y-5 border-t border-border-light/70 px-4 py-3 dark:border-border-dark/70">
+        {relatedCount === 0 && (
+          <p className="py-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+            暂无关联。正文中使用 [[笔记标题]] 即可建立链接。
+          </p>
+        )}
 
-      {/* P1: Unlinked Mentions */}
-      {hasUnlinkedMentions && (
-        <div className={hasBrokenLinks ? 'mb-4' : ''}>
-          <button
-            onClick={() => setShowUnlinkedMentions(!showUnlinkedMentions)}
-            className="w-full flex items-center gap-2 text-sm text-text-light-secondary dark:text-text-dark-secondary mb-3 hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-          >
-            {showUnlinkedMentions ? (
-              <ChevronDown className="w-4 h-4" />
-            ) : (
-              <ChevronRight className="w-4 h-4" />
-            )}
-            <span className="font-medium">Unlinked Mentions</span>
-            <span className="px-1.5 py-0.5 text-xs bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark rounded">
-              {unlinkedMentions.length}
-            </span>
-          </button>
-
-          {showUnlinkedMentions && (
-            <div className="space-y-2">
-              {unlinkedMentions.map((mention, index) => (
-                <div
-                  key={`${mention.noteId}-${index}`}
-                  className="p-2 text-sm rounded-lg bg-surface-light-elevated/50 dark:bg-surface-dark-elevated/50 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors group"
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <button
-                      onClick={() => handleNoteClick(mention.noteId)}
-                      className="flex items-center gap-2 flex-1 min-w-0 text-left"
-                    >
-                      <span className="text-lg">{notes[mention.noteId]?.icon || '📄'}</span>
-                      <span className="flex-1 truncate font-medium text-text-light-primary dark:text-text-dark-primary">
-                        {mention.noteTitle}
+        {backlinks.length > 0 && (
+          <section>
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
+              链接到这里
+              <span className="text-text-light-tertiary dark:text-text-dark-tertiary">{backlinks.length}</span>
+            </div>
+            <div className="space-y-1">
+              {backlinks.map((note) => {
+                const context = getBacklinkContext(note.contentText, currentNote?.title || '');
+                return (
+                  <button
+                    key={note.id}
+                    type="button"
+                    onClick={() => handleNoteClick(note.id)}
+                    className="group w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+                        {note.title}
                       </span>
-                      <ChevronRight className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleConvertToLink(mention.noteId, mention.position, currentNote?.title || '');
-                      }}
-                      className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 transition-colors flex-shrink-0"
-                      title="Convert to [[wiki link]]"
-                    >
-                      <Link2 className="w-3 h-3" />
-                      Link
-                    </button>
-                  </div>
-                  <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-8 line-clamp-2">
-                    {mention.context}
-                  </p>
+                      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-light-tertiary opacity-0 transition-opacity group-hover:opacity-100 dark:text-text-dark-tertiary" />
+                    </div>
+                    {context && (
+                      <p className="mt-0.5 line-clamp-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                        {context}
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {unlinkedMentions.length > 0 && (
+          <section>
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
+              可建立链接的提及
+              <span className="text-text-light-tertiary dark:text-text-dark-tertiary">{unlinkedMentions.length}</span>
+            </div>
+            <div className="space-y-1">
+              {unlinkedMentions.map((mention, index) => (
+                <div key={`${mention.noteId}-${index}`} className="flex items-start gap-2 rounded-lg px-2.5 py-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated">
+                  <button type="button" onClick={() => handleNoteClick(mention.noteId)} className="min-w-0 flex-1 text-left">
+                    <p className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">{mention.noteTitle}</p>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{mention.context}</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => convertToWikiLink(mention.noteId, mention.position, currentNote?.title || '')}
+                    className="shrink-0 rounded-lg border border-border-light px-2 py-1 text-xs font-medium text-accent-primary hover:bg-accent-primary/5 dark:border-border-dark"
+                  >
+                    建立链接
+                  </button>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      )}
+          </section>
+        )}
 
-      {/* P1: Broken Links */}
-      {hasBrokenLinks && (
-        <div>
-          <button
-            onClick={() => setShowBrokenLinks(!showBrokenLinks)}
-            className="w-full flex items-center gap-2 text-sm text-text-light-secondary dark:text-text-dark-secondary mb-3 hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-          >
-            {showBrokenLinks ? (
-              <ChevronDown className="w-4 h-4" />
-            ) : (
-              <ChevronRight className="w-4 h-4" />
-            )}
-            <AlertTriangle className="w-4 h-4" />
-            <span className="font-medium">Broken Links</span>
-            <span className="px-1.5 py-0.5 text-xs bg-accent-red/10 text-accent-red dark:bg-accent-red/20 dark:text-accent-red rounded">
-              {brokenLinks.length}
-            </span>
-          </button>
-
-          {showBrokenLinks && (
-            <div className="space-y-2">
+        {brokenLinks.length > 0 && (
+          <section>
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-status-error">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              失效链接 {brokenLinks.length}
+            </div>
+            <div className="space-y-1">
               {brokenLinks.map((link, index) => (
-                <div
-                  key={`${link.title}-${index}`}
-                  className="p-2 text-sm rounded-lg bg-accent-red/5 dark:bg-accent-red/10 border border-accent-red/20 dark:border-accent-red/30"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="w-4 h-4 text-accent-red dark:text-accent-red flex-shrink-0" />
-                    <span className="flex-1 font-medium text-text-light-primary dark:text-text-dark-primary truncate">
-                      [[{link.title}]]
-                    </span>
-                    <button
-                      onClick={() => handleCreateNote(link.title)}
-                      className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 transition-colors flex-shrink-0"
-                      title="Create this note"
-                    >
-                      <Plus className="w-3 h-3" />
-                      Create
-                    </button>
+                <div key={`${link.title}-${index}`} className="flex items-start gap-2 rounded-lg border border-status-error/15 px-2.5 py-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">[[{link.title}]]</p>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{link.context}</p>
                   </div>
-                  <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-6 line-clamp-2">
-                    {link.context}
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleCreateNote(link.title)}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-border-light px-2 py-1 text-xs font-medium text-accent-primary hover:bg-accent-primary/5 dark:border-border-dark"
+                  >
+                    <Plus className="h-3 w-3" /> 创建
+                  </button>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+          </section>
+        )}
+      </div>
+    </details>
   );
 }

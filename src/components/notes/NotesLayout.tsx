@@ -127,7 +127,7 @@ export const NotesLayout: React.FC<NotesLayoutProps> = ({
           <button
             onClick={toggleMobileDrawer}
             className="fixed top-20 left-4 z-30 p-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark transition-colors"
-            aria-label="Open sidebar menu"
+            aria-label="打开侧边栏菜单"
           >
             <Menu className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -159,7 +159,7 @@ export const NotesLayout: React.FC<NotesLayoutProps> = ({
                   <button
                     onClick={closeMobileDrawer}
                     className="absolute top-4 right-4 p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
-                    aria-label="Close sidebar menu"
+                    aria-label="关闭侧边栏菜单"
                   >
                     <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
                   </button>
@@ -222,7 +222,7 @@ export const NotesLayout: React.FC<NotesLayoutProps> = ({
         <button
           onClick={toggleMobileDrawer}
           className="fixed top-20 left-4 z-30 p-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark transition-colors"
-          aria-label="Open sidebar menu"
+          aria-label="打开侧边栏菜单"
         >
           <Menu className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
         </button>
@@ -254,7 +254,7 @@ export const NotesLayout: React.FC<NotesLayoutProps> = ({
                 <button
                   onClick={closeMobileDrawer}
                   className="absolute top-4 right-4 p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
-                  aria-label="Close sidebar menu"
+                  aria-label="关闭侧边栏菜单"
                 >
                   <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
                 </button>

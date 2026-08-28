@@ -6,7 +6,7 @@
 import { GoogleGenerativeAI, type Content } from '@google/generative-ai';
 import type { Message } from '../stores/useTerminalStore';
 
-const SYSTEM_PROMPT = `You are an AI assistant integrated into NeumanOS, a productivity web application. You help users with:
+const SYSTEM_PROMPT = `You are an AI assistant integrated into LifeOS, a local-first personal workspace. You help users organize, standardize, summarize and suggest; when an action would modify the user's data, propose it first and wait for confirmation. You help users with:
 
 1. **General Questions**: Answer questions on any topic
 2. **Code Generation**: Generate React/TypeScript/JavaScript code snippets
@@ -22,7 +22,7 @@ const SYSTEM_PROMPT = `You are an AI assistant integrated into NeumanOS, a produ
 - Always consider the context of a web-based productivity app
 
 **Current Context:**
-- App: NeumanOS (React + TypeScript + Tailwind CSS)
+- App: LifeOS (React + TypeScript + Tailwind CSS)
 - Features: Dashboard widgets, Tasks (Kanban), Calendar, Notes, Planning
 - Storage: IndexedDB (local-first, privacy-focused)
 `;
@@ -62,7 +62,7 @@ export class AITerminalService {
     onChunk?: (text: string) => void
   ): Promise<string> {
     if (!this.genAI) {
-      throw new Error('API key not configured. Please add your Google AI API key in Settings.');
+      throw new Error('未配置 API 密钥。请在设置中添加你的 Google AI API 密钥。');
     }
 
     try {
@@ -100,13 +100,13 @@ export class AITerminalService {
       }
     } catch (error: any) {
       if (error?.message?.includes('API_KEY_INVALID')) {
-        throw new Error('Invalid API key. Please check your Google AI API key in Settings.');
+        throw new Error('API 密钥无效。请在设置中检查你的 Google AI API 密钥。');
       } else if (error?.message?.includes('RATE_LIMIT_EXCEEDED')) {
-        throw new Error('Rate limit exceeded. Please try again in a moment.');
+        throw new Error('请求频率超限，请稍后再试。');
       } else if (error?.message?.includes('QUOTA_EXCEEDED')) {
-        throw new Error('Quota exceeded. Please check your API usage or upgrade your plan.');
+        throw new Error('配额已用尽。请检查你的 API 用量或升级套餐。');
       } else {
-        throw new Error(`AI Error: ${error?.message || 'Unknown error occurred'}`);
+        throw new Error(`AI 错误：${error?.message || '发生未知错误'}`);
       }
     }
   }
@@ -119,7 +119,7 @@ export class AITerminalService {
     language: string = 'typescript'
   ): Promise<string> {
     if (!this.genAI) {
-      throw new Error('API key not configured');
+      throw new Error('未配置 API 密钥');
     }
 
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
@@ -138,7 +138,7 @@ Return ONLY the code with proper formatting. Include brief comments for complex 
    */
   async explainCode(code: string, language?: string): Promise<string> {
     if (!this.genAI) {
-      throw new Error('API key not configured');
+      throw new Error('未配置 API 密钥');
     }
 
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });

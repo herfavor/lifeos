@@ -70,7 +70,7 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
       setStage('preview');
     } catch (error) {
       log.error('Markdown import failed', { error });
-      onMessage({ type: 'error', text: `Import failed: ${error}` });
+      onMessage({ type: 'error', text: `导入失败：${error}` });
       setStage('idle');
     }
 
@@ -149,13 +149,13 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
       setStage('complete');
       onMessage({
         type: 'success',
-        text: `Imported ${count} notes, ${foldersCreated} folders, ${linksRemapped} wiki-links remapped.`,
+        text: `已导入 ${count} 条笔记、${foldersCreated} 个文件夹，并重新映射 ${linksRemapped} 个 wiki 链接。`,
       });
     } catch (error) {
       log.error('Note creation failed during import', { error });
       onMessage({
         type: 'error',
-        text: `Import partially failed: ${count} of ${result.notes.length} notes imported. Error: ${error}`,
+        text: `导入部分失败：已导入 ${result.notes.length} 条笔记中的 ${count} 条。错误：${error}`,
       });
       setStage('complete');
     }
@@ -181,11 +181,11 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
       <div className="flex items-center gap-3 mb-1">
         <FileText className="w-5 h-5 text-accent-primary" />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Markdown / Obsidian Import
+          Markdown / Obsidian 导入
         </h2>
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        Import a folder of .md files as notes. Supports YAML frontmatter, [[wiki-links]], and #tags.
+        将包含 .md 文件的文件夹作为笔记导入。支持 YAML frontmatter、[[wiki-links]] 和 #tags。
       </p>
 
       {/* Idle State */}
@@ -193,11 +193,11 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
         <div className="border-2 border-dashed border-border-light dark:border-border-dark rounded-lg p-8 text-center">
           <FolderOpen className="w-12 h-12 mx-auto mb-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            Select a folder containing markdown (.md) files to import
+            选择包含要导入的 markdown（.md）文件的文件夹
           </p>
           <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium cursor-pointer transition-colors">
             <Upload className="w-4 h-4" />
-            Select Folder
+            选择文件夹
             <input
               ref={fileInputRef}
               type="file"
@@ -209,7 +209,7 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
             />
           </label>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-3">
-            Non-.md files will be skipped. Hidden files/folders are excluded.
+            非 .md 文件将被跳过。隐藏的文件/文件夹会被排除。
           </p>
         </div>
       )}
@@ -225,7 +225,7 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
             />
           </div>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Parsing {progress.current} of {progress.total} files...
+            正在解析文件：{progress.current} / {progress.total}...
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1 truncate">
             {progress.currentFile}
@@ -244,22 +244,22 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
             {/* Summary */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
               <SummaryCard
-                label="Notes Found"
+                label="找到的笔记"
                 value={result.notes.length}
                 icon={FileText}
               />
               <SummaryCard
-                label="Files Scanned"
+                label="已扫描文件"
                 value={result.totalFiles}
                 icon={FolderOpen}
               />
               <SummaryCard
-                label="Unique Tags"
+                label="唯一标签"
                 value={allTags.length}
                 icon={Tag}
               />
               <SummaryCard
-                label="Wiki Links"
+                label="Wiki 链接"
                 value={allLinks.length}
                 icon={Link2}
               />
@@ -286,7 +286,7 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
             {result.notes.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                  Sample Notes (first 5)
+                  示例笔记（前 5 条）
                 </h3>
                 <div className="space-y-2">
                   {result.notes.slice(0, 5).map((note, i) => (
@@ -301,14 +301,14 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
                         </p>
                         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary truncate">
                           {note.relativePath}
-                          {note.tags.length > 0 && ` | Tags: ${note.tags.join(', ')}`}
+                          {note.tags.length > 0 && ` | 标签：${note.tags.join(', ')}`}
                         </p>
                       </div>
                     </div>
                   ))}
                   {result.notes.length > 5 && (
                     <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-                      ...and {result.notes.length - 5} more
+                      ...以及另外 {result.notes.length - 5} 条
                     </p>
                   )}
                 </div>
@@ -323,13 +323,13 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
                 className="flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium transition-colors disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />
-                Import {result.notes.length} Notes
+                导入 {result.notes.length} 条笔记
               </button>
               <button
                 onClick={handleReset}
                 className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
               >
-                Cancel
+                取消
               </button>
             </div>
           </motion.div>
@@ -347,7 +347,7 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
             />
           </div>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Creating note {importedCount} of {result.notes.length}...
+            正在创建第 {importedCount} 条笔记（共 {result.notes.length} 条）...
           </p>
         </div>
       )}
@@ -357,16 +357,16 @@ export const MarkdownImportSection: React.FC<MarkdownImportSectionProps> = ({
         <div className="text-center py-8">
           <Check className="w-12 h-12 mx-auto mb-4 text-accent-green" />
           <p className="text-sm text-text-light-primary dark:text-text-dark-primary font-medium mb-2">
-            Import Complete
+            导入完成
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            {importedCount} notes imported successfully
+            已成功导入 {importedCount} 条笔记
           </p>
           <button
             onClick={handleReset}
             className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
           >
-            Import More
+            继续导入
           </button>
         </div>
       )}

@@ -17,19 +17,19 @@ const EXPORT_OPTIONS: Array<{ format: ExportFormat; label: string; icon: React.R
     format: 'markdown',
     label: 'Markdown (.md)',
     icon: <FileText size={14} />,
-    description: 'Formatted with headings and code blocks',
+    description: '带标题和代码块的格式化文本',
   },
   {
     format: 'json',
     label: 'JSON (.json)',
     icon: <FileJson size={14} />,
-    description: 'Structured data with metadata',
+    description: '包含元数据的结构化数据',
   },
   {
     format: 'text',
-    label: 'Plain Text (.txt)',
+    label: '纯文本 (.txt)',
     icon: <FileType size={14} />,
-    description: 'Simple text format',
+    description: '简单的文本格式',
   },
 ];
 
@@ -71,8 +71,8 @@ export const ConversationExportButton: React.FC<ConversationExportButtonProps> =
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-blue"
-        title="Export Conversation"
-        aria-label="Export conversation"
+        title="导出对话"
+        aria-label="导出对话"
       >
         <Download size={16} />
       </button>
@@ -80,7 +80,7 @@ export const ConversationExportButton: React.FC<ConversationExportButtonProps> =
       {isOpen && (
         <div className="absolute top-full right-0 mt-1 w-56 bg-surface-dark-elevated border border-border-dark rounded-lg shadow-xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-3 py-2 border-b border-border-dark">
-            <span className="text-xs font-medium text-text-dark-primary">Export As</span>
+            <span className="text-xs font-medium text-text-dark-primary">导出为</span>
             <button
               onClick={() => setIsOpen(false)}
               className="p-0.5 hover:bg-surface-dark rounded text-text-dark-secondary"

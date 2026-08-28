@@ -121,7 +121,7 @@ const FolderContextMenu: React.FC<ContextMenuProps> = ({
           className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
         >
           <FolderPlus className="w-4 h-4" />
-          New Subfolder
+          新建子文件夹
         </button>
       )}
       <button
@@ -132,7 +132,7 @@ const FolderContextMenu: React.FC<ContextMenuProps> = ({
         className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
       >
         <Edit2 className="w-4 h-4" />
-        Rename
+        重命名
       </button>
       <div className="border-t border-border-light dark:border-border-dark my-1" />
       <button
@@ -143,7 +143,7 @@ const FolderContextMenu: React.FC<ContextMenuProps> = ({
         className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-accent-red hover:bg-accent-red/10 dark:hover:bg-accent-red/20 transition-colors"
       >
         <Trash2 className="w-4 h-4" />
-        Delete
+        删除
       </button>
     </div>
   );
@@ -243,7 +243,7 @@ export const LinkFolderTree: React.FC<LinkFolderTreeProps> = ({
   const folderIds = useMemo(() => folders.map((f) => f.id), [folders]);
 
   return (
-    <div className="space-y-0.5" role="tree" aria-label="Link folders">
+    <div className="space-y-0.5" role="tree" aria-label="链接文件夹">
       {/* All Links (root) option - has chevron spacer to align with folder rows */}
       <div
         role="treeitem"
@@ -271,7 +271,7 @@ export const LinkFolderTree: React.FC<LinkFolderTreeProps> = ({
               : 'text-text-light-secondary dark:text-text-dark-secondary group-hover:text-text-light-primary dark:group-hover:text-text-dark-primary'
           }`}
         >
-          All Links
+          全部链接
         </span>
         {onCreateSubfolder && (
           <button
@@ -279,9 +279,9 @@ export const LinkFolderTree: React.FC<LinkFolderTreeProps> = ({
               e.stopPropagation();
               onCreateSubfolder(null);
             }}
-            className="ml-auto p-1 opacity-0 group-hover:opacity-100 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all flex-shrink-0"
-            title="New folder"
-            aria-label="Create folder at root"
+            className="ml-auto p-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all flex-shrink-0"
+            title="新建文件夹"
+            aria-label="在根目录创建文件夹"
           >
             <FolderPlus className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -468,7 +468,7 @@ const LinkFolderTreeNodeComponent: React.FC<ExtendedNodeProps> = ({
               onToggleExpanded(node.id);
             }}
             className="p-0.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors flex-shrink-0"
-            aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
+            aria-label={isExpanded ? '折叠文件夹' : '展开文件夹'}
           >
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
@@ -488,7 +488,7 @@ const LinkFolderTreeNodeComponent: React.FC<ExtendedNodeProps> = ({
               ? 'text-accent-primary'
               : 'text-text-light-secondary dark:text-text-dark-secondary'
           }`}
-          title="Drag to reorder"
+          title="拖动以排序"
         >
           {isExpanded && hasChildren ? (
             <FolderOpen className="w-4 h-4" />
@@ -517,9 +517,9 @@ const LinkFolderTreeNodeComponent: React.FC<ExtendedNodeProps> = ({
         {/* Menu icon - appears on hover at the end */}
         <button
           onClick={handleMenuButtonClick}
-          className="p-0.5 opacity-0 group-hover:opacity-100 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all flex-shrink-0 ml-1"
-          title="Folder options"
-          aria-label="Open folder menu"
+          className="p-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-all flex-shrink-0 ml-1"
+          title="文件夹选项"
+          aria-label="打开文件夹菜单"
         >
           <MoreVertical className="w-3.5 h-3.5 text-text-light-tertiary dark:text-text-dark-tertiary" />
         </button>

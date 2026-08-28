@@ -57,7 +57,7 @@ export function ActivityTimeline() {
 
   // Format time as HH:MM
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString('zh-CN', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
@@ -77,10 +77,10 @@ export function ActivityTimeline() {
           <Calendar className="w-6 h-6 text-accent-primary" />
           <div>
             <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Activity Timeline
+              动态时间线
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Visual timeline of your day ({totalHours}h {totalMinutes}m tracked)
+              你一天的可视化时间线（已记录 {totalHours} 小时 {totalMinutes} 分钟）
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export function ActivityTimeline() {
                   backgroundColor: color,
                 }}
                 title={`${entry.description}\n${formatTime(new Date(entry.startTime))} - ${
-                  entry.endTime ? formatTime(new Date(entry.endTime)) : 'Now'
+                  entry.endTime ? formatTime(new Date(entry.endTime)) : '现在'
                 }`}
               >
                 {/* Entry Label (show if wide enough) */}
@@ -153,11 +153,11 @@ export function ActivityTimeline() {
         {/* Entry List */}
         <div className="space-y-2">
           <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
-            Entries ({todayEntries.length})
+            条目 ({todayEntries.length})
           </h3>
           {todayEntries.length === 0 ? (
             <div className="p-8 text-center text-text-light-secondary dark:text-text-dark-secondary">
-              <p>No time tracked on this day</p>
+              <p>这一天没有时间记录</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -173,7 +173,7 @@ export function ActivityTimeline() {
                 return (
                   <div
                     key={entry.id}
-                    className="flex items-center gap-4 p-3 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light-tertiary dark:hover:bg-surface-dark-tertiary transition-colors cursor-pointer"
+                    className="flex items-center gap-4 p-3 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors cursor-pointer"
                   >
                     {/* Color Indicator */}
                     <div
@@ -183,7 +183,7 @@ export function ActivityTimeline() {
 
                     {/* Time Range */}
                     <div className="flex-shrink-0 text-sm font-mono text-text-light-secondary dark:text-text-dark-secondary">
-                      {formatTime(startTime)} - {endTime ? formatTime(endTime) : 'Now'}
+                      {formatTime(startTime)} - {endTime ? formatTime(endTime) : '现在'}
                     </div>
 
                     {/* Description */}
@@ -200,7 +200,7 @@ export function ActivityTimeline() {
 
                     {/* Duration */}
                     <div className="flex-shrink-0 text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                      {hours}h {minutes.toString().padStart(2, '0')}m
+                      {hours} 小时 {minutes.toString().padStart(2, '0')} 分钟
                     </div>
                   </div>
                 );

@@ -1,7 +1,7 @@
 {
-  "name": "NeumanOS - Personal Command Center",
-  "short_name": "NeumanOS",
-  "description": "Your Personal Command Center for productivity and organization",
+  "name": "LifeOS — 本地优先的个人管理平台",
+  "short_name": "LifeOS",
+  "description": "A local-first personal dashboard and management workspace.",
   "icons": [
     {
       "src": "/images/favicon/web-app-manifest-192x192.png",
@@ -26,7 +26,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#3b82f6",
+  "theme_color": "#4F46E5",
   "background_color": "#000000",
   "display": "standalone",
   "start_url": "/",

@@ -130,7 +130,7 @@ const TaskEmbedComponent = React.memo(function TaskEmbedComponent({
             ? 'bg-accent-green border-accent-green text-white'
             : 'border-border-light dark:border-border-dark hover:border-accent-blue'
         }`}
-        title={isDone ? 'Mark incomplete' : 'Mark complete'}
+        title={isDone ? '标记未完成' : '标记完成'}
       >
         {isDone && (
           <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">

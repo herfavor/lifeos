@@ -31,18 +31,18 @@ interface ProjectHealthCardProps {
 }
 
 interface HealthMetrics {
-  spi: number; // Schedule Performance Index
-  onTimeRate: number; // % of tasks completed on time
-  scopeChange: number; // % scope change (positive = added, negative = removed)
-  utilization: number; // Actual / Estimated hours %
-  overallHealth: 'healthy' | 'at-risk' | 'critical';
-  trend: 'improving' | 'declining' | 'stable';
+  spi: number | null; // null when no planned value exists
+  onTimeRate: number | null; // null when no completed task has a due date
+  scopeChange: number | null; // null when no baseline exists
+  utilization: number | null; // null when no estimate exists
+  overallHealth: 'healthy' | 'at-risk' | 'critical' | null;
+  trend: 'improving' | 'declining' | 'stable' | null;
 }
 
 /**
  * Calculate health metrics for a set of tasks
  */
-function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
+export function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
   const now = new Date();
   const completedTasks = tasks.filter((t) => t.status === 'done');
 
@@ -66,7 +66,7 @@ function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
     }
   });
 
-  const spi = plannedValue > 0 ? earnedValue / plannedValue : 1;
+  const spi = plannedValue > 0 ? earnedValue / plannedValue : null;
 
   // 2. On-time completion rate
   // Tasks that were completed by their due date
@@ -86,7 +86,7 @@ function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
   });
 
   const onTimeRate =
-    tasksWithDueDate > 0 ? (onTimeTasks / tasksWithDueDate) * 100 : 100;
+    tasksWithDueDate > 0 ? (onTimeTasks / tasksWithDueDate) * 100 : null;
 
   // 3. Scope change indicator
   // Compare current task count to baseline (if available)
@@ -96,7 +96,7 @@ function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
   const scopeChange =
     tasksWithBaseline.length > 0
       ? (tasksWithoutBaseline.length / tasksWithBaseline.length) * 100
-      : 0;
+      : null;
 
   // 4. Resource utilization
   // Actual hours / Estimated hours
@@ -113,15 +113,17 @@ function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
   });
 
   const utilization =
-    totalEstimated > 0 ? (totalActual / totalEstimated) * 100 : 0;
+    totalEstimated > 0 ? (totalActual / totalEstimated) * 100 : null;
 
   // 5. Overall health determination
-  let overallHealth: 'healthy' | 'at-risk' | 'critical' = 'healthy';
-
-  if (spi < 0.7 || onTimeRate < 50) {
-    overallHealth = 'critical';
-  } else if (spi < 0.9 || onTimeRate < 75) {
-    overallHealth = 'at-risk';
+  let overallHealth: HealthMetrics['overallHealth'] = null;
+  if (spi !== null || onTimeRate !== null) {
+    overallHealth = 'healthy';
+    if ((spi !== null && spi < 0.7) || (onTimeRate !== null && onTimeRate < 50)) {
+      overallHealth = 'critical';
+    } else if ((spi !== null && spi < 0.9) || (onTimeRate !== null && onTimeRate < 75)) {
+      overallHealth = 'at-risk';
+    }
   }
 
   // 6. Trend calculation (compare recent vs older tasks)
@@ -141,18 +143,21 @@ function calculateHealthMetrics(tasks: Task[]): HealthMetrics {
     return d >= fourteenDaysAgo && d < sevenDaysAgo;
   }).length;
 
-  let trend: 'improving' | 'declining' | 'stable' = 'stable';
-  if (recentCompleted > olderCompleted * 1.2) {
-    trend = 'improving';
-  } else if (recentCompleted < olderCompleted * 0.8) {
-    trend = 'declining';
+  let trend: HealthMetrics['trend'] = null;
+  if (recentCompleted > 0 || olderCompleted > 0) {
+    trend = 'stable';
+    if (recentCompleted > olderCompleted * 1.2) {
+      trend = 'improving';
+    } else if (recentCompleted < olderCompleted * 0.8) {
+      trend = 'declining';
+    }
   }
 
   return {
-    spi: Math.round(spi * 100) / 100,
-    onTimeRate: Math.round(onTimeRate),
-    scopeChange: Math.round(scopeChange),
-    utilization: Math.round(utilization),
+    spi: spi === null ? null : Math.round(spi * 100) / 100,
+    onTimeRate: onTimeRate === null ? null : Math.round(onTimeRate),
+    scopeChange: scopeChange === null ? null : Math.round(scopeChange),
+    utilization: utilization === null ? null : Math.round(utilization),
     overallHealth,
     trend,
   };
@@ -175,6 +180,12 @@ export function ProjectHealthCard({
 
   // Health color mapping
   const healthColors = {
+    unknown: {
+      bg: 'bg-surface-light-elevated dark:bg-surface-dark-elevated',
+      border: 'border-border-light dark:border-border-dark',
+      text: 'text-text-light-tertiary dark:text-text-dark-tertiary',
+      icon: Minus,
+    },
     healthy: {
       bg: 'bg-status-success/10',
       border: 'border-status-success/30',
@@ -195,7 +206,7 @@ export function ProjectHealthCard({
     },
   };
 
-  const healthConfig = healthColors[metrics.overallHealth];
+  const healthConfig = healthColors[metrics.overallHealth ?? 'unknown'];
   const HealthIcon = healthConfig.icon;
 
   // Trend icon
@@ -213,8 +224,9 @@ export function ProjectHealthCard({
         : 'text-text-light-tertiary dark:text-text-dark-tertiary';
 
   // SPI color
-  const spiColor =
-    metrics.spi >= 1
+  const spiColor = metrics.spi === null
+    ? 'text-text-light-primary dark:text-text-dark-primary'
+    : metrics.spi >= 1
       ? 'text-status-success'
       : metrics.spi >= 0.9
         ? 'text-status-warning'
@@ -229,17 +241,19 @@ export function ProjectHealthCard({
           <div className="flex items-center gap-2">
             <HealthIcon className={`w-4 h-4 ${healthConfig.text}`} />
             <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-              {metrics.overallHealth === 'healthy'
-                ? 'Healthy'
+              {metrics.overallHealth === null
+                ? '数据不足'
+                : metrics.overallHealth === 'healthy'
+                ? '健康'
                 : metrics.overallHealth === 'at-risk'
-                  ? 'At Risk'
-                  : 'Critical'}
+                  ? '有风险'
+                  : '严重'}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <TrendIcon className={`w-3 h-3 ${trendColor}`} />
             <span className={`text-xs ${spiColor}`}>
-              SPI: {metrics.spi.toFixed(2)}
+              SPI: {metrics.spi === null ? '—' : metrics.spi.toFixed(2)}
             </span>
           </div>
         </div>
@@ -256,15 +270,21 @@ export function ProjectHealthCard({
         <div className="flex items-center gap-2">
           <HealthIcon className={`w-5 h-5 ${healthConfig.text}`} />
           <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Project Health
+            项目健康度
           </h3>
-        </div>
+          </div>
         <div className="flex items-center gap-1">
           <TrendIcon className={`w-4 h-4 ${trendColor}`} />
           <span
             className={`text-xs capitalize ${trendColor}`}
           >
-            {metrics.trend}
+            {metrics.trend === null
+              ? '数据不足'
+              : metrics.trend === 'improving'
+              ? '改善中'
+              : metrics.trend === 'declining'
+                ? '下滑中'
+                : '稳定'}
           </span>
         </div>
       </div>
@@ -276,18 +296,20 @@ export function ProjectHealthCard({
           <div className="flex items-center gap-2 mb-1">
             <Activity className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Schedule Performance
+              进度绩效
             </span>
           </div>
           <p className={`text-xl font-bold ${spiColor}`}>
-            {metrics.spi.toFixed(2)}
+            {metrics.spi === null ? '—' : metrics.spi.toFixed(2)}
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {metrics.spi >= 1
-              ? 'Ahead of schedule'
+            {metrics.spi === null
+              ? '尚无计划值'
+              : metrics.spi >= 1
+              ? '进度超前'
               : metrics.spi >= 0.9
-                ? 'On track'
-                : 'Behind schedule'}
+                ? '符合预期'
+                : '进度落后'}
           </p>
         </div>
 
@@ -296,24 +318,26 @@ export function ProjectHealthCard({
           <div className="flex items-center gap-2 mb-1">
             <Calendar className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              On-time Rate
+              按时完成率
             </span>
           </div>
           <p
             className={`text-xl font-bold ${
-              metrics.onTimeRate >= 80
+              metrics.onTimeRate === null
+                ? 'text-text-light-primary dark:text-text-dark-primary'
+                : metrics.onTimeRate >= 80
                 ? 'text-status-success'
                 : metrics.onTimeRate >= 60
                   ? 'text-status-warning'
                   : 'text-status-error'
             }`}
           >
-            {metrics.onTimeRate}%
+            {metrics.onTimeRate === null ? '—' : `${metrics.onTimeRate}%`}
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
             {filteredTasks.filter((t) => t.status === 'done' && t.dueDate)
               .length}{' '}
-            tasks with deadlines
+            项任务有截止日期
           </p>
         </div>
 
@@ -322,25 +346,29 @@ export function ProjectHealthCard({
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Scope Change
+              范围变更
             </span>
           </div>
           <p
             className={`text-xl font-bold ${
-              metrics.scopeChange === 0
+              metrics.scopeChange === null
+                ? 'text-text-light-primary dark:text-text-dark-primary'
+                : metrics.scopeChange === 0
                 ? 'text-status-success'
                 : metrics.scopeChange <= 20
                   ? 'text-status-warning'
                   : 'text-status-error'
             }`}
           >
-            {metrics.scopeChange > 0 ? '+' : ''}
-            {metrics.scopeChange}%
+            {metrics.scopeChange !== null && metrics.scopeChange > 0 ? '+' : ''}
+            {metrics.scopeChange === null ? '—' : `${metrics.scopeChange}%`}
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {metrics.scopeChange === 0
-              ? 'No scope creep'
-              : 'Added since baseline'}
+            {metrics.scopeChange === null
+              ? '尚无项目基线'
+              : metrics.scopeChange === 0
+              ? '无范围蔓延'
+              : '相对基线新增'}
           </p>
         </div>
 
@@ -349,24 +377,28 @@ export function ProjectHealthCard({
           <div className="flex items-center gap-2 mb-1">
             <Clock className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Time Utilization
+              工时利用率
             </span>
           </div>
           <p
             className={`text-xl font-bold ${
-              metrics.utilization <= 100
+              metrics.utilization === null
+                ? 'text-text-light-primary dark:text-text-dark-primary'
+                : metrics.utilization <= 100
                 ? 'text-status-success'
                 : metrics.utilization <= 120
                   ? 'text-status-warning'
                   : 'text-status-error'
             }`}
           >
-            {metrics.utilization}%
+            {metrics.utilization === null ? '—' : `${metrics.utilization}%`}
           </p>
           <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            {metrics.utilization <= 100
-              ? 'Within budget'
-              : 'Over budget'}
+            {metrics.utilization === null
+              ? '尚无工时估算'
+              : metrics.utilization <= 100
+              ? '在预算内'
+              : '超出预算'}
           </p>
         </div>
       </div>
@@ -374,8 +406,8 @@ export function ProjectHealthCard({
       {/* Legend */}
       <div className="mt-4 pt-3 border-t border-border-light dark:border-border-dark">
         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          SPI: Earned Value ÷ Planned Value • {'>'}1.0 = ahead, 1.0 = on track,
-          {'<'}1.0 = behind
+          SPI：挣值 ÷ 计划值 • {'>'}1.0 = 超前，1.0 = 符合预期，
+          {'<'}1.0 = 落后
         </p>
       </div>
     </div>

@@ -125,7 +125,7 @@ function calculateSingleTaskShift(
     taskId: dependent.id,
     newStartDate,
     newDueDate,
-    reason: `Auto-shifted ${shiftDays > 0 ? '+' : ''}${shiftDays} days due to ${dependencyType} dependency on "${blocker.title}"`,
+    reason: `因对“${blocker.title}”的 ${dependencyType} 依赖，已自动顺延 ${shiftDays > 0 ? '+' : ''}${shiftDays} 天`,
   };
 }
 

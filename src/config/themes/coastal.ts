@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const coastalTheme: ThemeDefinition = {
   id: 'coastal',
   name: 'Coastal',
-  description: 'Ocean blues and sandy warmth from the shore',
+  description: '海岸般的海洋蓝与沙色暖意',
   category: 'professional',
   preview: {
     primary: '#0284C7',

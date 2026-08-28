@@ -18,6 +18,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createSyncedStorage } from '../lib/syncedStorage';
 import type { ProjectContext } from '../types';
+import {
+  decodePersistedValue,
+  isUnknownRecord,
+  toIsoDate,
+  toStringArray,
+  unwrapPersistedState,
+} from '../utils/persistedState';
 
 // ============================================================================
 // Types
@@ -75,6 +82,49 @@ type ProjectContextStore = ProjectContextState & ProjectContextActions;
 
 const generateId = () =>
   `proj_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+const RECOVERY_TIMESTAMP = new Date(0).toISOString();
+
+function normalizeProject(value: unknown, index: number): ProjectContext | null {
+  const decoded = decodePersistedValue(value);
+  if (!isUnknownRecord(decoded)) return null;
+  const id =
+    typeof decoded.id === 'string' && decoded.id.trim()
+      ? decoded.id
+      : `recovered-project-${index + 1}`;
+  const createdAt = toIsoDate(decoded.createdAt, RECOVERY_TIMESTAMP);
+  return {
+    ...decoded,
+    id,
+    name:
+      typeof decoded.name === 'string' && decoded.name.trim()
+        ? decoded.name
+        : `恢复的项目 ${index + 1}`,
+    parentId: typeof decoded.parentId === 'string' ? decoded.parentId : null,
+    color:
+      typeof decoded.color === 'string' && decoded.color.trim()
+        ? decoded.color
+        : '#3b82f6',
+    icon: typeof decoded.icon === 'string' ? decoded.icon : undefined,
+    description: typeof decoded.description === 'string' ? decoded.description : undefined,
+    archivedAt:
+      typeof decoded.archivedAt === 'string' ? decoded.archivedAt : undefined,
+    createdAt,
+    updatedAt: toIsoDate(decoded.updatedAt, createdAt),
+  } as ProjectContext;
+}
+
+export function normalizeProjects(value: unknown): ProjectContext[] {
+  const decoded = decodePersistedValue(value);
+  const values = Array.isArray(decoded)
+    ? decoded
+    : isUnknownRecord(decoded)
+      ? Object.values(decoded)
+      : [];
+  return values
+    .map(normalizeProject)
+    .filter((project): project is ProjectContext => project !== null);
+}
 
 // Default colors for new projects (cycling through semantic accents)
 const PROJECT_COLORS = [
@@ -298,11 +348,32 @@ export const useProjectContextStore = create<ProjectContextStore>()(
     {
       name: 'project-context',
       storage: createJSONStorage(() => createSyncedStorage()),
-      version: 1,
+      version: 2,
       partialize: (state) => ({
         projects: state.projects,
         activeProjectIds: state.activeProjectIds,
       }),
+      migrate: (persistedState) => {
+        const decoded = unwrapPersistedState(persistedState);
+        const state = isUnknownRecord(decoded) ? decoded : {};
+        const projects = normalizeProjects(state.projects);
+        const existingIds = new Set(projects.map((project) => project.id));
+        return {
+          projects,
+          activeProjectIds: toStringArray(state.activeProjectIds).filter((id) => existingIds.has(id)),
+        };
+      },
+      merge: (persistedState, currentState) => {
+        const decoded = unwrapPersistedState(persistedState);
+        const state = isUnknownRecord(decoded) ? decoded : {};
+        const projects = normalizeProjects(state.projects);
+        const existingIds = new Set(projects.map((project) => project.id));
+        return {
+          ...currentState,
+          projects,
+          activeProjectIds: toStringArray(state.activeProjectIds).filter((id) => existingIds.has(id)),
+        };
+      },
     }
   )
 );
@@ -322,14 +393,14 @@ export const useIsProjectFilterActive = () =>
  */
 export const useActiveProjectsLabel = () =>
   useProjectContextStore((state) => {
-    if (state.activeProjectIds.length === 0) return 'All Projects';
+    if (state.activeProjectIds.length === 0) return '全部项目';
     if (state.activeProjectIds.length === 1) {
       const project = state.projects.find(
         (p) => p.id === state.activeProjectIds[0]
       );
-      return project?.name ?? 'Unknown Project';
+      return project?.name ?? '未知项目';
     }
-    return `${state.activeProjectIds.length} Projects`;
+    return `${state.activeProjectIds.length} 个项目`;
   });
 
 /**

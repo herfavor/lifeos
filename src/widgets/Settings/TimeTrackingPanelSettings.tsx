@@ -45,10 +45,10 @@ export function TimeTrackingPanelSettings() {
         <Timer className="w-6 h-6 text-accent-primary" />
         <div>
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Time Tracking Panel
+            时间跟踪面板
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Configure the sidebar time tracking panel display
+            配置侧边栏时间跟踪面板的显示
           </p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function TimeTrackingPanelSettings() {
         <div className="flex items-center gap-2 mb-4">
           <Clock className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           <h3 className="text-base font-medium text-text-light-primary dark:text-text-dark-primary">
-            Time Display
+            时间显示
           </h3>
         </div>
 
@@ -67,10 +67,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Time Format
+                时间格式
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                App-wide setting (also affects header clock)
+                全局设置（也影响顶栏时钟）
               </p>
             </div>
             <div className="flex gap-2">
@@ -82,7 +82,7 @@ export function TimeTrackingPanelSettings() {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
                 }`}
               >
-                12-hour
+                12 小时制
               </button>
               <button
                 onClick={() => setTimeFormat('24h')}
@@ -92,7 +92,7 @@ export function TimeTrackingPanelSettings() {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
                 }`}
               >
-                24-hour
+                24 小时制
               </button>
             </div>
           </div>
@@ -101,10 +101,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Show Seconds
+                显示秒
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Display seconds in timer and entry times
+                在计时器和记录时间中显示秒
               </p>
             </div>
             <button
@@ -112,7 +112,7 @@ export function TimeTrackingPanelSettings() {
               className={`relative w-11 h-6 rounded-full transition-colors ${
                 showSeconds
                   ? 'bg-accent-primary'
-                  : 'bg-surface-light-tertiary dark:bg-surface-dark-tertiary'
+                  : 'bg-surface-light-elevated dark:bg-surface-dark-elevated'
               }`}
               role="switch"
               aria-checked={showSeconds}
@@ -132,7 +132,7 @@ export function TimeTrackingPanelSettings() {
         <div className="flex items-center gap-2 mb-4">
           <Layout className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           <h3 className="text-base font-medium text-text-light-primary dark:text-text-dark-primary">
-            Panel Display
+            面板显示
           </h3>
         </div>
 
@@ -141,10 +141,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Entry Density
+                记录密度
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Spacing between time entries
+                时间记录之间的间距
               </p>
             </div>
             <select
@@ -152,9 +152,9 @@ export function TimeTrackingPanelSettings() {
               onChange={(e) => setEntryDisplayDensity(e.target.value as EntryDisplayDensity)}
               className="px-3 py-1.5 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
             >
-              <option value="compact">Compact</option>
-              <option value="normal">Normal</option>
-              <option value="comfortable">Comfortable</option>
+              <option value="compact">紧凑</option>
+              <option value="normal">普通</option>
+              <option value="comfortable">宽松</option>
             </select>
           </div>
 
@@ -162,10 +162,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Max Visible Entries
+                最大可见记录数
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Number of entries shown before scrolling
+                滚动前显示的记录数量
               </p>
             </div>
             <select
@@ -175,7 +175,7 @@ export function TimeTrackingPanelSettings() {
             >
               {[3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                 <option key={n} value={n}>
-                  {n} entries
+                  {n} 条记录
                 </option>
               ))}
             </select>
@@ -185,10 +185,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Show Today's Total
+                显示今日总计
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Display daily total at bottom of panel
+                在面板底部显示每日总计
               </p>
             </div>
             <button
@@ -196,7 +196,7 @@ export function TimeTrackingPanelSettings() {
               className={`relative w-11 h-6 rounded-full transition-colors ${
                 showMiniSummary
                   ? 'bg-accent-primary'
-                  : 'bg-surface-light-tertiary dark:bg-surface-dark-tertiary'
+                  : 'bg-surface-light-elevated dark:bg-surface-dark-elevated'
               }`}
               role="switch"
               aria-checked={showMiniSummary}
@@ -213,10 +213,10 @@ export function TimeTrackingPanelSettings() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                Auto-expand for New Entries
+                新记录自动展开
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                Automatically expand panel when entries are added
+                添加记录时自动展开面板
               </p>
             </div>
             <button
@@ -224,7 +224,7 @@ export function TimeTrackingPanelSettings() {
               className={`relative w-11 h-6 rounded-full transition-colors ${
                 autoExpandEnabled
                   ? 'bg-accent-primary'
-                  : 'bg-surface-light-tertiary dark:bg-surface-dark-tertiary'
+                  : 'bg-surface-light-elevated dark:bg-surface-dark-elevated'
               }`}
               role="switch"
               aria-checked={autoExpandEnabled}
@@ -246,7 +246,7 @@ export function TimeTrackingPanelSettings() {
           className="flex items-center gap-2 px-4 py-2 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
-          Reset Panel to Defaults
+          将面板重置为默认
         </button>
       </div>
     </div>

@@ -73,8 +73,8 @@ export const TaskTimerButton: React.FC<TaskTimerButtonProps> = ({
             ? 'bg-status-error text-white hover:bg-status-error/80 animate-pulse'
             : 'bg-accent-primary/10 text-accent-primary hover:bg-accent-primary/20 hover:scale-110'
         }`}
-        title={isTimerActiveForThis ? 'Stop timer' : 'Start timer for this task'}
-        aria-label={isTimerActiveForThis ? 'Stop timer' : 'Start timer'}
+        title={isTimerActiveForThis ? '停止计时器' : '为此任务开始计时'}
+        aria-label={isTimerActiveForThis ? '停止计时器' : '开始计时'}
       >
         {isTimerActiveForThis ? (
           <Square className={iconSize} />
@@ -88,8 +88,8 @@ export const TaskTimerButton: React.FC<TaskTimerButtonProps> = ({
           isOpen={true}
           onClose={() => setShowConfirm(false)}
           onConfirm={handleConfirmSwitch}
-          title="Timer Already Running"
-          message={`A timer is already running for "${activeEntry?.description || 'Untitled'}". Stop it and start a new timer for "${taskTitle}"?`}
+          title="计时器正在运行"
+          message={`计时器正在为「${activeEntry?.description || '未命名'}」运行。是否停止它并为「${taskTitle}」开始新的计时？`}
           variant="warning"
         />
       )}

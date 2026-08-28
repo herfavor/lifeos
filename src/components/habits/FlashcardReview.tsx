@@ -9,14 +9,14 @@ interface FlashcardReviewProps {
 }
 
 const QUALITY_LABELS = [
-  { quality: 1, label: 'Again', color: 'bg-red-500 hover:bg-red-600' },
-  { quality: 3, label: 'Hard', color: 'bg-orange-500 hover:bg-orange-600' },
-  { quality: 4, label: 'Good', color: 'bg-emerald-500 hover:bg-emerald-600' },
-  { quality: 5, label: 'Easy', color: 'bg-blue-500 hover:bg-blue-600' },
+  { quality: 1, label: '重来', color: 'bg-red-500 hover:bg-red-600' },
+  { quality: 3, label: '困难', color: 'bg-orange-500 hover:bg-orange-600' },
+  { quality: 4, label: '良好', color: 'bg-emerald-500 hover:bg-emerald-600' },
+  { quality: 5, label: '简单', color: 'bg-blue-500 hover:bg-blue-600' },
 ];
 
 export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
-  const dueCards = useSpacedRepetitionStore((s) => s.getDueCards(deck));
+  const storedCards = useSpacedRepetitionStore((s) => s.cards);
   const reviewCard = useSpacedRepetitionStore((s) => s.reviewCard);
   const reducedMotion = useReducedMotion();
 
@@ -24,7 +24,12 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
   const [flipped, setFlipped] = useState(false);
   const [reviewed, setReviewed] = useState(0);
 
-  const cards = useMemo(() => [...dueCards], [dueCards]);
+  const cards = useMemo(() => {
+    const now = new Date().toISOString();
+    return (Array.isArray(storedCards) ? storedCards : []).filter(
+      (candidate) => candidate.nextReviewDate <= now && (!deck || candidate.deck === deck)
+    );
+  }, [deck, storedCards]);
   const card = cards[currentIndex];
   const remaining = cards.length - reviewed;
 
@@ -47,18 +52,18 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
         <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg shadow-xl w-full max-w-md mx-4 p-8 text-center">
           <Brain className="w-12 h-12 mx-auto mb-4 text-accent-primary" />
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-            {reviewed > 0 ? 'Session Complete!' : 'No Cards Due'}
+            {reviewed > 0 ? '学习完成！' : '暂无到期卡片'}
           </h2>
           <p className="text-text-light-tertiary dark:text-text-dark-tertiary mb-6">
             {reviewed > 0
-              ? `You reviewed ${reviewed} card${reviewed !== 1 ? 's' : ''}. Great work!`
-              : 'All caught up. Check back later for new reviews.'}
+              ? `你复习了 ${reviewed} 张卡片，干得漂亮！`
+              : '都已复习完，稍后再来看看有没有新内容。'}
           </p>
           <button
             onClick={onClose}
             className="px-6 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
           >
-            Done
+            完成
           </button>
         </div>
       </div>
@@ -75,7 +80,7 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
               {reviewed + 1} / {cards.length}
             </span>
             <span className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-              {remaining} remaining
+              剩余 {remaining}
             </span>
           </div>
           <div className="w-full h-1.5 bg-border-light dark:bg-border-dark rounded-full mb-6 overflow-hidden">
@@ -101,14 +106,14 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
           >
             <div className="text-center">
               <p className="text-xs uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary mb-3">
-                {flipped ? 'Answer' : 'Question'}
+                {flipped ? '答案' : '问题'}
               </p>
               <p className="text-lg text-text-light-primary dark:text-text-dark-primary whitespace-pre-wrap">
                 {flipped ? card.back : card.front}
               </p>
               {!flipped && (
                 <p className="mt-4 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                  Click to reveal answer
+                  点击显示答案
                 </p>
               )}
             </div>
@@ -147,7 +152,7 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
                 className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
-                Flip
+                翻转
               </button>
               <button
                 onClick={() => {
@@ -168,7 +173,7 @@ export function FlashcardReview({ deck, onClose }: FlashcardReviewProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            End Session
+            结束学习
           </button>
         </div>
       </div>

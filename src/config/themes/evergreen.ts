@@ -9,7 +9,7 @@ import type { ThemeDefinition } from './types';
 export const evergreenTheme: ThemeDefinition = {
   id: 'evergreen',
   name: 'Evergreen',
-  description: 'Rich forest greens with warm gold accents',
+  description: '浓郁森林绿搭配温暖金色点缀',
   category: 'professional',
   preview: {
     primary: '#166534',

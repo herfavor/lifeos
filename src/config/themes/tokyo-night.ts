@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const tokyoNightTheme: ThemeDefinition = {
   id: 'tokyo-night',
   name: 'Tokyo Night',
-  description: 'Deep indigo with neon city accents',
+  description: '深邃靛蓝搭配霓虹都市点缀',
   category: 'tech',
   preview: {
     primary: '#7AA2F7',

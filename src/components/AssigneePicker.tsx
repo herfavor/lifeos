@@ -104,7 +104,7 @@ export default function AssigneePicker({ selectedIds, onChange }: AssigneePicker
                 <button
                   onClick={() => removeMember(member.id)}
                   className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-                  aria-label={`Remove ${member.name}`}
+                  aria-label={`移除 ${member.name}`}
                 >
                   ✕
                 </button>
@@ -118,7 +118,7 @@ export default function AssigneePicker({ selectedIds, onChange }: AssigneePicker
           onClick={() => setIsOpen(!isOpen)}
           className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-left text-sm text-text-light-secondary dark:text-text-dark-secondary hover:border-accent-blue transition-colors"
         >
-          {selectedMembers.length === 0 ? '+ Add Assignee' : '+ Add Another Assignee'}
+          {selectedMembers.length === 0 ? '+ 添加负责人' : '+ 再添加一位负责人'}
         </button>
       </div>
 
@@ -133,7 +133,7 @@ export default function AssigneePicker({ selectedIds, onChange }: AssigneePicker
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search members..."
+              placeholder="搜索成员…"
               className="w-full px-3 py-1.5 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
             />
           </div>
@@ -142,7 +142,7 @@ export default function AssigneePicker({ selectedIds, onChange }: AssigneePicker
           <div className="max-h-48 overflow-y-auto">
             {filteredMembers.length === 0 ? (
               <div className="p-4 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                {searchQuery ? 'No members found' : 'No team members yet. Add members in Settings.'}
+                {searchQuery ? '未找到成员' : '还没有团队成员，请在设置中添加成员'}
               </div>
             ) : (
               <div className="py-1">

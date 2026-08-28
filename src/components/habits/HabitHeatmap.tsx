@@ -31,8 +31,8 @@ const INTENSITY_COLORS = [
   'bg-emerald-600 dark:bg-emerald-400',              // 4
 ];
 
-const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAY_LABELS = ['Mon', '', 'Wed', '', 'Fri', '', ''];
+const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+const DAY_LABELS = ['一', '', '三', '', '五', '', ''];
 
 export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmapProps) {
   const completions = useHabitStore((s) => s.completions);
@@ -59,7 +59,7 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
       if (activeHabitIds.includes(c.habitId)) {
         countMap.set(c.date, (countMap.get(c.date) ?? 0) + 1);
         const list = dayHabits.get(c.date) ?? [];
-        const title = habitTitleMap.get(c.habitId) ?? 'Unknown';
+        const title = habitTitleMap.get(c.habitId) ?? '未知';
         if (!list.includes(title)) list.push(title);
         dayHabits.set(c.date, list);
       }
@@ -143,7 +143,7 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
                 : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-secondary dark:hover:text-text-dark-secondary'
             }`}
           >
-            {r}d
+            {r} 天
           </button>
         ))}
       </div>
@@ -190,7 +190,7 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
                     ? 'bg-transparent'
                     : INTENSITY_COLORS[getIntensity(day.count, maxCount)]
                 } ${day.count > 0 ? 'cursor-pointer' : 'cursor-default'}`}
-                title={day.count >= 0 ? `${day.date}: ${day.count} completion${day.count !== 1 ? 's' : ''}` : ''}
+                title={day.count >= 0 ? `${day.date}：${day.count} 次完成` : ''}
               />
             ))}
           </div>
@@ -200,14 +200,14 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
       {/* Legend */}
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          {totalCompletions} completions in the last {weeks} weeks
+          {totalCompletions} 次完成（过去 {weeks} 周）
         </span>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mr-1">Less</span>
+          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mr-1">更少</span>
           {INTENSITY_COLORS.map((cls, i) => (
             <div key={i} className={`w-[12px] h-[12px] rounded-[2px] ${cls}`} />
           ))}
-          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-1">More</span>
+          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary ml-1">更多</span>
         </div>
       </div>
 
@@ -222,7 +222,7 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
               onClick={() => setSelectedDay(null)}
               className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary"
             >
-              Close
+              关闭
             </button>
           </div>
           <ul className="space-y-1">

@@ -27,11 +27,11 @@ const METADATA: AIProviderMetadata = {
   id: 'mistral',
   name: 'Mistral AI',
   displayName: 'Mistral AI',
-  description: 'European AI with privacy focus. GDPR-friendly with free tier for prototyping.',
+  description: '注重隐私的欧洲 AI。符合 GDPR，并提供免费层级用于原型开发。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://console.mistral.ai/api-keys',
-  apiKeyLabel: 'Mistral API Key',
+  apiKeyLabel: 'Mistral API 密钥',
 
   hasFreeModels: true,
   freeModelIds: [
@@ -40,7 +40,7 @@ const METADATA: AIProviderMetadata = {
   ],
 
   freeTierLimits: {
-    description: 'Free tier: Limited usage (~25 messages). Restrictive rate limits after initial use.',
+    description: '免费层级：用量有限（约 25 条消息）。初次使用后速率限制较严格。',
   },
 
   supportsCORS: false,
@@ -67,7 +67,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'analysis'],
-    description: 'Mistral\'s efficient small model. Good for most tasks.',
+    description: 'Mistral 高效的小型模型。适合大多数任务。',
   },
   {
     id: 'mistral-medium-latest',
@@ -81,7 +81,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'reasoning', 'analysis'],
-    description: 'Mistral\'s medium model. Better quality for complex tasks.',
+    description: 'Mistral 的中型模型。处理复杂任务时质量更佳。',
   },
 ];
 
@@ -103,7 +103,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 2.0,
     requiresApiKey: true,
     useCases: ['reasoning', 'code', 'analysis', 'creative'],
-    description: 'Mistral\'s flagship model. Excellent for complex reasoning.',
+    description: 'Mistral 的旗舰模型。非常适合复杂推理。',
   },
 ];
 
@@ -225,7 +225,7 @@ export class MistralProvider implements AIProvider {
     if (!this.apiKey) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Mistral provider not configured. Please add your API key.',
+        'Mistral 提供商尚未配置。请添加你的 API 密钥。',
         'mistral'
       );
     }
@@ -279,10 +279,10 @@ export class MistralProvider implements AIProvider {
       }
 
       // Map other errors
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : '未知错误';
       throw new ProviderError(
         ProviderErrorType.UNKNOWN,
-        `Mistral error: ${errorMessage}`,
+        `Mistral 错误：${errorMessage}`,
         'mistral'
       );
     }
@@ -351,7 +351,7 @@ export class MistralProvider implements AIProvider {
     if (!reader) {
       throw new ProviderError(
         ProviderErrorType.NETWORK_ERROR,
-        'Failed to get response stream',
+        '无法获取响应流',
         'mistral'
       );
     }
@@ -406,32 +406,32 @@ export class MistralProvider implements AIProvider {
     if (status === 401) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Invalid Mistral API key. Please check your API key and try again.',
+        'Mistral API 密钥无效。请检查你的 API 密钥后重试。',
         'mistral'
       );
     } else if (status === 429) {
       throw new ProviderError(
         ProviderErrorType.RATE_LIMIT,
-        'Mistral rate limit exceeded. Free tier has restrictive limits after initial usage.',
+        '已超出 Mistral 速率限制。免费层级在初次使用后限制较严格。',
         'mistral',
         true // retryable
       );
     } else if (status === 402) {
       throw new ProviderError(
         ProviderErrorType.QUOTA_EXCEEDED,
-        'Mistral quota exceeded. Free tier usage exhausted (~25 messages).',
+        'Mistral 配额已用尽。免费层级用量已耗尽（约 25 条消息）。',
         'mistral'
       );
     } else if (status === 404) {
       throw new ProviderError(
         ProviderErrorType.MODEL_NOT_FOUND,
-        'Model not found on Mistral.',
+        'Mistral 上未找到该模型。',
         'mistral'
       );
     } else {
       throw new ProviderError(
         ProviderErrorType.UNKNOWN,
-        `Mistral API error: ${status} ${response.statusText}`,
+        `Mistral API 错误：${status} ${response.statusText}`,
         'mistral'
       );
     }

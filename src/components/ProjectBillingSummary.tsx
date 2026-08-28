@@ -28,7 +28,7 @@ function formatHours(seconds: number): string {
  * Format currency with locale-aware display
  */
 function formatCurrency(amount: number, currency: string): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('zh-CN', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
@@ -151,14 +151,14 @@ export function ProjectBillingSummary({ projectId }: ProjectBillingSummaryProps)
     const { start, end } = getDateRange(dateRangePreset);
     const dateFormat: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
-    const text = `Billing Summary
-${project ? `Project: ${project.name}` : 'All Projects'}
-Period: ${start.toLocaleDateString('en-US', dateFormat)} - ${end.toLocaleDateString('en-US', dateFormat)}
+    const text = `计费摘要
+${project ? `项目：${project.name}` : '全部项目'}
+期间：${start.toLocaleDateString('zh-CN', dateFormat)} - ${end.toLocaleDateString('zh-CN', dateFormat)}
 
-Billable: ${formatHours(summary.billableHours * 3600)} hours @ avg ${formatCurrency(summary.avgRate, billingCurrency)}/hr
-Non-billable: ${formatHours(summary.nonBillableHours * 3600)} hours
+可计费：${formatHours(summary.billableHours * 3600)} 小时 @ 平均 ${formatCurrency(summary.avgRate, billingCurrency)}/小时
+不可计费：${formatHours(summary.nonBillableHours * 3600)} 小时
 
-Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
+合计：${formatCurrency(summary.totalAmount, billingCurrency)}`;
 
     try {
       await navigator.clipboard.writeText(text);
@@ -182,10 +182,10 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
           </div>
           <div>
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              {project ? project.name : 'All Projects'} Billing
+              {project ? project.name : '全部项目'} 计费
             </h3>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {start.toLocaleDateString('en-US', dateFormat)} – {end.toLocaleDateString('en-US', dateFormat)}
+              {start.toLocaleDateString('zh-CN', dateFormat)} – {end.toLocaleDateString('zh-CN', dateFormat)}
             </p>
           </div>
         </div>
@@ -194,17 +194,17 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
         <button
           onClick={handleCopyToClipboard}
           className="flex items-center gap-2 px-3 py-1.5 text-sm bg-surface-light-secondary dark:bg-surface-dark-secondary rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors border border-border-light dark:border-border-dark"
-          aria-label="Copy summary to clipboard"
+          aria-label="复制摘要到剪贴板"
         >
           {copied ? (
             <>
               <Check className="w-4 h-4 text-accent-green" />
-              <span className="text-accent-green">Copied!</span>
+              <span className="text-accent-green">已复制！</span>
             </>
           ) : (
             <>
               <Copy className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
-              <span className="text-text-light-secondary dark:text-text-dark-secondary">Copy</span>
+              <span className="text-text-light-secondary dark:text-text-dark-secondary">复制</span>
             </>
           )}
         </button>
@@ -224,10 +224,10 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
                   : 'bg-surface-light-secondary dark:bg-surface-dark-secondary text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }`}
             >
-              {preset === 'today' && 'Today'}
-              {preset === 'this-week' && 'This Week'}
-              {preset === 'this-month' && 'This Month'}
-              {preset === 'last-month' && 'Last Month'}
+              {preset === 'today' && '今天'}
+              {preset === 'this-week' && '本周'}
+              {preset === 'this-month' && '本月'}
+              {preset === 'last-month' && '上月'}
             </button>
           ))}
         </div>
@@ -240,14 +240,14 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-accent-green" />
             <span className="text-xs font-medium text-accent-green uppercase tracking-wide">
-              Billable
+              可计费
             </span>
           </div>
           <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {formatHours(summary.billableHours * 3600)}
           </p>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            hours @ avg {formatCurrency(summary.avgRate, billingCurrency)}/hr
+            小时 @ 平均 {formatCurrency(summary.avgRate, billingCurrency)}/小时
           </p>
         </div>
 
@@ -256,14 +256,14 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <span className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary uppercase tracking-wide">
-              Non-Billable
+              不可计费
             </span>
           </div>
           <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {formatHours(summary.nonBillableHours * 3600)}
           </p>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            hours tracked
+            已记录小时
           </p>
         </div>
 
@@ -272,14 +272,14 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="w-4 h-4 text-accent-primary" />
             <span className="text-xs font-medium text-accent-primary uppercase tracking-wide">
-              Total
+              合计
             </span>
           </div>
           <p className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {formatCurrency(summary.totalAmount, billingCurrency)}
           </p>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            from {summary.entryCount} entries
+            来自 {summary.entryCount} 条记录
           </p>
         </div>
       </div>
@@ -288,9 +288,9 @@ Total: ${formatCurrency(summary.totalAmount, billingCurrency)}`;
       {summary.entryCount === 0 && (
         <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
           <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No time entries found for this period.</p>
+          <p className="text-sm">此期间未找到时间记录。</p>
           <p className="text-xs mt-1">
-            Start tracking time to see billing summaries.
+            开始记录时间即可查看计费摘要。
           </p>
         </div>
       )}

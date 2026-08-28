@@ -132,7 +132,7 @@ export default function AutocompleteDropdown({
   onSelect,
   onCancel,
   currentFolderId,
-  getFolderPath = () => 'Root',
+  getFolderPath = () => '根目录',
 }: AutocompleteDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -237,7 +237,7 @@ export default function AutocompleteDropdown({
       {results.length === 0 ? (
         // Empty state
         <div className="p-4 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          {query ? 'No matching notes found' : 'Start typing to search notes'}
+          {query ? '未找到匹配的笔记' : '输入以搜索笔记'}
         </div>
       ) : (
         // Results list
@@ -263,7 +263,7 @@ export default function AutocompleteDropdown({
           ))}
           {results.length === 10 && (
             <div className="px-3 py-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center border-t border-border-light dark:border-border-dark">
-              Showing top 10 results
+              显示前 10 条结果
             </div>
           )}
         </div>
@@ -271,7 +271,7 @@ export default function AutocompleteDropdown({
 
       {/* Footer hint */}
       <div className="px-3 py-1.5 text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary text-center border-t border-border-light dark:border-border-dark">
-        ↑↓ to navigate • Enter to select • Esc to cancel
+        ↑↓ 导航 • Enter 选择 • Esc 取消
       </div>
     </div>
   );

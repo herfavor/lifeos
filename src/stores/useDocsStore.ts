@@ -21,7 +21,7 @@ import { useActivityStore } from './useActivityStore';
 // Default slide theme
 const DEFAULT_THEME: SlideTheme = {
   id: 'default',
-  name: 'Default',
+  name: '默认',
   colors: {
     primary: '#6366F1',
     secondary: '#8B5CF6',
@@ -36,7 +36,7 @@ const DEFAULT_THEME: SlideTheme = {
 };
 
 // Create empty sheet
-function createEmptySheet(name: string = 'Sheet 1'): SpreadsheetSheet {
+function createEmptySheet(name: string = '工作表 1'): SpreadsheetSheet {
   // Create 100 rows x 26 columns of empty cells
   const data: string[][] = Array.from({ length: 100 }, () =>
     Array.from({ length: 26 }, () => '')
@@ -83,6 +83,9 @@ interface DocsStoreState {
   createDoc: (type: DocType, title?: string, folderId?: string) => string;
   updateDoc: (id: string, updates: Partial<Doc>) => void;
   deleteDoc: (id: string) => void;
+  archiveDoc: (id: string) => void;
+  restoreDoc: (id: string) => void;
+  permanentlyDeleteDoc: (id: string) => void;
   duplicateDoc: (id: string) => string | null;
 
   // Folder CRUD
@@ -101,6 +104,8 @@ interface DocsStoreState {
 
   // Project context filtering
   getFilteredDocs: () => Doc[];
+  getArchivedDocs: () => Doc[];
+  getDeletedDocs: () => Doc[];
 
   // Recent docs
   trackDocAccess: (id: string) => void;
@@ -137,7 +142,7 @@ export const useDocsStore = create<DocsStoreState>()(
           case 'doc':
             newDoc = {
               id,
-              title: title || 'Untitled Document',
+              title: title || '未命名文档',
               source: 'user',
               type: 'doc',
               folderId: folderId || undefined,
@@ -156,7 +161,7 @@ export const useDocsStore = create<DocsStoreState>()(
           case 'sheet':
             newDoc = {
               id,
-              title: title || 'Untitled Spreadsheet',
+              title: title || '未命名电子表格',
               source: 'user',
               type: 'sheet',
               folderId: folderId || undefined,
@@ -173,7 +178,7 @@ export const useDocsStore = create<DocsStoreState>()(
           case 'slides':
             newDoc = {
               id,
-              title: title || 'Untitled Presentation',
+              title: title || '未命名演示文稿',
               source: 'user',
               type: 'slides',
               folderId: folderId || undefined,
@@ -194,7 +199,7 @@ export const useDocsStore = create<DocsStoreState>()(
         }));
 
         toast.success(
-          `Created ${type === 'doc' ? 'document' : type === 'sheet' ? 'spreadsheet' : 'presentation'}`
+          `已创建${type === 'doc' ? '文档' : type === 'sheet' ? '电子表格' : '演示文稿'}`
         );
         useActivityStore.getState().logActivity({
           type: 'created',
@@ -238,11 +243,46 @@ export const useDocsStore = create<DocsStoreState>()(
         if (!doc) return;
 
         set((state) => ({
-          docs: state.docs.filter((d) => d.id !== id),
+          docs: state.docs.map((d) =>
+            d.id === id ? { ...d, deletedAt: new Date().toISOString() } : d
+          ),
           activeDocId: state.activeDocId === id ? null : state.activeDocId,
         }));
 
-        toast.success(`Deleted "${doc.title}"`);
+        toast.success(`已将“${doc.title}”移到回收站`);
+      },
+
+      archiveDoc: (id) => {
+        const doc = get().docs.find((d) => d.id === id);
+        if (!doc || doc.deletedAt) return;
+        set((state) => ({
+          docs: state.docs.map((d) =>
+            d.id === id ? { ...d, archivedAt: new Date().toISOString() } : d
+          ),
+          activeDocId: state.activeDocId === id ? null : state.activeDocId,
+        }));
+        toast.success(`已归档“${doc.title}”`);
+      },
+
+      restoreDoc: (id) => {
+        const doc = get().docs.find((d) => d.id === id);
+        if (!doc) return;
+        set((state) => ({
+          docs: state.docs.map((d) =>
+            d.id === id ? { ...d, archivedAt: undefined, deletedAt: undefined } : d
+          ),
+        }));
+        toast.success(`已恢复“${doc.title}”`);
+      },
+
+      permanentlyDeleteDoc: (id) => {
+        const doc = get().docs.find((d) => d.id === id);
+        if (!doc?.deletedAt) return;
+        set((state) => ({
+          docs: state.docs.filter((d) => d.id !== id),
+          activeDocId: state.activeDocId === id ? null : state.activeDocId,
+        }));
+        toast.success(`已永久删除“${doc.title}”`);
       },
 
       // Duplicate a document
@@ -256,18 +296,20 @@ export const useDocsStore = create<DocsStoreState>()(
         const newDoc: Doc = {
           ...doc,
           id: newId,
-          title: `${doc.title} (Copy)`,
+          title: `${doc.title}（副本）`,
           createdAt: now,
           updatedAt: now,
           version: 1,
           order: get().docs.length,
+          archivedAt: undefined,
+          deletedAt: undefined,
         };
 
         set((state) => ({
           docs: [...state.docs, newDoc],
         }));
 
-        toast.success(`Duplicated "${doc.title}"`);
+        toast.success(`已复制“${doc.title}”`);
         return newId;
       },
 
@@ -288,7 +330,7 @@ export const useDocsStore = create<DocsStoreState>()(
           folders: [...state.folders, newFolder],
         }));
 
-        toast.success(`Created folder "${name}"`);
+        toast.success(`已创建文件夹“${name}”`);
         return id;
       },
 
@@ -323,7 +365,7 @@ export const useDocsStore = create<DocsStoreState>()(
             state.activeFolderId === id ? folder.parentId : state.activeFolderId,
         }));
 
-        toast.success(`Deleted folder "${folder.name}"`);
+        toast.success(`已删除文件夹“${folder.name}”`);
       },
 
       // Navigation
@@ -361,7 +403,25 @@ export const useDocsStore = create<DocsStoreState>()(
         return docs.filter(
           (d) =>
             d.source === 'user' &&
+            !d.archivedAt &&
+            !d.deletedAt &&
             matchesProjectFilter(d.projectIds, activeProjectIds)
+        );
+      },
+
+      getArchivedDocs: () => {
+        const { activeProjectIds } = useProjectContextStore.getState();
+        return get().docs.filter((d) =>
+          d.source === 'user' && Boolean(d.archivedAt) && !d.deletedAt &&
+          matchesProjectFilter(d.projectIds, activeProjectIds)
+        );
+      },
+
+      getDeletedDocs: () => {
+        const { activeProjectIds } = useProjectContextStore.getState();
+        return get().docs.filter((d) =>
+          d.source === 'user' && Boolean(d.deletedAt) &&
+          matchesProjectFilter(d.projectIds, activeProjectIds)
         );
       },
 
@@ -384,6 +444,8 @@ export const useDocsStore = create<DocsStoreState>()(
           .filter(
             (d) =>
               d.source === 'user' &&
+              !d.archivedAt &&
+              !d.deletedAt &&
               d.lastAccessedAt &&
               matchesProjectFilter(d.projectIds, activeProjectIds)
           )
@@ -407,6 +469,7 @@ export const useDocsStore = create<DocsStoreState>()(
       getDocsInFolder: (folderId) => {
         return get()
           .docs.filter((d) => {
+            if (d.archivedAt || d.deletedAt) return false;
             if (folderId === null) {
               return !d.folderId;
             }

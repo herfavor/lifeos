@@ -24,11 +24,11 @@ const METADATA: AIProviderMetadata = {
   id: 'openai',
   name: 'OpenAI',
   displayName: 'OpenAI',
-  description: 'Industry-leading models from OpenAI. Requires paid API key (separate from ChatGPT Plus).',
+  description: 'OpenAI 的业界领先模型。需要付费 API 密钥（与 ChatGPT Plus 分开）。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://platform.openai.com/api-keys',
-  apiKeyLabel: 'OpenAI API Key',
+  apiKeyLabel: 'OpenAI API 密钥',
 
   hasFreeModels: false, // No permanent free tier
   freeModelIds: [],
@@ -60,7 +60,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 2.5,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'reasoning', 'multimodal'],
-    description: 'OpenAI\'s flagship multimodal model. Best all-around performance.',
+    description: 'OpenAI 的旗舰多模态模型。综合性能最佳。',
   },
   {
     id: 'gpt-4o-mini',
@@ -77,7 +77,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 0.15,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'quick-tasks'],
-    description: 'Fast, affordable GPT-4 model. Great for most tasks.',
+    description: '快速实惠的 GPT-4 模型。适合大多数任务。',
   },
   {
     id: 'o1',
@@ -92,7 +92,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 15.0,
     requiresApiKey: true,
     useCases: ['reasoning', 'math', 'science', 'complex-analysis'],
-    description: 'OpenAI\'s reasoning model. Best for complex problems requiring deep thought.',
+    description: 'OpenAI 的推理模型。最适合需要深度思考的复杂问题。',
   },
   {
     id: 'o1-mini',
@@ -107,7 +107,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 3.0,
     requiresApiKey: true,
     useCases: ['reasoning', 'code', 'math'],
-    description: 'Faster, cheaper reasoning model for coding and STEM tasks.',
+    description: '更快更便宜的推理模型，适合编码和 STEM 任务。',
   },
 ];
 
@@ -201,7 +201,7 @@ export class OpenAIProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'OpenAI provider not configured. Please add your OpenAI API key.',
+        'OpenAI 提供商尚未配置。请添加你的 OpenAI API 密钥。',
         'openai'
       );
     }
@@ -294,38 +294,38 @@ export class OpenAIProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('Incorrect API key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid OpenAI API key. Please check your API key and try again.',
+          'OpenAI API 密钥无效。请检查你的 API 密钥后重试。',
           'openai'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'OpenAI rate limit exceeded. Please wait a moment and try again.',
+          '已超出 OpenAI 速率限制。请稍等片刻后重试。',
           'openai',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('quota') || err?.message?.includes('billing')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'OpenAI quota exceeded or billing issue. Please check your account.',
+          'OpenAI 配额已用尽或存在计费问题。请检查你的账户。',
           'openai'
         );
       } else if (err?.status === 404 || err?.message?.includes('model')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on OpenAI.`,
+          `OpenAI 上未找到模型“${model}”。`,
           'openai'
         );
       } else if (err?.message?.includes('CORS') || err?.message?.includes('fetch')) {
         throw new ProviderError(
           ProviderErrorType.NETWORK_ERROR,
-          'OpenAI requires backend proxy for browser use. CORS error encountered.',
+          'OpenAI 在浏览器中使用需要后端代理。遇到 CORS 错误。',
           'openai'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `OpenAI error: ${err?.message || 'Unknown error occurred'}`,
+          `OpenAI 错误：${err?.message || '发生未知错误'}`,
           'openai'
         );
       }

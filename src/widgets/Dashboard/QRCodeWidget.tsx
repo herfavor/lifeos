@@ -21,24 +21,24 @@ export const QRCodeWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="QR Code Generator" icon="📱">
+    <BaseWidget title="QR 码生成器" icon="📱">
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Text or URL
+            文本或 URL
           </label>
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Enter text or URL"
+            placeholder="输入文本或 URL"
             className="w-full px-3 py-2 text-sm border rounded bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent"
           />
         </div>
 
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Size: {size}x{size}
+            尺寸：{size}x{size}
           </label>
           <input
             type="range"
@@ -54,13 +54,13 @@ export const QRCodeWidget: React.FC = () => {
         {text && (
           <div className="flex flex-col items-center gap-3">
             <div className="p-3 bg-surface-light rounded">
-              <img src={qrCodeUrl} alt="QR Code" className="w-full h-auto" />
+              <img src={qrCodeUrl} alt="QR 码" className="w-full h-auto" />
             </div>
             <button
               onClick={handleDownload}
               className="w-full px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium transition-all duration-standard ease-smooth"
             >
-              💾 Download QR Code
+              💾 下载 QR 码
             </button>
           </div>
         )}

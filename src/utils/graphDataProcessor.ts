@@ -198,7 +198,7 @@ export function buildGraphData(
     filteredNotes = filteredNotes.filter(
       (note) =>
         note.title.toLowerCase().includes(query) ||
-        note.content.toLowerCase().includes(query)
+        note.contentText.toLowerCase().includes(query)
     );
   }
 
@@ -213,7 +213,7 @@ export function buildGraphData(
     const node: GraphNode = {
       id: note.id,
       type: 'note',
-      label: note.title || 'Untitled',
+      label: note.title || '未命名',
       color: 'var(--accent-cyan)', // Semantic token for notes
       size: 10, // Base size, will be updated based on connections
       metadata: {

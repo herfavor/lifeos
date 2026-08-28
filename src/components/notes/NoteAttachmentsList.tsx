@@ -4,7 +4,7 @@
  * Displays file icon, name, size with download and delete actions.
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { useNoteAttachmentsStore } from '../../stores/useNoteAttachmentsStore';
 import type { NoteAttachment } from '../../stores/useNoteAttachmentsStore';
 import { toast } from '../../stores/useToastStore';
@@ -97,11 +97,11 @@ function AttachmentRow({
           {formatFileSize(attachment.fileSize)}
         </div>
       </div>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
         <button
           onClick={handleDownload}
           className="p-1.5 rounded hover:bg-accent-primary/10 text-accent-primary transition-colors"
-          title="Download"
+          title="下载"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
@@ -116,7 +116,7 @@ function AttachmentRow({
               ? 'bg-red-500/20 text-red-500'
               : 'hover:bg-red-500/10 text-text-light-secondary dark:text-text-dark-secondary hover:text-red-500'
           }`}
-          title={confirmDelete ? 'Click again to confirm' : 'Delete'}
+          title={confirmDelete ? '再次点击确认' : '删除'}
           onBlur={() => setConfirmDelete(false)}
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -130,7 +130,18 @@ function AttachmentRow({
 }
 
 export const NoteAttachmentsList: React.FC<NoteAttachmentsListProps> = ({ noteId }) => {
-  const attachments = useNoteAttachmentsStore((state) => state.getAttachmentsByNote(noteId));
+  // Select the stable raw map, then derive the per-note list with useMemo.
+  // Calling getAttachmentsByNote() inside the selector returned a new array on
+  // every call, which React's useSyncExternalStore treats as a changing snapshot
+  // and crashes with "Maximum update depth exceeded" (zustand v5 + React 19).
+  const attachmentsMap = useNoteAttachmentsStore((state) => state.attachments);
+  const attachments = useMemo(
+    () =>
+      Object.values(attachmentsMap)
+        .filter((a) => a.noteId === noteId)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    [attachmentsMap, noteId]
+  );
   const deleteAttachment = useNoteAttachmentsStore((state) => state.deleteAttachment);
   const addAttachment = useNoteAttachmentsStore((state) => state.addAttachment);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -140,7 +151,7 @@ export const NoteAttachmentsList: React.FC<NoteAttachmentsListProps> = ({ noteId
   const handleDelete = useCallback(
     (id: string) => {
       deleteAttachment(id);
-      toast.success('Attachment deleted', 'The file has been removed.');
+      toast.success('附件已删除', '文件已被移除。');
     },
     [deleteAttachment],
   );
@@ -150,9 +161,9 @@ export const NoteAttachmentsList: React.FC<NoteAttachmentsListProps> = ({ noteId
       for (const file of files) {
         const result = await addAttachment(noteId, file);
         if (result) {
-          toast.success('File attached', `"${file.name}" has been attached.`);
+          toast.success('文件已附加', `“${file.name}”已附加。`);
         } else {
-          toast.error('Attachment failed', `Could not attach "${file.name}". Max 10MB.`);
+          toast.error('附件失败', `无法附加“${file.name}”。最大 10MB。`);
         }
       }
     },
@@ -207,7 +218,7 @@ export const NoteAttachmentsList: React.FC<NoteAttachmentsListProps> = ({ noteId
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
           </svg>
-          Attachments ({attachments.length})
+          附件 ({attachments.length})
         </span>
         <span className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
           &#9660;
@@ -245,7 +256,7 @@ export const NoteAttachmentsList: React.FC<NoteAttachmentsListProps> = ({ noteId
             onClick={() => fileInputRef.current?.click()}
             className="w-full py-2 border-2 border-dashed border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-secondary dark:text-text-dark-secondary hover:border-accent-primary hover:text-accent-primary transition-colors"
           >
-            {isDragOver ? 'Drop files here' : 'Add attachment (or drag file here)'}
+            {isDragOver ? '将文件拖放到此处' : '添加附件（或将文件拖到此处）'}
           </button>
         </div>
       )}

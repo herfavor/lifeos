@@ -21,15 +21,15 @@ interface SpreadsheetConditionalFormattingProps {
 }
 
 const OPERATORS: { value: FilterOperator; label: string }[] = [
-  { value: 'contains', label: 'Contains' },
-  { value: 'not-contains', label: 'Does not contain' },
-  { value: 'equals', label: 'Equals' },
-  { value: 'not-equals', label: 'Does not equal' },
-  { value: 'greater-than', label: 'Greater than' },
-  { value: 'less-than', label: 'Less than' },
-  { value: 'between', label: 'Between' },
-  { value: 'empty', label: 'Is empty' },
-  { value: 'not-empty', label: 'Is not empty' },
+  { value: 'contains', label: '包含' },
+  { value: 'not-contains', label: '不包含' },
+  { value: 'equals', label: '等于' },
+  { value: 'not-equals', label: '不等于' },
+  { value: 'greater-than', label: '大于' },
+  { value: 'less-than', label: '小于' },
+  { value: 'between', label: '介于' },
+  { value: 'empty', label: '为空' },
+  { value: 'not-empty', label: '不为空' },
 ];
 
 const PRESET_COLORS = [
@@ -92,7 +92,7 @@ export function SpreadsheetConditionalFormatting({
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Conditional Formatting
+            条件格式
           </h3>
           <button
             onClick={onClose}
@@ -106,7 +106,7 @@ export function SpreadsheetConditionalFormatting({
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {formats.length === 0 && (
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              No conditional formatting rules. Click &quot;Add Rule&quot; to create one.
+              没有条件格式规则。点击“添加规则”创建一条。
             </p>
           )}
 
@@ -117,7 +117,7 @@ export function SpreadsheetConditionalFormatting({
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-                  Rule {i + 1}
+                  规则 {i + 1}
                 </span>
                 <button
                   onClick={() => removeFormat(i)}
@@ -130,7 +130,7 @@ export function SpreadsheetConditionalFormatting({
               {/* Range */}
               <div className="flex items-center gap-2">
                 <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-                  Range
+                  范围
                 </label>
                 <input
                   type="text"
@@ -144,7 +144,7 @@ export function SpreadsheetConditionalFormatting({
               {/* Condition */}
               <div className="flex items-center gap-2 flex-wrap">
                 <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-                  When
+                  当
                 </label>
                 <select
                   value={fmt.condition.operator}
@@ -165,7 +165,7 @@ export function SpreadsheetConditionalFormatting({
                       type="text"
                       value={fmt.condition.value}
                       onChange={(e) => updateCondition(i, { value: e.target.value })}
-                      placeholder="Value"
+                      placeholder="值"
                       className={inputClass + ' flex-1 min-w-[60px]'}
                     />
                   )}
@@ -174,7 +174,7 @@ export function SpreadsheetConditionalFormatting({
                     type="text"
                     value={fmt.condition.value2 ?? ''}
                     onChange={(e) => updateCondition(i, { value2: e.target.value })}
-                    placeholder="Value 2"
+                    placeholder="值 2"
                     className={inputClass + ' w-20'}
                   />
                 )}
@@ -183,13 +183,13 @@ export function SpreadsheetConditionalFormatting({
               {/* Style */}
               <div className="flex items-center gap-3">
                 <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-                  Style
+                  样式
                 </label>
 
                 {/* Background color */}
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    BG:
+                    背景:
                   </span>
                   <div className="flex gap-0.5">
                     {PRESET_COLORS.map((color) => (
@@ -210,7 +210,7 @@ export function SpreadsheetConditionalFormatting({
                 {/* Text color */}
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    Text:
+                    文字:
                   </span>
                   <div className="flex gap-0.5">
                     {['#000000', '#FFFFFF', '#EF4444', '#3B82F6'].map((color) => (
@@ -244,7 +244,7 @@ export function SpreadsheetConditionalFormatting({
               {/* Preview */}
               <div className="flex items-center gap-2">
                 <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-14">
-                  Preview
+                  预览
                 </label>
                 <div
                   className="px-3 py-1 rounded text-sm border border-border-light dark:border-border-dark"
@@ -254,7 +254,7 @@ export function SpreadsheetConditionalFormatting({
                     fontWeight: fmt.style.bold ? 'bold' : 'normal',
                   }}
                 >
-                  Sample Text
+                  示例文本
                 </div>
               </div>
             </div>
@@ -265,7 +265,7 @@ export function SpreadsheetConditionalFormatting({
             className="flex items-center gap-1 text-sm text-accent-primary hover:underline"
           >
             <Plus className="w-3.5 h-3.5" />
-            Add Rule
+            添加规则
           </button>
         </div>
 
@@ -279,20 +279,20 @@ export function SpreadsheetConditionalFormatting({
             }}
             className="px-3 py-1.5 text-sm rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark"
           >
-            Clear All
+            全部清除
           </button>
           <div className="flex gap-2">
             <button
               onClick={onClose}
               className="px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-alt dark:hover:bg-surface-dark"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleApply}
               className="px-3 py-1.5 text-sm rounded bg-accent-primary text-white hover:bg-accent-primary/90"
             >
-              Apply
+              应用
             </button>
           </div>
         </div>

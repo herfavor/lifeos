@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const catppuccinTheme: ThemeDefinition = {
   id: 'catppuccin',
   name: 'Catppuccin Mocha',
-  description: 'Warm pastels on a dark chocolate base',
+  description: '深巧克力底色上的温暖柔和色调',
   category: 'tech',
   preview: {
     primary: '#CBA6F7',

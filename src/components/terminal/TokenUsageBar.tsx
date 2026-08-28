@@ -36,7 +36,7 @@ function formatCost(cost: number): string {
 export const MessageTokenBadge: React.FC<{ usage: TokenUsage }> = ({ usage }) => {
   return (
     <span className="inline-flex items-center gap-1 text-[10px] text-text-dark-tertiary">
-      <span title={`Prompt: ${usage.promptTokens} | Completion: ${usage.completionTokens}`}>
+      <span title={`输入：${usage.promptTokens} | 输出：${usage.completionTokens}`}>
         {formatTokens(usage.totalTokens)} tokens
       </span>
       {usage.estimatedCost !== undefined && usage.estimatedCost > 0 && (
@@ -79,21 +79,21 @@ export const TokenUsageBar: React.FC<TokenUsageBarProps> = ({ detailed = false }
 
   return (
     <div className="flex items-center gap-2 px-3 py-1 bg-surface-dark-elevated/50 border-t border-border-dark/50 text-[10px] text-text-dark-tertiary font-mono">
-      <span title={`Prompt: ${formatTokens(stats.totalPromptTokens)} | Completion: ${formatTokens(stats.totalCompletionTokens)}`}>
+      <span title={`输入：${formatTokens(stats.totalPromptTokens)} | 输出：${formatTokens(stats.totalCompletionTokens)}`}>
         Tokens: {formatTokens(stats.totalTokens)}
       </span>
       {stats.totalCost > 0 && (
         <>
           <span className="opacity-30">|</span>
-          <span>Cost: {formatCost(stats.totalCost)}</span>
+          <span>费用：{formatCost(stats.totalCost)}</span>
         </>
       )}
       {detailed && (
         <>
           <span className="opacity-30">|</span>
-          <span>In: {formatTokens(stats.totalPromptTokens)}</span>
+          <span>输入：{formatTokens(stats.totalPromptTokens)}</span>
           <span className="opacity-30">|</span>
-          <span>Out: {formatTokens(stats.totalCompletionTokens)}</span>
+          <span>输出：{formatTokens(stats.totalCompletionTokens)}</span>
         </>
       )}
     </div>

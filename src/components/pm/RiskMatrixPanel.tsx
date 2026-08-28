@@ -14,19 +14,33 @@ import { Plus, AlertTriangle, Shield, Filter } from 'lucide-react';
 import { useRiskStore } from '../../stores/useRiskStore';
 import { RiskDetailPanel } from './RiskDetailPanel';
 import type { RiskFormData } from './RiskDetailPanel';
-import type { Risk, RiskCategory } from '../../types';
+import type { Risk, RiskCategory, RiskStatus } from '../../types';
 
-const PROBABILITY_LABELS = ['Rare', 'Unlikely', 'Possible', 'Likely', 'Certain'];
-const IMPACT_LABELS = ['Negligible', 'Minor', 'Moderate', 'Major', 'Catastrophic'];
+const PROBABILITY_LABELS = ['罕见', '不太可能', '可能', '很可能', '几乎确定'];
+const IMPACT_LABELS = ['可忽略', '轻微', '中等', '重大', '灾难性'];
 
 const CATEGORIES: { value: RiskCategory | 'all'; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'technical', label: 'Technical' },
-  { value: 'schedule', label: 'Schedule' },
-  { value: 'budget', label: 'Budget' },
-  { value: 'resource', label: 'Resource' },
-  { value: 'external', label: 'External' },
+  { value: 'all', label: '全部' },
+  { value: 'technical', label: '技术' },
+  { value: 'schedule', label: '进度' },
+  { value: 'budget', label: '预算' },
+  { value: 'resource', label: '资源' },
+  { value: 'external', label: '外部' },
 ];
+
+const CATEGORY_LABELS: Record<RiskCategory, string> = {
+  technical: '技术',
+  schedule: '进度',
+  budget: '预算',
+  resource: '资源',
+  external: '外部',
+};
+
+const STATUS_LABELS: Record<RiskStatus, string> = {
+  identified: '已识别',
+  mitigating: '缓解中',
+  closed: '已关闭',
+};
 
 const CATEGORY_COLORS: Record<RiskCategory, string> = {
   technical: 'bg-blue-500',
@@ -107,7 +121,7 @@ export function RiskMatrixPanel() {
         <div className="flex items-center gap-3">
           <Shield className="w-5 h-5 text-accent-primary" />
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Risk Matrix
+            风险矩阵
           </h2>
         </div>
         <button
@@ -115,28 +129,28 @@ export function RiskMatrixPanel() {
           className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-primary text-white rounded-button text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <Plus className="w-4 h-4" />
-          Add Risk
+          添加风险
         </button>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-4 gap-3">
         <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark text-center">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Total</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">总计</p>
           <p className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
             {stats.total}
           </p>
         </div>
         <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark text-center">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">High</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">高</p>
           <p className="text-xl font-bold text-status-error">{stats.high}</p>
         </div>
         <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark text-center">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Medium</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">中</p>
           <p className="text-xl font-bold text-status-warning">{stats.medium}</p>
         </div>
         <div className="p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark text-center">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Low</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">低</p>
           <p className="text-xl font-bold text-status-success">{stats.low}</p>
         </div>
       </div>
@@ -170,7 +184,7 @@ export function RiskMatrixPanel() {
               className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary"
               style={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }}
             >
-              Probability
+              概率
             </span>
           </div>
 
@@ -229,7 +243,7 @@ export function RiskMatrixPanel() {
               </div>
             </div>
             <p className="text-xs text-center text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              Impact
+              影响
             </p>
           </div>
         </div>
@@ -237,14 +251,14 @@ export function RiskMatrixPanel() {
         {/* Legend */}
         <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border-light dark:border-border-dark flex-wrap">
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-            Categories:
+            类别：
           </span>
           {(Object.entries(CATEGORY_COLORS) as [RiskCategory, string][]).map(
             ([cat, color]) => (
               <div key={cat} className="flex items-center gap-1.5">
                 <span className={`w-3 h-3 rounded-full ${color}`} />
                 <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary capitalize">
-                  {cat}
+                  {CATEGORY_LABELS[cat]}
                 </span>
               </div>
             )
@@ -257,7 +271,7 @@ export function RiskMatrixPanel() {
         <div className="bento-card p-4">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
-            Risk Register ({filteredRisks.length})
+            风险登记簿 ({filteredRisks.length})
           </h3>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {filteredRisks
@@ -276,7 +290,7 @@ export function RiskMatrixPanel() {
                       {risk.title}
                     </p>
                     <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                      {risk.category} · {risk.status}
+                      {CATEGORY_LABELS[risk.category]} · {STATUS_LABELS[risk.status]}
                     </p>
                   </div>
                   <span

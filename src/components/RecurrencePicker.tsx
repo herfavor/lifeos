@@ -105,7 +105,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       if (parsed.endDate) setEndDate(parsed.endDate);
       setParseError(null);
     } else {
-      setParseError('Could not parse input. Try "every 2 weeks on Monday"');
+      setParseError('无法解析输入。请尝试 "every 2 weeks on Monday"');
     }
   };
 
@@ -118,38 +118,40 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
 
   // Helper: Build recurrence summary text
   const getRecurrenceSummary = (): string => {
-    let summary = 'Repeats ';
+    let summary = '重复：';
 
     // Frequency and interval
+    const intervalUnitLabels: Record<string, string> = { daily: '天', weekly: '周', monthly: '月', yearly: '年' };
+    const singleFrequencyLabels: Record<string, string> = { daily: '每天', weekly: '每周', monthly: '每月', yearly: '每年' };
     if (interval === 1) {
-      summary += frequency;
+      summary += singleFrequencyLabels[frequency];
     } else {
-      summary += `every ${interval} ${frequency === 'daily' ? 'days' : frequency === 'weekly' ? 'weeks' : frequency === 'monthly' ? 'months' : 'years'}`;
+      summary += `每 ${interval} ${intervalUnitLabels[frequency]}`;
     }
 
     // Days of week (for weekly)
     if (frequency === 'weekly' && daysOfWeek.length > 0) {
-      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const selectedDays = daysOfWeek.map((d) => dayNames[d]).join(', ');
-      summary += ` on ${selectedDays}`;
+      const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const selectedDays = daysOfWeek.map((d) => dayNames[d]).join('、');
+      summary += `，在 ${selectedDays}`;
     }
 
     // Day of month or ordinal pattern (for monthly)
     if (frequency === 'monthly') {
       if (weekOfMonth !== undefined && dayOfWeekInMonth !== undefined) {
-        const ordinalStr = { '1': 'first', '2': 'second', '3': 'third', '4': 'fourth', '-1': 'last' }[weekOfMonth.toString()];
-        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        summary += ` on the ${ordinalStr} ${dayNames[dayOfWeekInMonth]}`;
+        const ordinalStr = { '1': '第一个', '2': '第二个', '3': '第三个', '4': '第四个', '-1': '最后一个' }[weekOfMonth.toString()];
+        const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        summary += `，在${ordinalStr}${dayNames[dayOfWeekInMonth]}`;
       } else if (dayOfMonth) {
-        summary += ` on day ${dayOfMonth}`;
+        summary += `，在每月 ${dayOfMonth} 日`;
       }
     }
 
     // End condition
     if (endType === 'after' && endCount) {
-      summary += `, ends after ${endCount} occurrences`;
+      summary += `，在 ${endCount} 次后结束`;
     } else if (endType === 'until' && endDate) {
-      summary += `, ends on ${endDate}`;
+      summary += `，在 ${endDate} 结束`;
     }
 
     return summary;
@@ -186,14 +188,14 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Set Recurrence
+          设置重复
         </h3>
         {value && (
           <button
             onClick={handleClear}
             className="text-xs text-accent-red hover:text-accent-red-hover dark:text-accent-red dark:hover:text-accent-red-hover"
           >
-            Clear
+            清除
           </button>
         )}
       </div>
@@ -201,7 +203,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       {/* Natural Language Input (Quick Setup) */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Quick Setup (optional)
+          快速设置（可选）
         </label>
         <div className="flex gap-2">
           <input
@@ -215,7 +217,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
                 handleParseNaturalLanguage();
               }
             }}
-            placeholder="e.g., every 2 weeks on Monday"
+            placeholder="例如：every 2 weeks on Monday"
             className="flex-1 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
           />
           {naturalInput && (
@@ -226,7 +228,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               }}
               className="px-3 py-2 text-sm text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
             >
-              Clear
+              清除
             </button>
           )}
         </div>
@@ -235,7 +237,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
         )}
         {naturalInput && !parseError && (
           <p className="text-xs text-accent-green dark:text-accent-green mt-1">
-            ✓ Parsed successfully
+            ✓ 解析成功
           </p>
         )}
       </div>
@@ -243,24 +245,24 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       {/* Frequency */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Frequency
+          频率
         </label>
         <select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly')}
           className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
         >
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
+          <option value="daily">每天</option>
+          <option value="weekly">每周</option>
+          <option value="monthly">每月</option>
+          <option value="yearly">每年</option>
         </select>
       </div>
 
       {/* Interval */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Repeat every
+          重复间隔
         </label>
         <div className="flex items-center gap-2">
           <input
@@ -272,10 +274,10 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
             className="w-20 p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
           />
           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            {frequency === 'daily' && (interval === 1 ? 'day' : 'days')}
-            {frequency === 'weekly' && (interval === 1 ? 'week' : 'weeks')}
-            {frequency === 'monthly' && (interval === 1 ? 'month' : 'months')}
-            {frequency === 'yearly' && (interval === 1 ? 'year' : 'years')}
+            {frequency === 'daily' && '天'}
+            {frequency === 'weekly' && '周'}
+            {frequency === 'monthly' && '月'}
+            {frequency === 'yearly' && '年'}
           </span>
         </div>
       </div>
@@ -284,10 +286,10 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       {frequency === 'weekly' && (
         <div>
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Repeat on
+            重复于
           </label>
           <div className="flex gap-2">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+            {['日', '一', '二', '三', '四', '五', '六'].map((day, index) => (
               <button
                 key={day}
                 onClick={() => toggleDayOfWeek(index)}
@@ -311,7 +313,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
       {frequency === 'monthly' && (
         <div className="space-y-3">
           <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-            Repeat on
+            重复于
           </label>
 
           {/* Option 1: Specific day of month */}
@@ -323,7 +325,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               onChange={() => setMonthlyMode('day')}
               className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue"
             />
-            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">Day</span>
+            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">日期</span>
             <input
               type="number"
               min="1"
@@ -349,7 +351,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               onChange={() => setMonthlyMode('ordinal')}
               className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue"
             />
-            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">The</span>
+            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">第</span>
             <select
               value={weekOfMonth || 1}
               onChange={(e) => {
@@ -359,11 +361,11 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               disabled={monthlyMode !== 'ordinal'}
               className="p-1.5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none disabled:opacity-50"
             >
-              <option value={1}>first</option>
-              <option value={2}>second</option>
-              <option value={3}>third</option>
-              <option value={4}>fourth</option>
-              <option value={-1}>last</option>
+              <option value={1}>一</option>
+              <option value={2}>二</option>
+              <option value={3}>三</option>
+              <option value={4}>四</option>
+              <option value={-1}>最后</option>
             </select>
             <select
               value={dayOfWeekInMonth !== undefined ? dayOfWeekInMonth : 1}
@@ -374,13 +376,13 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               disabled={monthlyMode !== 'ordinal'}
               className="p-1.5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none disabled:opacity-50"
             >
-              <option value={0}>Sunday</option>
-              <option value={1}>Monday</option>
-              <option value={2}>Tuesday</option>
-              <option value={3}>Wednesday</option>
-              <option value={4}>Thursday</option>
-              <option value={5}>Friday</option>
-              <option value={6}>Saturday</option>
+              <option value={0}>星期日</option>
+              <option value={1}>星期一</option>
+              <option value={2}>星期二</option>
+              <option value={3}>星期三</option>
+              <option value={4}>星期四</option>
+              <option value={5}>星期五</option>
+              <option value={6}>星期六</option>
             </select>
           </label>
         </div>
@@ -396,18 +398,18 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
             className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue rounded"
           />
           <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-            Recur from completion date
+            从完成日期开始重复
           </span>
         </label>
         <p className="mt-1 ml-6 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          When enabled, next occurrence is calculated from when you complete the task (not from the due date)
+          启用后，下一次重复将从你完成任务的时间计算（而非截止日期）
         </p>
       </div>
 
       {/* End Condition */}
       <div>
         <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-          Ends
+          结束条件
         </label>
         <div className="space-y-3">
           {/* Never */}
@@ -419,7 +421,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               onChange={() => setEndType('never')}
               className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue"
             />
-            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">Never</span>
+            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">从不</span>
           </label>
 
           {/* After X occurrences */}
@@ -431,7 +433,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               onChange={() => setEndType('after')}
               className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue"
             />
-            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">After</span>
+            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">在</span>
             <input
               type="number"
               min="1"
@@ -444,7 +446,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               disabled={endType !== 'after'}
               className="w-20 p-1.5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none disabled:opacity-50"
             />
-            <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">occurrences</span>
+            <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">次后</span>
           </label>
 
           {/* Until date */}
@@ -456,7 +458,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
               onChange={() => setEndType('until')}
               className="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue"
             />
-            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">On</span>
+            <span className="text-sm text-text-light-primary dark:text-text-dark-primary">直到</span>
             <input
               type="date"
               value={endDate || ''}
@@ -482,7 +484,7 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
           ) : (
             <ChevronRight className="w-4 h-4" />
           )}
-          Advanced
+          高级
         </button>
         {showAdvanced && (
           <div className="mt-3 space-y-3 pl-6">
@@ -508,14 +510,14 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
           onClick={handleSave}
           className="flex-1 py-2 px-4 bg-accent-blue text-white text-sm font-medium rounded-lg hover:bg-accent-blue/90 transition-colors"
         >
-          Save
+          保存
         </button>
         {onClose && (
           <button
             onClick={onClose}
             className="py-2 px-4 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary text-sm font-medium rounded-lg hover:bg-surface-light dark:hover:bg-surface-dark transition-colors"
           >
-            Cancel
+            取消
           </button>
         )}
       </div>

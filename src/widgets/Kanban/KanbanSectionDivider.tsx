@@ -35,7 +35,7 @@ export const KanbanSectionDivider: React.FC<KanbanSectionDividerProps> = ({
       <button
         onClick={() => onToggleCollapse(section.id)}
         className="p-0.5 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-        title={section.collapsed ? 'Expand section' : 'Collapse section'}
+        title={section.collapsed ? '展开分区' : '折叠分区'}
       >
         {section.collapsed ? (
           <ChevronRight className="w-3.5 h-3.5" />
@@ -64,7 +64,7 @@ export const KanbanSectionDivider: React.FC<KanbanSectionDividerProps> = ({
         <span
           className="flex-1 text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider cursor-pointer"
           onDoubleClick={() => setIsEditing(true)}
-          title="Double-click to rename"
+          title="双击重命名"
         >
           {section.title}
         </span>
@@ -76,8 +76,8 @@ export const KanbanSectionDivider: React.FC<KanbanSectionDividerProps> = ({
 
       <button
         onClick={() => onDelete(section.id)}
-        className="p-0.5 opacity-0 group-hover:opacity-100 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error transition-all"
-        title="Delete section"
+        className="p-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error transition-all"
+        title="删除分区"
       >
         <Trash2 className="w-3 h-3" />
       </button>

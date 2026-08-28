@@ -6,7 +6,7 @@ import { logger } from '../services/logger';
 const log = logger.module('SyncedStorage');
 
 /**
- * NeumanOS Storage Strategy
+ * LifeOS Storage Strategy
  * =============================
  *
  * We use two storage tiers based on data importance and size:
@@ -98,7 +98,7 @@ export const createSyncedStorage = (): StateStorage => {
         saveStatusActions.setSaved();
       } catch (error) {
         log.error(`Failed to save ${name}`, { error });
-        saveStatusActions.setError(`Failed to save ${name}`);
+        saveStatusActions.setError(`保存 ${name} 失败`);
       }
     },
 

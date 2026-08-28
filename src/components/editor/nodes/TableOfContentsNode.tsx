@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { DecoratorNode } from 'lexical';
+import { $getNodeByKey, $getRoot, DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $isHeadingNode } from '@lexical/rich-text';
 import type {
@@ -27,8 +27,7 @@ function collectHeadings(editor: LexicalEditor): TocEntry[] {
   const entries: TocEntry[] = [];
   const state = editor.getEditorState();
   state.read(() => {
-    const root = editor.getEditorState()._nodeMap;
-    root.forEach((node) => {
+    $getRoot().getChildren().forEach((node) => {
       if ($isHeadingNode(node)) {
         const tag = node.getTag();
         const level = parseInt(tag.replace('h', ''), 10);
@@ -64,30 +63,12 @@ function TableOfContentsComponent({ nodeKey }: { nodeKey: NodeKey }) {
     // Initial collection
     setHeadings(collectHeadings(editor));
 
-    // Listen for mutations on HeadingNode
-    const unregister = editor.registerMutationListener(
-      // We use a generic approach: listen for all updates
-      // since registerMutationListener requires a node class
-      editor.getEditorState().read(() => {
-        // We need to get the HeadingNode class
-        // Since we can't import it in the mutation listener setup,
-        // we listen to update events instead
-        return undefined as unknown as typeof DecoratorNode;
-      }) as unknown as typeof DecoratorNode,
-      () => {
-        setHeadings(collectHeadings(editor));
-      },
-    );
-
-    // Also listen to general updates for heading text changes
+    // A general update listener covers insertion, removal and text changes.
     const unregisterUpdate = editor.registerUpdateListener(() => {
       setHeadings(collectHeadings(editor));
     });
 
     return () => {
-      if (typeof unregister === 'function') {
-        unregister();
-      }
       unregisterUpdate();
     };
   }, [editor]);
@@ -101,7 +82,7 @@ function TableOfContentsComponent({ nodeKey }: { nodeKey: NodeKey }) {
 
   const handleDelete = useCallback(() => {
     editor.update(() => {
-      const node = editor.getEditorState()._nodeMap.get(nodeKey);
+      const node = $getNodeByKey(nodeKey);
       if (node) {
         node.remove();
       }
@@ -113,7 +94,7 @@ function TableOfContentsComponent({ nodeKey }: { nodeKey: NodeKey }) {
       <div className="my-4 border border-border-light dark:border-border-dark rounded-lg p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated group relative">
         <button
           onClick={handleDelete}
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs"
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs"
           title="Remove table of contents"
         >
           X
@@ -147,7 +128,7 @@ function TableOfContentsComponent({ nodeKey }: { nodeKey: NodeKey }) {
         </button>
         <button
           onClick={handleDelete}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs text-text-light-secondary dark:text-text-dark-secondary"
+          className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs text-text-light-secondary dark:text-text-dark-secondary"
           title="Remove table of contents"
         >
           X

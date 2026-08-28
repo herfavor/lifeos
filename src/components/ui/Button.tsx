@@ -31,13 +31,13 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     'bg-accent-primary text-white dark:text-text-dark-primary hover:opacity-90 focus:ring-accent-primary',
   secondary:
-    'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark focus:ring-border-light dark:focus:ring-border-dark',
+    'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated focus:ring-border-light dark:focus:ring-border-dark',
   danger:
     'bg-gradient-button-danger text-white hover:opacity-90 focus:ring-accent-red',
   ghost:
-    'bg-transparent text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark focus:ring-border-light dark:focus:ring-border-dark',
+    'bg-transparent text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated focus:ring-border-light dark:focus:ring-border-dark',
   outline:
-    'bg-transparent text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark focus:ring-border-light dark:focus:ring-border-dark',
+    'bg-transparent text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated focus:ring-border-light dark:focus:ring-border-dark',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

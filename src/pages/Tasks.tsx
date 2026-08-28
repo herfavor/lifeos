@@ -2,9 +2,8 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GanttView } from '../components/GanttView';
 import { ExportTasksModal } from '../components/ExportTasksModal';
-import { LayoutGrid, ChartGantt, FileDown, Target, Users } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 import { PageContent } from '../components/PageContent';
-import { TabNavigation, type Tab } from '../components/TabNavigation';
 import { HabitsContent } from './Habits';
 import { ResourceUtilizationChart } from '../components/charts/ResourceUtilizationChart';
 
@@ -13,128 +12,121 @@ const Kanban = lazy(() =>
   import('../widgets/Kanban').then((module) => ({ default: module.Kanban }))
 );
 
-// Loading fallback
 const WidgetLoader = () => (
-  <div className="bento-card p-6 h-[600px] animate-pulse">
-    <div className="h-full bg-surface-light-elevated dark:bg-surface-dark-elevated rounded"></div>
+  <div className="h-[600px] animate-pulse rounded-xl border border-border-light p-4 dark:border-border-dark">
+    <div className="h-full rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated" />
   </div>
 );
 
-// Phase 5: Updated to use tabs (tasks, timeline, habits, resources) instead of views
+// Advanced task surfaces remain reachable from their dedicated sidebar links
+// and legacy URLs, but the primary /tasks page is deliberately just “tasks”.
 type TabType = 'tasks' | 'timeline' | 'habits' | 'resources';
-
 const VALID_TABS: TabType[] = ['tasks', 'timeline', 'habits', 'resources'];
 
-// Tab configuration for TabNavigation component
-const TASKS_TABS: Tab[] = [
-  { id: 'tasks', label: 'Tasks', icon: LayoutGrid },
-  { id: 'timeline', label: 'Timeline', icon: ChartGantt },
-  { id: 'habits', label: 'Habits', icon: Target },
-  { id: 'resources', label: 'Resources', icon: Users },
-];
+const ADVANCED_LABELS: Record<Exclude<TabType, 'tasks'>, string> = {
+  timeline: '任务时间线',
+  habits: '习惯',
+  resources: '资源',
+};
 
-/**
- * Tasks Page - Kanban board, Gantt timeline, Habits tracking, and Resources
- * Full-featured task management with drag-and-drop, timeline views, habit tracking, and resource allocation
- *
- * Phase 5: Updated to use TabNavigation with 4 tabs (Tasks, Timeline, Habits, Resources)
- */
 export const Tasks: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Read initial tab from URL query params
-  // Supports both ?tab= (new) and ?view= (legacy) for backwards compatibility
   const getTabFromUrl = (): TabType => {
     const params = new URLSearchParams(location.search);
     const tab = params.get('tab');
-    if (tab && VALID_TABS.includes(tab as TabType)) {
-      return tab as TabType;
-    }
-    // Legacy support: map ?view=kanban to tasks, ?view=gantt to timeline
+    if (tab && VALID_TABS.includes(tab as TabType)) return tab as TabType;
+
+    // Legacy support
     const view = params.get('view');
-    if (view === 'kanban') return 'tasks';
     if (view === 'gantt') return 'timeline';
-    return 'tasks'; // Default tab
+    return 'tasks';
   };
 
   const [activeTab, setActiveTab] = useState<TabType>(getTabFromUrl);
   const [showExportModal, setShowExportModal] = useState(false);
 
-  // Update tab when URL changes (e.g., from sidebar navigation)
+  // Older sidebar/bookmarks used /tasks?tab=inbox. Inbox now has one clear home.
   useEffect(() => {
-    const newTab = getTabFromUrl();
-    if (newTab !== activeTab) {
-      setActiveTab(newTab);
-    }
+    const params = new URLSearchParams(location.search);
+    if (params.get('tab') === 'inbox') navigate('/inbox', { replace: true });
+  }, [location.search, navigate]);
+
+  useEffect(() => {
+    const next = getTabFromUrl();
+    if (next !== activeTab) setActiveTab(next);
   }, [location.search]);
 
   useEffect(() => {
-    document.title = 'NeumanOS';
-  }, []);
+    document.title = activeTab === 'tasks'
+      ? '任务 · LifeOS'
+      : `${ADVANCED_LABELS[activeTab as Exclude<TabType, 'tasks'>]} · LifeOS`;
+  }, [activeTab]);
 
-  // Update URL when tab changes
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
-    navigate(`/tasks?tab=${tab}`, { replace: true });
-  };
+  const isAdvancedView = activeTab !== 'tasks';
 
   return (
     <PageContent page="tasks">
-      {/* Tab Navigation with Export Button */}
-      <div className="flex justify-between items-start mb-4">
-        <TabNavigation
-          tabs={TASKS_TABS}
-          activeTab={activeTab}
-          onTabChange={(tabId) => handleTabChange(tabId as TabType)}
-          ariaLabel="Tasks navigation"
-        />
+      <div className="mb-4 flex min-h-9 flex-wrap items-center justify-between gap-3">
+        {isAdvancedView ? (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/tasks', { replace: true })}
+              className="text-sm font-medium text-accent-primary hover:opacity-80"
+            >
+              ← 返回任务
+            </button>
+            <span className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
+              {ADVANCED_LABELS[activeTab as Exclude<TabType, 'tasks'>]}
+            </span>
+          </div>
+        ) : (
+          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+            只保留已经明确、可执行的下一步；还没决定的内容放在收件箱。
+          </p>
+        )}
 
-        {/* Export Button - only show for tasks/timeline tabs */}
-        {activeTab !== 'habits' && (
+        {(activeTab === 'tasks' || activeTab === 'timeline') && (
           <button
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-button border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Export tasks to markdown"
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border-light px-3 text-sm text-text-light-secondary transition-colors hover:border-accent-primary/50 hover:text-accent-primary dark:border-border-dark dark:text-text-dark-secondary"
+            title="将任务导出为 Markdown"
           >
-            <FileDown className="w-4 h-4" />
-            Export
+            <FileDown className="h-4 w-4" />
+            导出
           </button>
         )}
       </div>
 
-      {/* Tab Content */}
-      <div
-        role="tabpanel"
-        id={`tabpanel-${activeTab}`}
-        aria-labelledby={`tab-${activeTab}`}
-        className="min-h-[600px]"
-      >
+      <div className="min-h-[600px]">
         {activeTab === 'tasks' && (
           <Suspense fallback={<WidgetLoader />}>
             <Kanban />
           </Suspense>
         )}
         {activeTab === 'timeline' && (
-          <div className="h-full bento-card">
+          <div className="rounded-xl border border-border-light dark:border-border-dark">
             <GanttView />
           </div>
         )}
         {activeTab === 'habits' && <HabitsContent />}
         {activeTab === 'resources' && (
-          <div className="bento-card p-6">
-            <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-              Resource Utilization
+          <div className="rounded-xl border border-border-light p-5 dark:border-border-dark">
+            <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
+              资源利用率
             </h2>
-            <ResourceUtilizationChart height={400} />
-            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-4">
-              Manage resources in Settings. Assign resources to tasks in the task detail panel.
+            <div className="mt-4">
+              <ResourceUtilizationChart height={400} />
+            </div>
+            <p className="mt-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+              资源属于高级规划能力；在设置中管理资源，在任务详情里分配。
             </p>
           </div>
         )}
       </div>
 
-      {/* Export Tasks Modal */}
       <ExportTasksModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}

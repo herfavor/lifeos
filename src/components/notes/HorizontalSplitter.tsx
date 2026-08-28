@@ -132,7 +132,7 @@ export const HorizontalSplitter: React.FC<HorizontalSplitterProps> = ({
       aria-valuenow={Math.round(position)}
       aria-valuemin={minPosition}
       aria-valuemax={maxPosition}
-      aria-label="Resize folder and notes panes"
+      aria-label="调整文件夹与笔记面板大小"
       tabIndex={0}
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
@@ -144,7 +144,7 @@ export const HorizontalSplitter: React.FC<HorizontalSplitterProps> = ({
         transition-colors duration-100
         ${isFocused ? 'outline-2 outline-accent-primary outline-offset-2' : ''}
       `}
-      title="Drag to resize, double-click to reset"
+      title="拖动调整大小，双击重置"
     >
       {/* 8px hit area with 2px visible line */}
       <div
@@ -163,7 +163,7 @@ export const HorizontalSplitter: React.FC<HorizontalSplitterProps> = ({
       <div
         className={`
           absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-          flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-100
+          flex gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-100
         `}
       >
         <div className="w-1 h-1 rounded-full bg-text-light-tertiary dark:bg-text-dark-tertiary" />

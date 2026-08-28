@@ -15,7 +15,7 @@ test.describe('Tag Manager', () => {
   });
 
   test('has tag filter in sidebar or toolbar', async ({ page }) => {
-    const tagFilter = page.getByRole('button', { name: /tag|filter/i }).first();
+    const tagFilter = page.getByRole('button', { name: /标签|筛选/i }).first();
     if (await tagFilter.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(tagFilter).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Tag Manager', () => {
   });
 
   test('can open tag manager', async ({ page }) => {
-    const tagBtn = page.getByRole('button', { name: /manage.*tag|tag.*manager/i }).first();
+    const tagBtn = page.getByRole('button', { name: /管理.*标签|标签.*管理器/i }).first();
     if (await tagBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await tagBtn.click();
       await page.waitForTimeout(300);
@@ -32,12 +32,12 @@ test.describe('Tag Manager', () => {
   });
 
   test('tag filter shows tag options', async ({ page }) => {
-    const filterBtn = page.getByRole('button', { name: /filter/i }).first();
+    const filterBtn = page.getByRole('button', { name: /筛选/i }).first();
     if (await filterBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await filterBtn.click();
       await page.waitForTimeout(300);
 
-      const tagOption = page.getByText(/tag/i).first();
+      const tagOption = page.getByText(/标签/i).first();
       if (await tagOption.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(tagOption).toBeVisible();
       }

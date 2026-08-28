@@ -253,7 +253,7 @@ export async function importMarkdownFiles(
 
       // Skip empty files
       if (!content.trim()) {
-        warnings.push(`Skipped empty file: ${relativePath}`);
+        warnings.push(`已跳过空文件：${relativePath}`);
         skippedFiles++;
         continue;
       }
@@ -261,7 +261,7 @@ export async function importMarkdownFiles(
       const parsed = parseMarkdownFile(content, file.name, relativePath);
       notes.push(parsed);
     } catch (error) {
-      const msg = `Failed to parse ${relativePath}: ${error}`;
+      const msg = `无法解析 ${relativePath}：${error}`;
       errors.push(msg);
       log.error(msg);
     }

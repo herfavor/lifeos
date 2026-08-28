@@ -156,8 +156,8 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
         onContextMenu={(e) => onContextMenu?.(e, node)}
       >
-        {/* Left-side hover actions - reserve space to prevent overlap */}
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 shrink-0 w-[58px] transition-opacity duration-100">
+        {/* Left-side hover actions - reserve space to prevent overlap; revealed on hover, keyboard focus and touch */}
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 shrink-0 w-[58px] transition-opacity duration-100">
           {onCreateSubfolder && (
             <button
               onClick={(e) => {
@@ -169,8 +169,8 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
                 onCreateSubfolder(node.id);
               }}
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-              title="New subfolder"
-              aria-label="Create subfolder"
+              title="新建子文件夹"
+              aria-label="创建子文件夹"
             >
               <FolderPlus className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -185,8 +185,8 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
               onRename(node.id, node.name);
             }}
             className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-            title="Rename folder"
-            aria-label="Rename folder"
+            title="重命名文件夹"
+            aria-label="重命名文件夹"
           >
             <Edit2 className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -200,8 +200,8 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
               onDelete(node.id, node.name);
             }}
             className="p-1 hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded text-accent-red transition-colors"
-            title="Delete folder"
-            aria-label="Delete folder"
+            title="删除文件夹"
+            aria-label="删除文件夹"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -215,7 +215,7 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
               onToggleExpanded(node.id);
             }}
             className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors flex-shrink-0"
-            aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
+            aria-label={isExpanded ? '折叠文件夹' : '展开文件夹'}
           >
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
@@ -236,7 +236,7 @@ export const FolderTreeNode: React.FC<FolderTreeNodeProps> = ({
               : 'text-text-light-secondary dark:text-text-dark-secondary'
           }`}
           role="button"
-          aria-label={`Drag ${node.name} to reorder`}
+          aria-label={`拖动${node.name}以排序`}
           tabIndex={0}
           onClick={(e) => e.stopPropagation()}
         >

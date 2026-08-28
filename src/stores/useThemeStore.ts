@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ThemeState, ThemeMode, ColorMode } from '../types';
-import { injectThemeVariables, getTheme } from '../config/themes/registry';
+import { injectThemeVariables, hasTheme } from '../config/themes/registry';
 import type { ThemeId } from '../config/themes/types';
 import { indexedDBService } from '../services/indexedDB';
 
@@ -87,8 +87,8 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       mode: 'dark',
-      brandTheme: 'evergreen',
-      colorMode: 'dark',
+      brandTheme: 'ink-wash',
+      colorMode: 'system',
 
       backupPreferences: {
         hasBackupFolder: false,
@@ -96,7 +96,7 @@ export const useThemeStore = create<ThemeState>()(
         autoSaveEnabled: false,
         saveInterval: 30000,
         versionsToKeep: 7,
-        customFileName: 'NeumanOS',
+        customFileName: 'LifeOS',
         reminderPreference: 'every-session',
         nextReminderDate: null,
       },
@@ -110,9 +110,7 @@ export const useThemeStore = create<ThemeState>()(
         }),
 
       setBrandTheme: (themeId: string) => {
-        // Validate theme exists
-        const theme = getTheme(themeId as ThemeId);
-        if (!theme) return;
+        if (!hasTheme(themeId)) return;
 
         const { mode } = get();
         applyTheme(mode, themeId, true);
@@ -150,22 +148,29 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'theme-storage',
-      version: 3,
+      version: 4,
       migrate: (persisted: unknown, version: number) => {
-        const state = persisted as Record<string, unknown>;
+        let state = persisted as Record<string, unknown>;
         if (version === 0 || version === 1) {
-          return {
+          state = {
             ...state,
             brandTheme: 'evergreen',
             colorMode: (state.mode as string) || 'dark',
           };
         }
-        if (version === 2) {
+        if (version <= 2) {
           // Migrate all users from 'default' to 'evergreen'
-          return {
+          state = {
             ...state,
             brandTheme: state.brandTheme === 'default' ? 'evergreen' : state.brandTheme,
           };
+        }
+
+        // Version 4 replaces the former green/gold default with the quieter
+        // slate palette. Other explicitly selected themes and color modes stay
+        // untouched.
+        if (version < 4 && state.brandTheme === 'evergreen') {
+          state = { ...state, brandTheme: 'ink-wash' };
         }
         return state;
       },

@@ -14,15 +14,15 @@
  * - Right: Note metadata (future feature)
  */
 
-import React, { useEffect, useState, lazy, Suspense } from 'react';
+import React, { useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { FileText, Calendar as CalendarIcon, Network } from 'lucide-react';
+import { FileText, Calendar as CalendarIcon, Network, RotateCcw, Trash2 } from 'lucide-react';
 import { useNotesStore } from '../stores/useNotesStore';
-import { AIQuickActions } from '../components/AIQuickActions';
 import { useFoldersStore } from '../stores/useFoldersStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { NotesEditor, NotesEditorEmpty } from '../widgets/NotesEditor';
 import { PromptDialog } from '../components/PromptDialog';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { DailyNotesCalendar } from '../components/DailyNotesCalendar';
 import { TagManager } from '../components/TagManager';
 import { TemplateLibrary } from '../components/TemplateLibrary';
@@ -38,15 +38,16 @@ import type { NoteTemplate } from '../types/notes';
 const GraphView = lazy(() => import('./GraphView'));
 
 // Phase 5: Tab configuration for Notes page
-type NotesTabType = 'notes' | 'daily' | 'graph';
+type NotesTabType = 'notes' | 'daily' | 'graph' | 'trash';
 
-const VALID_TABS: NotesTabType[] = ['notes', 'daily', 'graph'];
+const VALID_TABS: NotesTabType[] = ['notes', 'daily', 'graph', 'trash'];
 
 // Tab configuration for TabNavigation component
 const NOTES_TABS: Tab[] = [
-  { id: 'notes', label: 'Notes', icon: FileText },
-  { id: 'daily', label: 'Daily Notes', icon: CalendarIcon },
-  { id: 'graph', label: 'Graph', icon: Network },
+  { id: 'notes', label: '笔记', icon: FileText },
+  { id: 'daily', label: '每日笔记', icon: CalendarIcon },
+  { id: 'graph', label: '图谱', icon: Network },
+  { id: 'trash', label: '回收站', icon: Trash2 },
 ];
 
 // Loading fallback for GraphView
@@ -55,7 +56,7 @@ const GraphViewLoader = () => (
     <div className="text-center">
       <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-accent-primary border-r-transparent" />
       <p className="mt-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-        Loading Graph...
+        图谱加载中…
       </p>
     </div>
   </div>
@@ -69,18 +70,29 @@ const log = logger.module('Notes');
  */
 export const Notes: React.FC = () => {
   const activeNoteId = useNotesStore((state) => state.activeNoteId);
-  const activeNote = useNotesStore((state) => activeNoteId ? state.notes[activeNoteId] : null);
+  const notes = useNotesStore((state) => state.notes);
+  const setActiveNote = useNotesStore((state) => state.setActiveNote);
   const getOrCreateDailyNote = useNotesStore((state) => state.getOrCreateDailyNote);
   const createNote = useNotesStore((state) => state.createNote);
+  const restoreNote = useNotesStore((state) => state.restoreNote);
+  const permanentlyDeleteNote = useNotesStore((state) => state.permanentlyDeleteNote);
+  const permanentlyDeleteNotes = useNotesStore((state) => state.permanentlyDeleteNotes);
   const activeFolderId = useFoldersStore((state) => state.activeFolderId);
   const dailyNotesEnabled = useSettingsStore((state) => state.dailyNotes.enabled);
+  const displayName = useSettingsStore((state) => state.displayName);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [blockId, setBlockId] = useState<string | undefined>();
+  const didAutoSelectNote = useRef(false);
+  const [noteToPermanentlyDelete, setNoteToPermanentlyDelete] = useState<string | null>(null);
+  const [showClearTrashConfirm, setShowClearTrashConfirm] = useState(false);
+  const deletedNotes = Object.values(notes)
+    .filter((note) => note.deletedAt)
+    .sort((a, b) => (b.deletedAt?.getTime() || 0) - (a.deletedAt?.getTime() || 0));
 
   // Phase 5: Tab state management
-  const getTabFromUrl = (): NotesTabType => {
+  const getTabFromUrl = useCallback((): NotesTabType => {
     const tab = searchParams.get('tab');
     if (tab && VALID_TABS.includes(tab as NotesTabType)) {
       return tab as NotesTabType;
@@ -90,7 +102,7 @@ export const Notes: React.FC = () => {
       return 'daily';
     }
     return 'notes'; // Default tab
-  };
+  }, [searchParams]);
 
   const [activeTab, setActiveTab] = useState<NotesTabType>(getTabFromUrl);
 
@@ -100,7 +112,35 @@ export const Notes: React.FC = () => {
     if (newTab !== activeTab) {
       setActiveTab(newTab);
     }
-  }, [searchParams]);
+  }, [activeTab, getTabFromUrl]);
+
+  const requestedNoteId = searchParams.get('note');
+  const requestedNoteExists = useNotesStore((state) =>
+    requestedNoteId ? Boolean(state.notes[requestedNoteId] && !state.notes[requestedNoteId].deletedAt) : false
+  );
+
+  // Deep links from Home, wiki links and the graph must open the requested
+  // note instead of merely landing somewhere in the Notes workspace.
+  useEffect(() => {
+    if (requestedNoteId && requestedNoteExists) {
+      setActiveTab('notes');
+      setActiveNote(requestedNoteId);
+    }
+  }, [requestedNoteExists, requestedNoteId, setActiveNote]);
+
+  // On first entry, resume the most recently edited active note. If the user
+  // later clears the selection, keep their explicit choice instead of
+  // immediately reopening it.
+  useEffect(() => {
+    if (didAutoSelectNote.current || activeNoteId || requestedNoteId) return;
+    const mostRecent = Object.values(notes)
+      .filter((note) => !note.isArchived && !note.deletedAt)
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+    if (mostRecent) {
+      didAutoSelectNote.current = true;
+      setActiveNote(mostRecent.id);
+    }
+  }, [activeNoteId, notes, requestedNoteId, setActiveNote]);
 
   // Update URL when tab changes
   const handleTabChange = (tab: NotesTabType) => {
@@ -156,7 +196,7 @@ export const Notes: React.FC = () => {
     // Substitute template variables
     const context = {
       title: customTitle,
-      userName: 'User', // Could be fetched from settings in future
+      userName: displayName.trim() || '我',
     };
     const processedContent = substituteTemplateVariables(template.description, context);
 
@@ -193,7 +233,7 @@ export const Notes: React.FC = () => {
 
   // Page setup and keyboard shortcuts
   useEffect(() => {
-    document.title = 'Notes - NeumanOS';
+    document.title = '笔记 - LifeOS';
     log.debug('Notes page loaded');
 
     // Keyboard shortcut for export (Cmd/Ctrl+Shift+E)
@@ -236,14 +276,18 @@ export const Notes: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  const visibleTabs = NOTES_TABS.filter(
+    (tab) => tab.id === 'notes' || tab.id === 'daily' || tab.id === activeTab
+  );
+
   return (
     <PageContent page="notes" variant="full-height">
-      {/* Phase 5: Tab Navigation */}
+      {/* Keep everyday writing primary; graph/trash only surface when explicitly opened. */}
       <TabNavigation
-        tabs={NOTES_TABS}
+        tabs={visibleTabs}
         activeTab={activeTab}
         onTabChange={(tabId) => handleTabChange(tabId as NotesTabType)}
-        ariaLabel="Notes navigation"
+        ariaLabel="笔记导航"
       />
 
       {/* Tab Content */}
@@ -267,6 +311,54 @@ export const Notes: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'trash' && (
+          <div className="flex-1 overflow-auto p-4 sm:p-6">
+            <div className="mx-auto max-w-4xl">
+              <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">笔记回收站</h2>
+                  <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                    删除的笔记会保留在这里；永久删除才会移除正文和关联图片。
+                  </p>
+                </div>
+                {deletedNotes.length > 0 && (
+                  <button type="button" onClick={() => setShowClearTrashConfirm(true)} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-status-error/30 px-3 py-2 text-sm text-status-error hover:bg-status-error/10">
+                    <Trash2 className="h-4 w-4" />清空回收站
+                  </button>
+                )}
+              </div>
+              {deletedNotes.length > 0 ? (
+                <div className="space-y-2">
+                  {deletedNotes.map((note) => (
+                    <div key={note.id} className="bento-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-text-light-primary dark:text-text-dark-primary">{note.title || '未命名笔记'}</p>
+                        <p className="mt-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                          删除于 {note.deletedAt?.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <button onClick={() => restoreNote(note.id)} className="btn-secondary inline-flex items-center gap-2 px-3 py-2 text-sm">
+                          <RotateCcw className="h-4 w-4" />恢复
+                        </button>
+                        <button onClick={() => setNoteToPermanentlyDelete(note.id)} className="inline-flex items-center gap-2 rounded-lg border border-status-error/30 px-3 py-2 text-sm text-status-error hover:bg-status-error/10">
+                          <Trash2 className="h-4 w-4" />永久删除
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bento-card py-14 text-center">
+                  <Trash2 className="mx-auto h-10 w-10 text-text-light-tertiary dark:text-text-dark-tertiary" />
+                  <p className="mt-3 font-medium text-text-light-primary dark:text-text-dark-primary">回收站为空</p>
+                  <button onClick={() => handleTabChange('notes')} className="btn-primary mt-5 px-4 py-2">返回笔记</button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Notes Tab - Main Notes View */}
         {activeTab === 'notes' && (
           <NotesLayout
@@ -281,7 +373,11 @@ export const Notes: React.FC = () => {
             {activeNoteId ? (
               <NotesEditor noteId={activeNoteId} blockId={blockId} />
             ) : (
-              <NotesEditorEmpty />
+              <NotesEditorEmpty
+                hasNotes={Object.values(notes).some((note) => !note.isArchived && !note.deletedAt)}
+                onCreate={() => createNote({ folderId: activeFolderId })}
+                onCreateFromTemplate={() => setShowTemplateLibrary(true)}
+              />
             )}
           </NotesLayout>
         )}
@@ -303,30 +399,40 @@ export const Notes: React.FC = () => {
           isOpen={true}
           onClose={handleCancelTitle}
           onConfirm={handleConfirmTitle}
-          title="Enter Note Title"
-          message={`Create a note from template "${selectedTemplate.name}". Please enter a title:`}
+          title="输入笔记标题"
+          message={`使用模板 "${selectedTemplate.name}" 创建笔记。请输入标题：`}
           defaultValue={titleInput}
-          placeholder="Note title"
-          confirmText="Create Note"
+          placeholder="笔记标题"
+          confirmText="创建笔记"
         />
-      )}
-
-      {/* AI Quick Actions - floating button for active note */}
-      {activeNote && activeTab === 'notes' && (
-        <div className="fixed bottom-6 right-6 z-40">
-          <AIQuickActions
-            context={{
-              type: 'note',
-              id: activeNote.id,
-              title: activeNote.title,
-              content: activeNote.contentText || '',
-            }}
-          />
-        </div>
       )}
 
       {/* Export Notes Modal */}
       <ExportNotesModal isOpen={showExportModal} onClose={() => setShowExportModal(false)} />
+      <ConfirmDialog
+        isOpen={Boolean(noteToPermanentlyDelete)}
+        onClose={() => setNoteToPermanentlyDelete(null)}
+        onConfirm={() => {
+          if (noteToPermanentlyDelete) permanentlyDeleteNote(noteToPermanentlyDelete);
+          setNoteToPermanentlyDelete(null);
+        }}
+        title="永久删除笔记"
+        message="此操作会永久删除笔记正文和关联图片，且无法恢复。"
+        confirmText="永久删除"
+        variant="danger"
+      />
+      <ConfirmDialog
+        isOpen={showClearTrashConfirm}
+        onClose={() => setShowClearTrashConfirm(false)}
+        onConfirm={() => {
+          permanentlyDeleteNotes(deletedNotes.map((note) => note.id));
+          setShowClearTrashConfirm(false);
+        }}
+        title="清空笔记回收站"
+        message={`永久删除回收站中的 ${deletedNotes.length} 篇笔记及其关联图片？此操作无法恢复。`}
+        confirmText="永久删除全部"
+        variant="danger"
+      />
     </PageContent>
   );
 };

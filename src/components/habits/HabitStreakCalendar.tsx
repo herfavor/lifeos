@@ -81,7 +81,7 @@ export function HabitStreakCalendar({ habit, onClose }: HabitStreakCalendarProps
                 {habit.title}
               </h3>
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                {completedThisMonth}/{totalDaysInMonth} days this month
+                本月完成 {completedThisMonth}/{totalDaysInMonth} 天
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export function HabitStreakCalendar({ habit, onClose }: HabitStreakCalendarProps
 
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-1">
-            {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((d) => (
+            {['一', '二', '三', '四', '五', '六', '日'].map((d) => (
               <div
                 key={d}
                 className="text-center text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary py-1"
@@ -148,7 +148,7 @@ export function HabitStreakCalendar({ habit, onClose }: HabitStreakCalendarProps
             onClick={onClose}
             className="px-4 py-1.5 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>

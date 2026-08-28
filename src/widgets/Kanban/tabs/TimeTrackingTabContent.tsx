@@ -26,12 +26,12 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hours}h ${minutes}m ${secs}s`;
+    return `${hours}小时 ${minutes}分 ${secs}秒`;
   };
 
   const formatTime = (seconds: number): string => {
     const hours = seconds / 3600;
-    return hours < 0.1 ? '<0.1h' : `${hours.toFixed(1)}h`;
+    return hours < 0.1 ? '<0.1小时' : `${hours.toFixed(1)}小时`;
   };
 
   return (
@@ -41,7 +41,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Total Time: {formatTime(totalSeconds)}
+              总时长：{formatTime(totalSeconds)}
             </h3>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
               {formatDuration(totalSeconds)}
@@ -53,14 +53,14 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
               className="px-4 py-2 bg-status-error text-white text-sm font-medium rounded-lg hover:bg-status-error/90 transition-colors flex items-center gap-2"
             >
               <span className="animate-pulse">⏱️</span>
-              Stop Timer
+              停止计时
             </button>
           ) : (
             <button
               onClick={onStartTimer}
               className="px-4 py-2 bg-accent-blue text-white text-sm font-medium rounded-lg hover:bg-accent-blue-hover transition-colors flex items-center gap-2"
             >
-              ▶️ Start Timer
+              ▶️ 开始计时
             </button>
           )}
         </div>
@@ -70,7 +70,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
           <div className="pt-3 border-t border-border-light dark:border-border-dark">
             <div className="flex items-center justify-between text-xs">
               <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                Estimated: {estimatedHours}h
+                预计：{estimatedHours}小时
               </span>
               <span className={`font-medium ${
                 totalSeconds / 3600 > estimatedHours
@@ -78,8 +78,8 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
                   : 'text-status-success'
               }`}>
                 {totalSeconds / 3600 > estimatedHours
-                  ? `Over by ${((totalSeconds / 3600) - estimatedHours).toFixed(1)}h`
-                  : `${(estimatedHours - (totalSeconds / 3600)).toFixed(1)}h remaining`
+                  ? `超出 ${((totalSeconds / 3600) - estimatedHours).toFixed(1)} 小时`
+                  : `剩余 ${(estimatedHours - (totalSeconds / 3600)).toFixed(1)} 小时`
                 }
               </span>
             </div>
@@ -103,7 +103,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
       {/* Time Entries List */}
       <div>
         <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-          Time Entries ({entries.length})
+          时间记录（{entries.length}）
         </h4>
         {entries.length > 0 ? (
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -131,7 +131,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
                       {formatTime(entry.duration)}
                     </p>
                     {!entry.endTime && (
-                      <p className="text-xs text-accent-blue">Running...</p>
+                      <p className="text-xs text-accent-blue">计时中…</p>
                     )}
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
           </div>
         ) : (
           <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-            ⏱️ No time entries yet
+            ⏱️ 暂无时间记录
           </div>
         )}
       </div>

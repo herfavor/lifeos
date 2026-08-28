@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const neonNoirTheme: ThemeDefinition = {
   id: 'neon-noir',
   name: 'Neon Noir',
-  description: 'Electric neon accents on deep noir backgrounds',
+  description: '深邃黑色背景上的电光霓虹点缀',
   category: 'vibrant',
   preview: {
     primary: '#FF2D95',

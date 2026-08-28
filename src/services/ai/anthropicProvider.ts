@@ -25,11 +25,11 @@ const METADATA: AIProviderMetadata = {
   id: 'anthropic',
   name: 'Anthropic Claude',
   displayName: 'Anthropic Claude',
-  description: 'Thoughtful, nuanced AI from Anthropic. Excellent for analysis and writing. CORS-friendly!',
+  description: '来自 Anthropic 的深思熟虑、细腻的 AI。非常适合分析和写作。支持 CORS！',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://console.anthropic.com/settings/keys',
-  apiKeyLabel: 'Anthropic API Key',
+  apiKeyLabel: 'Anthropic API 密钥',
 
   hasFreeModels: false, // No permanent free tier
   freeModelIds: [],
@@ -61,7 +61,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 3.0,
     requiresApiKey: true,
     useCases: ['analysis', 'reasoning', 'writing', 'code'],
-    description: 'Anthropic\'s best model. Excellent for thoughtful analysis and long-form writing.',
+    description: 'Anthropic 的最佳模型。非常适合深入分析和长文写作。',
   },
   {
     id: 'claude-3-5-haiku-20241022',
@@ -77,7 +77,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 1.0,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'quick-tasks'],
-    description: 'Fast, affordable Claude model. Great for most tasks.',
+    description: '快速且实惠的 Claude 模型。适合大多数任务。',
   },
   {
     id: 'claude-3-opus-20240229',
@@ -94,7 +94,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 15.0,
     requiresApiKey: true,
     useCases: ['reasoning', 'analysis', 'research', 'complex-tasks'],
-    description: 'Claude\'s most powerful model. Best for complex reasoning and analysis.',
+    description: 'Claude 最强大的模型。最适合复杂推理和分析。',
   },
 ];
 
@@ -200,7 +200,7 @@ export class AnthropicProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Anthropic provider not configured. Please add your Anthropic API key.',
+        'Anthropic 提供商尚未配置。请添加你的 Anthropic API 密钥。',
         'anthropic'
       );
     }
@@ -294,32 +294,32 @@ export class AnthropicProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('invalid x-api-key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid Anthropic API key. Please check your API key and try again.',
+          'Anthropic API 密钥无效。请检查你的 API 密钥后重试。',
           'anthropic'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate_limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'Anthropic rate limit exceeded. Please wait a moment and try again.',
+          '已超出 Anthropic 速率限制。请稍等片刻后重试。',
           'anthropic',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('credit balance')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'Anthropic credit balance too low. Please add credits to your account.',
+          'Anthropic 余额不足。请向你的账户充值。',
           'anthropic'
         );
       } else if (err?.status === 404 || err?.message?.includes('model_not_found')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on Anthropic.`,
+          `Anthropic 上未找到模型“${model}”。`,
           'anthropic'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `Anthropic error: ${err?.message || 'Unknown error occurred'}`,
+          `Anthropic 错误：${err?.message || '发生未知错误'}`,
           'anthropic'
         );
       }

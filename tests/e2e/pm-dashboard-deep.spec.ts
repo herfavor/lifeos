@@ -16,7 +16,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('page loads with heading', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: /Project|PM|Dashboard/i }).first();
+    const heading = page.getByRole('heading', { name: /项目管理/ }).first();
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -32,7 +32,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('has burndown chart section', async ({ page }) => {
-    const burndown = page.getByText(/burndown/i);
+    const burndown = page.getByText(/燃尽/);
     if (await burndown.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(burndown).toBeVisible();
     }
@@ -40,7 +40,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('has blocked tasks section', async ({ page }) => {
-    const blocked = page.getByText(/blocked/i);
+    const blocked = page.getByText(/受阻/);
     if (await blocked.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(blocked).toBeVisible();
     }
@@ -48,7 +48,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('has upcoming deadlines section', async ({ page }) => {
-    const deadlines = page.getByText(/deadline|upcoming|due/i).first();
+    const deadlines = page.getByText(/到期|即将|截止/).first();
     if (await deadlines.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(deadlines).toBeVisible();
     }
@@ -56,7 +56,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('has task completion stats', async ({ page }) => {
-    const stats = page.getByText(/completed|completion|progress/i).first();
+    const stats = page.getByText(/已完成|进行中/).first();
     if (await stats.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(stats).toBeVisible();
     }
@@ -64,7 +64,7 @@ test.describe('PM Dashboard', () => {
   });
 
   test('has sprint or timeline view', async ({ page }) => {
-    const sprint = page.getByText(/sprint|timeline|gantt/i).first();
+    const sprint = page.getByText(/冲刺|时间线/).first();
     if (await sprint.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(sprint).toBeVisible();
     }

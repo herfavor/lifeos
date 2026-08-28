@@ -17,17 +17,17 @@ interface AIQuickAction {
 }
 
 const NOTE_ACTIONS: AIQuickAction[] = [
-  { id: 'summarize', label: 'Summarize', icon: '📋', prompt: 'Summarize the following note concisely:\n\n' },
-  { id: 'expand', label: 'Expand', icon: '📝', prompt: 'Expand on the following note with more detail:\n\n' },
-  { id: 'fix-grammar', label: 'Fix Grammar', icon: '✏️', prompt: 'Fix the grammar and improve clarity of the following text:\n\n' },
-  { id: 'translate', label: 'Translate', icon: '🌐', prompt: 'Translate the following text to English (or if already in English, to Spanish):\n\n' },
-  { id: 'outline', label: 'Generate Outline', icon: '📑', prompt: 'Generate a structured outline from the following note:\n\n' },
+  { id: 'summarize', label: '总结', icon: '📋', prompt: '请对以下笔记进行简洁总结：\n\n' },
+  { id: 'expand', label: '扩写', icon: '📝', prompt: '请对以下笔记进行更详细的扩充：\n\n' },
+  { id: 'fix-grammar', label: '修正语法', icon: '✏️', prompt: '请修正以下文本的语法并提升清晰度：\n\n' },
+  { id: 'translate', label: '翻译', icon: '🌐', prompt: '请将以下文本翻译成英文（若已是英文，则翻译成西班牙语）：\n\n' },
+  { id: 'outline', label: '生成大纲', icon: '📑', prompt: '请根据以下笔记生成结构化大纲：\n\n' },
 ];
 
 const TASK_ACTIONS: AIQuickAction[] = [
-  { id: 'subtasks', label: 'Break into Subtasks', icon: '📊', prompt: 'Break this task into smaller, actionable subtasks:\n\n' },
-  { id: 'estimate', label: 'Estimate Time', icon: '⏱️', prompt: 'Estimate the time needed for this task and explain your reasoning:\n\n' },
-  { id: 'description', label: 'Write Description', icon: '📝', prompt: 'Write a detailed description for this task:\n\n' },
+  { id: 'subtasks', label: '拆分为子任务', icon: '📊', prompt: '请将此任务拆分为更小、可执行的子任务：\n\n' },
+  { id: 'estimate', label: '预估时间', icon: '⏱️', prompt: '请预估完成此任务所需的时间并说明理由：\n\n' },
+  { id: 'description', label: '撰写描述', icon: '📝', prompt: '请为此任务撰写详细描述：\n\n' },
 ];
 
 interface AIQuickActionsProps {
@@ -89,8 +89,8 @@ export const AIQuickActions: React.FC<AIQuickActionsProps> = ({ context, onActio
             : 'bg-gradient-to-r from-accent-blue to-accent-primary text-white hover:scale-105 hover:shadow-xl'
           }
         `}
-        title="AI Quick Actions"
-        aria-label="AI Quick Actions"
+        title="AI 快捷操作"
+        aria-label="AI 快捷操作"
       >
         {isOpen ? <X size={16} /> : <Sparkles size={16} />}
       </button>
@@ -103,7 +103,7 @@ export const AIQuickActions: React.FC<AIQuickActionsProps> = ({ context, onActio
             <div className="flex items-center gap-2">
               <Sparkles size={12} className="text-accent-primary" />
               <span className="text-xs font-medium text-text-dark-primary">
-                AI Actions for {context.type === 'note' ? 'Note' : 'Task'}
+                {context.type === 'note' ? '笔记' : '任务'}的 AI 操作
               </span>
             </div>
             <p className="text-[10px] text-text-dark-tertiary mt-0.5 truncate">
@@ -144,7 +144,7 @@ export const AIQuickActions: React.FC<AIQuickActionsProps> = ({ context, onActio
                 }}
                 className="mt-1.5 text-xs text-accent-blue hover:underline"
               >
-                Apply result
+                应用结果
               </button>
             </div>
           )}

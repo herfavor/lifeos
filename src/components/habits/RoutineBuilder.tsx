@@ -6,10 +6,10 @@ import { useRoutineStore, type Routine, type TimeOfDay } from '../../stores/useR
 const ROUTINE_ICONS = ['🌅', '🌙', '💼', '🏋️', '📖', '🧘', '🎯', '⚡', '🧠', '🔥'];
 
 const TIME_OF_DAY_OPTIONS: { value: TimeOfDay; label: string; icon: string }[] = [
-  { value: 'morning', label: 'Morning', icon: '🌅' },
-  { value: 'afternoon', label: 'Afternoon', icon: '☀️' },
-  { value: 'evening', label: 'Evening', icon: '🌙' },
-  { value: 'anytime', label: 'Anytime', icon: '🕐' },
+  { value: 'morning', label: '早上', icon: '🌅' },
+  { value: 'afternoon', label: '下午', icon: '☀️' },
+  { value: 'evening', label: '晚上', icon: '🌙' },
+  { value: 'anytime', label: '任意时间', icon: '🕐' },
 ];
 
 interface RoutineBuilderProps {
@@ -96,7 +96,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-4">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {routine ? 'Edit Routine' : 'Create Routine'}
+            {routine ? '编辑日常惯例' : '创建日常惯例'}
           </h2>
           <button
             onClick={onClose}
@@ -110,13 +110,13 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Name
+              名称
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Morning Power Routine"
+              placeholder="例如：晨间活力日常惯例"
               className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               autoFocus
             />
@@ -125,12 +125,12 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Description
+              描述
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What this routine helps you achieve..."
+              placeholder="这个日常惯例帮助你达成什么…"
               rows={2}
               className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary resize-none"
             />
@@ -139,7 +139,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Icon */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Icon
+              图标
             </label>
             <div className="flex flex-wrap gap-2">
               {ROUTINE_ICONS.map((i) => (
@@ -162,7 +162,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Time of Day */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Time of Day
+              时段
             </label>
             <div className="grid grid-cols-4 gap-2">
               {TIME_OF_DAY_OPTIONS.map((opt) => (
@@ -186,7 +186,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Estimated Minutes */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Estimated Duration (minutes)
+              预计时长（分钟）
             </label>
             <input
               type="number"
@@ -201,7 +201,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
           {/* Habit Chain */}
           <div>
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Habit Chain ({selectedHabitIds.length} habits)
+              习惯链（{selectedHabitIds.length} 个习惯）
             </label>
 
             {/* Selected habits with reorder controls */}
@@ -268,7 +268,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
                   className="w-full px-3 py-2 rounded-lg border border-dashed border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-primary"
                 >
                   <option value="" disabled>
-                    + Add habit to chain...
+                    + 添加习惯到链条…
                   </option>
                   {availableHabits.map((h) => (
                     <option key={h.id} value={h.id}>
@@ -281,7 +281,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
 
             {activeHabits.length === 0 && (
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary text-center py-4">
-                Create some habits first, then add them to a routine.
+                请先创建一些习惯，再添加到日常惯例中。
               </p>
             )}
           </div>
@@ -293,14 +293,14 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={handleSave}
             disabled={!name.trim() || selectedHabitIds.length === 0}
             className="px-4 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors disabled:opacity-50"
           >
-            {routine ? 'Save Changes' : 'Create Routine'}
+            {routine ? '保存更改' : '创建日常惯例'}
           </button>
         </div>
       </div>

@@ -46,7 +46,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
 
   const formatEventTime = (event: CalendarEvent): string => {
     if (event.isAllDay || !event.startTime) {
-      return 'All day';
+      return '全天';
     }
 
     if (event.endTime) {
@@ -61,11 +61,11 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
     const tomorrow = addDays(today, 1);
 
     if (isSameDay(date, today)) {
-      return 'Today';
+      return '今天';
     }
 
     if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return '明天';
     }
 
     return format(date, 'EEEE');
@@ -76,10 +76,10 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
         <div className="text-6xl mb-4">📅</div>
         <h3 className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          No upcoming events
+          暂无即将到来的事件
         </h3>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary max-w-md">
-          You don't have any events scheduled. Add an event to get started!
+          你还没有安排任何事件，添加一个事件开始吧！
         </p>
       </div>
     );
@@ -90,10 +90,10 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
       {/* Frozen header */}
       <div className="flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark p-4">
         <h2 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          Upcoming Events
+          即将到来的事件
         </h2>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          {upcomingEvents.reduce((total, day) => total + day.events.length, 0)} total events
+          共 {upcomingEvents.reduce((total, day) => total + day.events.length, 0)} 个事件
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     {format(date, 'MMMM d, yyyy')}
                   </span>
                   <span className="ml-auto text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    {dayEvents.length} event{dayEvents.length > 1 ? 's' : ''}
+                    {dayEvents.length} 个事件
                   </span>
                 </div>
               </div>
@@ -143,7 +143,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                         </div>
                         {event.recurrence && (
                           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                            🔄 Recurring
+                            🔄 重复
                           </div>
                         )}
                       </div>
@@ -157,7 +157,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                               {event._isMultiDayFirst && '→'}
                               {!event._isMultiDayFirst && !event._isMultiDayLast && '↔'}
                               {event._isMultiDayLast && '←'}
-                              Multi-day
+                              多日
                             </span>
                           )}
                         </h4>
@@ -178,7 +178,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                         {event.reminders && event.reminders.length > 0 && (
                           <div className="flex items-center gap-1 mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
                             <span>🔔</span>
-                            <span>{event.reminders.length} reminder{event.reminders.length > 1 ? 's' : ''}</span>
+                            <span>{event.reminders.length} 个提醒</span>
                           </div>
                         )}
                       </div>

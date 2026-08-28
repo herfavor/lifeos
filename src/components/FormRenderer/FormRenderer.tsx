@@ -178,19 +178,19 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
       // Required validation
       if (field.required) {
         if (value === undefined || value === null || value === '') {
-          newErrors[field.id] = 'This field is required';
+          newErrors[field.id] = '此字段为必填项';
         } else if (Array.isArray(value) && value.length === 0) {
-          newErrors[field.id] = 'Please select at least one option';
+          newErrors[field.id] = '请至少选择一个选项';
         }
       }
 
       // Number validation
       if (field.type === 'number' && value !== null && value !== undefined && value !== '') {
         if (field.validation?.min !== undefined && Number(value) < field.validation.min) {
-          newErrors[field.id] = `Minimum value is ${field.validation.min}`;
+          newErrors[field.id] = `最小值为 ${field.validation.min}`;
         }
         if (field.validation?.max !== undefined && Number(value) > field.validation.max) {
-          newErrors[field.id] = `Maximum value is ${field.validation.max}`;
+          newErrors[field.id] = `最大值为 ${field.validation.max}`;
         }
       }
 
@@ -281,12 +281,12 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
           </div>
           {progress > 0 && progress < 100 && (
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1 text-center">
-              Keep going! {progress}% complete
+              继续加油！已完成 {progress}%
             </p>
           )}
           {progress === 100 && (
             <p className="text-xs text-accent-green mt-1 text-center">
-              ✓ All fields completed! Ready to submit
+              ✓ 所有字段已完成！可以提交
             </p>
           )}
         </div>
@@ -344,7 +344,7 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
                   {displayValue || '—'}
                 </div>
                 <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                  Calculated value
+                  计算值
                 </div>
               </div>
             </div>
@@ -386,7 +386,7 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
       {/* Honeypot Field (hidden from humans, visible to bots) */}
       {form.settings.enableSpamProtection && (
         <div className="absolute left-[-9999px]" aria-hidden="true">
-          <label htmlFor="email_confirm">Email Confirmation</label>
+          <label htmlFor="email_confirm">邮箱确认</label>
           <input
             type="text"
             id="email_confirm"
@@ -402,9 +402,9 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
       <div className="flex justify-end pt-4">
         <button
           type="submit"
-          className="px-6 py-3 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+          className="px-6 py-3 bg-accent-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
         >
-          Submit
+          提交
         </button>
       </div>
     </form>

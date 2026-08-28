@@ -31,9 +31,9 @@ export const AI_TERMINAL_FOLDER_ICON = '🤖';
 /**
  * Daily note template for AI Terminal folder
  */
-export const AI_TERMINAL_DAILY_TEMPLATE = `# AI Terminal - {date}
+export const AI_TERMINAL_DAILY_TEMPLATE = `# AI 助手 - {date}
 
-## Conversations
+## 对话
 
 `;
 
@@ -101,7 +101,7 @@ export function getOrCreateAITerminalDailyNote(date: Date = new Date()): Note {
 
   // Look for existing daily note - IMPORTANT: Search ALL notes, not filtered ones
   // getAllNotes() applies filters which can cause missing notes and duplicate creation
-  const allNotes = Object.values(notesStore.notes);
+  const allNotes = Object.values(notesStore.notes).filter((note) => !note.deletedAt);
   const existingNote = allNotes.find(
     (n) =>
       n.folderId === folderId &&
@@ -173,42 +173,42 @@ export function formatMessageForNote(
   lines.push('');
 
   // Header with metadata
-  lines.push('## AI Terminal Capture');
+  lines.push('## AI 助手捕获');
 
   // Format timestamp
   const date = new Date(message.timestamp);
-  const dateStr = date.toLocaleDateString('en-US', {
+  const dateStr = date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
-  const timeStr = date.toLocaleTimeString('en-US', {
+  const timeStr = date.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
   });
-  lines.push(`**Date:** ${dateStr} at ${timeStr}`);
+  lines.push(`**日期：** ${dateStr} ${timeStr}`);
 
   // Model info
   if (message.model && message.provider) {
-    lines.push(`**Model:** ${message.model} (${message.provider})`);
+    lines.push(`**模型：** ${message.model} (${message.provider})`);
   } else if (message.model) {
-    lines.push(`**Model:** ${message.model}`);
+    lines.push(`**模型：** ${message.model}`);
   }
 
   lines.push('');
 
   // Include prompt if provided (for response saves)
   if (promptMessage) {
-    lines.push('### Prompt');
+    lines.push('### 提示');
     lines.push(promptMessage.content);
     lines.push('');
   }
 
   // Main content
   if (message.role === 'user') {
-    lines.push('### Prompt');
+    lines.push('### 提示');
   } else {
-    lines.push('### Response');
+    lines.push('### 回复');
   }
   lines.push(message.content);
   lines.push('');
@@ -244,7 +244,7 @@ export function formatConversationForNote(
   // Header
   lines.push('---');
   lines.push('');
-  lines.push('## AI Terminal Conversation');
+  lines.push('## AI 助手对话');
 
   // Timestamp range
   const firstDate = new Date(filteredMessages[0].timestamp);
@@ -253,8 +253,8 @@ export function formatConversationForNote(
     month: 'long',
     day: 'numeric',
   });
-  lines.push(`**Date:** ${dateStr}`);
-  lines.push(`**Messages:** ${filteredMessages.length}`);
+  lines.push(`**日期：** ${dateStr}`);
+  lines.push(`**消息数：** ${filteredMessages.length}`);
   lines.push('');
 
   // Messages
@@ -265,10 +265,10 @@ export function formatConversationForNote(
     });
 
     if (msg.role === 'user') {
-      lines.push(`### [${time}] Prompt`);
+      lines.push(`### [${time}] 提示`);
     } else {
       const modelInfo = msg.model ? ` (${msg.model})` : '';
-      lines.push(`### [${time}] Response${modelInfo}`);
+      lines.push(`### [${time}] 回复${modelInfo}`);
     }
     lines.push(msg.content);
     lines.push('');
@@ -304,7 +304,7 @@ export function saveMessageToNote(params: {
   const note = notesStore.getNote(targetNoteId);
   if (!note) {
     log.error('Target note not found', { noteId: targetNoteId });
-    throw new Error('Target note not found');
+    throw new Error('未找到目标笔记');
   }
 
   // Check for duplicate - skip if message already saved to this note
@@ -313,7 +313,7 @@ export function saveMessageToNote(params: {
       messageId: message.id,
       noteId: targetNoteId,
     });
-    return { success: true, skipped: true, reason: 'Message already saved' };
+    return { success: true, skipped: true, reason: '消息已保存' };
   }
 
   // Format the message
@@ -362,7 +362,7 @@ export function saveConversationToNote(params: {
   const note = notesStore.getNote(targetNoteId);
   if (!note) {
     log.error('Target note not found', { noteId: targetNoteId });
-    throw new Error('Target note not found');
+    throw new Error('未找到目标笔记');
   }
 
   // Format the conversation
@@ -507,7 +507,7 @@ export function createNoteWithConversation(params: {
   const markdown = formatConversationForNote(messages, filter);
 
   if (!markdown) {
-    throw new Error('No messages to save after filtering');
+    throw new Error('筛选后没有可保存的消息');
   }
 
   // Determine folder - use AI Terminal folder if not specified
@@ -600,15 +600,15 @@ export function getPrecedingPrompt(responseMessage: Message): Message | undefine
 /**
  * Quick Note configuration
  */
-export const QUICK_NOTE_TITLE = '⚡ Quick Note';
+export const QUICK_NOTE_TITLE = '⚡ 快速笔记';
 export const QUICK_NOTE_ICON = '⚡';
 
 /**
  * Quick Note template for initial creation
  */
-export const QUICK_NOTE_TEMPLATE = `# ⚡ Quick Note
+export const QUICK_NOTE_TEMPLATE = `# ⚡ 快速笔记
 
-Fast capture for quick thoughts. Use "Move to Daily Note" to organize later.
+快速记录想法。之后可使用"移至每日笔记"来整理。
 
 `;
 
@@ -645,7 +645,7 @@ export function getOrCreateQuickNote(): Note {
   const cachedQuickNoteId = terminalStore.quickNoteId;
   if (cachedQuickNoteId) {
     const note = notesStore.getNote(cachedQuickNoteId);
-    if (note && note.isQuickNote) {
+    if (note && !note.deletedAt && note.isQuickNote) {
       return note;
     }
     // Note was deleted or no longer marked as Quick Note, clear cache
@@ -813,7 +813,7 @@ export function moveContentToDailyNote(
 
   // Format content for Daily Note (add header if needed)
   const movedContent = `---
-**Moved from Quick Note**
+**从快速笔记移入**
 
 ${content.trim()}
 

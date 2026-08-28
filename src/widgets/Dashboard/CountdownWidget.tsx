@@ -66,7 +66,7 @@ export const CountdownWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Countdown" icon="⏳">
+    <BaseWidget title="倒计时" icon="⏳">
       <div className="space-y-3">
         {/* Add New Event */}
         <div className="space-y-2">
@@ -74,7 +74,7 @@ export const CountdownWidget: React.FC = () => {
             type="text"
             value={newEventName}
             onChange={(e) => setNewEventName(e.target.value)}
-            placeholder="Event name"
+            placeholder="事件名称"
             className="w-full px-3 py-2 rounded-button transition-all duration-standard ease-smooth bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary text-sm focus:ring-2 focus:ring-accent-blue focus:border-transparent"
           />
           <div className="flex gap-2">
@@ -88,7 +88,7 @@ export const CountdownWidget: React.FC = () => {
               onClick={addEvent}
               className="px-4 py-2 bg-accent-blue text-white rounded-button hover:bg-accent-blue-hover transition-all duration-standard ease-smooth text-sm font-medium"
             >
-              Add
+              添加
             </button>
           </div>
         </div>
@@ -96,7 +96,7 @@ export const CountdownWidget: React.FC = () => {
         {/* Events List */}
         {events.length === 0 ? (
           <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-            No countdowns yet. Add one above!
+            暂无倒计时，请在上方添加！
           </div>
         ) : (
           <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -113,31 +113,31 @@ export const CountdownWidget: React.FC = () => {
                     </h4>
                     <button
                       onClick={() => deleteEvent(event.id)}
-                      className="text-status-error hover:text-status-error-hover text-sm"
-                      title="Delete"
+                      className="text-status-error hover:text-accent-red-hover text-sm"
+                      title="删除"
                     >
                       ✕
                     </button>
                   </div>
                   {timeLeft.expired ? (
-                    <p className="text-status-error text-xs">Event passed!</p>
+                    <p className="text-status-error text-xs">事件已过！</p>
                   ) : (
                     <div className="grid grid-cols-4 gap-2 text-center">
                       <div>
                         <div className="text-lg font-bold text-accent-blue">{timeLeft.days}</div>
-                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Days</div>
+                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">天</div>
                       </div>
                       <div>
                         <div className="text-lg font-bold text-accent-blue">{timeLeft.hours}</div>
-                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Hours</div>
+                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">小时</div>
                       </div>
                       <div>
                         <div className="text-lg font-bold text-accent-blue">{timeLeft.minutes}</div>
-                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Mins</div>
+                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">分</div>
                       </div>
                       <div>
                         <div className="text-lg font-bold text-accent-blue">{timeLeft.seconds}</div>
-                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Secs</div>
+                        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">秒</div>
                       </div>
                     </div>
                   )}

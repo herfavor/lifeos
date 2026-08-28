@@ -1,9 +1,9 @@
 /**
  * LinkedEventsPanel Component
  *
- * Displays calendar events linked to the current note.
- * Shows event title, date, time, and color. Click navigates to the calendar date.
- * Part of Wave 5D: Calendar-Notes bidirectional linking.
+ * Displays calendar events linked to the current note. Relationship panels
+ * are secondary to writing, so this surface starts collapsed and expands on
+ * demand instead of permanently taking editor height.
  */
 
 import { useMemo, useState } from 'react';
@@ -26,9 +26,8 @@ export function LinkedEventsPanel({ noteId }: LinkedEventsPanelProps) {
   const { events, setCurrentDate, setViewMode } = useCalendarStore();
   const { unlinkEventFromNote } = useNotesStore();
   const { unlinkNoteFromEvent } = useCalendarStore();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  // Resolve event IDs to actual events with their date keys
   const resolvedEvents = useMemo((): ResolvedEvent[] => {
     if (!note?.linkedEventIds?.length) return [];
 
@@ -46,13 +45,11 @@ export function LinkedEventsPanel({ noteId }: LinkedEventsPanelProps) {
       if (linkedIds.size === 0) break;
     }
 
-    // Sort by date
     result.sort((a, b) => a.dateKey.localeCompare(b.dateKey));
     return result;
   }, [note?.linkedEventIds, events]);
 
-  if (!note?.linkedEventIds?.length) return null;
-  if (resolvedEvents.length === 0) return null;
+  if (!note?.linkedEventIds?.length || resolvedEvents.length === 0) return null;
 
   const handleNavigateToEvent = (dateKey: string) => {
     const [year, month, day] = dateKey.split('-').map(Number);
@@ -67,8 +64,7 @@ export function LinkedEventsPanel({ noteId }: LinkedEventsPanelProps) {
 
   const formatDate = (dateKey: string): string => {
     const [year, month, day] = dateKey.split('-').map(Number);
-    const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('en-US', {
+    return new Date(year, month - 1, day).toLocaleDateString('zh-CN', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -76,63 +72,44 @@ export function LinkedEventsPanel({ noteId }: LinkedEventsPanelProps) {
   };
 
   return (
-    <div className="border-t border-border-light dark:border-border-dark">
+    <div className="border-t border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark">
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
+        type="button"
+        onClick={() => setIsExpanded((open) => !open)}
+        className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-text-light-secondary transition-colors hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary"
+        aria-expanded={isExpanded}
       >
-        {isExpanded ? (
-          <ChevronDown className="w-3.5 h-3.5" />
-        ) : (
-          <ChevronRight className="w-3.5 h-3.5" />
-        )}
-        <Calendar className="w-3.5 h-3.5 text-accent-primary" />
-        <span>Linked Events ({resolvedEvents.length})</span>
+        {isExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+        <Calendar className="h-3.5 w-3.5" />
+        <span className="font-medium">关联日程</span>
+        <span className="rounded-full bg-surface-light-elevated px-2 py-0.5 text-[11px] text-text-light-tertiary dark:bg-surface-dark-elevated dark:text-text-dark-tertiary">
+          {resolvedEvents.length}
+        </span>
       </button>
 
       {isExpanded && (
-        <div className="px-3 pb-2 space-y-1">
+        <div className="space-y-1 border-t border-border-light/70 px-4 py-2 dark:border-border-dark/70">
           {resolvedEvents.map(({ event, dateKey }) => (
-            <div
-              key={event.id}
-              className="group flex items-center gap-2 px-2 py-1.5 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            >
-              <button
-                onClick={() => handleNavigateToEvent(dateKey)}
-                className="flex-1 min-w-0 text-left flex items-start gap-2"
-              >
-                <div
-                  className="w-2 h-2 rounded-full mt-1 flex-shrink-0"
-                  style={{
-                    backgroundColor: event.colorCategory
-                      ? undefined
-                      : '#3b82f6',
-                  }}
-                />
-                <div className="min-w-0">
-                  <div className="text-[11px] font-medium text-text-light-primary dark:text-text-dark-primary truncate">
-                    {event.title}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
-                    <span>{formatDate(dateKey)}</span>
-                    {event.startTime && (
-                      <>
-                        <Clock className="w-2.5 h-2.5" />
-                        <span>
-                          {event.startTime}
-                          {event.endTime ? ` - ${event.endTime}` : ''}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
+            <div key={event.id} className="group flex items-center gap-2 rounded-lg px-2.5 py-2 transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated">
+              <button type="button" onClick={() => handleNavigateToEvent(dateKey)} className="min-w-0 flex-1 text-left">
+                <p className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">{event.title}</p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                  <span>{formatDate(dateKey)}</span>
+                  {event.startTime && (
+                    <>
+                      <Clock className="h-3 w-3" />
+                      <span>{event.startTime}{event.endTime ? `–${event.endTime}` : ''}</span>
+                    </>
+                  )}
+                </p>
               </button>
               <button
+                type="button"
                 onClick={() => handleUnlink(event.id)}
-                className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-status-error text-text-light-secondary dark:text-text-dark-secondary transition-all"
-                aria-label={`Unlink ${event.title}`}
+                className="rounded p-1 text-text-light-tertiary opacity-0 transition-all hover:bg-status-error/10 hover:text-status-error group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 dark:text-text-dark-tertiary"
+                aria-label={`取消关联${event.title}`}
               >
-                <X className="w-3 h-3" />
+                <X className="h-3.5 w-3.5" />
               </button>
             </div>
           ))}

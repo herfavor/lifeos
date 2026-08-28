@@ -43,7 +43,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
   onClose,
   onSelectNote,
   onCreateNote,
-  title = 'Choose Destination',
+  title = '选择保存位置',
   isSaving = false,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +58,10 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
 
   // Get all notes - select raw object to avoid infinite loop, memoize conversion
   const notesRecord = useNotesStore((state) => state.notes);
-  const allNotes = useMemo(() => Object.values(notesRecord), [notesRecord]);
+  const allNotes = useMemo(
+    () => Object.values(notesRecord).filter((note) => !note.deletedAt),
+    [notesRecord]
+  );
 
   // Filter notes by search query
   const filteredNotes = useMemo(() => {
@@ -158,7 +161,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
           className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
             isSelected
               ? 'bg-accent-blue/20 text-accent-blue'
-              : 'hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary'
+              : 'hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
           }`}
           style={{ paddingLeft: `${depth * 16 + 12}px` }}
           onClick={() => {
@@ -211,7 +214,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
               notesInFolder.map((note) => (
                 <div
                   key={note.id}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
                   style={{ paddingLeft: `${(depth + 1) * 16 + 12}px` }}
                   onClick={() => handleSelectNote(note)}
                   role="option"
@@ -255,8 +258,8 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover rounded-lg transition-colors"
-            aria-label="Close"
+            className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
+            aria-label="关闭"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -273,7 +276,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
             onClick={() => setViewMode('browse')}
           >
             <FileText className="w-4 h-4 inline mr-1.5" />
-            Existing Note
+            现有笔记
           </button>
           <button
             className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
@@ -284,7 +287,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
             onClick={() => setViewMode('create')}
           >
             <Plus className="w-4 h-4 inline mr-1.5" />
-            New Note
+            新建笔记
           </button>
         </div>
 
@@ -295,7 +298,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
               <input
                 type="text"
-                placeholder="Search notes..."
+                placeholder="搜索笔记..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-accent-blue/50 transition-all"
@@ -311,7 +314,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
             <input
               ref={newNoteInputRef}
               type="text"
-              placeholder="Note title..."
+              placeholder="笔记标题..."
               value={newNoteTitle}
               onChange={(e) => setNewNoteTitle(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -319,7 +322,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
               disabled={isSaving}
             />
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              Select a folder below, or leave unselected for root level
+              在下方选择文件夹，或保持未选择以保存到根目录
             </p>
           </div>
         )}
@@ -333,7 +336,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
                 filteredNotes.map((note) => (
                   <div
                     key={note.id}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
                     onClick={() => handleSelectNote(note)}
                     role="option"
                   >
@@ -353,7 +356,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
                 ))
               ) : (
                 <div className="text-center py-6 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                  No notes found for "{searchQuery}"
+                  未找到与 "{searchQuery}" 匹配的笔记
                 </div>
               )}
             </>
@@ -367,7 +370,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors mb-1 ${
                   selectedFolderId === null && viewMode === 'create'
                     ? 'bg-accent-blue/20 text-accent-blue'
-                    : 'hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary'
+                    : 'hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
                 }`}
                 onClick={() => {
                   if (viewMode === 'create') {
@@ -377,7 +380,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
               >
                 <Home className="w-4 h-4 shrink-0" />
                 <span className="text-sm font-medium">
-                  {viewMode === 'create' ? 'Root Level (No Folder)' : 'All Notes'}
+                  {viewMode === 'create' ? '根目录（无文件夹）' : '全部笔记'}
                 </span>
               </div>
 
@@ -387,7 +390,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
                 getNotesInFolder(null).map((note) => (
                   <div
                     key={note.id}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover text-text-light-primary dark:text-text-dark-primary"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
                     style={{ paddingLeft: '28px' }}
                     onClick={() => handleSelectNote(note)}
                     role="option"
@@ -405,7 +408,7 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
                 folderTree.map((node) => renderFolderItem(node, 0))
               ) : (
                 <div className="text-center py-4 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                  No folders yet
+                  还没有文件夹
                 </div>
               )}
             </>
@@ -417,10 +420,10 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
           <div className="flex items-center justify-end gap-3 px-4 py-3 border-t border-border-light dark:border-border-dark shrink-0">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-hover dark:hover:bg-surface-dark-hover transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
               disabled={isSaving}
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleCreateNote}
@@ -430,12 +433,12 @@ export const NoteDestinationPicker: React.FC<NoteDestinationPickerProps> = ({
               {isSaving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Creating...
+                  创建中...
                 </>
               ) : (
                 <>
                   <Plus className="w-4 h-4" />
-                  Create & Save
+                  创建并保存
                 </>
               )}
             </button>

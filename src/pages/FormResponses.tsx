@@ -49,7 +49,7 @@ export default function FormResponses() {
 
   const handleExport = () => {
     if (responses.length === 0) {
-      toast.warning('No responses to export');
+      toast.warning('没有可导出的回复');
       return;
     }
     exportFormResponsesToCSV(form, responses);
@@ -102,17 +102,17 @@ export default function FormResponses() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/forms')}
-              className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded-lg transition-colors"
-              aria-label="Back to forms"
+              className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
+              aria-label="返回表单"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <h1 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                {form.title} - Responses
+                {form.title} - 回复
               </h1>
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                {responses.length} {responses.length === 1 ? 'response' : 'responses'}
+                {responses.length} 条回复
               </p>
             </div>
           </div>
@@ -120,26 +120,26 @@ export default function FormResponses() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate(`/forms/${id}/fill`)}
-              className="flex items-center gap-2 px-4 py-2 bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg hover:bg-border-light dark:hover:bg-border-dark"
+              className="flex items-center gap-2 px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg hover:bg-border-light dark:hover:bg-border-dark"
             >
               <Plus className="w-4 h-4" />
-              New Response
+              新建回复
             </button>
             {responses.length > 0 && (
               <>
                 <button
                   onClick={handleExport}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+                  className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg hover:opacity-90"
                 >
                   <Download className="w-4 h-4" />
-                  Export CSV
+                  导出 CSV
                 </button>
                 <button
                   onClick={handleClearAll}
                   className="flex items-center gap-2 px-4 py-2 bg-accent-red/10 text-accent-red rounded-lg hover:bg-accent-red/20"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Clear All
+                  清除全部
                 </button>
               </>
             )}
@@ -153,22 +153,22 @@ export default function FormResponses() {
               onClick={() => setActiveTab('responses')}
               className={`px-4 py-2 font-medium transition-colors border-b-2 ${
                 activeTab === 'responses'
-                  ? 'border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark'
+                  ? 'border-accent-primary text-accent-primary'
                   : 'border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
               }`}
             >
-              Responses
+              回复
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
               className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors border-b-2 ${
                 activeTab === 'analytics'
-                  ? 'border-primary-light dark:border-primary-dark text-primary-light dark:text-primary-dark'
+                  ? 'border-accent-primary text-accent-primary'
                   : 'border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
               }`}
             >
               <BarChart3 className="w-4 h-4" />
-              Analytics
+              数据分析
             </button>
           </div>
         </div>
@@ -183,17 +183,17 @@ export default function FormResponses() {
                 <Plus className="w-12 h-12 text-text-light-tertiary dark:text-text-dark-tertiary" />
               </div>
               <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-                No responses yet
+                暂无回复
               </h2>
               <p className="text-text-light-secondary dark:text-text-dark-secondary mb-6 max-w-md">
-                Start collecting data by filling out the form
+                填写表单即可开始收集数据
               </p>
               <button
                 onClick={() => navigate(`/forms/${id}/fill`)}
-                className="flex items-center gap-2 px-6 py-3 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90"
+                className="flex items-center gap-2 px-6 py-3 bg-accent-primary text-white rounded-lg hover:opacity-90"
               >
                 <Plus className="w-5 h-5" />
-                Fill Form
+                填写表单
               </button>
             </div>
           ) : (
@@ -207,32 +207,32 @@ export default function FormResponses() {
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-light dark:border-border-dark">
                     <div className="flex items-center gap-3">
                       <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                        Submitted: {new Date(response.submittedAt).toLocaleString()}
+                        提交于：{new Date(response.submittedAt).toLocaleString()}
                       </div>
                       {response.isSpam && (
                         <div
                           className="flex items-center gap-1 px-2 py-1 bg-accent-yellow/10 text-accent-yellow rounded text-xs font-medium"
-                          title={`Suspicious response (${
+                          title={`可疑回复（${
                             response.submissionTimeSeconds !== undefined
-                              ? `submitted in ${response.submissionTimeSeconds.toFixed(1)}s`
-                              : 'honeypot triggered'
-                          })`}
+                              ? `在 ${response.submissionTimeSeconds.toFixed(1)} 秒内提交`
+                              : '触发蜜罐'
+                          }）`}
                         >
                           <AlertTriangle className="w-3 h-3" />
-                          Spam
+                          垃圾回复
                         </div>
                       )}
                       {response.submissionTimeSeconds !== undefined && !response.isSpam && (
                         <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                          {response.submissionTimeSeconds.toFixed(1)}s
+                          {response.submissionTimeSeconds.toFixed(1)}秒
                         </div>
                       )}
                     </div>
                     <button
                       onClick={() => handleDeleteResponse(response.id)}
                       className="p-2 hover:bg-accent-red/10 text-accent-red rounded"
-                      title="Delete response"
-                      aria-label="Delete response"
+                      title="删除回复"
+                      aria-label="删除回复"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -270,10 +270,10 @@ export default function FormResponses() {
                 <div className="flex flex-col items-center justify-center h-full text-center">
                   <BarChart3 className="w-16 h-16 text-text-light-tertiary dark:text-text-dark-tertiary mb-4" />
                   <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-                    No data to analyze yet
+                    暂无数据可分析
                   </h2>
                   <p className="text-text-light-secondary dark:text-text-dark-secondary mb-6 max-w-md">
-                    Analytics will appear once you have form responses
+                    有表单回复后即可查看数据分析
                   </p>
                 </div>
               ) : (
@@ -282,7 +282,7 @@ export default function FormResponses() {
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4">
                       <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        Total Responses
+                        回复总数
                       </div>
                       <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
                         {analytics.totalResponses}
@@ -291,7 +291,7 @@ export default function FormResponses() {
 
                     <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4">
                       <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        Valid Responses
+                        有效回复
                       </div>
                       <div className="text-2xl font-bold text-accent-green">
                         {analytics.nonSpamResponses}
@@ -300,7 +300,7 @@ export default function FormResponses() {
 
                     <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4">
                       <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        Spam Rate
+                        垃圾率
                       </div>
                       <div className="text-2xl font-bold text-accent-yellow">
                         {analytics.spamRate.toFixed(1)}%
@@ -309,10 +309,10 @@ export default function FormResponses() {
 
                     <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4">
                       <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-1">
-                        Avg. Time
+                        平均用时
                       </div>
                       <div className="text-2xl font-bold text-accent-primary">
-                        {analytics.avgCompletionTimeSeconds.toFixed(1)}s
+                        {analytics.avgCompletionTimeSeconds.toFixed(1)}秒
                       </div>
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export default function FormResponses() {
                   {analytics.responsesByDay.length > 0 && (
                     <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-6">
                       <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-                        Responses Over Time
+                        回复趋势
                       </h3>
                       <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={analytics.responsesByDay}>
@@ -351,14 +351,14 @@ export default function FormResponses() {
                         {field.fieldLabel}
                       </h3>
                       <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary mb-4">
-                        {field.responseCount} {field.responseCount === 1 ? 'response' : 'responses'}
+                        {field.responseCount} 条回复
                       </p>
 
                       {/* Average value for numeric fields */}
                       {field.averageValue !== undefined && (
                         <div className="mb-4">
                           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            Average:
+                            平均值：
                           </span>
                           <span className="ml-2 text-lg font-bold text-accent-primary">
                             {field.averageValue.toFixed(2)}
@@ -392,7 +392,7 @@ export default function FormResponses() {
                       {field.mostCommonAnswers && field.mostCommonAnswers.length > 0 && (
                         <div className="mt-4">
                           <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                            Most Common Answers:
+                            最常见的回答：
                           </h4>
                           <div className="space-y-2">
                             {field.mostCommonAnswers.map((answer, idx) => (
@@ -401,7 +401,7 @@ export default function FormResponses() {
                                   {answer.value}
                                 </span>
                                 <span className="text-sm font-medium text-accent-primary">
-                                  {answer.count} {answer.count === 1 ? 'response' : 'responses'}
+                                  {answer.count} 条回复
                                 </span>
                               </div>
                             ))}
@@ -420,9 +420,9 @@ export default function FormResponses() {
           isOpen={responseToDelete !== null}
           onClose={() => setResponseToDelete(null)}
           onConfirm={confirmDeleteResponse}
-          title="Delete Response"
-          message="Delete this response?"
-          confirmText="Delete"
+          title="删除回复"
+          message="确定删除这条回复？"
+          confirmText="删除"
           variant="danger"
         />
 
@@ -430,9 +430,9 @@ export default function FormResponses() {
           isOpen={showClearAllConfirm}
           onClose={() => setShowClearAllConfirm(false)}
           onConfirm={confirmClearAll}
-          title="Clear All Responses"
-          message={`Delete all ${responses.length} responses? This cannot be undone.`}
-          confirmText="Clear All"
+          title="清除全部回复"
+          message={`确定删除全部 ${responses.length} 条回复？此操作无法撤销。`}
+          confirmText="清除全部"
           variant="danger"
         />
       </div>
@@ -443,16 +443,16 @@ export default function FormResponses() {
 // Helper function to format values for display
 function formatValue(value: any, fieldType: string): string {
   if (value === null || value === undefined || value === '') {
-    return '(empty)';
+    return '（空）';
   }
 
   switch (fieldType) {
     case 'checkbox':
-      return value ? 'Yes' : 'No';
+      return value ? '是' : '否';
 
     case 'multiselect':
       if (Array.isArray(value)) {
-        return value.length > 0 ? value.join(', ') : '(none selected)';
+        return value.length > 0 ? value.join(', ') : '（未选择）';
       }
       return String(value);
 

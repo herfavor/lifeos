@@ -1,7 +1,7 @@
 /**
  * CSS Variable Keys — Single Source of Truth
  *
- * All 31 CSS custom properties used by the theme system.
+ * All CSS custom properties used by the theme system.
  * Referenced by theme definitions and injection logic.
  */
 
@@ -42,6 +42,10 @@ export const THEME_VARIABLE_KEYS = [
   '--accent-yellow-hover',
   '--accent-orange',
   '--accent-orange-hover',
+  '--accent-primary',
+  '--accent-primary-hover',
+  '--accent-secondary',
+  '--accent-secondary-hover',
 
   // Status colors
   '--status-success',

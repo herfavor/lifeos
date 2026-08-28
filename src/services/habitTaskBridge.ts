@@ -20,12 +20,12 @@ export function convertHabitToTask(habitId: string): string | null {
 
   const habit = habitStore.habits.find((h) => h.id === habitId);
   if (!habit) {
-    toast.error('Habit not found');
+    toast.error('未找到习惯');
     return null;
   }
 
   if (habit.linkedTaskId) {
-    toast.warning('Already linked', 'This habit is already linked to a task');
+    toast.warning('已关联', '该习惯已关联到一个任务');
     return habit.linkedTaskId;
   }
 
@@ -38,7 +38,7 @@ export function convertHabitToTask(habitId: string): string | null {
   // Create the task
   kanbanStore.addTask({
     title: habit.title,
-    description: habit.description || `Recurring task from habit: ${habit.title}`,
+    description: habit.description || `来自习惯的重复任务：${habit.title}`,
     status: 'todo',
     priority: habit.difficulty === 'hard' ? 'high' : habit.difficulty === 'medium' ? 'medium' : 'low',
     tags: ['habit', habit.category],
@@ -57,7 +57,7 @@ export function convertHabitToTask(habitId: string): string | null {
   if (newTask) {
     // Link habit back to task
     habitStore.updateHabit(habitId, { linkedTaskId: newTask.id });
-    toast.success('Task created', `"${habit.title}" is now tracked as a task`);
+    toast.success('任务已创建', `"${habit.title}" 现在已作为任务跟踪`);
     return newTask.id;
   }
 
@@ -74,12 +74,12 @@ export function convertTaskToHabit(taskId: string): string | null {
 
   const task = kanbanStore.tasks.find((t) => t.id === taskId);
   if (!task) {
-    toast.error('Task not found');
+    toast.error('未找到任务');
     return null;
   }
 
   if (task.linkedHabitId) {
-    toast.warning('Already linked', 'This task is already linked to a habit');
+    toast.warning('已关联', '该任务已关联到一个习惯');
     return task.linkedHabitId;
   }
 
@@ -103,7 +103,7 @@ export function convertTaskToHabit(taskId: string): string | null {
   // Link task back to habit
   kanbanStore.updateTask(taskId, { linkedHabitId: habitId });
 
-  toast.success('Habit created', `"${task.title}" is now tracked as a habit`);
+  toast.success('习惯已创建', `"${task.title}" 现在已作为习惯跟踪`);
   return habitId;
 }
 

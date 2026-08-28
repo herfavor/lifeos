@@ -127,25 +127,25 @@ export async function getDiagnosticReport(): Promise<DiagnosticReport> {
 async function getSystemInfo(): Promise<SystemInfo> {
   // Browser detection
   const ua = navigator.userAgent;
-  let browserName = 'Unknown';
-  let browserVersion = 'Unknown';
+  let browserName = '未知';
+  let browserVersion = '未知';
 
   if (ua.includes('Chrome')) {
     browserName = 'Chrome';
-    browserVersion = ua.match(/Chrome\/([\d.]+)/)?.[1] || 'Unknown';
+    browserVersion = ua.match(/Chrome\/([\d.]+)/)?.[1] || '未知';
   } else if (ua.includes('Firefox')) {
     browserName = 'Firefox';
-    browserVersion = ua.match(/Firefox\/([\d.]+)/)?.[1] || 'Unknown';
+    browserVersion = ua.match(/Firefox\/([\d.]+)/)?.[1] || '未知';
   } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
     browserName = 'Safari';
-    browserVersion = ua.match(/Version\/([\d.]+)/)?.[1] || 'Unknown';
+    browserVersion = ua.match(/Version\/([\d.]+)/)?.[1] || '未知';
   } else if (ua.includes('Edg')) {
     browserName = 'Edge';
-    browserVersion = ua.match(/Edg\/([\d.]+)/)?.[1] || 'Unknown';
+    browserVersion = ua.match(/Edg\/([\d.]+)/)?.[1] || '未知';
   }
 
   // OS detection
-  let platform = 'Unknown';
+  let platform = '未知';
   if (ua.includes('Win')) platform = 'Windows';
   else if (ua.includes('Mac')) platform = 'macOS';
   else if (ua.includes('Linux')) platform = 'Linux';
@@ -162,7 +162,7 @@ async function getSystemInfo(): Promise<SystemInfo> {
   let connection: string | undefined;
   if ('connection' in navigator) {
     const conn = (navigator as NavigatorWithExtensions).connection;
-    connection = conn?.effectiveType || 'Unknown';
+    connection = conn?.effectiveType || '未知';
   }
 
   return {
@@ -423,7 +423,7 @@ export function formatDiagnosticReport(report: DiagnosticReport): string {
   const lines: string[] = [];
 
   // Header
-  lines.push('# NeumanOS Diagnostic Report');
+  lines.push('# LifeOS Diagnostic Report');
   lines.push('');
   lines.push(`**Generated:** ${new Date(report.generated).toLocaleString()}`);
   lines.push('');
@@ -551,7 +551,7 @@ export function downloadDiagnosticReport(report: DiagnosticReport): void {
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
   const timeString = new Date().toISOString().replace(/[:.]/g, '-').split('T')[1].split('.')[0];
-  const filename = `neumanos-diagnostics-${timestamp}-${timeString}.md`;
+  const filename = `lifeos-diagnostics-${timestamp}-${timeString}.md`;
 
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

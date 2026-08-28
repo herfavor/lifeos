@@ -132,7 +132,7 @@ function ExpiryTimer({ expiresAt }: { expiresAt: string }) {
   return (
     <span className="flex items-center gap-1 text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">
       <Clock className="w-3 h-3" />
-      {hoursLeft}h left
+      剩余 {hoursLeft} 小时
     </span>
   );
 }
@@ -171,7 +171,7 @@ export function DailyQuestsPanel() {
             <ChevronDown className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
           )}
           <span className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Daily Quests
+            每日任务
           </span>
           <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-accent-primary/10 text-accent-primary">
             {completedCount}/{quests.length}
@@ -198,7 +198,7 @@ export function DailyQuestsPanel() {
 
           {claimedCount === quests.length && quests.length > 0 && (
             <p className="text-center text-xs text-text-light-tertiary dark:text-text-dark-tertiary py-2">
-              All quests completed! New quests tomorrow.
+              所有任务已完成！明天会有新任务。
             </p>
           )}
         </div>

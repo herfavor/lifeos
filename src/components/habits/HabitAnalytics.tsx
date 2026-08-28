@@ -12,16 +12,16 @@ import type { Habit, HabitCompletion, HabitCategory } from '../../types';
 
 // Category display config
 const CATEGORY_LABELS: Record<HabitCategory, string> = {
-  health: 'Health',
-  productivity: 'Productivity',
-  learning: 'Learning',
-  social: 'Social',
-  mindfulness: 'Mindfulness',
-  fitness: 'Fitness',
-  nutrition: 'Nutrition',
-  creative: 'Creative',
-  finance: 'Finance',
-  uncategorized: 'Uncategorized',
+  health: '健康',
+  productivity: '效率',
+  learning: '学习',
+  social: '社交',
+  mindfulness: '正念',
+  fitness: '健身',
+  nutrition: '营养',
+  creative: '创意',
+  finance: '财务',
+  uncategorized: '未分类',
 };
 
 const CHART_COLORS = [
@@ -89,7 +89,7 @@ function buildWeeklyTrend(
     }
 
     const rate = possible > 0 ? Math.round((completed / possible) * 100) : 0;
-    const month = weekStart.toLocaleString('en', { month: 'short' });
+    const month = weekStart.toLocaleString('zh-CN', { month: 'short' });
     const day = weekStart.getDate();
     points.push({ label: `${month} ${day}`, rate });
   }
@@ -131,7 +131,7 @@ function buildDayOfWeekStats(
   habits: Habit[],
   completions: HabitCompletion[],
 ): DayOfWeekData[] {
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
   const stats = dayNames.map((day) => ({
     day,
     completions: 0,
@@ -208,9 +208,9 @@ function buildTimeDistribution(completions: HabitCompletion[]): TimeDistData[] {
   }
 
   return [
-    { period: 'Morning (6am-12pm)', count: morning, color: '#f97316' },
-    { period: 'Afternoon (12pm-6pm)', count: afternoon, color: '#3b82f6' },
-    { period: 'Evening (6pm-12am)', count: evening, color: '#8b5cf6' },
+    { period: '上午（6-12点）', count: morning, color: '#f97316' },
+    { period: '下午（12-18点）', count: afternoon, color: '#3b82f6' },
+    { period: '晚上（18-24点）', count: evening, color: '#8b5cf6' },
   ];
 }
 
@@ -247,7 +247,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     weeks.push(currentWeek);
   }
 
-  const dayLabels = ['Mon', '', 'Wed', '', 'Fri', '', 'Sun'];
+  const dayLabels = ['一', '', '三', '', '五', '', '日'];
 
   return (
     <div className="overflow-x-auto">
@@ -268,7 +268,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
                 key={di}
                 className="w-3 h-3 rounded-sm"
                 style={{ backgroundColor: day ? HEATMAP_COLORS[day.level] : 'transparent' }}
-                title={day ? `${day.date}: ${day.count} completions` : ''}
+                title={day ? `${day.date}：${day.count} 次完成` : ''}
               />
             ))}
           </div>
@@ -276,11 +276,11 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
       </div>
       {/* Legend */}
       <div className="flex items-center gap-1 mt-2 text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">
-        <span>Less</span>
+        <span>更少</span>
         {HEATMAP_COLORS.map((color, i) => (
           <div key={i} className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
         ))}
-        <span>More</span>
+        <span>更多</span>
       </div>
     </div>
   );
@@ -306,7 +306,7 @@ function StreakLeaderboard({ habits }: { habits: Habit[] }) {
     <div>
       <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
         <Flame className="w-4 h-4" />
-        Streak Leaderboard
+        连续排行榜
       </h4>
       <div className="space-y-2">
         {topStreaks.map((habit, idx) => (
@@ -321,7 +321,7 @@ function StreakLeaderboard({ habits }: { habits: Habit[] }) {
                   {habit.title}
                 </span>
                 <span className="text-sm font-medium text-accent-orange shrink-0 ml-2">
-                  {habit.currentStreak} days
+                  {habit.currentStreak} 天
                 </span>
               </div>
               <div className="w-full h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
@@ -363,7 +363,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="flex items-center gap-3">
               <BarChart3 className="w-6 h-6 text-accent-primary" />
               <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-                Habit Analytics
+                习惯分析
               </h2>
             </div>
           </div>
@@ -373,7 +373,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="bg-surface-light-alt dark:bg-surface-dark rounded-xl p-4">
               <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
-                Weekly Completion Rate
+                每周完成率
               </h4>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -390,7 +390,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
                       width={35}
                     />
                     <Tooltip
-                      formatter={(value: number | undefined) => [`${value ?? 0}%`, 'Completion Rate']}
+                      formatter={(value: number | undefined) => [`${value ?? 0}%`, '完成率']}
                       contentStyle={{
                         backgroundColor: 'var(--color-surface-dark, #1f2937)',
                         border: '1px solid var(--color-border-dark, #374151)',
@@ -414,7 +414,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="bg-surface-light-alt dark:bg-surface-dark rounded-xl p-4">
               <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                Best & Worst Days (90 days)
+                最佳与最差日期（90 天）
               </h4>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -427,7 +427,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
                       width={35}
                     />
                     <Tooltip
-                      formatter={(value: number | undefined) => [`${value ?? 0}%`, 'Completion Rate']}
+                      formatter={(value: number | undefined) => [`${value ?? 0}%`, '完成率']}
                       contentStyle={{
                         backgroundColor: 'var(--color-surface-dark, #1f2937)',
                         border: '1px solid var(--color-border-dark, #374151)',
@@ -452,7 +452,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="bg-surface-light-alt dark:bg-surface-dark rounded-xl p-4">
               <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                6-Month Activity Heatmap
+                6 个月活动热力图
               </h4>
               <ContributionHeatmap data={heatmapData} />
             </div>
@@ -461,7 +461,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="bg-surface-light-alt dark:bg-surface-dark rounded-xl p-4">
               <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <PieChartIcon className="w-4 h-4" />
-                Category Breakdown
+                分类分布
               </h4>
               {categoryBreakdown.length > 0 ? (
                 <div className="h-48">
@@ -481,7 +481,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
                         ))}
                       </Pie>
                       <Tooltip
-                        formatter={(value: number | undefined, name: string | undefined) => [`${value ?? 0} completions`, name ?? '']}
+                        formatter={(value: number | undefined, name: string | undefined) => [`${value ?? 0} 次完成`, name ?? '']}
                         contentStyle={{
                           backgroundColor: 'var(--color-surface-dark, #1f2937)',
                           border: '1px solid var(--color-border-dark, #374151)',
@@ -506,7 +506,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
                 </div>
               ) : (
                 <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary text-center py-8">
-                  No completion data yet
+                  暂无完成数据
                 </p>
               )}
             </div>
@@ -520,7 +520,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             <div className="bg-surface-light-alt dark:bg-surface-dark rounded-xl p-4">
               <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3 flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                Completion Time Distribution
+                完成时间分布
               </h4>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -533,7 +533,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
                       width={130}
                     />
                     <Tooltip
-                      formatter={(value: number | undefined) => [`${value ?? 0}`, 'Completions']}
+                      formatter={(value: number | undefined) => [`${value ?? 0}`, '完成次数']}
                       contentStyle={{
                         backgroundColor: 'var(--color-surface-dark, #1f2937)',
                         border: '1px solid var(--color-border-dark, #374151)',
@@ -559,7 +559,7 @@ export function HabitAnalytics({ onClose }: HabitAnalyticsProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>

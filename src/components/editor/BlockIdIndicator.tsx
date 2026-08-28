@@ -45,8 +45,8 @@ export function BlockIdIndicator({ blockId, noteTitle, className = '' }: BlockId
         transition-all duration-200
         ${className}
       `}
-      title="Click to copy block reference"
-      aria-label={`Copy block reference: ${blockId}`}
+      title="点击复制块引用"
+      aria-label={`复制块引用：${blockId}`}
     >
       <span className="font-mono">#{blockId}</span>
       {copied ? (

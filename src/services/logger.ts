@@ -327,6 +327,6 @@ export function logBuildInfo(): void {
   // Dynamic import to avoid circular dependency
   import('../utils/buildInfo').then(({ formatBuildInfo }) => {
     // Always log build info, regardless of log level (for support/debugging)
-    console.info(`%c🧠 NeumanOS | ${formatBuildInfo()}`, 'color: #00D4FF; font-weight: bold');
+    console.info(`%c✨ LifeOS | ${formatBuildInfo()}`, 'color: #00D4FF; font-weight: bold');
   });
 }

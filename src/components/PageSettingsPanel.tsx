@@ -28,10 +28,10 @@ export const PageSettingsPanel: React.FC<PageSettingsPanelProps> = ({
   // Notes settings (placeholder for future)
   if (pagePath === '/notes') {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title="Notes Settings">
+      <Modal isOpen={isOpen} onClose={onClose} title="笔记设置">
         <div className="space-y-4">
           <p className="text-text-light-secondary dark:text-text-dark-secondary">
-            Notes settings will be added when Notes feature is implemented.
+            笔记功能实现后将提供笔记设置。
           </p>
         </div>
       </Modal>
@@ -41,10 +41,10 @@ export const PageSettingsPanel: React.FC<PageSettingsPanelProps> = ({
   // Planning settings (placeholder for future)
   if (pagePath === '/planning') {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title="Planning Settings">
+      <Modal isOpen={isOpen} onClose={onClose} title="规划设置">
         <div className="space-y-4">
           <p className="text-text-light-secondary dark:text-text-dark-secondary">
-            Planning settings will be added when needed.
+            需要时将提供规划设置。
           </p>
         </div>
       </Modal>
@@ -54,10 +54,10 @@ export const PageSettingsPanel: React.FC<PageSettingsPanelProps> = ({
   // Tasks settings (placeholder for future)
   if (pagePath === '/tasks') {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} title="Tasks Settings">
+      <Modal isOpen={isOpen} onClose={onClose} title="任务设置">
         <div className="space-y-4">
           <p className="text-text-light-secondary dark:text-text-dark-secondary">
-            Tasks settings will be added when needed.
+            需要时将提供任务设置。
           </p>
         </div>
       </Modal>

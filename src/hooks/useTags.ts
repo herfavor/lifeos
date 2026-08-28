@@ -25,7 +25,7 @@ export function useTags() {
   return useMemo(() => {
     const tagSet = new Set<string>();
     Object.values(notes).forEach((note) => {
-      if (!note.isArchived) {
+      if (!note.isArchived && !note.deletedAt) {
         note.tags.forEach((tag) => tagSet.add(tag));
       }
     });
@@ -43,7 +43,7 @@ export function useTagCounts(): TagCount[] {
     const tagCounts = new Map<string, number>();
 
     Object.values(notes).forEach((note) => {
-      if (!note.isArchived) {
+      if (!note.isArchived && !note.deletedAt) {
         note.tags.forEach((tag) => {
           tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
         });
@@ -64,11 +64,11 @@ export function useNotesWithTags(tags: string[]) {
 
   return useMemo(() => {
     if (tags.length === 0) {
-      return Object.values(notes).filter((note) => !note.isArchived);
+      return Object.values(notes).filter((note) => !note.isArchived && !note.deletedAt);
     }
 
     return Object.values(notes).filter((note) => {
-      if (note.isArchived) return false;
+      if (note.isArchived || note.deletedAt) return false;
       // Note must have ALL specified tags (AND logic)
       return tags.every((tag) => note.tags.includes(tag));
     });
@@ -87,7 +87,7 @@ export function useRecentTags(limit = 10): string[] {
 
     // Sort notes by updatedAt descending
     const sortedNotes = Object.values(notes)
-      .filter((note) => !note.isArchived)
+      .filter((note) => !note.isArchived && !note.deletedAt)
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
     // Collect tags from most recent notes

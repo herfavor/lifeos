@@ -123,7 +123,7 @@ const ProjectNode: React.FC<ProjectNodeProps> = ({
             type="button"
             onClick={handleExpandClick}
             className="p-0.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-            aria-label={expanded ? 'Collapse' : 'Expand'}
+            aria-label={expanded ? '折叠' : '展开'}
           >
             {expanded ? (
               <ChevronDown className={compact ? 'w-3 h-3' : 'w-4 h-4'} />
@@ -286,7 +286,7 @@ export const ProjectTree: React.FC<ProjectTreeProps> = ({
           `}
         >
           <span className={`${compact ? 'w-2 h-2' : 'w-3 h-3'} rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary flex-shrink-0`} />
-          <span className="flex-1">All Projects</span>
+          <span className="flex-1">全部项目</span>
           {selectionMode === 'multi' && (
             <input
               type="checkbox"
@@ -306,7 +306,7 @@ export const ProjectTree: React.FC<ProjectTreeProps> = ({
       {/* Root projects */}
       {rootProjects.length === 0 ? (
         <div className={`${compact ? 'px-2 py-3 text-xs' : 'px-3 py-4 text-sm'} text-center text-text-light-tertiary dark:text-text-dark-tertiary`}>
-          No projects yet
+          暂无项目
         </div>
       ) : (
         rootProjects.map((project) => (
@@ -331,7 +331,7 @@ export const ProjectTree: React.FC<ProjectTreeProps> = ({
         <>
           <div className="border-t border-border-light dark:border-border-dark my-2" />
           <div className={`${compact ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'} text-text-light-tertiary dark:text-text-dark-tertiary font-medium uppercase tracking-wide`}>
-            Archived
+            已归档
           </div>
           {archivedProjects.map((project) => (
             <ProjectNode

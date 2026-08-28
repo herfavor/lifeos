@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const solarizedTheme: ThemeDefinition = {
   id: 'solarized',
   name: 'Solarized Light',
-  description: 'Precision-crafted warm hues with balanced contrast',
+  description: '精心调配的暖色调与均衡对比',
   category: 'professional',
   preview: {
     primary: '#268BD2',

@@ -5,8 +5,8 @@
  * Features: large timer display, current task, keyboard controls.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Play, Pause, X, RotateCcw, Target, Clock, CheckCircle2 } from 'lucide-react';
 import { useFocusModeStore } from '../stores/useFocusModeStore';
 import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
@@ -29,6 +29,8 @@ const formatDuration = (seconds: number): string => {
 
 export const Focus: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedTaskId = searchParams.get('task');
 
   // Focus mode state
   const {
@@ -44,38 +46,75 @@ export const Focus: React.FC = () => {
 
   // Get linked task details
   const tasks = useKanbanStore((state) => state.tasks);
-  const linkedTask = linkedTaskId ? tasks.find((t) => t.id === linkedTaskId) : null;
+  const moveTask = useKanbanStore((state) => state.moveTask);
+  // A route task is used only for a new session. If a focus session already
+  // exists, its linked task remains the source of truth for the shared timer.
+  const sessionTaskId = isActive ? linkedTaskId : (requestedTaskId || linkedTaskId);
+  const linkedTask = sessionTaskId ? tasks.find((t) => t.id === sessionTaskId) : null;
+  const initializedSessionRef = useRef(false);
 
   // Session duration (updates every second)
   const [sessionDuration, setSessionDuration] = useState(0);
 
-  // Start focus session on mount if not already active
+  // A focus session and its time record are one shared active session. This
+  // intentionally runs once on entry: stopping a timer is an explicit user
+  // action and must not be mistaken for a reason to create another one.
   useEffect(() => {
-    if (!isActive) {
-      startFocus();
-    }
-  }, [isActive, startFocus]);
+    if (initializedSessionRef.current) return;
+    initializedSessionRef.current = true;
 
-  // Update session duration every second
+    if (!isActive) {
+      startFocus(sessionTaskId || undefined);
+    }
+
+    if (!activeEntry) {
+      startTimer({
+        taskId: sessionTaskId || undefined,
+        projectId: linkedTask?.projectIds[0] || undefined,
+        description: linkedTask?.title || '专注时段',
+        billable: false,
+      });
+    }
+  }, [activeEntry, isActive, linkedTask, linkedTaskId, requestedTaskId, sessionTaskId, startFocus, startTimer]);
+
+  // Update session duration every second. The shared time-tracking entry is
+  // the source of truth: while it is paused, freeze the display at the pause
+  // moment instead of counting wall-clock time from the focus start.
   useEffect(() => {
-    if (!startedAt) return;
+    if (!startedAt && !activeEntry?.startTime) return;
 
     const updateDuration = () => {
-      const start = new Date(startedAt).getTime();
+      if (activeEntry?.isPaused && activeEntry.pausedAt) {
+        setSessionDuration(
+          Math.max(0, Math.floor(
+            (new Date(activeEntry.pausedAt).getTime() - new Date(activeEntry.startTime).getTime()) / 1000
+          ))
+        );
+        return;
+      }
+      const start = new Date(activeEntry?.startTime ?? startedAt!).getTime();
       const now = Date.now();
-      setSessionDuration(Math.floor((now - start) / 1000));
+      setSessionDuration(Math.max(0, Math.floor((now - start) / 1000)));
     };
 
     updateDuration();
+
+    if (activeEntry?.isPaused) return; // Frozen while paused; resume resumes ticking.
     const interval = setInterval(updateDuration, 1000);
     return () => clearInterval(interval);
-  }, [startedAt]);
+  }, [startedAt, activeEntry?.startTime, activeEntry?.isPaused, activeEntry?.pausedAt]);
 
   // Handle exit focus mode
   const handleExit = useCallback(() => {
+    if (activeEntry && !window.confirm('当前仍在计时。要结束计时并退出专注模式吗？')) {
+      return;
+    }
+    if (activeEntry) {
+      void stopTimer();
+    }
     endFocus();
     navigate(-1);
-  }, [endFocus, navigate]);
+  }, [activeEntry, stopTimer, endFocus, navigate]);
 
   // Handle timer toggle
   const handleTimerToggle = useCallback(() => {
@@ -85,15 +124,24 @@ export const Focus: React.FC = () => {
       // Start timer linked to task
       startTimer({
         taskId: linkedTaskId,
-        description: linkedTask?.title || 'Focus session',
+        projectId: linkedTask?.projectIds[0] || undefined,
+        description: linkedTask?.title || '专注时段',
       });
     } else {
       // Start timer without task
       startTimer({
-        description: 'Focus session',
+        description: '专注时段',
       });
     }
   }, [activeEntry, linkedTaskId, linkedTask, startTimer, stopTimer]);
+
+  const handleCompleteTask = useCallback(() => {
+    if (!linkedTask) return;
+    moveTask(linkedTask.id, 'done');
+    if (activeEntry) void stopTimer();
+    endFocus();
+    navigate(-1);
+  }, [linkedTask, moveTask, activeEntry, stopTimer, endFocus, navigate]);
 
   // Handle reset (restart session)
   const handleReset = useCallback(() => {
@@ -104,8 +152,8 @@ export const Focus: React.FC = () => {
   useShortcut({
     id: 'focus-exit',
     keys: ['Escape'],
-    label: 'Exit Focus Mode',
-    description: 'Leave focus mode and return to previous page',
+    label: '退出专注模式',
+    description: '退出专注模式并返回上一页',
     handler: handleExit,
     priority: 100, // High priority
   });
@@ -113,8 +161,8 @@ export const Focus: React.FC = () => {
   useShortcut({
     id: 'focus-timer-toggle',
     keys: ['Space'],
-    label: 'Toggle Timer',
-    description: 'Start or stop the focus timer',
+    label: '切换计时器',
+    description: '启动或停止专注计时器',
     handler: handleTimerToggle,
     priority: 90,
   });
@@ -122,8 +170,8 @@ export const Focus: React.FC = () => {
   useShortcut({
     id: 'focus-reset',
     keys: ['r'],
-    label: 'Reset Session',
-    description: 'Reset the focus session timer',
+    label: '重置专注时段',
+    description: '重置专注时段计时器',
     handler: handleReset,
     priority: 80,
   });
@@ -137,8 +185,8 @@ export const Focus: React.FC = () => {
       <button
         onClick={handleExit}
         className="absolute top-6 right-6 p-3 rounded-full bg-surface-dark-elevated hover:bg-surface-dark-elevated/80 text-text-dark-secondary hover:text-text-dark-primary transition-all"
-        title="Exit Focus Mode (Esc)"
-        aria-label="Exit Focus Mode"
+        title="退出专注模式 (Esc)"
+        aria-label="退出专注模式"
       >
         <X className="w-6 h-6" />
       </button>
@@ -152,7 +200,7 @@ export const Focus: React.FC = () => {
           </div>
           <div className="flex items-center justify-center gap-2 text-text-dark-secondary">
             <Clock className="w-4 h-4" />
-            <span className="text-sm uppercase tracking-wide">Focus Time</span>
+            <span className="text-sm uppercase tracking-wide">专注时间</span>
           </div>
         </div>
 
@@ -175,8 +223,8 @@ export const Focus: React.FC = () => {
           <button
             onClick={handleReset}
             className="p-4 rounded-full bg-surface-dark-elevated hover:bg-surface-dark-elevated/80 text-text-dark-secondary hover:text-text-dark-primary transition-all"
-            title="Reset Session (R)"
-            aria-label="Reset session"
+            title="重置专注时段 (R)"
+            aria-label="重置专注时段"
           >
             <RotateCcw className="w-6 h-6" />
           </button>
@@ -189,8 +237,8 @@ export const Focus: React.FC = () => {
                 ? 'bg-accent-primary hover:bg-accent-primary/90 text-white'
                 : 'bg-accent-secondary hover:bg-accent-secondary/90 text-white'
             }`}
-            title={activeEntry ? 'Pause Timer (Space)' : 'Start Timer (Space)'}
-            aria-label={activeEntry ? 'Pause timer' : 'Start timer'}
+            title={activeEntry ? '结束计时 (Space)' : '启动计时 (Space)'}
+            aria-label={activeEntry ? '结束计时' : '启动计时'}
           >
             {activeEntry ? (
               <Pause className="w-10 h-10" />
@@ -199,38 +247,48 @@ export const Focus: React.FC = () => {
             )}
           </button>
 
-          {/* Placeholder for symmetry */}
-          <div className="w-14 h-14" />
+          {linkedTask ? (
+            <button
+              onClick={handleCompleteTask}
+              className="p-4 rounded-full bg-accent-green/20 text-accent-green transition-colors hover:bg-accent-green/30"
+              title="完成任务并结束专注"
+              aria-label="完成任务并结束专注"
+            >
+              <CheckCircle2 className="h-6 w-6" />
+            </button>
+          ) : (
+            <div className="w-14 h-14" />
+          )}
         </div>
 
         {/* Active timer indicator */}
         {activeEntry && (
           <div className="flex items-center justify-center gap-2 text-accent-primary animate-pulse">
             <div className="w-2 h-2 rounded-full bg-accent-primary" />
-            <span className="text-sm font-medium uppercase tracking-wide">Recording</span>
+            <span className="text-sm font-medium uppercase tracking-wide">记录中</span>
           </div>
         )}
       </div>
 
       {/* Keyboard hints */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-6 text-text-dark-muted text-xs">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-6 text-text-dark-secondary text-xs">
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             Space
           </kbd>
-          <span>Timer</span>
+          <span>计时器</span>
         </div>
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             R
           </kbd>
-          <span>Reset</span>
+          <span>重置</span>
         </div>
         <div className="flex items-center gap-2">
           <kbd className="px-2 py-1 rounded bg-surface-dark-elevated border border-border-dark font-mono">
             Esc
           </kbd>
-          <span>Exit</span>
+          <span>退出</span>
         </div>
       </div>
     </div>

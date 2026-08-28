@@ -32,7 +32,7 @@ export const WeatherForecastWidget: React.FC = () => {
       const response = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=temperature_2m_max,temperature_2m_min,weathercode&temperature_unit=fahrenheit&timezone=auto`
       );
-      if (!response.ok) throw new Error('Failed to fetch forecast');
+      if (!response.ok) throw new Error('获取天气预报失败');
 
       const data = await response.json();
       // Skip today (index 0), show next 5 days (indices 1-5)
@@ -45,7 +45,7 @@ export const WeatherForecastWidget: React.FC = () => {
 
       setForecast(days);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load forecast');
+      setError(err instanceof Error ? err.message : '加载天气预报失败');
     } finally {
       setLoading(false);
     }
@@ -65,12 +65,12 @@ export const WeatherForecastWidget: React.FC = () => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return date.toLocaleDateString('zh-CN', { weekday: 'short', month: 'short', day: 'numeric' });
   };
 
   return (
     <BaseWidget
-      title="Weather Forecast"
+      title="天气预报"
       icon="🌤️"
       loading={loading}
       error={error}

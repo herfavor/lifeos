@@ -57,13 +57,13 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border-dark flex-shrink-0">
-        <h3 className="text-sm font-medium text-text-dark-primary">System Prompt</h3>
+        <h3 className="text-sm font-medium text-text-dark-primary">系统提示词</h3>
         <div className="flex items-center gap-1">
           {customSystemPrompt && (
             <button
               onClick={handleClear}
               className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-red"
-              title="Clear system prompt"
+              title="清除系统提示词"
             >
               <RotateCcw size={14} />
             </button>
@@ -71,7 +71,7 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
           <button
             onClick={onClose}
             className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-white"
-            title="Close"
+            title="关闭"
           >
             <X size={14} />
           </button>
@@ -81,7 +81,7 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {/* Presets */}
         <div>
-          <div className="text-xs font-medium text-text-dark-secondary mb-2">Presets</div>
+          <div className="text-xs font-medium text-text-dark-secondary mb-2">预设</div>
           <div className="grid grid-cols-2 gap-2">
             {SYSTEM_PROMPT_PRESETS.map((preset) => (
               <button
@@ -112,9 +112,9 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
                 : 'bg-surface-dark border-border-dark hover:border-accent-blue/30 text-text-dark-primary hover:text-accent-blue'
             }`}
           >
-            <div className="text-xs font-medium">Custom Prompt</div>
+            <div className="text-xs font-medium">自定义提示词</div>
             <div className="text-[10px] text-text-dark-tertiary mt-0.5">
-              Write your own system instructions
+              编写你自己的系统指令
             </div>
           </button>
         </div>
@@ -125,14 +125,14 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
             <textarea
               value={editedPrompt}
               onChange={(e) => setEditedPrompt(e.target.value)}
-              placeholder="Enter custom system instructions..."
+              placeholder="输入自定义系统指令..."
               className="w-full h-40 px-3 py-2 text-xs bg-surface-dark-elevated border border-border-dark rounded-lg text-text-dark-primary placeholder-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-blue resize-none font-mono"
             />
             <button
               onClick={handleSaveCustom}
               className="mt-2 w-full px-3 py-1.5 text-xs bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 rounded transition-all font-medium"
             >
-              Apply Custom Prompt
+              应用自定义提示词
             </button>
           </div>
         )}
@@ -140,7 +140,7 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
         {/* Current Prompt Preview */}
         {customSystemPrompt && !isCustom && (
           <div>
-            <div className="text-xs font-medium text-text-dark-secondary mb-1">Active Prompt Preview</div>
+            <div className="text-xs font-medium text-text-dark-secondary mb-1">当前提示词预览</div>
             <div className="p-2 bg-surface-dark-elevated rounded-lg text-[10px] text-text-dark-tertiary font-mono max-h-24 overflow-y-auto">
               {customSystemPrompt.substring(0, 200)}
               {customSystemPrompt.length > 200 && '...'}
@@ -158,9 +158,9 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
                 : 'bg-surface-dark border-border-dark hover:border-accent-primary/30 text-text-dark-primary hover:text-accent-primary'
             }`}
           >
-            <div className="text-xs font-medium">Custom Instructions (Global)</div>
+            <div className="text-xs font-medium">自定义指令（全局）</div>
             <div className="text-[10px] text-text-dark-tertiary mt-0.5">
-              Persistent instructions prepended to every conversation
+              持久指令，会在每次对话开头附加
             </div>
           </button>
         </div>
@@ -170,14 +170,14 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
             <textarea
               value={editedInstructions}
               onChange={(e) => setEditedInstructions(e.target.value)}
-              placeholder="e.g., Always respond in bullet points. Use formal tone. Focus on TypeScript."
+              placeholder="例如：始终用要点回复。使用正式语气。专注于 TypeScript。"
               className="w-full h-28 px-3 py-2 text-xs bg-surface-dark-elevated border border-border-dark rounded-lg text-text-dark-primary placeholder-text-dark-tertiary focus:outline-none focus:ring-1 focus:ring-accent-primary resize-none font-mono"
             />
             <button
               onClick={() => setCustomInstructions(editedInstructions.trim())}
               className="mt-2 w-full px-3 py-1.5 text-xs bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 rounded transition-all font-medium"
             >
-              {customInstructions ? 'Update Instructions' : 'Save Instructions'}
+              {customInstructions ? '更新指令' : '保存指令'}
             </button>
             {customInstructions && (
               <button
@@ -187,7 +187,7 @@ export const SystemPromptPanel: React.FC<SystemPromptPanelProps> = ({ onClose })
                 }}
                 className="mt-1 w-full px-3 py-1 text-[10px] text-accent-red/60 hover:text-accent-red transition-all"
               >
-                Clear Instructions
+                清除指令
               </button>
             )}
           </div>

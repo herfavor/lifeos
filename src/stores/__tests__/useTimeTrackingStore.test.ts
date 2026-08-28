@@ -69,7 +69,7 @@ vi.stubGlobal('crypto', {
 });
 
 // Import after mocking
-import { useTimeTrackingStore } from '../useTimeTrackingStore';
+import { mergeTimeTrackingProjects, useTimeTrackingStore } from '../useTimeTrackingStore';
 import { timeTrackingDb } from '../../db/timeTrackingDb';
 
 // Type the mocked module
@@ -107,6 +107,22 @@ describe('useTimeTrackingStore', () => {
     vi.clearAllMocks();
   });
 
+  it('uses core projects for active time tracking and keeps legacy-only projects historical', () => {
+    const projects = mergeTimeTrackingProjects(
+      [{
+        id: 'legacy', name: '旧计费项目', color: '#999999', active: true, archived: false,
+        createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-01T00:00:00.000Z',
+      }],
+      [{
+        id: 'core', name: '核心项目', color: '#3b82f6', parentId: null,
+        createdAt: '2026-08-26T00:00:00.000Z', updatedAt: '2026-08-26T00:00:00.000Z',
+      }]
+    );
+
+    expect(projects.find((project) => project.id === 'core')).toMatchObject({ active: true, archived: false });
+    expect(projects.find((project) => project.id === 'legacy')).toMatchObject({ active: false, archived: true });
+  });
+
   describe('Timer Operations', () => {
     describe('startTimer', () => {
       it('should start a new timer with description', () => {
@@ -131,16 +147,17 @@ describe('useTimeTrackingStore', () => {
 
         const state = useTimeTrackingStore.getState();
         expect(state.activeEntry?.projectId).toBe('project-1');
+        expect(state.activeEntry?.projectIds).toEqual(['project-1']);
         expect(state.activeEntry?.taskId).toBe('task-1');
       });
 
-      it('should set billable to true by default', () => {
+      it('should set billable to false by default', () => {
         const store = useTimeTrackingStore.getState();
 
         store.startTimer({ description: 'Test' });
 
         const state = useTimeTrackingStore.getState();
-        expect(state.activeEntry?.billable).toBe(true);
+        expect(state.activeEntry?.billable).toBe(false);
       });
 
       it('should set billable to false when specified', () => {
@@ -160,6 +177,23 @@ describe('useTimeTrackingStore', () => {
         expect(localStorageMock.setItem).toHaveBeenCalledWith(
           'activeTimer',
           expect.any(String)
+        );
+      });
+
+      it('persists a running session instead of silently discarding it', async () => {
+        const store = useTimeTrackingStore.getState();
+        store.startTimer({ description: 'Session A' });
+        store.startTimer({ description: 'Session B' });
+
+        // flush the fire-and-forget stopTimer that persists session A
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+
+        const state = useTimeTrackingStore.getState();
+        expect(state.activeEntry?.description).toBe('Session B');
+        expect(mockTimeTrackingDb.addEntry).toHaveBeenCalledWith(
+          expect.objectContaining({ description: 'Session A' })
         );
       });
     });

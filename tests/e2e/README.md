@@ -1,12 +1,12 @@
 # Hosted browser-test suite
 
-NeumanOS keeps its browser-test source in this directory, but executes it only through the repository's manual **Hosted browser tests** GitHub Actions workflow on GitHub-hosted Linux. TJNMPM is not a browser-test runner and must not install or launch Playwright, Chromium, Firefox, WebKit, Chrome, or another external browser payload.
+LifeOS keeps its browser-test source in this directory, but executes it only through the repository's manual **Hosted browser tests** GitHub Actions workflow on GitHub-hosted Linux. TJNMPM is not a browser-test runner and must not install or launch Playwright, Chromium, Firefox, WebKit, Chrome, or another external browser payload.
 
 ## Execution boundary
 
 - Trigger `.github/workflows/browser-tests.yml` manually from the repository's Actions page.
 - The workflow uses Node from `.node-version`, installs browsers only on disposable GitHub-hosted Linux runners, and grants the workflow token `contents: read` only.
-- Tests build NeumanOS and serve a task-owned production preview on `127.0.0.1:4173`. They cannot accept `TEST_BASE_URL` or target production.
+- Tests build LifeOS and serve a task-owned production preview on `127.0.0.1:4173`. They cannot accept `TEST_BASE_URL` or target production.
 - Browser contexts use synthetic test data only. Never add credentials, authenticated profiles, cookies, tokens, private backups, or production data.
 - Failure reports, screenshots, videos, and traces are retained for three days. Successful runs upload no browser artifact.
 - CamoFox on TJN-SERVE is a source-intake browser, not an end-to-end test runner.

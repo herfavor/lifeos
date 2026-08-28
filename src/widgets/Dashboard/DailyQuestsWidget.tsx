@@ -22,7 +22,7 @@ export function DailyQuestsWidget(_props: WidgetComponentProps) {
         <div className="flex items-center gap-2">
           <Scroll className="w-5 h-5 text-accent-primary" />
           <span className="font-medium text-text-light-primary dark:text-text-dark-primary">
-            Daily Quests
+            每日任务
           </span>
         </div>
         <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
@@ -32,7 +32,7 @@ export function DailyQuestsWidget(_props: WidgetComponentProps) {
 
       {quests.length === 0 ? (
         <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary text-center py-4">
-          Add habits to unlock daily quests.
+          添加习惯以解锁每日任务。
         </p>
       ) : (
         <>
@@ -42,13 +42,13 @@ export function DailyQuestsWidget(_props: WidgetComponentProps) {
                 {completedCount}/{quests.length}
               </div>
               <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                quests completed
+                任务已完成
               </div>
             </div>
             {claimableCount > 0 && (
               <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-accent-primary/10 text-accent-primary rounded-full animate-pulse">
                 <Gift className="w-3 h-3" />
-                {claimableCount} to claim
+                {claimableCount} 个可领取
               </span>
             )}
           </div>
@@ -105,7 +105,7 @@ export function DailyQuestsWidget(_props: WidgetComponentProps) {
         href="/habits"
         className="block text-center text-xs text-accent-primary hover:text-accent-primary/80 transition-colors pt-1"
       >
-        View all quests
+        查看全部任务
       </a>
     </div>
   );

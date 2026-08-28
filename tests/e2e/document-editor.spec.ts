@@ -15,7 +15,7 @@ test.describe('Document Editor', () => {
   });
 
   test('create page loads', async ({ page }) => {
-    const heading = page.getByText(/Create|Documents/i).first();
+    const heading = page.getByText(/创建|文档/i).first();
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Document Editor', () => {
   });
 
   test('has documents tab', async ({ page }) => {
-    const docsTab = page.getByRole('tab', { name: /Documents/i });
+    const docsTab = page.getByRole('tab', { name: /文档/i });
     if (await docsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(docsTab).toBeVisible();
     }
@@ -31,7 +31,7 @@ test.describe('Document Editor', () => {
   });
 
   test('can create a new document', async ({ page }) => {
-    const newDocBtn = page.getByRole('button', { name: /new.*doc|create.*doc|document|\+/i }).first();
+    const newDocBtn = page.getByRole('button', { name: /新建.*文档|创建.*文档|文档|\+/i }).first();
     if (await newDocBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newDocBtn.click();
       await page.waitForTimeout(500);
@@ -40,7 +40,7 @@ test.describe('Document Editor', () => {
   });
 
   test('document editor has content area', async ({ page }) => {
-    const newDocBtn = page.getByRole('button', { name: /new.*doc|create.*doc|document|\+/i }).first();
+    const newDocBtn = page.getByRole('button', { name: /新建.*文档|创建.*文档|文档|\+/i }).first();
     if (await newDocBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newDocBtn.click();
       await page.waitForTimeout(500);
@@ -54,12 +54,12 @@ test.describe('Document Editor', () => {
   });
 
   test('document has title input', async ({ page }) => {
-    const newDocBtn = page.getByRole('button', { name: /new.*doc|create.*doc|document|\+/i }).first();
+    const newDocBtn = page.getByRole('button', { name: /新建.*文档|创建.*文档|文档|\+/i }).first();
     if (await newDocBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newDocBtn.click();
       await page.waitForTimeout(500);
 
-      const titleInput = page.getByPlaceholder(/title|untitled/i).first();
+      const titleInput = page.getByPlaceholder(/标题|无标题/i).first();
       if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(titleInput).toBeVisible();
       }
@@ -68,13 +68,13 @@ test.describe('Document Editor', () => {
   });
 
   test('document has formatting toolbar', async ({ page }) => {
-    const newDocBtn = page.getByRole('button', { name: /new.*doc|create.*doc|document|\+/i }).first();
+    const newDocBtn = page.getByRole('button', { name: /新建.*文档|创建.*文档|文档|\+/i }).first();
     if (await newDocBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newDocBtn.click();
       await page.waitForTimeout(500);
 
       const toolbar = page.locator('[role="toolbar"]').first()
-        .or(page.locator('[aria-label="Bold"], [title="Bold"]').first());
+        .or(page.locator('[aria-label="加粗"], [title^="加粗"]').first());
       if (await toolbar.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(toolbar).toBeVisible();
       }

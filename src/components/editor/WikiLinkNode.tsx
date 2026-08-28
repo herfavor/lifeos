@@ -69,8 +69,8 @@ export class WikiLinkNode extends TextNode {
     element.setAttribute(
       'aria-label',
       this.__isBroken
-        ? `Broken link to ${linkTarget}. Click to create note.`
-        : `Link to ${linkTarget}`
+        ? `指向 ${linkTarget} 的链接已失效。点击创建笔记。`
+        : `链接到 ${linkTarget}`
     );
 
     // Cursor pointer for clickable links
@@ -94,8 +94,8 @@ export class WikiLinkNode extends TextNode {
       dom.setAttribute(
         'aria-label',
         this.__isBroken
-          ? `Broken link to ${this.__linkTitle}. Click to create note.`
-          : `Link to ${this.__linkTitle}`
+          ? `指向 ${this.__linkTitle} 的链接已失效。点击创建笔记。`
+          : `链接到 ${this.__linkTitle}`
       );
     }
 

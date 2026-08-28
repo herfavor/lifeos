@@ -163,6 +163,8 @@ export interface AutomationRule {
   created: string;
   lastRun?: string;
   runCount: number;
+  archivedAt?: string;
+  deletedAt?: string;
 }
 
 export interface AutomationExecutionLog {

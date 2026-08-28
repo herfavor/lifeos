@@ -24,12 +24,12 @@ const categoryIcons = {
 };
 
 const categoryLabels = {
-  flowchart: 'Flowcharts',
-  orgchart: 'Org Charts',
-  system: 'System Design',
-  'user-flow': 'User Flows',
-  mindmap: 'Mind Maps',
-  other: 'Other',
+  flowchart: '流程图',
+  orgchart: '组织结构图',
+  system: '系统设计',
+  'user-flow': '用户流程',
+  mindmap: '思维导图',
+  other: '其他',
 };
 
 export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateGalleryProps) {
@@ -62,12 +62,12 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            Choose a Template
+            选择模板
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark rounded-lg transition-colors"
-            aria-label="Close template gallery"
+            className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
+            aria-label="关闭模板库"
           >
             <X className="w-5 h-5" />
           </button>
@@ -77,7 +77,7 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
         <div className="flex gap-2 px-6 py-4 border-b border-border-light dark:border-border-dark overflow-x-auto">
           {categories.map((category) => {
             const Icon = category === 'all' ? FileText : categoryIcons[category as DiagramTemplate['category']];
-            const label = category === 'all' ? 'All Templates' : categoryLabels[category as DiagramTemplate['category']];
+            const label = category === 'all' ? '全部模板' : categoryLabels[category as DiagramTemplate['category']];
 
             return (
               <button
@@ -87,8 +87,8 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
                   flex items-center gap-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap
                   ${
                     selectedCategory === category
-                      ? 'bg-primary-light dark:bg-primary-dark text-white'
-                      : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                      ? 'bg-accent-primary text-white'
+                      : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }
                 `}
               >
@@ -103,7 +103,7 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
         <div className="flex-1 overflow-y-auto p-6">
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-12 text-text-light-tertiary dark:text-text-dark-tertiary">
-              <p>No templates available in this category.</p>
+              <p>此分类中没有可用模板。</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -133,9 +133,9 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
 
                     {/* Template Info */}
                     <div className="flex items-start gap-2">
-                      <CategoryIcon className="w-5 h-5 text-primary-light dark:text-primary-dark shrink-0 mt-0.5" />
+                      <CategoryIcon className="w-5 h-5 text-accent-primary shrink-0 mt-0.5" />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary group-hover:text-primary-light dark:group-hover:text-primary-dark transition-colors">
+                        <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary group-hover:text-accent-primary transition-colors">
                           {template.name}
                         </h3>
                         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary line-clamp-2">
@@ -146,7 +146,7 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
 
                     {/* Element Count Badge */}
                     <div className="absolute top-2 right-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full px-2 py-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                      {template.elements.length} element{template.elements.length !== 1 ? 's' : ''}
+                      {template.elements.length} 个元素
                     </div>
                   </button>
                 );
@@ -158,13 +158,13 @@ export function TemplateGallery({ isOpen, onClose, onSelectTemplate }: TemplateG
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
           <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-            Select a template to get started quickly
+            选择模板即可快速开始
           </p>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-surface-hover-light dark:bg-surface-hover-dark hover:bg-border-light dark:hover:bg-border-dark rounded-lg transition-colors text-text-light-primary dark:text-text-dark-primary"
+            className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded-lg transition-colors text-text-light-primary dark:text-text-dark-primary"
           >
-            Cancel
+            取消
           </button>
         </div>
       </div>

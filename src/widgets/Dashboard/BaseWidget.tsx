@@ -53,10 +53,10 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-      className={`bg-surface-light dark:bg-surface-dark-elevated rounded-card shadow-card p-4 flex flex-col relative overflow-hidden ${className}`}
+      className={`h-full border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark-elevated rounded-card p-4 flex flex-col relative overflow-hidden ${className}`}
     >
       {/* Auto-refresh progress indicator */}
       {isAutoRefreshing && (
@@ -78,7 +78,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
                 {subtitle}
                 {subtitle && lastRefreshedLabel && ' · '}
                 {lastRefreshedLabel && (
-                  <span title="Last refreshed">{lastRefreshedLabel}</span>
+                  <span title="最后刷新时间">{lastRefreshedLabel}</span>
                 )}
               </p>
             )}
@@ -92,8 +92,8 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
               onClick={handleRefresh}
               disabled={isRefreshing || loading}
               className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark rounded transition-all duration-standard ease-smooth disabled:opacity-50"
-              title="Refresh"
-              aria-label="Refresh widget"
+              title="刷新"
+              aria-label="刷新组件"
             >
               <span className={`text-lg ${isRefreshing ? 'animate-spin inline-block' : ''}`}>
                 🔄
@@ -106,8 +106,8 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
             <button
               onClick={onSettings}
               className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark rounded transition-all duration-standard ease-smooth"
-              title="Settings"
-              aria-label="Widget settings"
+              title="设置"
+              aria-label="组件设置"
             >
               <span className="text-lg">⚙️</span>
             </button>
@@ -122,7 +122,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-8 border-4 border-accent-blue border-t-transparent rounded-full animate-spin"></div>
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Loading...
+                  加载中…
               </span>
             </div>
           </div>
@@ -138,7 +138,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
                   onClick={handleRefresh}
                   className="text-sm text-accent-blue hover:underline mt-2"
                 >
-                  Try again
+                  重试
                 </button>
               )}
             </div>

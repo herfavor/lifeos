@@ -43,19 +43,19 @@ export function BackupSettings() {
 
       setTestMessage({
         type: 'success',
-        text: `Backup folder selected: ${dirHandle.name}`,
+        text: `已选择备份文件夹：${dirHandle.name}`,
       });
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
         // User cancelled - not an error
         setTestMessage({
           type: 'error',
-          text: 'Folder selection cancelled',
+          text: '已取消文件夹选择',
         });
       } else {
         setTestMessage({
           type: 'error',
-          text: `Error: ${(error as Error).message}`,
+          text: `错误：${(error as Error).message}`,
         });
       }
     } finally {
@@ -92,12 +92,12 @@ export function BackupSettings() {
       await autoSaveManager.saveNow();
       setTestMessage({
         type: 'success',
-        text: 'Backup saved successfully!',
+        text: '备份保存成功！',
       });
     } catch (error) {
       setTestMessage({
         type: 'error',
-        text: `Error: ${(error as Error).message}`,
+        text: `错误：${(error as Error).message}`,
       });
     } finally {
       setIsTesting(false);
@@ -126,14 +126,14 @@ export function BackupSettings() {
     // Remove any .brain extension if user types it
     const baseName = value.replace(/\.brain$/i, '').trim();
     // Store with .brain extension
-    updateBackupPreferences({ customFileName: baseName ? `${baseName}.brain` : 'NeumanOS.brain' });
+    updateBackupPreferences({ customFileName: baseName ? `${baseName}.brain` : 'LifeOS.brain' });
   };
 
   /**
    * Get display filename (without .brain extension)
    */
   const getDisplayFileName = () => {
-    return (backupPreferences.customFileName || 'NeumanOS.brain').replace(/\.brain$/i, '');
+    return (backupPreferences.customFileName || 'LifeOS.brain').replace(/\.brain$/i, '');
   };
 
   return (
@@ -141,10 +141,10 @@ export function BackupSettings() {
       {/* Header */}
       <div>
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-          Backup & Sync
+          备份与同步
         </h2>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-          Automatically backup your data to a cloud-synced folder (iCloud, Google Drive, OneDrive, Proton Drive, Dropbox)
+          自动将数据备份到云同步文件夹（iCloud、Google Drive、OneDrive、Proton Drive、Dropbox）
         </p>
       </div>
 
@@ -153,16 +153,16 @@ export function BackupSettings() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-              Auto-Save Status
+              自动保存状态
             </span>
             {backupPreferences.autoSaveEnabled && (
               <span className="px-2 py-0.5 text-xs font-medium bg-accent-green/10 text-accent-green rounded-button">
-                Enabled
+                已启用
               </span>
             )}
             {!backupPreferences.autoSaveEnabled && (
               <span className="px-2 py-0.5 text-xs font-medium bg-accent-yellow/10 text-accent-yellow rounded-button">
-                Disabled
+                已禁用
               </span>
             )}
           </div>
@@ -187,8 +187,8 @@ export function BackupSettings() {
         {/* Folder Path */}
         {backupPreferences.hasBackupFolder && (
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            <span className="font-medium">Folder: </span>
-            {backupPreferences.backupFolderPath || 'Not set'}
+            <span className="font-medium">文件夹： </span>
+            {backupPreferences.backupFolderPath || '未设置'}
           </div>
         )}
       </div>
@@ -196,7 +196,7 @@ export function BackupSettings() {
       {/* Folder Picker */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-          Backup Folder
+          备份文件夹
         </label>
         <div className="flex gap-2">
           <button
@@ -204,7 +204,7 @@ export function BackupSettings() {
             disabled={isSelecting}
             className="px-4 py-2.5 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-standard ease-smooth"
           >
-            {isSelecting ? 'Selecting...' : backupPreferences.hasBackupFolder ? 'Change Folder' : 'Choose Folder'}
+            {isSelecting ? '选择中…' : backupPreferences.hasBackupFolder ? '更改文件夹' : '选择文件夹'}
           </button>
 
           {backupPreferences.hasBackupFolder && (
@@ -213,7 +213,7 @@ export function BackupSettings() {
               disabled={isTesting || !backupPreferences.autoSaveEnabled}
               className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-standard ease-smooth border border-border-light dark:border-border-dark"
             >
-              {isTesting ? 'Saving...' : 'Test Auto-Save'}
+              {isTesting ? '保存中…' : '测试自动保存'}
             </button>
           )}
         </div>
@@ -236,15 +236,15 @@ export function BackupSettings() {
       {backupPreferences.hasBackupFolder && (
         <div className="space-y-4 pt-4 border-t border-border-light dark:border-border-dark">
           <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Configuration
+            配置
           </h3>
 
           {/* Save Interval */}
           <div className="space-y-2">
             <label className="block text-sm text-text-light-primary dark:text-text-dark-primary">
-              Save Interval
+              保存间隔
               <span className="ml-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                ({backupPreferences.saveInterval / 1000} seconds)
+                （{backupPreferences.saveInterval / 1000} 秒）
               </span>
             </label>
             <input
@@ -257,17 +257,17 @@ export function BackupSettings() {
               className="w-full h-2 bg-border-light dark:bg-border-dark rounded-button appearance-none cursor-pointer accent-accent-blue"
             />
             <div className="flex justify-between text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              <span>10s</span>
-              <span>5min</span>
+              <span>10 秒</span>
+              <span>5 分钟</span>
             </div>
           </div>
 
           {/* Versions to Keep */}
           <div className="space-y-2">
             <label className="block text-sm text-text-light-primary dark:text-text-dark-primary">
-              Versions to Keep
+              保留版本数
               <span className="ml-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                ({backupPreferences.versionsToKeep} backups)
+                （{backupPreferences.versionsToKeep} 个备份）
               </span>
             </label>
             <input
@@ -288,7 +288,7 @@ export function BackupSettings() {
           {/* Custom File Name */}
           <div className="space-y-2">
             <label className="block text-sm text-text-light-primary dark:text-text-dark-primary">
-              File Name
+              文件名
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -301,7 +301,7 @@ export function BackupSettings() {
               <span className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">.brain</span>
             </div>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              Backup files will be named: {getDisplayFileName()}-YYYY-MM-DD-HHmmss.brain
+              备份文件将命名为：{getDisplayFileName()}-YYYY-MM-DD-HHmmss.brain
             </p>
           </div>
         </div>
@@ -315,7 +315,7 @@ export function BackupSettings() {
           rel="noopener noreferrer"
           className="text-sm text-accent-blue hover:underline"
         >
-          📖 View Backup & Sync Documentation →
+          📖 查看备份与同步文档 →
         </a>
       </div>
     </div>

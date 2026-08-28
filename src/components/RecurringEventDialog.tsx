@@ -32,7 +32,7 @@ export const RecurringEventDialog: React.FC<RecurringEventDialogProps> = ({
     onClose();
   };
 
-  const title = action === 'edit' ? 'Edit Recurring Event' : 'Delete Recurring Event';
+  const title = action === 'edit' ? '编辑重复事件' : '删除重复事件';
   const icon = action === 'edit' ? '✏️' : '🗑️';
 
   return (
@@ -46,7 +46,7 @@ export const RecurringEventDialog: React.FC<RecurringEventDialogProps> = ({
               "{eventTitle}"
             </p>
             <p className="text-text-light-secondary dark:text-text-dark-secondary">
-              This is a recurring event. Would you like to {action} only this occurrence, or all events in the series?
+              这是一个重复事件。你希望{action === 'edit' ? '编辑' : '删除'}仅此一次事件，还是整个系列中的所有事件？
             </p>
           </div>
         </div>
@@ -57,22 +57,22 @@ export const RecurringEventDialog: React.FC<RecurringEventDialogProps> = ({
             onClick={handleThisEvent}
             className="w-full px-4 py-3 rounded-button bg-accent-blue hover:bg-accent-blue-hover text-white font-medium transition-all duration-standard ease-smooth text-left"
           >
-            <div className="font-semibold">This event only</div>
+            <div className="font-semibold">仅此事件</div>
             <div className="text-sm opacity-90 mt-1">
               {action === 'edit'
-                ? 'Modify only this occurrence'
-                : 'Delete only this occurrence'}
+                ? '仅修改此一次事件'
+                : '仅删除此一次事件'}
             </div>
           </button>
           <button
             onClick={handleAllEvents}
             className="w-full px-4 py-3 rounded-button bg-accent-primary hover:bg-accent-primary-hover text-white font-medium transition-all duration-standard ease-smooth text-left"
           >
-            <div className="font-semibold">All events in series</div>
+            <div className="font-semibold">系列中的所有事件</div>
             <div className="text-sm opacity-90 mt-1">
               {action === 'edit'
-                ? 'Modify all recurring events'
-                : 'Delete all recurring events'}
+                ? '修改所有重复事件'
+                : '删除所有重复事件'}
             </div>
           </button>
           <button
@@ -80,7 +80,7 @@ export const RecurringEventDialog: React.FC<RecurringEventDialogProps> = ({
             className="w-full px-4 py-2 rounded-button border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth"
             autoFocus
           >
-            Cancel
+            取消
           </button>
         </div>
       </div>

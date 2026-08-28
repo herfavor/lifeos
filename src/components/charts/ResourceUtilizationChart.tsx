@@ -77,7 +77,7 @@ export function ResourceUtilizationChart({ height = 256 }: ResourceUtilizationCh
         style={{ height: `${height}px` }}
       >
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No resources available. Add resources in Settings.
+          暂无可用资源。请在设置中添加资源。
         </p>
       </div>
     );
@@ -115,11 +115,11 @@ export function ResourceUtilizationChart({ height = 256 }: ResourceUtilizationCh
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${value ?? 0}%`, 'Utilization']}
+            formatter={(value) => [`${value ?? 0}%`, '利用率']}
             labelFormatter={(label) => {
               const resource = chartData.find((r) => r.name === label);
               if (!resource) return label;
-              return `${label} (${resource.assignedHours}h / ${resource.capacity}h, ${resource.taskCount} task${resource.taskCount !== 1 ? 's' : ''})`;
+              return `${label}（${resource.assignedHours}h / ${resource.capacity}h，${resource.taskCount} 个任务）`;
             }}
           />
           <ReferenceLine

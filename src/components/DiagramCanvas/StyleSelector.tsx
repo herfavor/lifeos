@@ -25,16 +25,16 @@ export function StyleSelector({
   onBowingChange,
 }: StyleSelectorProps) {
   const styles: Array<{value: DrawingStyle; label: string; icon: typeof Circle}> = [
-    { value: 'normal', label: 'Normal', icon: Circle },
-    { value: 'hand-drawn', label: 'Hand-Drawn', icon: Pencil },
-    { value: 'cartoon', label: 'Cartoon', icon: Sparkles },
+    { value: 'normal', label: '标准', icon: Circle },
+    { value: 'hand-drawn', label: '手绘', icon: Pencil },
+    { value: 'cartoon', label: '卡通', icon: Sparkles },
   ];
 
   return (
     <div className="bg-surface-light dark:bg-surface-dark p-4 rounded-lg space-y-4">
       <div>
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Drawing Style
+          绘图样式
         </label>
         <div className="flex gap-2">
           {styles.map((style) => {
@@ -48,9 +48,9 @@ export function StyleSelector({
                 className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-accent-blue text-white'
-                    : 'bg-surface-light-secondary dark:bg-surface-dark-secondary text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-tertiary dark:hover:bg-surface-dark-tertiary'
+                    : 'bg-surface-light-secondary dark:bg-surface-dark-secondary text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                 }`}
-                aria-label={`Set style to ${style.label}`}
+                aria-label={`将样式设置为${style.label}`}
                 aria-pressed={isActive}
               >
                 <Icon className="w-4 h-4" />
@@ -68,7 +68,7 @@ export function StyleSelector({
               htmlFor="roughness-slider"
               className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1"
             >
-              Roughness: {roughness.toFixed(1)}
+              粗糙度：{roughness.toFixed(1)}
             </label>
             <input
               id="roughness-slider"
@@ -79,11 +79,11 @@ export function StyleSelector({
               value={roughness}
               onChange={(e) => onRoughnessChange(parseFloat(e.target.value))}
               className="w-full accent-accent-blue"
-              aria-label="Adjust roughness (how sketchy the lines are)"
+              aria-label="调整粗糙度（线条的草绘程度）"
             />
             <div className="flex justify-between text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-              <span>Smooth</span>
-              <span>Sketchy</span>
+              <span>平滑</span>
+              <span>草绘</span>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export function StyleSelector({
               htmlFor="bowing-slider"
               className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1"
             >
-              Bowing: {bowing.toFixed(1)}
+              弯曲度：{bowing.toFixed(1)}
             </label>
             <input
               id="bowing-slider"
@@ -103,11 +103,11 @@ export function StyleSelector({
               value={bowing}
               onChange={(e) => onBowingChange(parseFloat(e.target.value))}
               className="w-full accent-accent-blue"
-              aria-label="Adjust bowing (how much lines curve)"
+              aria-label="调整弯曲度（线条的弯曲程度）"
             />
             <div className="flex justify-between text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-              <span>Straight</span>
-              <span>Curved</span>
+              <span>平直</span>
+              <span>弯曲</span>
             </div>
           </div>
         </div>
@@ -116,14 +116,14 @@ export function StyleSelector({
       {currentStyle === 'cartoon' && (
         <div className="p-3 bg-accent-blue/10 rounded-md">
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Cartoon style uses preset values for a playful, rounded appearance.
+            卡通风格使用预设值，呈现活泼圆润的外观。
           </p>
         </div>
       )}
 
       <div className="pt-2 border-t border-border-light dark:border-border-dark">
         <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Style Preview
+          样式预览
         </h4>
         <div className="bg-white dark:bg-surface-dark-secondary p-4 rounded-md border border-border-light dark:border-border-dark">
           <svg width="100%" height="60" viewBox="0 0 200 60" className="overflow-visible">
@@ -166,7 +166,7 @@ export function StyleSelector({
                 textAnchor="middle"
                 className="text-sm fill-text-light-tertiary dark:fill-text-dark-tertiary"
               >
-                Preview shapes with {currentStyle} style
+                {currentStyle === 'hand-drawn' ? '以手绘样式预览形状' : '以卡通样式预览形状'}
               </text>
             )}
           </svg>

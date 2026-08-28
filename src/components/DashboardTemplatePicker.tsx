@@ -21,60 +21,55 @@ interface DashboardTemplate {
 
 const TEMPLATES: DashboardTemplate[] = [
   {
-    id: 'productivity',
-    name: 'Productivity Focus',
-    description: 'Tasks, calendar, pomodoro, and notes for getting things done',
-    icon: '💼',
-    widgets: ['weathermap', 'taskssummary', 'tasksquickadd', 'upcomingevents', 'recentnotes', 'pomodoro'],
+    id: 'lifeos-default',
+    name: '我的今天',
+    description: '今天、快速记录、近期日程、项目与笔记——克制的日常布局',
+    icon: '☀️',
+    widgets: ['myday', 'quickadd', 'upcomingevents', 'portfolio', 'recentnotes'],
     sizes: {
-      weathermap: 3,
-      taskssummary: 1,
-      tasksquickadd: 1,
+      myday: 1,
+      quickadd: 1,
       upcomingevents: 1,
+      portfolio: 1,
       recentnotes: 1,
-      pomodoro: 1,
     },
   },
   {
-    id: 'developer',
-    name: 'Developer',
-    description: 'GitHub, Hacker News, calculator, and tasks for developers',
-    icon: '🔧',
-    widgets: ['weathermap', 'taskssummary', 'hackernews', 'recentnotes', 'shortcuts', 'calculator'],
+    id: 'productivity',
+    name: '高效专注',
+    description: '任务概览、日历、番茄钟和笔记，助你高效完成工作',
+    icon: '💼',
+    widgets: ['taskssummary', 'upcomingevents', 'pomodoro', 'recentnotes', 'quickadd'],
     sizes: {
-      weathermap: 3,
       taskssummary: 1,
-      hackernews: 2,
+      upcomingevents: 1,
+      pomodoro: 1,
       recentnotes: 1,
-      shortcuts: 1,
-      calculator: 1,
+      quickadd: 1,
+    },
+  },
+  {
+    id: 'projects',
+    name: '项目总览',
+    description: '项目健康度、每周洞察与近期日程，掌握整体进展',
+    icon: '📂',
+    widgets: ['portfolio', 'taskssummary', 'weeklyinsights', 'upcomingevents'],
+    sizes: {
+      portfolio: 2,
+      taskssummary: 1,
+      weeklyinsights: 1,
+      upcomingevents: 1,
     },
   },
   {
     id: 'minimal',
-    name: 'Minimal',
-    description: 'Weather and tasks - just the essentials',
+    name: '极简',
+    description: '只保留快速记录和今天——最少干扰',
     icon: '✨',
-    widgets: ['weathermap', 'tasksquickadd', 'quote'],
+    widgets: ['quickadd', 'myday'],
     sizes: {
-      weathermap: 3,
-      tasksquickadd: 2,
-      quote: 1,
-    },
-  },
-  {
-    id: 'information',
-    name: 'Information Hub',
-    description: 'News, crypto, weather, and world clock for staying informed',
-    icon: '📰',
-    widgets: ['weathermap', 'hackernews', 'crypto', 'worldclock', 'quote', 'wikipedia'],
-    sizes: {
-      weathermap: 3,
-      hackernews: 2,
-      crypto: 1,
-      worldclock: 1,
-      quote: 1,
-      wikipedia: 1,
+      quickadd: 2,
+      myday: 1,
     },
   },
 ];
@@ -114,10 +109,10 @@ export const DashboardTemplatePicker: React.FC<DashboardTemplatePickerProps> = (
       </div>
 
       <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">
-        Set Up Your Dashboard
+        设置你的首页
       </h2>
       <p className="text-text-light-secondary dark:text-text-dark-secondary mb-8 max-w-md mx-auto">
-        Choose a starter template or customize from scratch. You can always change your layout later.
+        选择一个入门模板或从零开始自定义。之后随时可以更改布局。
       </p>
 
       {/* Template Grid */}
@@ -137,7 +132,7 @@ export const DashboardTemplatePicker: React.FC<DashboardTemplatePickerProps> = (
                   {template.name}
                 </h3>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  {template.widgets.length} widgets
+                  {template.widgets.length} 个组件
                 </p>
               </div>
             </div>
@@ -159,7 +154,7 @@ export const DashboardTemplatePicker: React.FC<DashboardTemplatePickerProps> = (
               })}
               {template.widgets.length > 5 && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-surface-light-elevated dark:bg-surface-dark text-text-light-tertiary dark:text-text-dark-tertiary">
-                  +{template.widgets.length - 5} more
+                  +{template.widgets.length - 5} 更多
                 </span>
               )}
             </div>
@@ -172,7 +167,7 @@ export const DashboardTemplatePicker: React.FC<DashboardTemplatePickerProps> = (
         onClick={onCustomize}
         className="px-6 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-button font-medium transition-all duration-standard ease-smooth"
       >
-        Or customize from scratch...
+        或从零开始自定义…
       </button>
     </div>
   );

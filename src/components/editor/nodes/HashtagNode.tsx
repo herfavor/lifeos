@@ -55,7 +55,7 @@ export class HashtagNode extends TextNode {
     // Accessibility
     element.setAttribute(
       'aria-label',
-      `Hashtag ${this.__tag}. Click to filter notes.`
+      `话题标签 ${this.__tag}。点击筛选笔记。`
     );
     
     // Cursor pointer for clickable hashtags
@@ -74,7 +74,7 @@ export class HashtagNode extends TextNode {
       dom.setAttribute('data-tag', this.__tag);
       dom.setAttribute(
         'aria-label',
-        `Hashtag ${this.__tag}. Click to filter notes.`
+        `话题标签 ${this.__tag}。点击筛选笔记。`
       );
     }
     

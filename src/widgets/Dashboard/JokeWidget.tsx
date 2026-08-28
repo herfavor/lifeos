@@ -31,12 +31,12 @@ export const JokeWidget: React.FC = () => {
       const response = await fetch(
         'https://v2.jokeapi.dev/joke/Programming?safe-mode'
       );
-      if (!response.ok) throw new Error('Failed to fetch joke');
+      if (!response.ok) throw new Error('无法获取笑话');
 
       const data = await response.json();
       setJoke(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load joke');
+      setError(err instanceof Error ? err.message : '无法加载笑话');
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export const JokeWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Developer Jokes"
+      title="开发者笑话"
       icon="😄"
       loading={loading}
       error={error}
@@ -84,7 +84,7 @@ export const JokeWidget: React.FC = () => {
           )}
 
           <div className="mt-4 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            Category: {joke.category}
+            分类：{joke.category}
           </div>
         </div>
       )}

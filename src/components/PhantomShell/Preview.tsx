@@ -23,9 +23,9 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
       <div className={`flex items-center justify-center bg-surface-dark ${className}`}>
         <div className="text-center text-text-dark-secondary">
           <div className="text-4xl mb-4">🚀</div>
-          <p className="text-sm">No dev server running</p>
+          <p className="text-sm">没有正在运行的开发服务器</p>
           <p className="text-xs mt-2">
-            Run <code className="text-accent-primary">npm run dev</code> to start
+            运行 <code className="text-accent-primary">npm run dev</code> 以启动
           </p>
         </div>
       </div>
@@ -38,7 +38,7 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
         <div className="absolute inset-0 flex items-center justify-center bg-surface-dark z-10">
           <div className="flex flex-col items-center">
             <div className="animate-spin w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full" />
-            <p className="mt-4 text-sm text-text-dark-secondary">Loading preview...</p>
+            <p className="mt-4 text-sm text-text-dark-secondary">正在加载预览…</p>
           </div>
         </div>
       )}
@@ -47,7 +47,7 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
         src={devServerUrl}
         className="w-full h-full border-0"
         onLoad={() => setIsLoading(false)}
-        title="Preview"
+        title="预览"
         sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
       />
 
@@ -61,7 +61,7 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
           onClick={() => window.open(devServerUrl, '_blank')}
           className="text-xs text-accent-primary hover:underline"
         >
-          Open ↗
+          打开 ↗
         </button>
       </div>
     </div>

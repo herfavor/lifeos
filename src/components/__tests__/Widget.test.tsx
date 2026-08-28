@@ -116,7 +116,7 @@ describe('Widget', () => {
       </Widget>
     );
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('加载中…')).toBeInTheDocument();
     expect(screen.queryByText('Content that should not appear')).not.toBeInTheDocument();
   });
 
@@ -139,7 +139,7 @@ describe('Widget', () => {
       </Widget>
     );
 
-    expect(screen.getByText('Try Again')).toBeInTheDocument();
+    expect(screen.getByText('重试')).toBeInTheDocument();
   });
 
   it('should call onRefresh when retry button is clicked', async () => {
@@ -151,7 +151,7 @@ describe('Widget', () => {
       </Widget>
     );
 
-    await user.click(screen.getByText('Try Again'));
+    await user.click(screen.getByText('重试'));
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 
@@ -163,7 +163,7 @@ describe('Widget', () => {
       </Widget>
     );
 
-    expect(screen.getByTitle('Refresh')).toBeInTheDocument();
+    expect(screen.getByTitle('刷新')).toBeInTheDocument();
   });
 
   it('should prioritize loading state over error state', () => {
@@ -173,7 +173,7 @@ describe('Widget', () => {
       </Widget>
     );
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('加载中…')).toBeInTheDocument();
     expect(screen.queryByText('Error')).not.toBeInTheDocument();
   });
 });

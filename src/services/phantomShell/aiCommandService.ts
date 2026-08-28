@@ -11,36 +11,36 @@ import { logger } from '../logger';
 const log = logger.module('PhantomShell:AICommand');
 
 // System prompt for shell command generation
-const SYSTEM_PROMPT = `You are Phantom Shell AI, a terminal assistant for a browser-based development environment.
+const SYSTEM_PROMPT = `你是 Phantom Shell AI，一个基于浏览器的开发环境中的终端助手。
 
-Your job is to translate natural language requests into terminal commands.
+你的任务是把自然语言请求转换为终端命令。
 
-CONTEXT:
-- You are running in WebContainers (Node.js in browser)
-- Available: npm, npx, node, basic shell commands (ls, cd, cat, mkdir, rm, etc.)
-- NOT available: git, docker, python, system-level commands
-- File system is in-memory (persisted to IndexedDB)
+上下文：
+- 你运行在 WebContainers 中（浏览器内的 Node.js）
+- 可用：npm、npx、node、基础 shell 命令（ls、cd、cat、mkdir、rm 等）
+- 不可用：git、docker、python、系统级命令
+- 文件系统位于内存中（持久化到 IndexedDB）
 
-RESPONSE FORMAT:
-- For simple requests, respond with ONLY the command(s), one per line
-- For complex requests, briefly explain then provide commands
-- Use npm not yarn or pnpm
-- Prefer npx for one-off tools
+回复格式：
+- 对于简单请求，仅回复命令本身，每行一条
+- 对于复杂请求，先简要说明再给出命令
+- 使用 npm，不要用 yarn 或 pnpm
+- 一次性工具优先使用 npx
 
-EXAMPLES:
-User: create a react app
-Response: npm create vite@latest my-app -- --template react
+示例：
+用户：create a react app
+回复：npm create vite@latest my-app -- --template react
 
-User: install express
-Response: npm install express
+用户：install express
+回复：npm install express
 
-User: show files
-Response: ls -la
+用户：show files
+回复：ls -la
 
-DO NOT:
-- Suggest git commands (git isn't available)
-- Suggest python/pip commands
-- Output markdown formatting (just plain text)`;
+禁止事项：
+- 不要建议 git 命令（git 不可用）
+- 不要建议 python/pip 命令
+- 不要输出 markdown 格式（只输出纯文本）`;
 
 // ==================== TYPES ====================
 
@@ -140,7 +140,7 @@ export const processAICommand = async (
   if (!prompt.trim()) {
     return {
       commands: [],
-      error: 'Please provide a request\n(e.g., /ai create a react app)',
+      error: '请提供请求\n（例如：/ai create a react app）',
     };
   }
 
@@ -161,7 +161,7 @@ export const processAICommand = async (
   if (configuredProviders.length === 0) {
     return {
       commands: [],
-      error: 'No AI provider configured.\nSet up a provider in Settings.',
+      error: '未配置 AI 提供商。\n请在设置中配置提供商。',
     };
   }
 
@@ -170,14 +170,14 @@ export const processAICommand = async (
   // Build context message
   let contextMsg = '';
   if (context?.currentDirectory) {
-    contextMsg += `Current directory: ${context.currentDirectory}\n`;
+    contextMsg += `当前目录：${context.currentDirectory}\n`;
   }
   if (context?.recentOutput) {
-    contextMsg += `Recent terminal output:\n${context.recentOutput.slice(-500)}\n`;
+    contextMsg += `最近的终端输出：\n${context.recentOutput.slice(-500)}\n`;
   }
 
   const fullPrompt = contextMsg
-    ? `${contextMsg}\n---\nUser request: ${prompt}`
+    ? `${contextMsg}\n---\n用户请求：${prompt}`
     : prompt;
 
   try {
@@ -219,7 +219,7 @@ export const processAICommand = async (
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       commands: [],
-      error: `AI request failed:\n${errorMessage}`,
+      error: `AI 请求失败：\n${errorMessage}`,
     };
   }
 };

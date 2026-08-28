@@ -16,7 +16,7 @@ export const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
   if (!activityLog || activityLog.length === 0) {
     return (
       <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-        📋 No activity yet
+        📋 暂无动态
       </div>
     );
   }
@@ -30,14 +30,14 @@ export const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
             <div className="w-2 h-2 mt-2 rounded-full bg-accent-blue flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                {entry.action === 'created' && 'Created task'}
-                {entry.action === 'updated' && entry.field && `Updated ${entry.field}`}
-                {entry.action === 'moved' && 'Moved to different column'}
-                {entry.action === 'commented' && 'Added comment'}
-                {entry.action === 'checklist_updated' && 'Updated checklist'}
+                {entry.action === 'created' && '创建了任务'}
+                {entry.action === 'updated' && entry.field && `更新了 ${entry.field}`}
+                {entry.action === 'moved' && '移动到其他列'}
+                {entry.action === 'commented' && '添加了评论'}
+                {entry.action === 'checklist_updated' && '更新了清单'}
                 {entry.oldValue && entry.newValue && (
                   <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                    {' '}from "{entry.oldValue}" to "{entry.newValue}"
+                    {' '}从“{entry.oldValue}”改为“{entry.newValue}”
                   </span>
                 )}
               </p>

@@ -3,10 +3,10 @@ import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
 import { formatDuration, roundDuration } from '../utils/timeFormatters';
 
 const ROUNDING_OPTIONS: { value: 0 | 5 | 15 | 30; label: string }[] = [
-  { value: 0, label: 'Exact (no rounding)' },
-  { value: 5, label: 'Nearest 5 minutes' },
-  { value: 15, label: 'Nearest 15 minutes' },
-  { value: 30, label: 'Nearest 30 minutes' },
+  { value: 0, label: '精确（不取整）' },
+  { value: 5, label: '按 5 分钟取整' },
+  { value: 15, label: '按 15 分钟取整' },
+  { value: 30, label: '按 30 分钟取整' },
 ];
 
 // Example durations to show rounding effect
@@ -37,10 +37,10 @@ export function TimeRoundingSettings() {
         <Clock className="w-6 h-6 text-accent-primary" />
         <div>
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Time Rounding
+            时间取整
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Configure how time durations are rounded when stopping timers
+            配置停止计时器时时长的取整方式
           </p>
         </div>
       </div>
@@ -50,9 +50,8 @@ export function TimeRoundingSettings() {
         <Info className="w-5 h-5 text-accent-blue flex-shrink-0 mt-0.5" />
         <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
           <p>
-            Rounding is applied when you stop a timer or export entries.
-            The actual start and end times are preserved, only the reported
-            duration is rounded.
+            取整会在您停止计时器或导出记录时应用。
+            实际开始和结束时间会被保留，仅对显示的时长进行取整。
           </p>
         </div>
       </div>
@@ -60,7 +59,7 @@ export function TimeRoundingSettings() {
       {/* Rounding Options */}
       <div className="p-4 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg border border-border-light dark:border-border-dark">
         <p className="font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-          Rounding Interval
+          取整间隔
         </p>
         <div className="space-y-2">
           {ROUNDING_OPTIONS.map((option) => (
@@ -95,20 +94,20 @@ export function TimeRoundingSettings() {
       {/* Rounding Preview */}
       <div className="p-4 bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 rounded-lg border border-border-light dark:border-border-dark">
         <p className="font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-          Rounding Preview
+          取整预览
         </p>
         <div className="overflow-hidden rounded-lg border border-border-light dark:border-border-dark">
           <table className="w-full">
             <thead className="bg-surface-light-elevated dark:bg-surface-dark-elevated">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase">
-                  Actual
+                  实际
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase">
-                  Rounded
+                  取整后
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-text-light-secondary dark:text-text-dark-secondary uppercase">
-                  Difference
+                  差值
                 </th>
               </tr>
             </thead>
@@ -131,7 +130,7 @@ export function TimeRoundingSettings() {
                         ? 'text-status-success-text'
                         : 'text-status-error'
                     }`}>
-                      {diff === 0 ? 'No change' : `${diff > 0 ? '+' : ''}${Math.floor(diff / 60)}m ${Math.abs(diff % 60)}s`}
+                      {diff === 0 ? '无变化' : `${diff > 0 ? '+' : ''}${Math.floor(diff / 60)} 分 ${Math.abs(diff % 60)} 秒`}
                     </td>
                   </tr>
                 );

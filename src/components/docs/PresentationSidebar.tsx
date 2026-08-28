@@ -53,7 +53,7 @@ function SlideThumbnail({ slide, index, isActive, onClick }: SlideThumbnailProps
             {...common}
             width={element.width * THUMB_SCALE}
             height={element.height * THUMB_SCALE}
-            text={element.text?.content || 'Text'}
+            text={element.text?.content || '文本'}
             fontSize={(element.text?.fontSize || 32) * THUMB_SCALE}
             fontFamily={element.text?.fontFamily || 'Inter'}
             fill={element.text?.color || '#1F2937'}
@@ -207,7 +207,7 @@ export function PresentationSidebar({
           className="w-full flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed border-border-light dark:border-border-dark hover:border-accent-primary hover:bg-accent-primary/5 transition-colors text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-primary"
         >
           <Plus className="w-4 h-4" />
-          <span className="text-sm">Add slide</span>
+          <span className="text-sm">添加幻灯片</span>
         </button>
       </div>
     </div>

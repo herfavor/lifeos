@@ -44,7 +44,7 @@ export const MotivationalWidget: React.FC = () => {
   }, [fetchContent]);
 
   return (
-    <BaseWidget title="Daily Motivation" icon="✨" loading={loading} onRefresh={fetchContent}>
+    <BaseWidget title="每日激励" icon="✨" loading={loading} onRefresh={fetchContent}>
       <div className="space-y-3">
         <div
           className="relative rounded-button overflow-hidden h-40 flex items-center justify-center transition-all duration-standard ease-smooth"

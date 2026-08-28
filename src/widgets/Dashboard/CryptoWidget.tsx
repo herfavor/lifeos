@@ -34,12 +34,12 @@ export const CryptoWidget: React.FC = () => {
       const response = await fetch(
         'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true'
       );
-      if (!response.ok) throw new Error('Failed to fetch crypto prices');
+      if (!response.ok) throw new Error('获取加密货币价格失败');
 
       const data = await response.json();
       setCrypto(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load prices');
+      setError(err instanceof Error ? err.message : '加载价格失败');
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export const CryptoWidget: React.FC = () => {
   }, [settings.refreshRate, fetchCrypto]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: price < 1 ? 4 : 2,
@@ -83,7 +83,7 @@ export const CryptoWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Crypto Tracker"
+      title="加密货币行情"
       icon="₿"
       loading={loading}
       error={error}

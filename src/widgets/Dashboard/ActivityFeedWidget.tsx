@@ -27,11 +27,11 @@ const MODULE_ICONS: Record<ModuleType, string> = {
 };
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
-  created: 'Created',
-  updated: 'Updated',
-  deleted: 'Deleted',
-  completed: 'Completed',
-  viewed: 'Viewed',
+  created: '已创建',
+  updated: '已更新',
+  deleted: '已删除',
+  completed: '已完成',
+  viewed: '已查看',
 };
 
 function getRelativeTime(timestamp: string): string {
@@ -39,13 +39,13 @@ function getRelativeTime(timestamp: string): string {
   const then = new Date(timestamp).getTime();
   const diffMs = now - then;
   const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes} 分钟前`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours} 小时前`;
   const days = Math.floor(hours / 24);
-  if (days === 1) return 'Yesterday';
-  return `${days}d ago`;
+  if (days === 1) return '昨天';
+  return `${days} 天前`;
 }
 
 export const ActivityFeedWidget: React.FC<WidgetComponentProps> = () => {
@@ -55,7 +55,7 @@ export const ActivityFeedWidget: React.FC<WidgetComponentProps> = () => {
   const recentEvents = getActivities({ limit: 5 });
 
   return (
-    <BaseWidget title="Activity Feed" icon="📊" subtitle="Recent activity">
+    <BaseWidget title="动态" icon="📊" subtitle="最近动态">
       <div className="flex flex-col h-full min-h-[160px]">
         {recentEvents.length > 0 ? (
           <div className="space-y-1.5 mb-4">
@@ -82,15 +82,15 @@ export const ActivityFeedWidget: React.FC<WidgetComponentProps> = () => {
         ) : (
           <WidgetEmptyState
             icon="📊"
-            message="No activity yet"
-            hint="Events will appear as you use NeumanOS"
+            message="暂无动态"
+            hint="使用 LifeOS 后这里将显示动态"
           />
         )}
         <button
           onClick={() => navigate('/activity')}
           className="w-full mt-auto px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
         >
-          View All Activity →
+          查看全部动态 →
         </button>
       </div>
     </BaseWidget>

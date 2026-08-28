@@ -185,10 +185,10 @@ function PickerModal({
 
   const title =
     type === 'task'
-      ? 'Embed Task'
+      ? '嵌入任务'
       : type === 'event'
-        ? 'Embed Event'
-        : 'Embed Spreadsheet';
+        ? '嵌入事件'
+        : '嵌入电子表格';
 
   return (
     <div

@@ -33,7 +33,7 @@ export function QuizResults({
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">
-          Quiz Results
+          测验结果
         </h1>
         <p className="text-text-light-secondary dark:text-text-dark-secondary">
           {form.title}
@@ -54,7 +54,7 @@ export function QuizResults({
           </span>
         </div>
         <div className="text-xl text-text-light-secondary dark:text-text-dark-secondary mb-4">
-          {score} out of {maxScore} points
+          {score} / {maxScore} 分
         </div>
         <div
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
@@ -66,12 +66,12 @@ export function QuizResults({
           {passed ? (
             <>
               <CheckCircle className="w-5 h-5" />
-              <span className="font-medium">Passed!</span>
+              <span className="font-medium">通过！</span>
             </>
           ) : (
             <>
               <XCircle className="w-5 h-5" />
-              <span className="font-medium">Not Passed</span>
+              <span className="font-medium">未通过</span>
             </>
           )}
         </div>
@@ -81,7 +81,7 @@ export function QuizResults({
       {showCorrectAnswers && (
         <div className="space-y-4 mb-8">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Question Breakdown
+            逐题解析
           </h2>
           {form.fields.map((field) => {
             // Skip fields without quiz settings
@@ -118,14 +118,14 @@ export function QuizResults({
                         {field.label}
                       </h3>
                       <span className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                        {isCorrect ? points : 0} / {points} points
+                        {isCorrect ? points : 0} / {points} 分
                       </span>
                     </div>
 
                     <div className="space-y-2 text-sm">
                       <div>
                         <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                          Your answer:{' '}
+                          你的答案：{' '}
                         </span>
                         <span className="text-text-light-primary dark:text-text-dark-primary font-medium">
                           {formatAnswer(userAnswer)}
@@ -135,7 +135,7 @@ export function QuizResults({
                       {!isCorrect && (
                         <div>
                           <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                            Correct answer:{' '}
+                            正确答案：{' '}
                           </span>
                           <span className="text-accent-green font-medium">
                             {formatAnswer(correctAnswer)}
@@ -162,17 +162,17 @@ export function QuizResults({
         {onRetake && (
           <button
             onClick={onRetake}
-            className="px-6 py-3 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+            className="px-6 py-3 bg-accent-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
           >
-            Retake Quiz
+            重新测验
           </button>
         )}
         {onClose && (
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors font-medium"
+            className="px-6 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg hover:bg-border-light dark:hover:bg-border-dark transition-colors font-medium"
           >
-            Close
+            关闭
           </button>
         )}
       </div>
@@ -218,7 +218,7 @@ function checkAnswerMatch(userAnswer: any, correctAnswer: unknown): boolean {
  */
 function formatAnswer(answer: unknown): string {
   if (answer === undefined || answer === null || answer === '') {
-    return '[not answered]';
+    return '[未作答]';
   }
 
   if (Array.isArray(answer)) {
@@ -226,7 +226,7 @@ function formatAnswer(answer: unknown): string {
   }
 
   if (typeof answer === 'boolean') {
-    return answer ? 'Yes' : 'No';
+    return answer ? '是' : '否';
   }
 
   return String(answer);

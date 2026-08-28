@@ -54,7 +54,10 @@ export function TagPicker({
   const notesSnapshot = useNotesStore((state) => state.notes);
 
   // Cache the notes array to prevent infinite re-renders
-  const allNotes = useMemo(() => Object.values(notesSnapshot), [notesSnapshot]);
+  const allNotes = useMemo(
+    () => Object.values(notesSnapshot).filter((note) => !note.deletedAt),
+    [notesSnapshot]
+  );
 
   // Generate smart tag suggestions
   const suggestions = useMemo(() => {
@@ -226,7 +229,7 @@ export function TagPicker({
                     ? `hover:bg-${color}/20 dark:hover:bg-${color}/30`
                     : 'hover:bg-accent-primary/20'
                 }`}
-                aria-label={`Remove tag ${tag}`}
+                aria-label={`移除标签 ${tag}`}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -239,10 +242,10 @@ export function TagPicker({
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary transition-colors"
-            aria-label="Add tag"
+            aria-label="添加标签"
           >
             <Plus className="w-3 h-3" />
-            Add tag
+            添加标签
           </button>
         )}
       </div>
@@ -271,7 +274,7 @@ export function TagPicker({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search or create tag..."
+              placeholder="搜索或创建标签…"
               className="w-full px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary"
             />
           </div>
@@ -289,7 +292,7 @@ export function TagPicker({
                     <div className="flex items-center gap-2">
                       <Plus className="w-4 h-4 text-accent-primary" />
                       <span>
-                        Create "<span className="font-medium">{searchQuery}</span>"
+                        创建“<span className="font-medium">{searchQuery}</span>”
                       </span>
                     </div>
                   </button>
@@ -310,7 +313,7 @@ export function TagPicker({
                   ))
                 ) : (
                   <div className="px-3 py-4 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    No matching tags
+                    没有匹配的标签
                   </div>
                 )}
               </>
@@ -323,7 +326,7 @@ export function TagPicker({
                   </div>
                 ) : (
                   <div className="px-3 py-4 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    No tags yet
+                    还没有标签
                   </div>
                 )}
               </>

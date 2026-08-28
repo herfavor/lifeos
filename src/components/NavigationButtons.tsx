@@ -47,8 +47,8 @@ export const NavigationButtons: React.FC = () => {
   useShortcut({
     id: 'nav-go-back',
     keys: ['alt', 'ArrowLeft'],
-    label: 'Go back',
-    description: 'Navigate to previous page',
+    label: '返回',
+    description: '导航至上一页',
     handler: handleGoBack,
     priority: 30,
     allowInInput: true,
@@ -57,8 +57,8 @@ export const NavigationButtons: React.FC = () => {
   useShortcut({
     id: 'nav-go-forward',
     keys: ['alt', 'ArrowRight'],
-    label: 'Go forward',
-    description: 'Navigate to next page',
+    label: '前进',
+    description: '导航至下一页',
     handler: handleGoForward,
     priority: 30,
     allowInInput: true,
@@ -82,8 +82,8 @@ export const NavigationButtons: React.FC = () => {
             : 'text-text-light-secondary/30 dark:text-text-dark-secondary/30 cursor-not-allowed'
           }
         `}
-        title="Go back (Alt+Left)"
-        aria-label="Go back"
+        title="返回 (Alt+Left)"
+        aria-label="返回"
       >
         <ArrowLeft className="w-4 h-4" />
       </button>
@@ -97,8 +97,8 @@ export const NavigationButtons: React.FC = () => {
             : 'text-text-light-secondary/30 dark:text-text-dark-secondary/30 cursor-not-allowed'
           }
         `}
-        title="Go forward (Alt+Right)"
-        aria-label="Go forward"
+        title="前进 (Alt+Right)"
+        aria-label="前进"
       >
         <ArrowRight className="w-4 h-4" />
       </button>

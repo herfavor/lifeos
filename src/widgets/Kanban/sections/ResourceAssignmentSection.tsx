@@ -93,7 +93,7 @@ export const ResourceAssignmentSection: React.FC<ResourceAssignmentSectionProps>
   return (
     <div className="relative">
       <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-        Assigned To
+        指派给
       </label>
 
       <button
@@ -123,7 +123,7 @@ export const ResourceAssignmentSection: React.FC<ResourceAssignmentSectionProps>
           </>
         ) : (
           <span className="text-text-light-secondary dark:text-text-dark-secondary">
-            + Assign resource
+            + 指派资源
           </span>
         )}
       </button>
@@ -137,15 +137,15 @@ export const ResourceAssignmentSection: React.FC<ResourceAssignmentSectionProps>
               onClick={() => handleAssign(null)}
               className="w-full px-3 py-2 text-left text-sm hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border-b border-border-light dark:border-border-dark"
             >
-              Unassign
+              取消指派
             </button>
           )}
 
           {resourcesWithUtilization.length === 0 ? (
             <div className="px-3 py-4 text-sm text-text-light-secondary dark:text-text-dark-secondary text-center">
-              No resources available.
+              暂无可用资源。
               <br />
-              Add resources in Settings.
+              请在设置中添加资源。
             </div>
           ) : (
             resourcesWithUtilization.map((resource) => (
@@ -190,7 +190,7 @@ export const ResourceAssignmentSection: React.FC<ResourceAssignmentSectionProps>
                   </div>
                   {resource.isOverCapacity && (
                     <div className="text-[10px] text-status-error">
-                      Over capacity
+                      超出容量
                     </div>
                   )}
                 </div>

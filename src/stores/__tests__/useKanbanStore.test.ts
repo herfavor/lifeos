@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useKanbanStore } from '../useKanbanStore';
+import { useKanbanArchiveStore } from '../useKanbanArchiveStore';
 
 describe('useKanbanStore', () => {
   beforeEach(() => {
     // Reset store to initial state
     useKanbanStore.setState({ tasks: [] });
+    useKanbanArchiveStore.setState({ archivedTasks: [] });
   });
 
   it('should have empty tasks initially', () => {
@@ -88,7 +90,7 @@ describe('useKanbanStore', () => {
     expect(state.tasks[0].status).toBe('todo'); // Unchanged field
   });
 
-  it('should delete a task', () => {
+  it('should move a deleted task into the recoverable archive', () => {
     useKanbanStore.getState().addTask({
       title: 'Task to Delete',
       description: '',
@@ -107,6 +109,10 @@ describe('useKanbanStore', () => {
 
     const state = useKanbanStore.getState();
     expect(state.tasks).toHaveLength(0);
+    expect(useKanbanArchiveStore.getState().archivedTasks[0]).toMatchObject({
+      id: taskId,
+      title: 'Task to Delete',
+    });
   });
 
   it('should move a task to a different status', () => {

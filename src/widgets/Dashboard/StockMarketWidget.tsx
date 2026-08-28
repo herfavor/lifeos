@@ -51,7 +51,7 @@ export const StockMarketWidget: React.FC = () => {
       const stockData = await Promise.all(stockPromises);
       setStocks(stockData);
     } catch (err) {
-      setError('Failed to fetch stock data. Please try again.');
+      setError('获取股票数据失败，请重试。');
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export const StockMarketWidget: React.FC = () => {
   }, [fetchStocks]);
 
   return (
-    <BaseWidget title="Stock Market" icon="📈" loading={loading} error={error} onRefresh={fetchStocks}>
+    <BaseWidget title="股市" icon="📈" loading={loading} error={error} onRefresh={fetchStocks}>
       <div className="space-y-2">
         {stocks.map((stock) => (
           <div

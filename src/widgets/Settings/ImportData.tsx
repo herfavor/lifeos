@@ -32,7 +32,7 @@ export const ImportData: React.FC = () => {
       const previewData = generateImportPreview(detectedSource, content);
       setPreview(previewData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to read file');
+      setError(err instanceof Error ? err.message : '读取文件失败');
     }
   };
 
@@ -51,9 +51,9 @@ export const ImportData: React.FC = () => {
 
       setResult({
         success: true,
-        message: `Successfully imported ${importResult.tasksImported} task(s). ${
+        message: `成功导入 ${importResult.tasksImported} 个任务。${
           importResult.tagsCreated.length > 0
-            ? `Created ${importResult.tagsCreated.length} new tag(s).`
+            ? `已创建 ${importResult.tagsCreated.length} 个新标签。`
             : ''
         }`,
       });
@@ -66,7 +66,7 @@ export const ImportData: React.FC = () => {
         fileInputRef.current.value = '';
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import failed');
+      setError(err instanceof Error ? err.message : '导入失败');
     } finally {
       setImporting(false);
     }
@@ -76,11 +76,10 @@ export const ImportData: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-          Import Tasks
+          导入任务
         </h3>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-          Import your tasks from other productivity tools. Supported formats: Trello (JSON), Asana (JSON),
-          Todoist (CSV), ClickUp (CSV), Monday.com (CSV), Notion (CSV).
+          从其他生产力工具导入任务。支持格式：Trello（JSON）、Asana（JSON）、Todoist（CSV）、ClickUp（CSV）、Monday.com（CSV）、Notion（CSV）。
         </p>
       </div>
 
@@ -112,10 +111,10 @@ export const ImportData: React.FC = () => {
             />
           </svg>
           <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Click to upload or drag and drop
+            点击上传或拖拽文件到此处
           </span>
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            JSON or CSV files only
+            仅支持 JSON 或 CSV 文件
           </span>
         </label>
       </div>
@@ -129,7 +128,7 @@ export const ImportData: React.FC = () => {
                 {file.name}
               </p>
               <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                Detected format: <span className="font-medium">{formatSourceName(source)}</span>
+                检测到的格式：<span className="font-medium">{formatSourceName(source)}</span>
               </p>
             </div>
             <button
@@ -145,7 +144,7 @@ export const ImportData: React.FC = () => {
               }}
               className="text-status-error-text hover:underline text-sm"
             >
-              Clear
+              清除
             </button>
           </div>
         </div>
@@ -155,13 +154,13 @@ export const ImportData: React.FC = () => {
       {preview && (
         <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 rounded-lg border border-border-light dark:border-border-dark">
           <h4 className="font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-            Preview ({preview.taskCount} task{preview.taskCount !== 1 ? 's' : ''})
+            预览（{preview.taskCount} 个任务）
           </h4>
 
           {/* Warnings */}
           {preview.warnings.length > 0 && (
             <div className="mb-4 p-3 bg-status-warning-bg text-status-warning-text rounded text-sm">
-              <p className="font-medium mb-1">Warnings:</p>
+              <p className="font-medium mb-1">警告：</p>
               <ul className="list-disc list-inside space-y-1">
                 {preview.warnings.map((warning, idx) => (
                   <li key={idx}>{warning}</li>
@@ -174,7 +173,7 @@ export const ImportData: React.FC = () => {
           {preview.newTags.length > 0 && (
             <div className="mb-4">
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                New tags to be created ({preview.newTags.length}):
+                将要创建的新标签（{preview.newTags.length}）：
               </p>
               <div className="flex flex-wrap gap-2">
                 {preview.newTags.slice(0, 10).map((tag) => (
@@ -187,7 +186,7 @@ export const ImportData: React.FC = () => {
                 ))}
                 {preview.newTags.length > 10 && (
                   <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    +{preview.newTags.length - 10} more
+                    +{preview.newTags.length - 10} 更多
                   </span>
                 )}
               </div>
@@ -232,7 +231,7 @@ export const ImportData: React.FC = () => {
                       )}
                       {task.tags && task.tags.length > 0 && (
                         <span className="px-1.5 py-0.5 rounded bg-accent-purple/10 text-accent-purple">
-                          {task.tags.length} tag{task.tags.length !== 1 ? 's' : ''}
+                          {task.tags.length} 个标签
                         </span>
                       )}
                     </div>
@@ -242,7 +241,7 @@ export const ImportData: React.FC = () => {
             ))}
             {preview.taskCount > 10 && (
               <p className="text-xs text-center text-text-light-secondary dark:text-text-dark-secondary py-2">
-                +{preview.taskCount - 10} more task{preview.taskCount - 10 !== 1 ? 's' : ''}
+                +{preview.taskCount - 10} 个更多任务
               </p>
             )}
           </div>
@@ -254,7 +253,7 @@ export const ImportData: React.FC = () => {
               disabled={importing}
               className="flex-1 px-4 py-2 bg-accent-blue text-white text-sm font-medium rounded-lg hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {importing ? 'Importing...' : `Import ${preview.taskCount} Task${preview.taskCount !== 1 ? 's' : ''}`}
+              {importing ? '正在导入…' : `导入 ${preview.taskCount} 个任务`}
             </button>
           </div>
         </div>
@@ -263,7 +262,7 @@ export const ImportData: React.FC = () => {
       {/* Error */}
       {error && (
         <div className="p-4 bg-status-error-bg text-status-error-text rounded-lg">
-          <p className="font-medium mb-1">Error</p>
+          <p className="font-medium mb-1">错误</p>
           <p className="text-sm">{error}</p>
         </div>
       )}
@@ -271,7 +270,7 @@ export const ImportData: React.FC = () => {
       {/* Success */}
       {result && result.success && (
         <div className="p-4 bg-status-success-bg text-status-success-text rounded-lg">
-          <p className="font-medium mb-1">Success!</p>
+          <p className="font-medium mb-1">成功！</p>
           <p className="text-sm">{result.message}</p>
         </div>
       )}
@@ -279,7 +278,7 @@ export const ImportData: React.FC = () => {
       {/* Export documentation links */}
       <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 rounded-lg">
         <h4 className="font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-          How to export from other tools
+          如何从其他工具导出
         </h4>
         <ul className="space-y-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
           <li>
@@ -315,8 +314,8 @@ function formatSourceName(source: ImportSource): string {
     clickup: 'ClickUp (CSV)',
     monday: 'Monday.com (CSV)',
     notion: 'Notion (CSV)',
-    'generic-json': 'Generic JSON',
-    'generic-csv': 'Generic CSV',
+    'generic-json': '通用 JSON',
+    'generic-csv': '通用 CSV',
   };
   return map[source];
 }

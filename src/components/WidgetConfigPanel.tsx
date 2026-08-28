@@ -14,12 +14,12 @@ interface WidgetConfigPanelProps {
 
 /** Refresh interval options shared across refreshable widgets */
 const REFRESH_OPTIONS: Array<{ label: string; value: number }> = [
-  { label: 'Manual only', value: 0 },
-  { label: '1 minute', value: 1 },
-  { label: '5 minutes', value: 5 },
-  { label: '15 minutes', value: 15 },
-  { label: '30 minutes', value: 30 },
-  { label: '1 hour', value: 60 },
+  { label: '仅手动', value: 0 },
+  { label: '1 分钟', value: 1 },
+  { label: '5 分钟', value: 5 },
+  { label: '15 分钟', value: 15 },
+  { label: '30 分钟', value: 30 },
+  { label: '1 小时', value: 60 },
 ];
 
 /** Reusable select for refresh interval */
@@ -29,7 +29,7 @@ const RefreshIntervalSelect: React.FC<{
 }> = ({ value, onChange }) => (
   <div>
     <label className="block text-xs font-medium text-text-light-primary dark:text-text-dark-primary mb-1.5">
-      Auto-Refresh Interval
+      自动刷新间隔
     </label>
     <select
       value={value}
@@ -113,12 +113,12 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
         onChange={(v) => update({ refreshRate: v })}
       />
       <SettingsNumber
-        label="Stories to Show"
+        label="显示故事数"
         value={settings.maxItems ?? 5}
         onChange={(v) => update({ maxItems: v })}
         min={3}
         max={15}
-        hint="Number of top stories displayed"
+        hint="显示的热门故事数量"
       />
     </div>
   ),
@@ -139,14 +139,14 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
         value={settings.subreddit ?? 'programming'}
         onChange={(v) => update({ subreddit: v })}
         placeholder="programming"
-        hint="Subreddit name without r/"
+        hint="不带 r/ 的 Subreddit 名称"
       />
       <RefreshIntervalSelect
         value={settings.refreshRate ?? 15}
         onChange={(v) => update({ refreshRate: v })}
       />
       <SettingsNumber
-        label="Posts to Show"
+        label="显示帖子数"
         value={settings.maxItems ?? 5}
         onChange={(v) => update({ maxItems: v })}
         min={3}
@@ -158,7 +158,7 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   github: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsInput
-        label="GitHub Username"
+        label="GitHub 用户名"
         value={settings.username ?? ''}
         onChange={(v) => update({ username: v })}
         placeholder="octocat"
@@ -182,7 +182,7 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   unsplash: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsInput
-        label="Photo Category"
+        label="图片分类"
         value={settings.category ?? 'nature'}
         onChange={(v) => update({ category: v })}
         placeholder="nature, architecture, travel..."
@@ -197,12 +197,12 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   pomodoro: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsNumber
-        label="Focus Duration (minutes)"
+        label="专注时长（分钟）"
         value={settings.duration ?? 25}
         onChange={(v) => update({ duration: v })}
         min={5}
         max={90}
-        hint="Typical: 25 min (Pomodoro) or 50 min (deep work)"
+        hint="常规：25 分钟（番茄钟）或 50 分钟（深度工作）"
       />
     </div>
   ),
@@ -214,7 +214,7 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
         onChange={(v) => update({ refreshRate: v })}
       />
       <SettingsNumber
-        label="Articles to Show"
+        label="显示文章数"
         value={settings.maxItems ?? 5}
         onChange={(v) => update({ maxItems: v })}
         min={3}
@@ -226,11 +226,11 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   worldclock: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsInput
-        label="Timezones"
+        label="时区"
         value={(settings.timezones ?? []).join(', ')}
         onChange={(v) => update({ timezones: v.split(',').map((s) => s.trim()).filter(Boolean) })}
         placeholder="America/New_York, Europe/London, Asia/Tokyo"
-        hint="Comma-separated timezone identifiers"
+        hint="用逗号分隔的时区标识符"
       />
     </div>
   ),
@@ -238,7 +238,7 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   currency: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsInput
-        label="Base Currency"
+        label="基础货币"
         value={settings.baseCurrency ?? 'USD'}
         onChange={(v) => update({ baseCurrency: v.toUpperCase() })}
         placeholder="USD"
@@ -275,7 +275,7 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
         onChange={(v) => update({ refreshRate: v })}
       />
       <SettingsNumber
-        label="Papers to Show"
+        label="显示论文数"
         value={settings.maxItems ?? 5}
         onChange={(v) => update({ maxItems: v })}
         min={3}
@@ -287,11 +287,11 @@ const WIDGET_CONFIGS: Record<string, React.FC<{
   packagestats: ({ settings, update }) => (
     <div className="space-y-3">
       <SettingsInput
-        label="NPM Packages"
+        label="NPM 包"
         value={(settings.packageNames ?? []).join(', ')}
         onChange={(v) => update({ packageNames: v.split(',').map((s) => s.trim()).filter(Boolean) })}
         placeholder="react, vue, svelte"
-        hint="Comma-separated package names"
+        hint="用逗号分隔的包名"
       />
       <RefreshIntervalSelect
         value={settings.refreshRate ?? 60}
@@ -339,7 +339,7 @@ export const WidgetConfigPanel: React.FC<WidgetConfigPanelProps> = ({ widgetId }
   // Widgets with no configurable settings
   return (
     <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-      This widget has no additional settings.
+      此组件没有其他设置。
     </p>
   );
 };

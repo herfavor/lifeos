@@ -181,7 +181,7 @@ class AutoSaveManager {
       await this.saveToLocal();
       this.lastSaveTime = Date.now();
     } else {
-      throw new Error('Auto-save not enabled or no directory configured');
+      throw new Error('自动保存未启用或未配置保存目录');
     }
   }
 

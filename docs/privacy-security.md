@@ -1,295 +1,62 @@
-# Privacy & Security
+# 隐私与安全
 
-NeumanOS is built on a simple principle: your data belongs to you. This guide explains where your data lives, what we collect (almost nothing), and how your information is protected.
+LifeOS 的核心原则是：**你的业务数据默认留在当前设备 / 浏览器 origin。**
 
----
+## 本地保存
 
-## Table of Contents
+任务、项目、日程、笔记、收藏、习惯等主要数据通过 IndexedDB / Dexie 保存；部分界面偏好和小型配置使用 localStorage。
 
-- [Where Your Data Lives](#where-your-data-lives)
-- [Privacy Guarantees](#privacy-guarantees)
-- [Analytics Disclosure](#analytics-disclosure)
-- [Dashboard Widgets & External Data](#dashboard-widgets--external-data)
-- [AI Terminal Security](#ai-terminal-security)
-- [Backing Up Your Data](#backing-up-your-data)
-- [Browser Security Tips](#browser-security-tips)
-- [Related Guides](#related-guides)
+没有 LifeOS 账户系统，也没有 LifeOS 云同步服务。
 
----
+## 浏览器 origin 边界
 
-## Where Your Data Lives
+本地存储不是“整台电脑共享数据库”，而是按 origin 隔离。
 
-All your data -- notes, tasks, calendar events, time entries, settings, and widget configurations -- is stored **locally in your web browser** on your own device. NeumanOS uses your browser's built-in storage, which provides 50GB+ of capacity depending on your available disk space.
+例如：
 
-**What this means in practice:**
+- `http://localhost:5173`
+- `http://localhost:4173`
+- `https://lifeos.example.com`
 
-- Your data lives on your computer, not on our servers
-- No internet connection is required to use NeumanOS (after the initial page load)
-- Nobody -- not even us -- can access your data remotely
-- If you clear your browser data, your NeumanOS data goes with it (so back up regularly)
+三者数据默认相互独立。
 
-Your data never leaves your device unless you explicitly export it, set up auto-save to a cloud folder you control, or use optional dashboard widgets that fetch data from external APIs (see [Dashboard Widgets & External Data](#dashboard-widgets--external-data) below).
+## 哪些功能会联网
 
----
+只有主动使用相应能力时才需要网络，例如：
 
-## Privacy Guarantees
+- AI provider 请求
+- 天气 / 新闻 / 外部信息组件
+- 外部链接 / 图片 / 地图资源
+- 你自己部署的代理
 
-### What NeumanOS Does NOT Collect
+PWA Service Worker 也会获取和缓存当前应用的静态资源；这不是业务数据云同步。
 
-- No account creation or email addresses
-- No passwords (except your optional AI encryption password, stored in memory only)
-- No behavior tracking, user profiling, or advertising analytics
-- No crash reports or error telemetry
-- No cookies (except theme preference)
-- No fingerprinting
-- No advertising or marketing data
-- No personal data of any kind
+## AI API key
 
-### What NeumanOS Does NOT Do
+API key 通过设备管理密钥加密后保存在本地。
 
-- We do not create user accounts
-- We do not store data on our servers
-- We do not sell or share data (we don't have any to sell)
-- We do not track which features you use
-- We do not know how many notes you have, what tasks you create, or how you use the app
+- LifeOS 不提供 API key 中转服务器；
+- `.brain` 默认不包含 API key；
+- 清除站点数据会同时清除设备密钥和已保存 provider 配置，需要重新填写。
 
-### Open Source
+## AI 上下文
 
-NeumanOS is open source under the MIT License. You can audit the entire codebase yourself to verify these claims:
+今日快照用于数量型状态摘要。
 
-- **Repository:** [github.com/travisjneuman/neumanos](https://github.com/travisjneuman/neumanos)
+跨模块上下文是显式开关。开启后，选定的任务、日程、笔记等上下文会随 prompt 发送给当前 AI provider，因此只应对你信任的 provider 开启。
 
----
+## 高风险操作
 
-## Analytics Disclosure
+AI 新用户默认使用自动执行，但删除任务、事件、笔记、时间记录和例行仍强制确认。
 
-NeumanOS uses **Cloudflare Web Analytics** for basic, privacy-respecting site metrics.
+普通 UI 中的永久删除也应与可恢复归档 / 回收站分开。
 
-### What Cloudflare Web Analytics Does
+## 备份
 
-- Counts page views (aggregate, not per-user)
-- Shows country-level distribution of visitors
-- Measures basic performance metrics (page load time)
+本地优先意味着你承担备份责任。建议定期导出 `.brain`，并把自动备份文件夹交给你自己信任的同步工具。
 
-### What Cloudflare Web Analytics Does NOT Do
+## 相关指南
 
-- Does NOT use cookies
-- Does NOT use fingerprinting
-- Does NOT store IP addresses
-- Does NOT track individual users
-- Does NOT identify returning visitors
-- Does NOT collect any personal data
-
-Cloudflare Web Analytics is GDPR and CCPA compliant. It provides only aggregate, anonymized metrics -- we can see that "500 people visited this week from 20 countries" but we cannot identify any individual.
-
-### Blocking Analytics
-
-You can block Cloudflare Web Analytics with any standard ad blocker. The app works perfectly without it. Blocking analytics has zero impact on functionality.
-
----
-
-## Dashboard Widgets & External Data
-
-Some optional dashboard widgets fetch data from third-party APIs to display real-time information. These requests only happen when you actively add the widget to your dashboard.
-
-### Widgets That Contact External Services
-
-**Location-based widgets:**
-
-| Widget | Service | Data Sent |
-|--------|---------|-----------|
-| **IP Info** | ipapi.co | Your IP address (sent automatically by the HTTP request) |
-| **Weather Forecast** | api.open-meteo.com | Approximate location coordinates |
-| **Weather Map** | api.open-meteo.com, OpenStreetMap tiles | Approximate location coordinates |
-| **Air Quality** | air-quality-api.open-meteo.com | Approximate location coordinates |
-
-**News category widgets** (all contact external APIs, no personal data sent):
-
-| Widget | Service |
-|--------|---------|
-| **Hacker News** | news.ycombinator.com API |
-| **Reddit** | reddit.com public API |
-| **AI News** | Various news aggregator APIs |
-| **Sports** | site.api.espn.com |
-| **Wikipedia** | en.wikipedia.org API |
-| **Motivational** | Quotes API |
-
-**Dev category widgets** (all contact external APIs, no personal data sent):
-
-| Widget | Service |
-|--------|---------|
-| **GitHub / GitHub Trending** | api.github.com |
-| **Dev.to** | dev.to API |
-| **Awesome Lists** | GitHub API |
-| **Repo Stats** | GitHub API |
-| **Package Stats** | npm registry API |
-| **Twitch** | Twitch API |
-| **YouTube** | YouTube public API |
-
-**Finance category widgets** (all contact external APIs, no personal data sent):
-
-| Widget | Service |
-|--------|---------|
-| **Stock Market** | Financial data APIs |
-| **Crypto** | CoinGecko or similar API |
-| **Currency Converter** | Exchange rate APIs |
-
-**Fun category widgets** (all contact external APIs, no personal data sent):
-
-| Widget | Service |
-|--------|---------|
-| **Quote of the Day** | Quotes API |
-| **Random Facts** | Facts API |
-| **Jokes** | JokeAPI |
-| **Word of the Day** | Dictionary API |
-| **Bored** | BoredAPI |
-
-**Other widgets contacting external services:**
-
-| Widget | Service | Data Sent |
-|--------|---------|-----------|
-| **Unsplash** | unsplash.com | No personal data |
-| **Dictionary** | Free dictionary API | Search terms only |
-| **Uptime** | Target URLs you configure | HTTP requests to those URLs |
-
-**General rule:** All widgets in the **news**, **dev**, **finance**, and **fun** categories contact external APIs to fetch content. Widgets in the **core** and **productivity** categories read only from your local data and make no external requests (except AI Briefing, which uses your configured AI provider).
-
-### Widgets That Stay Fully Local
-
-These widgets never contact any external service:
-
-- My Day, Task Summary, Tasks Quick Add, Upcoming Events, Recent Notes, Habit Summary, Activity Feed, Bookmarks, Quick Add
-- Pomodoro, Shortcuts, Countdown, Flashcard, Daily Quests, Energy Tracker, Productivity Karma, Weekly Insights, Clipboard, Tab Manager, Forms, Analytics, Portfolio
-- Calculator, QR Code Generator, Unit Converter, Color Palette
-- Pixel Art, Typing Test, Memory Game
-
-### How to Control This
-
-- **Widgets are opt-in** -- no external requests are made until you add a widget to your dashboard
-- **Remove any widget at any time** to immediately stop those requests
-- **No accounts or tokens** are shared with these services (except your own AI API keys with AI providers)
-- **Check widget categories** -- core and productivity widgets are local-only; news, dev, finance, and fun widgets contact external APIs
-
-These external requests are the only exception to the "data never leaves your device" principle. All your notes, tasks, calendar events, and other content remain entirely local.
-
----
-
-## AI Terminal Security
-
-If you use the AI Terminal with your own API keys, those keys receive special protection.
-
-### Encryption
-
-- API keys are encrypted with **AES-256** encryption before being stored
-- You set a password that encrypts your keys (minimum 12 characters recommended)
-- Your password is held in memory only -- it is never written to disk
-- Your password is never sent over the network
-
-### Key Storage
-
-- Encrypted keys are stored in your browser's local storage
-- Keys are decrypted only when needed and only in memory
-- Keys are sent **only** to the AI provider you choose (OpenAI, Anthropic, etc.)
-- Keys are **never** sent to NeumanOS servers
-
-### What Happens During an AI Conversation
-
-1. You type a message
-2. NeumanOS decrypts your API key in memory
-3. Your message is sent directly from your browser to the AI provider
-4. The AI provider responds directly to your browser
-5. NeumanOS never sees, stores, or relays your conversations
-
-### Chat History Storage
-
-AI conversation history is stored locally in your browser as plaintext (not encrypted). If your device or browser profile is compromised, conversation history could be read. You can clear chat history at any time from the AI Terminal settings.
-
-### Password Expiry
-
-You can configure how long your password stays active:
-- **Daily** -- Most secure, re-enter every 24 hours
-- **Weekly** -- Balanced security and convenience
-- **Monthly** -- Most convenient, re-enter every 30 days
-
-> **Tip:** Use a password manager to store your encryption password. If you forget it, you'll need to clear all keys and re-add them.
-
-### If Your API Key Is Compromised
-
-1. Immediately revoke the key in the provider's dashboard
-2. Generate a new key
-3. Check usage/billing for unauthorized activity
-4. Report to the provider if unauthorized charges occurred
-5. Update the key in NeumanOS settings
-6. Set spending limits in provider dashboards when available
-
----
-
-## Backing Up Your Data
-
-Since your data is stored locally, backups are essential. NeumanOS provides two backup methods:
-
-### Manual Export
-
-1. Go to **Settings** > **Backup & Sync**
-2. Click **Export All Data**
-3. Downloads a `.brain` file (compressed JSON)
-4. Store this file somewhere safe
-
-### Auto-Save to Cloud Folder
-
-1. Set up a cloud-synced folder on your computer (Google Drive, iCloud, OneDrive, Proton Drive, or Dropbox)
-2. Go to **Settings** > **Backup & Sync**
-3. Click **Choose Folder** and select your cloud folder
-4. NeumanOS automatically saves backups every 30 seconds
-
-**Privacy note:** Auto-save writes files to a folder you control on your computer. NeumanOS never has access to your cloud account -- your cloud provider's desktop app handles the syncing independently.
-
-**What's included in backups:**
-- All notes and folders
-- All tasks and projects
-- All calendar events
-- All time tracking entries
-- Widget configurations
-- Settings and preferences
-- AI chat history (encrypted keys excluded by default)
-
-> **Tip:** For maximum privacy with cloud backups, use **Proton Drive** which provides end-to-end encryption.
-
-See the [Backup & Sync Guide](./backup-sync.md) for detailed setup instructions.
-
----
-
-## Browser Security Tips
-
-### Protect Your Data
-
-- **Don't clear browser data** without exporting a backup first
-- **Use auto-save** to a cloud folder for continuous protection
-- **Export backups regularly** -- at minimum once a month
-- **Keep your browser updated** for the latest security patches
-- **Install NeumanOS as a PWA** for offline access and added stability
-
-### Recommended Browsers
-
-NeumanOS works in all modern browsers. For the best experience:
-- **Chrome 86+** -- Best compatibility, auto-save support
-- **Edge 86+** -- Full feature support
-- **Safari 15.2+** -- Full feature support
-- **Firefox 88+** -- Works well, but auto-save to folder is not supported (use manual export)
-
-### Shared or Public Computers
-
-If you use NeumanOS on a shared computer:
-- Always use a private/incognito window
-- Your data will be deleted when you close the window
-- Never enter AI API keys on shared computers
-- Export your data before closing if needed
-
----
-
-## Related Guides
-
-- **[Backup & Sync](./backup-sync.md)** -- Detailed backup setup and cloud provider instructions
-- **[AI Terminal](./ai-terminal.md)** -- API key setup and provider security details
-- **[Getting Started](./getting-started.md)** -- Overview of NeumanOS and local storage
-- **[Troubleshooting](./troubleshooting.md)** -- Data recovery and storage issues
+- [备份与恢复](./backup-sync.md)
+- [AI 管理](./ai-management.md)
+- [后端代理](./backend-proxy-setup.md)

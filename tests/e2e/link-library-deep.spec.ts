@@ -15,7 +15,7 @@ test.describe('Link Library', () => {
   });
 
   test('page loads with heading', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: /Link Library|Bookmarks/i });
+    const heading = page.getByRole('heading', { name: /链接库|书签/i });
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -59,7 +59,7 @@ test.describe('Link Library', () => {
           await titleInput.fill('E2E Test Bookmark');
         }
 
-        const saveBtn = page.getByRole('button', { name: /save|add|create/i }).first();
+        const saveBtn = page.getByRole('button', { name: /保存|添加|创建/i }).first();
         if (await saveBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveBtn.click();
           await page.waitForTimeout(300);
@@ -70,7 +70,7 @@ test.describe('Link Library', () => {
   });
 
   test('has search input', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(searchInput).toBeVisible();
     }
@@ -86,8 +86,8 @@ test.describe('Link Library', () => {
   });
 
   test('has view toggle (grid/list)', async ({ page }) => {
-    const gridBtn = page.locator('[title="Grid view"], [aria-label="Grid view"]').first();
-    const listBtn = page.locator('[title="List view"], [aria-label="List view"]').first();
+    const gridBtn = page.locator('[title="网格视图"], [aria-label="网格视图"]').first();
+    const listBtn = page.locator('[title="列表视图"], [aria-label="列表视图"]').first();
     if (await gridBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(gridBtn).toBeVisible();
     }
@@ -98,7 +98,7 @@ test.describe('Link Library', () => {
   });
 
   test('has export button', async ({ page }) => {
-    const exportBtn = page.getByRole('button', { name: /export/i });
+    const exportBtn = page.getByRole('button', { name: /导出/i });
     if (await exportBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(exportBtn).toBeVisible();
     }
@@ -106,7 +106,7 @@ test.describe('Link Library', () => {
   });
 
   test('has import button', async ({ page }) => {
-    const importBtn = page.getByRole('button', { name: /import/i });
+    const importBtn = page.getByRole('button', { name: /导入/i });
     if (await importBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(importBtn).toBeVisible();
     }

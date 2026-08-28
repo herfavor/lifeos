@@ -31,7 +31,7 @@ export function TimeByProjectChart({ entries, dateRange }: TimeByProjectChartPro
     return (
       <div className="w-full h-64 flex items-center justify-center">
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No time entries in selected period
+          所选时间段内暂无时间记录
         </p>
       </div>
     );
@@ -53,7 +53,7 @@ export function TimeByProjectChart({ entries, dateRange }: TimeByProjectChartPro
           <YAxis
             tick={{ fontSize: 12 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
-            label={{ value: 'Hours', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
+            label={{ value: '小时', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
           />
           <Tooltip
             contentStyle={{
@@ -61,7 +61,7 @@ export function TimeByProjectChart({ entries, dateRange }: TimeByProjectChartPro
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${Number(value ?? 0).toFixed(2)} hours`, 'Time Tracked']}
+            formatter={(value) => [`${Number(value ?? 0).toFixed(2)} 小时`, '记录时长']}
           />
           <Bar dataKey="hours" fill="var(--accent-primary)" radius={[4, 4, 0, 0]} />
         </BarChart>

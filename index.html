@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="zh-CN" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,44 +11,41 @@
     <link rel="icon" type="image/svg+xml" href="/images/favicon/favicon.svg" />
     <link rel="shortcut icon" href="/images/favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="neumanos" />
+    <meta name="apple-mobile-web-app-title" content="LifeOS" />
     <link rel="manifest" href="/images/favicon/site.webmanifest" />
 
     <!-- SEO Meta Tags -->
-    <title>NeumanOS — Privacy-First Personal Productivity OS</title>
-    <meta name="description" content="Privacy-first, local-only personal OS with 30+ widgets — calendar, notes, kanban, spreadsheets, AI terminal, and more. All data stays on your device. No accounts, no servers." />
-    <meta name="keywords" content="neumanos, productivity, dashboard, local-first, privacy-first, task management, calendar, kanban, notes, spreadsheet, ai terminal, pwa, offline, react, typescript" />
-    <meta name="author" content="Travis Neuman" />
-    <link rel="canonical" href="https://os.neuman.dev/" />
+    <title>LifeOS — 本地优先的个人管理平台</title>
+    <meta name="description" content="LifeOS 是一个本地优先的个人综合管理平台：日程、任务、项目、笔记、收藏与 AI 助手聚合在一个工作台里。所有数据保存在你自己的设备上，无需账户，无需服务器。" />
+    <meta name="keywords" content="lifeos, productivity, dashboard, personal workspace, local-first, privacy-first, task management, calendar, kanban, notes, bookmarks, ai assistant, pwa, offline" />
+    <meta name="author" content="LifeOS Contributors" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://os.neuman.dev/" />
-    <meta property="og:title" content="NeumanOS — Privacy-First Personal Productivity OS" />
-    <meta property="og:description" content="Privacy-first, local-only personal OS with 30+ widgets — calendar, notes, kanban, spreadsheets, AI terminal, and more. All data stays on your device." />
-    <meta property="og:image" content="https://os.neuman.dev/images/og-image.png" />
-    <meta property="og:image:alt" content="NeumanOS dashboard showing calendar, notes, kanban boards, and productivity widgets" />
+    <meta property="og:title" content="LifeOS — 本地优先的个人管理平台" />
+    <meta property="og:description" content="A local-first personal dashboard and management workspace. All data stays on your device." />
+    <meta property="og:image" content="/images/og-image.png" />
+    <meta property="og:image:alt" content="LifeOS logo — a local-first personal dashboard and management workspace" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="NeumanOS" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="LifeOS" />
+    <meta property="og:locale" content="zh_CN" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://os.neuman.dev/" />
-    <meta name="twitter:title" content="NeumanOS — Privacy-First Personal Productivity OS" />
-    <meta name="twitter:description" content="Privacy-first, local-only personal OS with 30+ widgets — calendar, notes, kanban, spreadsheets, AI terminal, and more. All data stays on your device." />
-    <meta name="twitter:image" content="https://os.neuman.dev/images/og-image.png" />
-    <meta name="twitter:image:alt" content="NeumanOS dashboard showing calendar, notes, kanban boards, and productivity widgets" />
+    <meta name="twitter:title" content="LifeOS — 本地优先的个人管理平台" />
+    <meta name="twitter:description" content="A local-first personal dashboard and management workspace. All data stays on your device." />
+    <meta name="twitter:image" content="/images/og-image.png" />
+    <meta name="twitter:image:alt" content="LifeOS logo — a local-first personal dashboard and management workspace" />
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "NeumanOS",
-      "url": "https://os.neuman.dev",
-      "description": "Privacy-first, local-only personal OS with 30+ widgets — calendar, notes, kanban, spreadsheets, AI terminal, and more. All data stays on your device.",
+      "name": "LifeOS",
+      "url": "https://github.com/herfavor/lifeos",
+      "description": "A local-first personal dashboard and management workspace. All data stays on your device.",
       "applicationCategory": "ProductivityApplication",
       "operatingSystem": "Any (Web Browser)",
       "browserRequirements": "Requires JavaScript. Works best in Chrome, Firefox, Safari, Edge.",
@@ -58,14 +55,12 @@
         "priceCurrency": "USD"
       },
       "author": {
-        "@type": "Person",
-        "name": "Travis Neuman",
-        "url": "https://travisjneuman.com"
+        "@type": "Organization",
+        "name": "LifeOS Contributors",
+        "url": "https://github.com/herfavor/lifeos"
       },
-      "image": "https://os.neuman.dev/images/og-image.png",
-      "screenshot": "https://os.neuman.dev/images/og-image.png",
-      "featureList": "Calendar, Notes, Kanban Boards, Spreadsheets, AI Terminal, Weather, Maps, Time Tracking, Pomodoro Timer, Bookmarks, Contacts",
-      "softwareVersion": "1.5.0",
+      "image": "/images/og-image.png",
+      "featureList": "Dashboard, Today, Inbox, Projects, Tasks, Calendar, Notes, Bookmarks, AI Assistant, Review, Time Tracking, Habits",
       "license": "https://opensource.org/licenses/MIT"
     }
     </script>
@@ -89,8 +84,6 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""></script>
 
-    <!-- Cloudflare Web Analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f9662dda3d0442cbba5cfdc500fa0878"}'></script>
-    <!-- End Cloudflare Web Analytics -->
+    <!-- LifeOS is local-first: no analytics beacons, no telemetry. -->
   </body>
 </html>

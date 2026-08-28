@@ -55,9 +55,10 @@ export function TimeTrackingTimer() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(currentProjectId || null);
   const [timerTags, setTimerTags] = useState<string[]>([]);
   const [isBillable, setIsBillable] = useState(() => {
-    // Load billable default from localStorage (default: true for freelance use)
+    // Load billable default from localStorage (default: false — sessions are
+    // personal by default; marking billable is an explicit opt-in).
     const saved = localStorage.getItem('timeTracking:billableDefault');
-    return saved !== null ? saved === 'true' : true;
+    return saved === 'true';
   });
   const [showManualEntryModal, setShowManualEntryModal] = useState(false);
   const [recentEntries, setRecentEntries] = useState<TimeEntry[]>([]);
@@ -141,7 +142,7 @@ export function TimeTrackingTimer() {
     localStorage.setItem('timeTracking:billableDefault', String(isBillable));
 
     startTimer({
-      description: description || 'Untitled Task',
+      description: description || '未命名任务',
       projectId: selectedProjectId || undefined,
       billable: isBillable,
     });
@@ -239,7 +240,7 @@ export function TimeTrackingTimer() {
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-accent-primary" />
-              Active Timer
+              当前计时器
             </h3>
 
             {/* Timer Display */}
@@ -249,7 +250,7 @@ export function TimeTrackingTimer() {
               </div>
               {activeEntry?.isPaused && (
                 <div className="text-sm text-status-warning font-medium mt-2">
-                  Paused
+                  已暂停
                 </div>
               )}
             </div>
@@ -260,7 +261,7 @@ export function TimeTrackingTimer() {
                 type="text"
                 value={description}
                 onChange={handleDescriptionChange}
-                placeholder="What are you working on?"
+                placeholder="正在做什么？"
                 className="w-full px-4 py-3 text-base bg-surface-light-elevated dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
               />
 
@@ -268,7 +269,7 @@ export function TimeTrackingTimer() {
               <ProjectSelector
                 value={selectedProjectId}
                 onChange={handleProjectChange}
-                placeholder="Select a project (optional)"
+                placeholder="选择项目（可选）"
                 showNoProject={true}
               />
 
@@ -281,7 +282,7 @@ export function TimeTrackingTimer() {
                     updateActiveEntry({ tags: newTags });
                   }
                 }}
-                placeholder="Add tags (e.g., meeting, coding, review)"
+                placeholder="添加标签（如：会议、编码、评审）"
               />
 
               {/* Billable Toggle */}
@@ -297,7 +298,7 @@ export function TimeTrackingTimer() {
                   htmlFor="timer-billable"
                   className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
                 >
-                  Billable time
+                  可计费时间
                 </label>
               </div>
             </div>
@@ -307,10 +308,10 @@ export function TimeTrackingTimer() {
               {!activeEntry ? (
                 <button
                   onClick={handleStartTimer}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-accent-primary text-white dark:text-dark-background rounded-lg font-semibold hover:opacity-90 transition-opacity text-lg"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-accent-primary text-white rounded-lg font-semibold hover:opacity-90 transition-opacity text-lg"
                 >
                   <Play className="w-5 h-5" />
-                  Start Timer
+                  开始计时
                 </button>
               ) : (
                 <>
@@ -321,12 +322,12 @@ export function TimeTrackingTimer() {
                     {activeEntry.isPaused ? (
                       <>
                         <Play className="w-5 h-5" />
-                        Resume
+                        继续
                       </>
                     ) : (
                       <>
                         <Pause className="w-5 h-5" />
-                        Pause
+                        暂停
                       </>
                     )}
                   </button>
@@ -335,7 +336,7 @@ export function TimeTrackingTimer() {
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-status-error text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
                   >
                     <Square className="w-5 h-5" />
-                    Stop
+                    停止
                   </button>
                 </>
               )}
@@ -347,7 +348,7 @@ export function TimeTrackingTimer() {
               className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary font-medium hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Add Manual Entry
+              添加手动记录
             </button>
           </div>
 
@@ -355,14 +356,14 @@ export function TimeTrackingTimer() {
           <div className="lg:w-80 lg:border-l lg:border-border-light dark:lg:border-border-dark lg:pl-6">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-accent-primary" />
-              Statistics
+              统计
             </h3>
 
             <div className="space-y-4">
               {/* Today's Total */}
               <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Today</span>
+                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">今天</span>
                   <Calendar className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </div>
                 <div className="text-2xl font-mono font-bold text-accent-primary mt-1">
@@ -373,7 +374,7 @@ export function TimeTrackingTimer() {
               {/* Weekly Total */}
               <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">This Week</span>
+                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">本周</span>
                   <Target className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </div>
                 <div className="text-2xl font-mono font-bold text-text-light-primary dark:text-text-dark-primary mt-1">
@@ -384,7 +385,7 @@ export function TimeTrackingTimer() {
               {/* Daily Average */}
               <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Daily Avg</span>
+                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">日均</span>
                   <TrendingUp className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </div>
                 <div className="text-2xl font-mono font-bold text-text-light-primary dark:text-text-dark-primary mt-1">
@@ -397,13 +398,13 @@ export function TimeTrackingTimer() {
             {weeklySummary && (
               <div className="mt-4 p-4 bg-surface-light-elevated dark:bg-surface-dark rounded-lg">
                 <h4 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-3">
-                  This Week
+                  本周
                 </h4>
                 <div className="flex items-end justify-between gap-1 h-16">
                   {weeklySummary.dailyBreakdown.map((day, index) => {
                     const maxDuration = Math.max(...weeklySummary.dailyBreakdown.map(d => d.totalDuration), 1);
                     const heightPercent = (day.totalDuration / maxDuration) * 100;
-                    const dayNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                    const dayNames = ['一', '二', '三', '四', '五', '六', '日'];
                     const isToday = new Date(day.date).toDateString() === new Date().toDateString();
 
                     return (
@@ -436,9 +437,9 @@ export function TimeTrackingTimer() {
       <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark p-6">
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4 flex items-center gap-2">
           <RotateCcw className="w-5 h-5 text-accent-primary" />
-          Recent Entries
+          最近记录
           <span className="text-sm font-normal text-text-light-tertiary dark:text-text-dark-tertiary ml-2">
-            (Click to continue)
+            （点击继续）
           </span>
         </h3>
 
@@ -446,7 +447,7 @@ export function TimeTrackingTimer() {
           <div className="text-center py-8">
             <Clock className="w-12 h-12 mx-auto text-text-light-tertiary dark:text-text-dark-tertiary mb-3" />
             <p className="text-text-light-secondary dark:text-text-dark-secondary">
-              No time entries yet. Start your first timer!
+              暂无时间记录，开始你的第一次计时吧！
             </p>
           </div>
         ) : (
@@ -462,7 +463,7 @@ export function TimeTrackingTimer() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-text-light-primary dark:text-text-dark-primary truncate">
-                        {entry.description || 'Untitled'}
+                        {entry.description || '未命名'}
                       </p>
                       {project && (
                         <div className="flex items-center gap-1.5 mt-1">
@@ -517,7 +518,7 @@ export function TimeTrackingTimer() {
           isOpen={showIdlePrompt}
           idleDuration={idleDuration}
           idleStartTime={idleStartTime}
-          timerDescription={currentDescription || 'Untitled Task'}
+          timerDescription={currentDescription || '未命名任务'}
           onKeep={handleIdleKeep}
           onDiscard={handleIdleDiscard}
           onAdjust={handleIdleAdjust}

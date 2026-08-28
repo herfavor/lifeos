@@ -41,7 +41,7 @@ export const PWAInstallPrompt: React.FC = () => {
 
       <div className="flex-1 min-w-0">
         <p className="font-medium text-text-light-primary dark:text-text-dark-primary">
-          Install NeumanOS
+          安装 LifeOS
         </p>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
           Add to your home screen for quick access

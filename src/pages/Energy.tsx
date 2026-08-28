@@ -2,13 +2,23 @@ import { useMemo, useState } from 'react';
 import { useEnergyStore } from '../stores/useEnergyStore';
 import type { EnergyLog, EnergyPattern } from '../stores/useEnergyStore';
 import { useKanbanStore } from '../stores/useKanbanStore';
-import { PageHeader } from '../components/PageHeader';
+import { PageContent } from '../components/PageContent';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { CalendarPlus, Pencil, Trash2 } from 'lucide-react';
+import { toast } from '../stores/useToastStore';
+import type { Task } from '../types';
 
 type TimeOfDay = 'morning' | 'afternoon' | 'evening';
 
 const ENERGY_FACES = ['😴', '😩', '😐', '😐', '🙂', '🙂', '😊', '😄', '💪', '⚡'];
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const FULL_DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const FULL_DAY_NAMES = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+const TIME_OF_DAY_LABELS: Record<TimeOfDay, string> = {
+  morning: '早晨',
+  afternoon: '下午',
+  evening: '晚上',
+};
 
 function getDateKey(date: Date): string {
   const y = date.getFullYear();
@@ -49,12 +59,12 @@ function EnergyLogForm() {
   return (
     <form onSubmit={handleSubmit} className="p-4 rounded-xl bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark space-y-4">
       <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-        Log Current Energy
+        记录当前精力
       </h3>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Level</span>
+          <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">等级</span>
           <span className="text-2xl">{face} <span className="text-sm font-medium">{level}/10</span></span>
         </div>
         <input
@@ -90,7 +100,7 @@ function EnergyLogForm() {
             `}
           >
             {tod === 'morning' ? '🌅' : tod === 'afternoon' ? '☀️' : '🌙'}{' '}
-            {tod.charAt(0).toUpperCase() + tod.slice(1)}
+            {TIME_OF_DAY_LABELS[tod]}
           </button>
         ))}
       </div>
@@ -99,7 +109,7 @@ function EnergyLogForm() {
         type="text"
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="Optional note (e.g., slept well, coffee)"
+        placeholder="可选备注（例如：睡得好、喝了咖啡）"
         className="w-full px-3 py-2 rounded-lg text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-secondary/50 dark:placeholder:text-text-dark-secondary/50"
       />
 
@@ -107,7 +117,7 @@ function EnergyLogForm() {
         type="submit"
         className="w-full px-4 py-2 rounded-lg text-sm font-medium bg-accent-blue text-white hover:bg-accent-blue/90 transition-colors"
       >
-        Log Energy
+        记录精力
       </button>
     </form>
   );
@@ -117,15 +127,15 @@ function EnergyLogForm() {
 
 function WeeklyHeatmap({ patterns }: { patterns: EnergyPattern[] }) {
   const times: Array<{ key: TimeOfDay; label: string }> = [
-    { key: 'morning', label: 'Morning' },
-    { key: 'afternoon', label: 'Afternoon' },
-    { key: 'evening', label: 'Evening' },
+    { key: 'morning', label: '早晨' },
+    { key: 'afternoon', label: '下午' },
+    { key: 'evening', label: '晚上' },
   ];
 
   return (
     <div className="p-4 rounded-xl bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark">
       <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-        Weekly Energy Patterns
+        每周精力模式
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -156,7 +166,7 @@ function WeeklyHeatmap({ patterns }: { patterns: EnergyPattern[] }) {
                     <td key={pattern.dayOfWeek} className="py-1 px-1">
                       <div
                         className={`w-full aspect-square rounded-md flex items-center justify-center text-xs font-medium ${getHeatmapColor(val)} ${val > 0 ? 'text-text-light-primary dark:text-text-dark-primary' : 'text-text-light-secondary/30 dark:text-text-dark-secondary/30'}`}
-                        title={`${FULL_DAY_NAMES[pattern.dayOfWeek]} ${time.label}: ${val > 0 ? val + '/10' : 'No data'}`}
+                        title={`${FULL_DAY_NAMES[pattern.dayOfWeek]} ${time.label}：${val > 0 ? val + '/10' : '无数据'}`}
                       >
                         {val > 0 ? val : '-'}
                       </div>
@@ -169,7 +179,7 @@ function WeeklyHeatmap({ patterns }: { patterns: EnergyPattern[] }) {
         </table>
       </div>
       <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-2">
-        Based on 4-week rolling average
+        基于 4 周滚动平均值
       </p>
     </div>
   );
@@ -202,14 +212,14 @@ function EnergyTrendChart({ logs }: { logs: EnergyLog[] }) {
   return (
     <div className="p-4 rounded-xl bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark">
       <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-        30-Day Energy Trend
+        30 天精力趋势
       </h3>
       <div className="h-32 flex items-end gap-px">
         {dailyAverages.map((day) => (
           <div
             key={day.date}
             className="flex-1 flex flex-col items-center justify-end"
-            title={`${day.label}: ${day.avg > 0 ? day.avg + '/10' : 'No data'}`}
+            title={`${day.label}：${day.avg > 0 ? day.avg + '/10' : '无数据'}`}
           >
             <div
               className={`w-full rounded-t-sm transition-all ${
@@ -240,7 +250,7 @@ function EnergyTrendChart({ logs }: { logs: EnergyLog[] }) {
 
 // ==================== BURNOUT ALERT ====================
 
-function BurnoutAlert({ logs }: { logs: EnergyLog[] }) {
+function LowEnergyNotice({ logs }: { logs: EnergyLog[] }) {
   const alert = useMemo(() => {
     // Check last 3 days for consecutive below-4 averages
     const lowDays: string[] = [];
@@ -273,10 +283,12 @@ function BurnoutAlert({ logs }: { logs: EnergyLog[] }) {
       <div className="flex items-start gap-3">
         <span className="text-xl">🔥</span>
         <div>
-          <h4 className="text-sm font-semibold text-red-400">Burnout Alert</h4>
+          <h4 className="text-sm font-semibold text-red-400">连续低精力提醒</h4>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            Your energy has been below 4/10 for {alert.days} consecutive days. Consider taking a break,
-            adjusting your workload, or scheduling lighter tasks.
+            你的精力已连续 {alert.days} 天低于 4/10。建议休息一下、调整工作量，或安排更轻松的任务。
+          </p>
+          <p className="mt-2 text-[11px] text-text-light-tertiary dark:text-text-dark-tertiary">
+            这是基于本机记录的生活管理提示，不是医疗判断。
           </p>
         </div>
       </div>
@@ -288,6 +300,38 @@ function BurnoutAlert({ logs }: { logs: EnergyLog[] }) {
 
 function TaskSuggestions({ patterns }: { patterns: EnergyPattern[] }) {
   const tasks = useKanbanStore((s) => s.tasks);
+  const updateTask = useKanbanStore((s) => s.updateTask);
+
+  const scheduleTask = (task: Task, offsetDays: number) => {
+    const date = new Date();
+    date.setDate(date.getDate() + offsetDays);
+    updateTask(task.id, {
+      dueDate: getDateKey(date),
+      status: task.status === 'backlog' ? 'todo' : task.status,
+    });
+    toast.success(offsetDays === 0 ? '已放入今天' : '已安排到一周后');
+  };
+
+  const renderTask = (task: Task, accentClass: string) => (
+    <li key={task.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border-light px-2.5 py-2 text-xs dark:border-border-dark">
+      <span className={`h-1.5 w-1.5 rounded-full ${accentClass}`} aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate text-text-light-primary dark:text-text-dark-primary">{task.title}</span>
+      <button
+        type="button"
+        onClick={() => scheduleTask(task, 0)}
+        className="inline-flex min-h-8 items-center gap-1 rounded-md bg-accent-primary/10 px-2 text-accent-primary hover:bg-accent-primary/20"
+      >
+        <CalendarPlus className="h-3 w-3" /> 今天
+      </button>
+      <button
+        type="button"
+        onClick={() => scheduleTask(task, 7)}
+        className="min-h-8 rounded-md px-2 text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"
+      >
+        一周后
+      </button>
+    </li>
+  );
 
   const suggestions = useMemo(() => {
     const activeTasks = tasks.filter(
@@ -334,10 +378,10 @@ function TaskSuggestions({ patterns }: { patterns: EnergyPattern[] }) {
     return (
       <div className="p-4 rounded-xl bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark">
         <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
-          Task Suggestions
+          任务建议
         </h3>
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Add energy costs to tasks and log your energy for a few weeks to get personalized scheduling suggestions.
+          为任务添加精力消耗值，并连续记录几周精力，即可获得个性化的日程安排建议。
         </p>
       </div>
     );
@@ -346,28 +390,20 @@ function TaskSuggestions({ patterns }: { patterns: EnergyPattern[] }) {
   return (
     <div className="p-4 rounded-xl bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark space-y-3">
       <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-        Task Suggestions
+        任务建议
       </h3>
 
       <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-        Your peak energy is typically on <span className="font-medium text-green-400">{suggestions.peakDay} {suggestions.peakTime}</span> ({suggestions.peakAvg}/10)
+        你的精力通常在 <span className="font-medium text-green-400">{suggestions.peakDay} {TIME_OF_DAY_LABELS[suggestions.peakTime]}</span> 达到高峰（{suggestions.peakAvg}/10）
       </div>
 
       {suggestions.highEnergyTasks.length > 0 && (
         <div>
           <p className="text-xs font-medium text-orange-400 mb-1">
-            Schedule for high-energy times:
+            适合高精力时段安排：
           </p>
           <ul className="space-y-1">
-            {suggestions.highEnergyTasks.map((task) => (
-              <li key={task.id} className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex items-center gap-1.5">
-                <span className="text-orange-400">●</span>
-                {task.title}
-                <span className="text-text-light-secondary/50 dark:text-text-dark-secondary/50">
-                  (cost: {task.energyCost}/5)
-                </span>
-              </li>
-            ))}
+            {suggestions.highEnergyTasks.map((task) => renderTask(task, 'bg-orange-400'))}
           </ul>
         </div>
       )}
@@ -375,19 +411,128 @@ function TaskSuggestions({ patterns }: { patterns: EnergyPattern[] }) {
       {suggestions.lowEnergyTasks.length > 0 && (
         <div>
           <p className="text-xs font-medium text-blue-400 mb-1">
-            Good for low-energy periods:
+            适合低精力时段：
           </p>
           <ul className="space-y-1">
-            {suggestions.lowEnergyTasks.map((task) => (
-              <li key={task.id} className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex items-center gap-1.5">
-                <span className="text-blue-400">●</span>
-                {task.title}
-              </li>
-            ))}
+            {suggestions.lowEnergyTasks.map((task) => renderTask(task, 'bg-blue-400'))}
           </ul>
         </div>
       )}
     </div>
+  );
+}
+
+function EnergyLogHistory({ logs }: { logs: EnergyLog[] }) {
+  const updateLog = useEnergyStore((state) => state.updateLog);
+  const deleteLog = useEnergyStore((state) => state.deleteLog);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<{ level: number; timeOfDay: TimeOfDay; note: string }>({
+    level: 5,
+    timeOfDay: 'morning',
+    note: '',
+  });
+
+  const recentLogs = useMemo(
+    () => [...logs].sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 10),
+    [logs]
+  );
+
+  const beginEdit = (log: EnergyLog) => {
+    setEditingId(log.id);
+    setDraft({ level: log.level, timeOfDay: log.timeOfDay, note: log.note ?? '' });
+  };
+
+  const saveEdit = () => {
+    if (!editingId) return;
+    updateLog(editingId, draft);
+    setEditingId(null);
+    toast.success('精力记录已更新');
+  };
+
+  return (
+    <section className="rounded-xl border border-border-light bg-surface-light p-4 dark:border-border-dark dark:bg-surface-dark-elevated">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">最近记录</h3>
+          <p className="mt-0.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">可修正误记，也可删除不再需要的样本。</p>
+        </div>
+        <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{logs.length} 条</span>
+      </div>
+
+      {recentLogs.length === 0 ? (
+        <p className="py-6 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">还没有精力记录。</p>
+      ) : (
+        <div className="mt-3 space-y-2">
+          {recentLogs.map((log) => (
+            <div key={log.id} className="rounded-lg border border-border-light px-3 py-2 dark:border-border-dark">
+              {editingId === log.id ? (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                      等级
+                      <input
+                        type="number"
+                        min={1}
+                        max={10}
+                        value={draft.level}
+                        onChange={(event) => setDraft((value) => ({ ...value, level: Number(event.target.value) }))}
+                        className="mt-1 w-full rounded-md border border-border-light bg-surface-light px-2 py-1.5 text-text-light-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+                      />
+                    </label>
+                    <label className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                      时段
+                      <select
+                        value={draft.timeOfDay}
+                        onChange={(event) => setDraft((value) => ({ ...value, timeOfDay: event.target.value as TimeOfDay }))}
+                        className="mt-1 w-full rounded-md border border-border-light bg-surface-light px-2 py-1.5 text-text-light-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+                      >
+                        <option value="morning">早晨</option>
+                        <option value="afternoon">下午</option>
+                        <option value="evening">晚上</option>
+                      </select>
+                    </label>
+                  </div>
+                  <input
+                    value={draft.note}
+                    onChange={(event) => setDraft((value) => ({ ...value, note: event.target.value }))}
+                    placeholder="备注"
+                    className="w-full rounded-md border border-border-light bg-surface-light px-2 py-1.5 text-sm text-text-light-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setEditingId(null)} className="rounded-md px-2.5 py-1.5 text-xs text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark">取消</button>
+                    <button type="button" onClick={saveEdit} className="rounded-md bg-accent-primary px-2.5 py-1.5 text-xs font-medium text-white">保存</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <span className="text-xl" aria-label={`精力 ${log.level}/10`}>{ENERGY_FACES[log.level - 1]}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">{log.level}/10 · {TIME_OF_DAY_LABELS[log.timeOfDay]}</p>
+                    <p className="truncate text-xs text-text-light-secondary dark:text-text-dark-secondary">{log.date}{log.note ? ` · ${log.note}` : ''}</p>
+                  </div>
+                  <button type="button" onClick={() => beginEdit(log)} aria-label="编辑精力记录" className="flex min-h-9 min-w-9 items-center justify-center rounded-lg text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark"><Pencil className="h-3.5 w-3.5" /></button>
+                  <button type="button" onClick={() => setDeleteId(log.id)} aria-label="删除精力记录" className="flex min-h-9 min-w-9 items-center justify-center rounded-lg text-status-error-text hover:bg-status-error-bg"><Trash2 className="h-3.5 w-3.5" /></button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) deleteLog(deleteId);
+          setDeleteId(null);
+        }}
+        title="删除精力记录"
+        message="这条本机精力记录将被永久删除，相关趋势会重新计算。"
+        confirmText="删除"
+        variant="danger"
+      />
+    </section>
   );
 }
 
@@ -400,15 +545,14 @@ export function Energy() {
   const patterns = useMemo(() => calculatePatterns(), [calculatePatterns, logs]);
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <PageHeader />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
+    <PageContent page="energy" className="pb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column: Log + Burnout Alert */}
         <div className="space-y-4">
           <EnergyLogForm />
-          <BurnoutAlert logs={logs} />
+          <LowEnergyNotice logs={logs} />
           <TaskSuggestions patterns={patterns} />
+          <EnergyLogHistory logs={logs} />
         </div>
 
         {/* Right Column: Charts */}
@@ -417,6 +561,6 @@ export function Energy() {
           <EnergyTrendChart logs={logs} />
         </div>
       </div>
-    </div>
+    </PageContent>
   );
 }

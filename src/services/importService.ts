@@ -24,7 +24,7 @@ function parseTrelloJSON(data: any): ImportTask[] {
   const tasks: ImportTask[] = [];
 
   if (!data.cards || !Array.isArray(data.cards)) {
-    throw new Error('Invalid Trello JSON: missing "cards" array');
+    throw new Error('无效的 Trello JSON：缺少 "cards" 数组');
   }
 
   for (const card of data.cards) {
@@ -70,14 +70,14 @@ function parseAsanaJSON(data: any): ImportTask[] {
 
   const items = data.data || data.tasks || [];
   if (!Array.isArray(items)) {
-    throw new Error('Invalid Asana JSON: expected array of tasks');
+    throw new Error('无效的 Asana JSON：应为任务数组');
   }
 
   for (const item of items) {
     if (!item.name && !item.gid) continue;
 
     const task: ImportTask = {
-      title: item.name || `Task ${item.gid}`,
+      title: item.name || `任务 ${item.gid}`,
       description: item.notes || '',
       completed: item.completed === true,
       status: item.completed ? 'done' : 'todo',
@@ -104,7 +104,7 @@ function parseTodoistCSV(csvText: string): ImportTask[] {
   const lines = csvText.trim().split('\n');
 
   if (lines.length === 0) {
-    throw new Error('Empty CSV file');
+    throw new Error('CSV 文件为空');
   }
 
   // Skip header row
@@ -115,7 +115,7 @@ function parseTodoistCSV(csvText: string): ImportTask[] {
     const cols = parseCSVLine(line);
 
     const task: ImportTask = {
-      title: cols[1] || 'Untitled Task',
+      title: cols[1] || '未命名任务',
       description: cols[2] || '',
       status: 'todo',
       tags: [],
@@ -148,7 +148,7 @@ function parseGenericCSV(csvText: string): ImportTask[] {
   const lines = csvText.trim().split('\n');
 
   if (lines.length === 0) {
-    throw new Error('Empty CSV file');
+    throw new Error('CSV 文件为空');
   }
 
   // Parse header
@@ -164,7 +164,7 @@ function parseGenericCSV(csvText: string): ImportTask[] {
   const completedIdx = findColumnIndex(headers, ['completed', 'done', 'finished']);
 
   if (titleIdx === -1) {
-    throw new Error('Could not find task title column. Expected headers: "name", "task", or "title"');
+    throw new Error('找不到任务标题列。预期表头："name"、"task" 或 "title"');
   }
 
   // Parse rows
@@ -175,7 +175,7 @@ function parseGenericCSV(csvText: string): ImportTask[] {
     const cols = parseCSVLine(line);
 
     const task: ImportTask = {
-      title: cols[titleIdx] || 'Untitled Task',
+      title: cols[titleIdx] || '未命名任务',
       description: descIdx !== -1 ? cols[descIdx] || '' : '',
       status: 'todo',
       tags: [],
@@ -296,7 +296,7 @@ function formatDateYYYYMMDD(date: Date): string {
 }
 
 /**
- * Map Trello/Asana list name to NeumanOS status
+ * Map Trello/Asana list name to LifeOS status
  */
 function mapListNameToStatus(listName: string): TaskStatus {
   const lower = listName.toLowerCase();
@@ -310,7 +310,7 @@ function mapListNameToStatus(listName: string): TaskStatus {
 }
 
 /**
- * Map generic status to NeumanOS status
+ * Map generic status to LifeOS status
  */
 function mapGenericStatusToStatus(status: string): TaskStatus {
   const lower = status.toLowerCase().trim();
@@ -325,7 +325,7 @@ function mapGenericStatusToStatus(status: string): TaskStatus {
 }
 
 /**
- * Map generic priority to NeumanOS priority
+ * Map generic priority to LifeOS priority
  */
 function mapGenericPriorityToPriority(priority: string): TaskPriority {
   const lower = priority.toLowerCase().trim();
@@ -413,7 +413,7 @@ export function parseImportFile(source: ImportSource, content: string): ImportTa
       if (Array.isArray(data)) {
         // Array of tasks directly
         return data.map(item => ({
-          title: item.title || item.name || item.task || 'Untitled',
+          title: item.title || item.name || item.task || '未命名',
           description: item.description || item.desc || item.notes || '',
           dueDate: parseFlexibleDate(item.dueDate || item.due || item.date),
           priority: mapGenericPriorityToPriority(item.priority || 'medium'),
@@ -421,10 +421,10 @@ export function parseImportFile(source: ImportSource, content: string): ImportTa
           tags: item.tags || [],
         }));
       }
-      throw new Error('Unrecognized JSON structure');
+      throw new Error('无法识别的 JSON 结构');
 
     default:
-      throw new Error(`Unsupported import source: ${source}`);
+      throw new Error(`不支持的导入来源：${source}`);
   }
 }
 
@@ -443,13 +443,13 @@ export function generateImportPreview(source: ImportSource, content: string): Im
   // Check for tasks without due dates
   const noDueDateCount = tasks.filter(t => !t.dueDate).length;
   if (noDueDateCount > 0) {
-    warnings.push(`${noDueDateCount} task(s) have no due date`);
+    warnings.push(`${noDueDateCount} 个任务没有截止日期`);
   }
 
   // Check for tasks without descriptions
   const noDescCount = tasks.filter(t => !t.description).length;
   if (noDescCount > 0) {
-    warnings.push(`${noDescCount} task(s) have no description`);
+    warnings.push(`${noDescCount} 个任务没有描述`);
   }
 
   return {

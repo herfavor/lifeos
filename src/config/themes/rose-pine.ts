@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const rosePineTheme: ThemeDefinition = {
   id: 'rose-pine',
   name: 'Rose Pine',
-  description: 'Soft rosewood highlights on natural pine',
+  description: '自然松木上的柔和玫瑰木高光',
   category: 'minimal',
   preview: {
     primary: '#C4A7E7',

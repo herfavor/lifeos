@@ -33,9 +33,9 @@ export default function WikiLinkAutocompletePlugin({
   // Get folder path helper
   const getFolderPath = useCallback(
     (folderId: string | null): string => {
-      if (!folderId) return 'Root';
+      if (!folderId) return '根目录';
       const path = getPath(folderId);
-      if (!path || path.length === 0) return 'Root';
+      if (!path || path.length === 0) return '根目录';
       return path.map(folder => folder.name).join(' / ');
     },
     [getPath]

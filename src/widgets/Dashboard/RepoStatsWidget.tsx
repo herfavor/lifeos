@@ -54,33 +54,33 @@ export const RepoStatsWidget: React.FC<RepoStatsWidgetProps> = ({ widgetId = 're
       // Try parsing as owner/repo format
       else if (cleaned.includes('/')) {
         [owner, repo] = cleaned.split('/');
-        if (!owner || !repo) throw new Error('Invalid format');
+        if (!owner || !repo) throw new Error('格式无效');
       }
       // Single word - treat as username, fetch user stats instead
       else {
         // For username only, we could fetch user stats, but for now show error
-        throw new Error('Please enter owner/repo or full URL');
+        throw new Error('请输入 owner/repo 或完整 URL');
       }
 
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-      if (!response.ok) throw new Error('Repository not found');
+      if (!response.ok) throw new Error('未找到该仓库');
 
       const data = await response.json();
       setStats({
         name: data.name,
         owner: data.owner.login,
-        description: data.description || 'No description',
+        description: data.description || '暂无描述',
         stars: data.stargazers_count,
         forks: data.forks_count,
         watchers: data.watchers_count,
         openIssues: data.open_issues_count,
-        language: data.language || 'Unknown',
+        language: data.language || '未知',
         url: data.html_url,
       });
 
       updateWidgetSettings(widgetId, { repoUrl: url });
     } catch (err) {
-      setError('Repository not found');
+      setError('未找到该仓库');
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export const RepoStatsWidget: React.FC<RepoStatsWidgetProps> = ({ widgetId = 're
   }, [repoUrl]);
 
   return (
-    <BaseWidget title={stats ? `${stats.owner}/${stats.name}` : 'Repo Stats'} icon="📊" loading={loading} error={error}>
+    <BaseWidget title={stats ? `${stats.owner}/${stats.name}` : '仓库统计'} icon="📊" loading={loading} error={error}>
       <div className="space-y-3">
         {!stats && (
           <form onSubmit={handleSubmit} className="flex gap-2">
@@ -113,14 +113,14 @@ export const RepoStatsWidget: React.FC<RepoStatsWidgetProps> = ({ widgetId = 're
               type="text"
               value={inputUrl}
               onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="owner/repo or full URL"
+              placeholder="owner/repo 或完整 URL"
               className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
             />
             <button
               type="submit"
               className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth"
             >
-              Load
+              加载
             </button>
           </form>
         )}
@@ -134,27 +134,27 @@ export const RepoStatsWidget: React.FC<RepoStatsWidgetProps> = ({ widgetId = 're
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 text-center transition-all duration-standard ease-smooth">
                 <div className="text-lg font-bold text-accent-blue">{formatNumber(stats.stars)}</div>
-                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Stars</div>
+                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">星标</div>
               </div>
               <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 text-center transition-all duration-standard ease-smooth">
                 <div className="text-lg font-bold text-accent-primary">{formatNumber(stats.forks)}</div>
-                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Forks</div>
+                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">复刻</div>
               </div>
               <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 text-center transition-all duration-standard ease-smooth">
                 <div className="text-lg font-bold text-accent-secondary">{formatNumber(stats.watchers)}</div>
-                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Watchers</div>
+                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">关注</div>
               </div>
               <div className="bg-surface-light-elevated dark:bg-surface-dark rounded-button p-2 text-center transition-all duration-standard ease-smooth">
                 <div className="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">
                   {stats.openIssues}
                 </div>
-                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Issues</div>
+                <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">议题</div>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-text-light-secondary dark:text-text-dark-secondary">
-                Language: <span className="text-text-light-primary dark:text-text-dark-primary font-medium">{stats.language}</span>
+                语言：<span className="text-text-light-primary dark:text-text-dark-primary font-medium">{stats.language}</span>
               </span>
               <a
                 href={stats.url}
@@ -162,7 +162,7 @@ export const RepoStatsWidget: React.FC<RepoStatsWidgetProps> = ({ widgetId = 're
                 rel="noopener noreferrer"
                 className="text-accent-blue hover:underline"
               >
-                View on GitHub →
+                在 GitHub 上查看 →
               </a>
             </div>
           </div>

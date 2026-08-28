@@ -16,7 +16,7 @@ test.describe('Idle Prompt', () => {
 
   test('page loads without idle prompt initially', async ({ page }) => {
     // Idle prompt should NOT appear immediately
-    const idleModal = page.getByText(/idle|inactive|break/i).first();
+    const idleModal = page.getByText(/空闲一段时间/).first();
     const isVisible = await idleModal.isVisible({ timeout: 1000 }).catch(() => false);
     // It's expected to not be visible initially
     expect(isVisible).toBe(false);

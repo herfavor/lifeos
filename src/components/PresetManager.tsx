@@ -12,18 +12,19 @@ export interface WidgetPreset {
   isDefault?: boolean;
 }
 
-// Default preset layouts
+// Default preset layouts (LifeOS: no weather map by default — it remains
+// available in the Widget Manager for manual addition)
 const DEFAULT_PRESETS: WidgetPreset[] = [
   {
     id: 'default',
-    name: 'Default',
-    description: 'Core widgets: Weather, Tasks Summary, Quick Add, Events & Notes',
-    enabledWidgets: ['weathermap', 'taskssummary', 'tasksquickadd', 'upcomingevents', 'recentnotes'],
+    name: '默认',
+    description: 'LifeOS 默认布局：今天、快速记录、近期日程、项目与笔记',
+    enabledWidgets: ['myday', 'quickadd', 'upcomingevents', 'portfolio', 'recentnotes'],
     widgetSizes: {
-      weathermap: 3,
-      taskssummary: 1,
-      tasksquickadd: 1,
+      myday: 1,
+      quickadd: 1,
       upcomingevents: 1,
+      portfolio: 1,
       recentnotes: 1,
     },
     createdAt: new Date().toISOString(),
@@ -31,11 +32,11 @@ const DEFAULT_PRESETS: WidgetPreset[] = [
   },
   {
     id: 'productivity',
-    name: 'Productivity Focus',
-    description: 'Task-focused layout for getting work done',
-    enabledWidgets: ['weathermap', 'tasksquickadd', 'upcomingevents', 'recentnotes', 'pomodoro'],
+    name: '高效专注',
+    description: '以任务为中心的布局，助你高效完成工作',
+    enabledWidgets: ['taskssummary', 'tasksquickadd', 'upcomingevents', 'recentnotes', 'pomodoro'],
     widgetSizes: {
-      weathermap: 3,
+      taskssummary: 1,
       tasksquickadd: 3,
       upcomingevents: 1,
       recentnotes: 1,
@@ -46,11 +47,10 @@ const DEFAULT_PRESETS: WidgetPreset[] = [
   },
   {
     id: 'developer',
-    name: 'Developer Dashboard',
-    description: 'GitHub, Hacker News, and dev tools',
-    enabledWidgets: ['weathermap', 'github', 'hackernews', 'recentnotes', 'shortcuts', 'calculator'],
+    name: '开发者首页',
+    description: 'GitHub、Hacker News 和开发工具',
+    enabledWidgets: ['github', 'hackernews', 'recentnotes', 'shortcuts', 'calculator'],
     widgetSizes: {
-      weathermap: 3,
       github: 2,
       hackernews: 2,
       recentnotes: 1,
@@ -62,12 +62,12 @@ const DEFAULT_PRESETS: WidgetPreset[] = [
   },
   {
     id: 'minimal',
-    name: 'Minimal',
-    description: 'Just the essentials',
-    enabledWidgets: ['weathermap', 'tasksquickadd'],
+    name: '极简',
+    description: '仅保留快速记录和今天',
+    enabledWidgets: ['quickadd', 'myday'],
     widgetSizes: {
-      weathermap: 3,
-      tasksquickadd: 3,
+      quickadd: 3,
+      myday: 1,
     },
     createdAt: new Date().toISOString(),
     isDefault: true,
@@ -190,7 +190,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
 
       // Validate preset structure
       if (!preset.name || !preset.enabledWidgets || !preset.widgetSizes) {
-        toast.error('Invalid preset file format');
+        toast.error('预设文件格式无效');
         return;
       }
 
@@ -205,7 +205,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
       setPresets([...DEFAULT_PRESETS, ...updatedCustom]);
     } catch (error) {
       console.error('Failed to import preset:', error);
-      toast.error('Failed to import preset', 'Please check the file format.');
+      toast.error('导入预设失败', '请检查文件格式。');
     }
   };
 
@@ -217,12 +217,12 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Layout Presets
+            布局预设
           </h2>
           <button
             onClick={onClose}
             className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
-            aria-label="Close preset manager"
+            aria-label="关闭预设管理器"
           >
             ✕
           </button>
@@ -236,7 +236,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
               onClick={() => setShowSaveDialog(true)}
               className="w-full px-4 py-3 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium transition-all duration-standard ease-smooth"
             >
-              💾 Save Current Layout
+              💾 保存当前布局
             </button>
           </div>
 
@@ -244,19 +244,19 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
           {showSaveDialog && (
             <div className="mb-6 p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-button border border-border-light dark:border-border-dark">
               <h3 className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-                Save Current Layout
+                保存当前布局
               </h3>
               <input
                 type="text"
                 value={presetName}
                 onChange={(e) => setPresetName(e.target.value)}
-                placeholder="Preset name (e.g., My Workflow)"
+                placeholder="预设名称（例如：My Workflow）"
                 className="w-full px-3 py-2 mb-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button text-text-light-primary dark:text-text-dark-primary"
               />
               <textarea
                 value={presetDescription}
                 onChange={(e) => setPresetDescription(e.target.value)}
-                placeholder="Description (optional)"
+                placeholder="描述（可选）"
                 rows={2}
                 className="w-full px-3 py-2 mb-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button text-text-light-primary dark:text-text-dark-primary"
               />
@@ -266,7 +266,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
                   disabled={!presetName.trim()}
                   className="px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Save
+                  保存
                 </button>
                 <button
                   onClick={() => {
@@ -276,7 +276,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
                   }}
                   className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button font-medium"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </div>
@@ -285,7 +285,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
           {/* Import Preset Button */}
           <div className="mb-6">
             <label className="block w-full px-4 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button font-medium transition-all duration-standard ease-smooth cursor-pointer text-center">
-              📥 Import Preset
+              📥 导入预设
               <input
                 type="file"
                 accept=".json"
@@ -298,7 +298,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
           {/* Preset List */}
           <div className="space-y-3">
             <h3 className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase">
-              Available Presets
+              可用预设
             </h3>
             {presets.map((preset) => (
               <div
@@ -311,7 +311,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
                       {preset.name}
                       {preset.isDefault && (
                         <span className="ml-2 text-xs px-2 py-0.5 bg-accent-primary/20 text-accent-primary rounded">
-                          Default
+                          默认
                         </span>
                       )}
                     </h4>
@@ -321,7 +321,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
                       </p>
                     )}
                     <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                      {preset.enabledWidgets.length} widgets
+                      {preset.enabledWidgets.length} 个组件
                     </p>
                   </div>
                 </div>
@@ -330,20 +330,20 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
                     onClick={() => loadPreset(preset)}
                     className="px-3 py-1.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button text-sm font-medium"
                   >
-                    Load
+                    加载
                   </button>
                   <button
                     onClick={() => exportPreset(preset)}
                     className="px-3 py-1.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button text-sm font-medium"
                   >
-                    Export
+                    导出
                   </button>
                   {!preset.isDefault && (
                     <button
                       onClick={() => deletePreset(preset.id)}
                       className="px-3 py-1.5 bg-accent-red hover:bg-accent-red-hover text-white rounded-button text-sm font-medium"
                     >
-                      Delete
+                      删除
                     </button>
                   )}
                 </div>

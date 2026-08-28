@@ -16,23 +16,29 @@ import { getOrphansWithSuggestions, detectOrphans } from '../utils/graphOrphanDe
 import type { GraphSearchFilters } from '../types/graph';
 import { Target, X, Palette, AlertCircle } from 'lucide-react';
 import { PageContent } from '../components/PageContent';
+import { appendMarkdownToLexical, ensureLexicalContent } from '../utils/markdownToLexical';
 
 export default function GraphView() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const notes = useNotesStore((state) => state.notes);
+  const allNotes = useNotesStore((state) => state.notes);
+  const notes = useMemo(
+    () => Object.fromEntries(Object.entries(allNotes).filter(([, note]) => !note.deletedAt)),
+    [allNotes]
+  );
   const updateNote = useNotesStore((state) => state.updateNote);
   const addTag = useNotesStore((state) => state.addTag);
 
-  const [hideOrphans, setHideOrphans] = useState(false);
+  const [hideOrphans, setHideOrphans] = useState(true);
   const [colorBy, setColorBy] = useState<'none' | 'folder' | 'tag'>('none'); // P1: Color grouping
   const [sizeByConnections, setSizeByConnections] = useState(true); // P1: Node sizing
 
   // P2: New state for advanced features
-  const [showLinkStrength, setShowLinkStrength] = useState(true); // P2: Link strength visualization
+  const [showLinkStrength, setShowLinkStrength] = useState(false); // Link strength is an advanced display option
   const [graphSearchFilters, setGraphSearchFilters] = useState<GraphSearchFilters>({}); // P2: Graph search
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null); // P2: Search results
   const [showOrphanPanel, setShowOrphanPanel] = useState(false); // P2: Orphan panel
+  const [showDisplayOptions, setShowDisplayOptions] = useState(false);
 
   // Focus mode state
   const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
@@ -111,19 +117,28 @@ export default function GraphView() {
     return buildGraphData(notes, filters);
   }, [notes, hideOrphans, focusNodeId, focusDepth, colorBy, sizeByConnections]);
 
+  // Keep an unfiltered graph for orphan discovery. The visible graph may hide
+  // orphans by default, but the "未连接笔记" panel still needs to know they exist.
+  const completeGraphData = useMemo(() => {
+    const filters: GraphFilters = {
+      hideOrphans: false,
+      colorBy,
+      sizeByConnections,
+    };
+    return buildGraphData(notes, filters);
+  }, [notes, colorBy, sizeByConnections]);
+
   // P1: Get color groups for legend
   const colorGroups = useMemo(() => getColorGroups(graphData, colorBy), [graphData, colorBy]);
 
-  // P2: Detect orphan nodes
   const orphanIds = useMemo(() => {
-    return detectOrphans(graphData.nodes, graphData.edges);
-  }, [graphData]);
+    return detectOrphans(completeGraphData.nodes, completeGraphData.edges);
+  }, [completeGraphData]);
 
-  // P2: Get orphan nodes with suggestions
   const orphanNodes = useMemo(() => {
     if (!showOrphanPanel) return [];
-    return getOrphansWithSuggestions(graphData.nodes, graphData.edges, notes);
-  }, [graphData, notes, showOrphanPanel]);
+    return getOrphansWithSuggestions(completeGraphData.nodes, completeGraphData.edges, notes);
+  }, [completeGraphData, notes, showOrphanPanel]);
 
   // P2: Perform graph search when filters change
   useEffect(() => {
@@ -171,9 +186,12 @@ export default function GraphView() {
     // Add the target note to the orphan's linkedNotes
     const currentLinkedNotes = orphanNote.linkedNotes || [];
     if (!currentLinkedNotes.includes(targetId)) {
+      const wikiLink = `[[${targetNote.title}]]`;
+      const currentContent = ensureLexicalContent(orphanNote.content, orphanNote.contentText);
       updateNote(orphanId, {
         linkedNotes: [...currentLinkedNotes, targetId],
-        content: orphanNote.content + `\n\n[[${targetNote.title}]]`,
+        content: appendMarkdownToLexical(currentContent, wikiLink, '\n\n'),
+        contentText: `${orphanNote.contentText.trim()}\n\n${wikiLink}`.trim(),
       });
     }
   };
@@ -199,16 +217,16 @@ export default function GraphView() {
         <div className="flex-1 flex flex-col p-6 gap-4 overflow-hidden">
         {/* Focus Mode Banner */}
         {focusNodeId && notes[focusNodeId] && (
-          <div className="flex items-center gap-4 p-3 bg-gradient-to-r from-accent-primary/10 to-accent-secondary/10 rounded-lg border border-accent-primary/20">
+          <div className="flex items-center gap-4 rounded-xl border border-accent-primary/20 bg-accent-primary/5 p-3">
             <Target className="w-4 h-4 text-accent-primary flex-shrink-0" />
             <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-              Focused: {notes[focusNodeId]?.title}
+              聚焦于：{notes[focusNodeId]?.title}
             </span>
 
             <div className="flex items-center gap-2 ml-auto">
               <label className="flex items-center gap-2">
                 <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary whitespace-nowrap">
-                  Depth:
+                  深度：
                 </span>
                 <input
                   type="range"
@@ -219,7 +237,7 @@ export default function GraphView() {
                   className="w-20 accent-accent-primary"
                 />
                 <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-12">
-                  {focusDepth} hop{focusDepth > 1 ? 's' : ''}
+                  {focusDepth} 跳
                 </span>
               </label>
 
@@ -228,15 +246,14 @@ export default function GraphView() {
                 className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary transition-colors"
               >
                 <X className="w-3 h-3" />
-                Reset
+                重置
               </button>
             </div>
           </div>
         )}
 
-        {/* Controls */}
-        <div className="flex flex-col gap-3">
-          {/* Row 1: Graph Search Component (P2) */}
+        {/* Controls: search is primary; visual tuning stays out of the way. */}
+        <div className="flex flex-col gap-2">
           <GraphSearch
             availableTags={availableTags}
             filters={graphSearchFilters}
@@ -244,79 +261,77 @@ export default function GraphView() {
             resultCount={searchResult?.matchCount}
           />
 
-          {/* Row 2: Visual Controls and Hide Orphans */}
-          <div className="flex items-center gap-4 flex-wrap">
-            {/* Link Strength Toggle (P2) */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showLinkStrength}
-                onChange={(e) => setShowLinkStrength(e.target.checked)}
-                className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-purple focus:ring-accent-purple"
-              />
-              <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Show link strength
-              </span>
-            </label>
-
-            {/* Hide Orphans Toggle */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={hideOrphans}
-                onChange={(e) => setHideOrphans(e.target.checked)}
-                className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-accent-primary"
-              />
-              <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Hide orphans
-              </span>
-            </label>
-
-            {/* Orphan Panel Toggle (P2) */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setShowOrphanPanel(!showOrphanPanel)}
-              className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                showOrphanPanel
-                  ? 'bg-accent-primary text-white'
-                  : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:border-accent-primary'
+              type="button"
+              onClick={() => setHideOrphans((value) => !value)}
+              className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                hideOrphans
+                  ? 'border-accent-primary/30 bg-accent-primary/5 text-accent-primary'
+                  : 'border-border-light text-text-light-secondary dark:border-border-dark dark:text-text-dark-secondary'
               }`}
             >
-              <AlertCircle className="w-4 h-4" />
-              <span>Orphans ({orphanIds.size})</span>
+              {hideOrphans ? '显示孤立节点' : '隐藏孤立节点'}
             </button>
-
-            {/* P1: Color Grouping */}
-            <div className="flex items-center gap-2">
-              <Palette className="w-4 h-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
-              <select
-                value={colorBy}
-                onChange={(e) => setColorBy(e.target.value as 'none' | 'folder' | 'tag')}
-                className="px-3 py-1.5 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light-base dark:bg-surface-dark-base text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
-              >
-                <option value="none">Default colors</option>
-                <option value="folder">Color by folder</option>
-                <option value="tag">Color by tag</option>
-              </select>
-            </div>
-
-            {/* P1: Node Sizing Toggle */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={sizeByConnections}
-                onChange={(e) => setSizeByConnections(e.target.checked)}
-                className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-accent-primary"
-              />
-              <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Size by connections
-              </span>
-            </label>
-
-            {/* Stats */}
-            <div className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary ml-auto">
-              {graphData.nodes.length} nodes · {graphData.edges.length} connections
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowOrphanPanel(!showOrphanPanel)}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+                showOrphanPanel
+                  ? 'border-accent-primary/30 bg-accent-primary/5 text-accent-primary'
+                  : 'border-border-light text-text-light-secondary dark:border-border-dark dark:text-text-dark-secondary'
+              }`}
+            >
+              <AlertCircle className="h-4 w-4" />
+              未连接笔记（{orphanIds.size}）
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDisplayOptions((value) => !value)}
+              className="rounded-lg border border-border-light px-3 py-1.5 text-sm text-text-light-secondary hover:text-accent-primary dark:border-border-dark dark:text-text-dark-secondary"
+              aria-expanded={showDisplayOptions}
+            >
+              显示选项
+            </button>
+            <span className="ml-auto text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+              {graphData.nodes.length} 个节点 · {graphData.edges.length} 条连接
+            </span>
           </div>
+
+          {showDisplayOptions && (
+            <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border-light bg-surface-light p-3 text-sm dark:border-border-dark dark:bg-surface-dark">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showLinkStrength}
+                  onChange={(e) => setShowLinkStrength(e.target.checked)}
+                  className="h-4 w-4 rounded border-border-light text-accent-primary focus:ring-accent-primary dark:border-border-dark"
+                />
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">链接强度</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <Palette className="h-4 w-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
+                <select
+                  value={colorBy}
+                  onChange={(e) => setColorBy(e.target.value as 'none' | 'folder' | 'tag')}
+                  className="rounded-lg border border-border-light bg-surface-light px-2.5 py-1.5 text-sm text-text-light-primary outline-none dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+                >
+                  <option value="none">默认颜色</option>
+                  <option value="folder">按文件夹</option>
+                  <option value="tag">按标签</option>
+                </select>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sizeByConnections}
+                  onChange={(e) => setSizeByConnections(e.target.checked)}
+                  className="h-4 w-4 rounded border-border-light text-accent-primary focus:ring-accent-primary dark:border-border-dark"
+                />
+                <span className="text-text-light-secondary dark:text-text-dark-secondary">按连接数调整大小</span>
+              </label>
+            </div>
+          )}
         </div>
 
         {/* Graph or Empty State */}
@@ -324,10 +339,10 @@ export default function GraphView() {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                No notes yet
+                还没有笔记
               </p>
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                Create some notes with backlinks to see your knowledge graph
+                创建一些带反向链接的笔记，即可查看您的知识图谱
               </p>
             </div>
           </div>
@@ -335,10 +350,10 @@ export default function GraphView() {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                No notes match your filters
+                没有符合筛选条件的笔记
               </p>
               <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                Try adjusting your search or showing orphan notes
+                请尝试调整搜索，或显示孤立笔记
               </p>
             </div>
           </div>
@@ -356,28 +371,29 @@ export default function GraphView() {
           </div>
         )}
 
-        {/* Legend */}
+        {/* Legends are reference material, not primary graph chrome. */}
+        {showDisplayOptions && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-6 text-xs text-text-light-tertiary dark:text-text-dark-tertiary flex-wrap">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]" />
-              <span>Notes</span>
+              <span>笔记</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[var(--accent-secondary)]" />
-              <span>Tags</span>
+              <span>标签</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[var(--accent-secondary)] border-2 border-accent-orange" />
-              <span>Orphans</span>
+              <span>孤立节点</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-0.5 bg-[var(--accent-primary)]" />
-              <span>Backlinks</span>
+              <span>反向链接</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-0.5 bg-[var(--border-light)] dark:bg-[var(--border-dark)]" />
-              <span>Tag connections</span>
+              <span>标签连接</span>
             </div>
           </div>
 
@@ -387,21 +403,22 @@ export default function GraphView() {
           {/* P1: Color Groups Legend */}
           {colorBy !== 'none' && colorGroups.size > 0 && (
             <div className="flex items-center gap-4 text-xs text-text-light-tertiary dark:text-text-dark-tertiary flex-wrap">
-              <span className="font-medium">{colorBy === 'folder' ? 'Folders:' : 'Tags:'}</span>
+              <span className="font-medium">{colorBy === 'folder' ? '文件夹：' : '标签：'}</span>
               {Array.from(colorGroups.entries()).map(([name, { color, count }]) => (
                 <div key={name} className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-                  <span>{name === 'root' ? 'Root' : name}</span>
+                  <span>{name === 'root' ? '根目录' : name}</span>
                   <span className="opacity-60">({count})</span>
                 </div>
               ))}
             </div>
           )}
         </div>
+        )}
 
         {/* Instructions */}
         <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          <span className="font-medium">Tip:</span> Drag nodes to reposition · Scroll to zoom · Click to focus · Double-click to open
+          <span className="font-medium">提示：</span>拖动节点调整位置 · 滚动缩放 · 单击聚焦 · 双击打开
         </div>
         </div>
 

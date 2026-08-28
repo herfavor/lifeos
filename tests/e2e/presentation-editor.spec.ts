@@ -15,7 +15,7 @@ test.describe('Presentation Editor', () => {
   });
 
   test('presentations tab loads', async ({ page }) => {
-    const tab = page.getByRole('tab', { name: 'Presentations' });
+    const tab = page.getByRole('tab', { name: '演示文稿' });
     if (await tab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(tab).toHaveAttribute('aria-selected', 'true');
     }
@@ -23,7 +23,7 @@ test.describe('Presentation Editor', () => {
   });
 
   test('can create a new presentation', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*presentation|create.*presentation|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*演示文稿|创建.*演示文稿|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -32,12 +32,12 @@ test.describe('Presentation Editor', () => {
   });
 
   test('presentation has slides panel', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*presentation|create.*presentation|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*演示文稿|创建.*演示文稿|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
 
-      const slidesPanel = page.getByText('Slides');
+      const slidesPanel = page.getByText('幻灯片');
       if (await slidesPanel.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(slidesPanel).toBeVisible();
       }
@@ -46,12 +46,12 @@ test.describe('Presentation Editor', () => {
   });
 
   test('has theme selector', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*presentation|create.*presentation|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*演示文稿|创建.*演示文稿|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
 
-      const themeBtn = page.getByRole('button', { name: /theme/i });
+      const themeBtn = page.getByRole('button', { name: /主题|theme/i });
       if (await themeBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(themeBtn).toBeVisible();
       }
@@ -60,12 +60,12 @@ test.describe('Presentation Editor', () => {
   });
 
   test('can add a new slide', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*presentation|create.*presentation|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*演示文稿|创建.*演示文稿|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
 
-      const addSlideBtn = page.getByRole('button', { name: /add.*slide|\+/i }).first();
+      const addSlideBtn = page.getByRole('button', { name: /添加.*幻灯片|\+/i }).first();
       if (await addSlideBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await addSlideBtn.click();
         await page.waitForTimeout(300);

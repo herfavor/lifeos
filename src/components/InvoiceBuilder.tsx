@@ -61,7 +61,7 @@ export function InvoiceBuilder() {
   // Generate preview
   const handleGeneratePreview = async () => {
     if (!clientName.trim()) {
-      toast.warning('Please enter a client name');
+      toast.warning('请输入客户名称');
       return;
     }
 
@@ -77,7 +77,7 @@ export function InvoiceBuilder() {
       setPreview(invoice);
     } catch (error) {
       console.error('Failed to generate invoice', error);
-      toast.error('Failed to generate invoice', 'Please try again.');
+      toast.error('生成发票失败', '请重试。');
     } finally {
       setIsGenerating(false);
     }
@@ -90,7 +90,7 @@ export function InvoiceBuilder() {
     setIsSaving(true);
     try {
       await createInvoice(preview);
-      toast.success('Invoice saved', 'Your invoice has been saved successfully.');
+      toast.success('发票已保存', '您的发票已成功保存。');
       // Reset form
       setPreview(null);
       setClientName('');
@@ -98,7 +98,7 @@ export function InvoiceBuilder() {
       setNotes('');
     } catch (error) {
       console.error('Failed to save invoice', error);
-      toast.error('Failed to save invoice', 'Please try again.');
+      toast.error('保存发票失败', '请重试。');
     } finally {
       setIsSaving(false);
     }
@@ -141,8 +141,8 @@ export function InvoiceBuilder() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-text-primary">Create Invoice</h2>
-          <p className="text-sm text-text-secondary">Generate invoices from your time entries</p>
+          <h2 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">创建发票</h2>
+          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">根据时间记录生成发票</p>
         </div>
       </div>
 
@@ -150,12 +150,12 @@ export function InvoiceBuilder() {
         {/* Left: Filters & Settings */}
         <div className="space-y-6">
           {/* Client Info */}
-          <div className="rounded-lg bg-surface-elevated p-4 space-y-4">
-            <h3 className="font-semibold text-text-primary">Client Information</h3>
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 space-y-4">
+            <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">客户信息</h3>
 
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Client Name *
+                客户名称 *
               </label>
               <input
                 type="text"
@@ -168,7 +168,7 @@ export function InvoiceBuilder() {
 
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Client Email
+                客户邮箱
               </label>
               <input
                 type="email"
@@ -181,13 +181,13 @@ export function InvoiceBuilder() {
           </div>
 
           {/* Filters */}
-          <div className="rounded-lg bg-surface-elevated p-4 space-y-4">
-            <h3 className="font-semibold text-text-primary">Time Entry Filters</h3>
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 space-y-4">
+            <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">时间记录筛选</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  Start Date
+                  开始日期
                 </label>
                 <input
                   type="date"
@@ -199,7 +199,7 @@ export function InvoiceBuilder() {
 
               <div>
                 <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  End Date
+                  结束日期
                 </label>
                 <input
                   type="date"
@@ -212,7 +212,7 @@ export function InvoiceBuilder() {
 
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Projects
+                项目
               </label>
               <select
                 multiple
@@ -231,22 +231,22 @@ export function InvoiceBuilder() {
                 ))}
               </select>
               <p className="mt-1 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                Hold Ctrl/Cmd to select multiple
+                按住 Ctrl/Cmd 可选择多个
               </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                Group By
+                分组方式
               </label>
               <select
                 value={filters.groupBy}
                 onChange={(e) => setFilters({ ...filters, groupBy: e.target.value as 'project' | 'date' | 'none' })}
                 className="w-full rounded-md border border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated px-3 py-2 text-sm text-text-light-primary dark:text-text-dark-primary focus:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="project">Project</option>
-                <option value="date">Date</option>
-                <option value="none">Individual Entries</option>
+                <option value="project">项目</option>
+                <option value="date">日期</option>
+                <option value="none">单条记录</option>
               </select>
             </div>
 
@@ -259,20 +259,20 @@ export function InvoiceBuilder() {
                 className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-2 focus:ring-accent-primary"
               />
               <label htmlFor="billableOnly" className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                Billable entries only
+                仅可计费记录
               </label>
             </div>
           </div>
 
           {/* Notes */}
-          <div className="rounded-lg bg-surface-elevated p-4 space-y-4">
-            <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">Invoice Notes</h3>
+          <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-4 space-y-4">
+            <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">发票备注</h3>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full rounded-md border border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated px-3 py-2 text-sm text-text-light-primary dark:text-text-dark-primary focus:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
               rows={4}
-              placeholder="Payment terms, thank you note, etc."
+              placeholder="付款条款、感谢语等"
             />
           </div>
 
@@ -281,17 +281,17 @@ export function InvoiceBuilder() {
             disabled={isGenerating || !clientName.trim()}
             className="w-full rounded-md bg-accent-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isGenerating ? 'Generating...' : 'Generate Preview'}
+            {isGenerating ? '生成中…' : '生成预览'}
           </button>
         </div>
 
         {/* Right: Preview */}
-        <div className="rounded-lg bg-surface-elevated p-6">
+        <div className="rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated p-6">
           {!preview ? (
-            <div className="flex h-full min-h-[400px] items-center justify-center text-text-tertiary">
+            <div className="flex h-full min-h-[400px] items-center justify-center text-text-light-tertiary dark:text-text-dark-tertiary">
               <div className="text-center">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Invoice preview will appear here</p>
+                <p>发票预览将显示在此处</p>
               </div>
             </div>
           ) : (
@@ -299,16 +299,16 @@ export function InvoiceBuilder() {
               {/* Preview Header */}
               <div className="flex items-center justify-between pb-4 border-b border-border-light">
                 <div>
-                  <h3 className="text-xl font-bold text-text-primary">
+                  <h3 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
                     {preview.invoiceNumber}
                   </h3>
-                  <p className="text-sm text-text-secondary">
+                  <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
                     {new Date(preview.invoiceDate).toLocaleDateString()}
                   </p>
                 </div>
                 <button
                   onClick={() => setPreview(null)}
-                  className="rounded-md p-2 text-text-secondary hover:bg-surface-hover"
+                  className="rounded-md p-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -316,22 +316,22 @@ export function InvoiceBuilder() {
 
               {/* Client */}
               <div>
-                <p className="text-xs font-medium text-text-tertiary mb-1">BILL TO</p>
-                <p className="font-medium text-text-primary">{preview.clientName}</p>
+                <p className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary mb-1">客户</p>
+                <p className="font-medium text-text-light-primary dark:text-text-dark-primary">{preview.clientName}</p>
                 {preview.clientEmail && (
-                  <p className="text-sm text-text-secondary">{preview.clientEmail}</p>
+                  <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{preview.clientEmail}</p>
                 )}
               </div>
 
               {/* Line Items */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-text-tertiary">LINE ITEMS</p>
+                <p className="text-xs font-medium text-text-light-tertiary dark:text-text-dark-tertiary">费用明细</p>
                 <div className="space-y-1">
                   {preview.lineItems.map(item => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-text-primary">{item.description}</span>
-                      <span className="text-text-secondary">
-                        {item.quantity}h × ${item.rate} = ${item.amount.toFixed(2)}
+                      <span className="text-text-light-primary dark:text-text-dark-primary">{item.description}</span>
+                      <span className="text-text-light-secondary dark:text-text-dark-secondary">
+                        {item.quantity}小时 × ${item.rate} = ${item.amount.toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -341,18 +341,18 @@ export function InvoiceBuilder() {
               {/* Totals */}
               <div className="space-y-2 border-t border-border-light pt-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-text-secondary">Subtotal</span>
-                  <span className="text-text-primary">${preview.subtotal.toFixed(2)}</span>
+                  <span className="text-text-light-secondary dark:text-text-dark-secondary">小计</span>
+                  <span className="text-text-light-primary dark:text-text-dark-primary">${preview.subtotal.toFixed(2)}</span>
                 </div>
                 {preview.taxRate > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-text-secondary">Tax ({preview.taxRate}%)</span>
-                    <span className="text-text-primary">${preview.taxAmount.toFixed(2)}</span>
+                    <span className="text-text-light-secondary dark:text-text-dark-secondary">税（{preview.taxRate}%）</span>
+                    <span className="text-text-light-primary dark:text-text-dark-primary">${preview.taxAmount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold border-t border-border-light pt-2">
-                  <span className="text-text-primary">Total</span>
-                  <span className="text-text-primary">${preview.total.toFixed(2)}</span>
+                  <span className="text-text-light-primary dark:text-text-dark-primary">合计</span>
+                  <span className="text-text-light-primary dark:text-text-dark-primary">${preview.total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -364,27 +364,27 @@ export function InvoiceBuilder() {
                   className="w-full flex items-center justify-center gap-2 rounded-md bg-accent-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-primary/90 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Invoice'}
+                  {isSaving ? '保存中…' : '保存发票'}
                 </button>
 
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={handleExportPDF}
-                    className="flex items-center justify-center gap-1 rounded-md bg-surface-base px-3 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover"
+                    className="flex items-center justify-center gap-1 rounded-md bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
                   >
                     <Download className="w-4 h-4" />
                     PDF
                   </button>
                   <button
                     onClick={handleExportCSV}
-                    className="flex items-center justify-center gap-1 rounded-md bg-surface-base px-3 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover"
+                    className="flex items-center justify-center gap-1 rounded-md bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
                   >
                     <Download className="w-4 h-4" />
                     CSV
                   </button>
                   <button
                     onClick={handleExportJSON}
-                    className="flex items-center justify-center gap-1 rounded-md bg-surface-base px-3 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover"
+                    className="flex items-center justify-center gap-1 rounded-md bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm font-medium text-text-light-primary dark:text-text-dark-primary transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
                   >
                     <Download className="w-4 h-4" />
                     JSON

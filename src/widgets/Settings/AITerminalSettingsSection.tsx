@@ -1,78 +1,47 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTerminalStore } from '../../stores/useTerminalStore';
-import type { QuickNoteMode } from '../../stores/useTerminalStore';
+import {
+  AI_EXECUTION_MODE_DESCRIPTIONS,
+  AI_EXECUTION_MODE_LABELS,
+  useAISettingsStore,
+  type AIExecutionMode,
+} from '../../stores/useAISettingsStore';
 import { ProviderSettings } from '../../components/ProviderSettings';
 import { createDefaultRouter, PROVIDER_METADATA } from '../../services/ai/providerRouter';
 import { logger } from '../../services/logger';
 
 const log = logger.module('AI:Settings');
 
-const QUICK_NOTE_MODES: { value: QuickNoteMode; label: string; description: string }[] = [
-  {
-    value: 'permanent',
-    label: 'Permanent',
-    description: 'One Quick Note forever. Manually move content when ready.',
-  },
-  {
-    value: 'daily',
-    label: 'Daily',
-    description: 'New Quick Note each day. Old ones become regular notes.',
-  },
-  {
-    value: 'auto-archive',
-    label: 'Auto-Archive',
-    description: 'Entries older than X days auto-move to Daily Notes.',
-  },
-];
-
-const AUTO_ARCHIVE_OPTIONS = [
-  { value: 3, label: '3 days' },
-  { value: 7, label: '7 days' },
-  { value: 14, label: '14 days' },
-  { value: 30, label: '30 days' },
-];
-
 /**
- * AI Terminal Settings Section
- * Provides functional AI provider configuration directly in Settings.
- * Changes sync with AI Terminal since both use the same store.
+ * Provider configuration for the single AI Command Center surface.
+ * The internal store name remains for data compatibility with older releases.
  */
 export const AITerminalSettingsSection: React.FC = () => {
   const providers = useTerminalStore((s) => s.providers);
   const activeProvider = useTerminalStore((s) => s.activeProvider);
   const activeModel = useTerminalStore((s) => s.activeModel);
-  const encryptionPassword = useTerminalStore((s) => s.encryptionPassword);
-  const isPasswordExpired = useTerminalStore((s) => s.isPasswordExpired);
 
-  // Quick Note settings
-  const quickNoteMode = useTerminalStore((s) => s.quickNoteMode);
-  const autoArchiveDays = useTerminalStore((s) => s.autoArchiveDays);
-  const setQuickNoteMode = useTerminalStore((s) => s.setQuickNoteMode);
-  const setAutoArchiveDays = useTerminalStore((s) => s.setAutoArchiveDays);
-
-  const [showProviderSettings, setShowProviderSettings] = useState(false);
   const [configuredCount, setConfiguredCount] = useState(0);
+  const providerCount = Object.keys(PROVIDER_METADATA).length;
 
   // Create router for settings (shares store with AITerminal)
   const router = useMemo(() => createDefaultRouter(), []);
 
-  // Initialize API keys and count configured providers
+  // Initialize API keys and count configured providers.
+  // Keys decrypt with the device-managed local key (no password).
   useEffect(() => {
     const initializeAndCount = async () => {
-      // Initialize API keys from encrypted storage
-      if (encryptionPassword && !isPasswordExpired()) {
-        const allProviderIds = Object.keys(PROVIDER_METADATA);
-        for (const providerId of allProviderIds) {
-          const providerConfig = providers[providerId];
-          if (providerConfig && providerConfig.encryptedApiKey) {
-            try {
-              const decryptedKey = await useTerminalStore.getState().getProviderApiKey(providerId, encryptionPassword);
-              if (decryptedKey) {
-                router.setProviderApiKey(providerId, decryptedKey);
-              }
-            } catch (error) {
-              log.error(`Failed to decrypt ${providerId} API key`, { error });
+      const allProviderIds = Object.keys(PROVIDER_METADATA);
+      for (const providerId of allProviderIds) {
+        const providerConfig = providers[providerId];
+        if (providerConfig && providerConfig.encryptedApiKey) {
+          try {
+            const decryptedKey = await useTerminalStore.getState().getProviderApiKey(providerId);
+            if (decryptedKey) {
+              router.setProviderApiKey(providerId, decryptedKey);
             }
+          } catch (error) {
+            log.error(`Failed to decrypt ${providerId} API key`, { error });
           }
         }
       }
@@ -83,7 +52,7 @@ export const AITerminalSettingsSection: React.FC = () => {
     };
 
     initializeAndCount();
-  }, [encryptionPassword, isPasswordExpired, providers, router]);
+  }, [providers, router]);
 
   // Recount when providers change
   useEffect(() => {
@@ -101,31 +70,25 @@ export const AITerminalSettingsSection: React.FC = () => {
           <span className="text-2xl">🤖</span>
           <div>
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-              AI Terminal
+              AI 提供商
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Multi-provider AI assistant with 8 providers
+              为 AI 指挥中心配置服务，当前支持 {providerCount} 家提供商
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowProviderSettings(true)}
-          className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium rounded-lg transition-colors"
-        >
-          Configure Providers
-        </button>
       </div>
 
       {/* Provider Status */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">Configured Providers</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">已配置提供商</p>
           <p className="text-2xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            {configuredCount} <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">/ 8</span>
+            {configuredCount} <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary">/ {providerCount}</span>
           </p>
         </div>
         <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
-          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">Active Provider</p>
+          <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">当前提供商</p>
           <p className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary truncate">
             {activeProvider ? (
               <>
@@ -137,128 +100,99 @@ export const AITerminalSettingsSection: React.FC = () => {
                 )}
               </>
             ) : (
-              <span className="text-text-light-secondary dark:text-text-dark-secondary">Not selected</span>
+              <span className="text-text-light-secondary dark:text-text-dark-secondary">未选择</span>
             )}
           </p>
         </div>
       </div>
 
-      {/* Features */}
-      <div className="mb-6 p-4 bg-status-info-bg dark:bg-status-info-bg-dark border border-status-info-border dark:border-status-info-border-dark rounded-lg">
-        <p className="text-sm text-status-info-text dark:text-status-info-text-dark mb-2">
-          <strong>🎯 Multi-Provider System</strong>
-        </p>
-        <ul className="text-xs text-status-info-text dark:text-status-info-text-dark space-y-1">
-          <li>• 8 AI providers (OpenRouter, Groq, HuggingFace, Mistral, Gemini, OpenAI, Claude, Grok)</li>
-          <li>• Free models available on most providers</li>
-          <li>• Automatic fallback if primary provider fails</li>
-          <li>• Encrypted API key storage with password protection</li>
-        </ul>
+      {/* Provider configuration stays inside Settings instead of opening a full-screen portal. */}
+      <div className="mb-6">
+        <ProviderSettings inline router={router} />
       </div>
 
-      {/* Quick Note Settings */}
-      <div className="mb-6 p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg">⚡</span>
-          <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Quick Note Settings
-          </h3>
-        </div>
-
-        {/* Mode Selection */}
-        <div className="mb-4">
-          <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Quick Note Mode
-          </label>
-          <div className="space-y-2">
-            {QUICK_NOTE_MODES.map((mode) => (
-              <label
-                key={mode.value}
-                className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                  quickNoteMode === mode.value
-                    ? 'bg-accent-yellow/10 border border-accent-yellow/30'
-                    : 'bg-surface-light dark:bg-surface-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated border border-transparent'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="quickNoteMode"
-                  value={mode.value}
-                  checked={quickNoteMode === mode.value}
-                  onChange={(e) => setQuickNoteMode(e.target.value as QuickNoteMode)}
-                  className="mt-0.5"
-                />
-                <div>
-                  <span className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                    {mode.label}
-                  </span>
-                  <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-0.5">
-                    {mode.description}
-                  </p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Auto-Archive Days (only shown in auto-archive mode) */}
-        {quickNoteMode === 'auto-archive' && (
-          <div className="mt-4 pt-4 border-t border-border-light dark:border-border-dark">
-            <label className="block text-xs text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              Archive entries older than
-            </label>
-            <select
-              value={autoArchiveDays}
-              onChange={(e) => setAutoArchiveDays(Number(e.target.value))}
-              className="w-full px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-yellow"
-            >
-              {AUTO_ARCHIVE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-2">
-              Entries older than {autoArchiveDays} days will be automatically moved to their respective Daily Notes.
-            </p>
-          </div>
-        )}
-      </div>
+      {/* AI 执行权限与上下文 */}
+      <AIAccessSettings />
 
       {/* Chat History Privacy Note */}
-      <div className="mb-6 p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
-        <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          <strong>Privacy note:</strong> Chat history is stored locally in plaintext. Clear history anytime from the AI Terminal.
+      <div className="rounded-lg border border-border-light bg-surface-light-elevated p-4 dark:border-border-dark dark:bg-surface-dark-elevated">
+        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          <strong>本地与隐私：</strong>API 密钥使用设备管理的本地密钥加密；对话保存在当前浏览器中，可随时在 AI 指挥中心清空。只有你主动发送消息时，相关内容才会发往所选提供商。
         </p>
       </div>
-
-      {/* Free Provider Links */}
-      <div className="p-4 bg-status-success-bg dark:bg-status-success-bg-dark border border-status-success-border dark:border-status-success-border-dark rounded-lg">
-        <p className="text-sm font-semibold text-status-success-text dark:text-status-success-text-dark mb-2">
-          Get Free API Keys:
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-sm text-status-success-text dark:text-status-success-text-dark">
-          <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
-            OpenRouter →
-          </a>
-          <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
-            Groq →
-          </a>
-          <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
-            HuggingFace →
-          </a>
-          <a href="https://console.mistral.ai/api-keys/" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
-            Mistral →
-          </a>
-        </div>
-      </div>
-
-      {/* Provider Settings Modal */}
-      <ProviderSettings
-        isOpen={showProviderSettings}
-        onClose={() => setShowProviderSettings(false)}
-        router={router}
-      />
     </div>
   );
 };
+
+/** AI 执行权限与今日快照偏好。 */
+function AIAccessSettings() {
+  const executionMode = useAISettingsStore((s) => s.executionMode);
+  const setExecutionMode = useAISettingsStore((s) => s.setExecutionMode);
+  const todaySnapshotEnabled = useAISettingsStore((s) => s.todaySnapshotEnabled);
+  const setTodaySnapshotEnabled = useAISettingsStore((s) => s.setTodaySnapshotEnabled);
+  const logEnabled = useAISettingsStore((s) => s.logEnabled);
+  const setLogEnabled = useAISettingsStore((s) => s.setLogEnabled);
+
+  const modes: AIExecutionMode[] = ['ask', 'auto', 'readonly'];
+
+  return (
+    <div className="mb-6 rounded-lg border border-border-light bg-surface-light-elevated p-4 dark:border-border-dark dark:bg-surface-dark-elevated">
+      <p className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
+        AI 执行权限
+      </p>
+      <p className="mt-0.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">
+        决定 AI 管理模式中写操作(创建/修改/删除)如何落地；可在 AI 工作区顶部随时切换。
+      </p>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {modes.map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={executionMode === mode}
+            onClick={() => setExecutionMode(mode)}
+            className={`min-w-28 flex-1 rounded-xl border px-3 py-2.5 text-left transition-all ${
+              executionMode === mode
+                ? 'border-accent-primary bg-accent-primary/10'
+                : 'border-border-light bg-surface-light hover:border-accent-primary/40 dark:border-border-dark dark:bg-surface-dark'
+            }`}
+          >
+            <span className={`block text-sm font-semibold ${executionMode === mode ? 'text-accent-primary' : 'text-text-light-primary dark:text-text-dark-primary'}`}>
+              {AI_EXECUTION_MODE_LABELS[mode]}
+            </span>
+            <span className="mt-0.5 block text-[11px] leading-relaxed text-text-light-secondary dark:text-text-dark-secondary">
+              {AI_EXECUTION_MODE_DESCRIPTIONS[mode]}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 space-y-2.5 border-t border-border-light/60 pt-3 dark:border-border-dark/60">
+        <label className="flex cursor-pointer items-center justify-between gap-3 text-xs text-text-light-secondary dark:text-text-dark-secondary">
+          <span>
+            <strong className="text-text-light-primary dark:text-text-dark-primary">今日快照</strong>
+            <span className="ml-1.5">在提示词中注入今日计数摘要(仅数量，不包含内容)，让 AI 感知你的当天状态</span>
+          </span>
+          <input
+            type="checkbox"
+            checked={todaySnapshotEnabled}
+            onChange={(e) => setTodaySnapshotEnabled(e.target.checked)}
+            className="h-4 w-4 accent-[var(--accent-primary)]"
+          />
+        </label>
+        <label className="flex cursor-pointer items-center justify-between gap-3 text-xs text-text-light-secondary dark:text-text-dark-secondary">
+          <span>
+            <strong className="text-text-light-primary dark:text-text-dark-primary">操作日志</strong>
+            <span className="ml-1.5">每次 AI 执行写操作都记录到「操作记录」(可查看结果、一键撤销)</span>
+          </span>
+          <input
+            type="checkbox"
+            checked={logEnabled}
+            onChange={(e) => setLogEnabled(e.target.checked)}
+            className="h-4 w-4 accent-[var(--accent-primary)]"
+          />
+        </label>
+      </div>
+    </div>
+  );
+}

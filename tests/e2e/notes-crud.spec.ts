@@ -15,7 +15,7 @@ test.describe('Notes CRUD Operations', () => {
 
   test('can create a new note', async ({ page }) => {
     // Find and click the create note button
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await expect(createButton).toBeVisible();
     await createButton.click();
 
@@ -38,7 +38,7 @@ test.describe('Notes CRUD Operations', () => {
 
   test('can edit an existing note', async ({ page }) => {
     // Create a note first
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -62,7 +62,7 @@ test.describe('Notes CRUD Operations', () => {
 
   test('can delete a note', async ({ page }) => {
     // Create a note first
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -90,13 +90,13 @@ test.describe('Notes CRUD Operations', () => {
 
   test('can organize notes in folders', async ({ page }) => {
     // Look for folder management UI
-    const newFolderButton = page.getByRole('button', { name: /new.*folder|create.*folder|add.*folder/i });
+    const newFolderButton = page.getByRole('button', { name: /新建文件夹|创建.*文件夹|添加.*文件夹/i });
 
     if (await newFolderButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFolderButton.click();
 
       // Fill in folder name
-      const folderInput = page.getByPlaceholder(/folder.*name|name/i);
+      const folderInput = page.getByPlaceholder(/文件夹.*名称|名称/i);
       if (await folderInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await folderInput.fill('E2E Test Folder');
 
@@ -110,7 +110,7 @@ test.describe('Notes CRUD Operations', () => {
         await page.getByText('E2E Test Folder').click();
 
         // Create a note in this folder
-        const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+        const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
         await createButton.click();
 
         const editor = page.locator('[contenteditable="true"]').first();
@@ -128,7 +128,7 @@ test.describe('Notes CRUD Operations', () => {
 
   test('can search for notes', async ({ page }) => {
     // Create a few notes first
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
 
     // Create first note
     await createButton.click();
@@ -152,7 +152,7 @@ test.describe('Notes CRUD Operations', () => {
     await page.waitForTimeout(1000);
 
     // Look for search input
-    const searchInput = page.getByPlaceholder(/search/i);
+    const searchInput = page.getByPlaceholder(/搜索/i);
 
     if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Search for "Searchable"

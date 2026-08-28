@@ -3,8 +3,8 @@
  * Supports image upload, resize, alt text, and delete
  */
 
-import React, { useState, useCallback } from 'react';
-import { DecoratorNode } from 'lexical';
+import React, { useState, useCallback, useEffect } from 'react';
+import { $getNodeByKey, DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { indexedDBService } from '../../services/indexedDB';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
@@ -179,6 +179,42 @@ function ImageComponent({
   const [showAltEditor, setShowAltEditor] = useState(false);
   const [editedAltText, setEditedAltText] = useState(altText);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [displaySrc, setDisplaySrc] = useState(imageId ? '' : src);
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  useEffect(() => {
+    if (!imageId) {
+      setDisplaySrc(src);
+      setLoadFailed(false);
+      return;
+    }
+
+    let cancelled = false;
+    let restoredUrl: string | null = null;
+
+    indexedDBService
+      .getImage(imageId)
+      .then((blob) => {
+        if (cancelled) return;
+        if (!blob) {
+          // Non-blob sources (for example an imported HTTPS image) remain usable.
+          if (src && !src.startsWith('blob:')) setDisplaySrc(src);
+          else setLoadFailed(true);
+          return;
+        }
+        restoredUrl = URL.createObjectURL(blob);
+        setDisplaySrc(restoredUrl);
+        setLoadFailed(false);
+      })
+      .catch(() => {
+        if (!cancelled) setLoadFailed(true);
+      });
+
+    return () => {
+      cancelled = true;
+      if (restoredUrl) URL.revokeObjectURL(restoredUrl);
+    };
+  }, [imageId, src]);
 
   const handleDeleteClick = useCallback(() => {
     setShowDeleteConfirm(true);
@@ -191,14 +227,9 @@ function ImageComponent({
         await indexedDBService.deleteImage(imageId);
       }
 
-      // Revoke blob URL
-      URL.revokeObjectURL(src);
-
       // Remove node from editor
       editor.update(() => {
-        const node = editor.getEditorState().read(() => {
-          return editor.getEditorState()._nodeMap.get(nodeKey);
-        });
+        const node = $getNodeByKey(nodeKey);
         if (node) {
           node.remove();
         }
@@ -210,13 +241,11 @@ function ImageComponent({
     } finally {
       setShowDeleteConfirm(false);
     }
-  }, [imageId, src, editor, nodeKey]);
+  }, [imageId, editor, nodeKey]);
 
   const handleSaveAltText = () => {
     editor.update(() => {
-      const node = editor.getEditorState().read(() => {
-        return editor.getEditorState()._nodeMap.get(nodeKey);
-      });
+      const node = $getNodeByKey(nodeKey);
       if (node && node instanceof ImageNode) {
         node.setAltText(editedAltText);
       }
@@ -233,41 +262,51 @@ function ImageComponent({
     >
       {/* Resizable container */}
       <div
-        className="resize overflow-auto inline-block rounded-lg border-2 border-transparent hover:border-accent-blue/30 transition-all duration-200"
+        className="resize inline-block overflow-auto rounded-lg border-2 border-transparent transition-all duration-200 hover:border-accent-primary/30"
         style={{
           maxWidth: maxWidth,
           resize: 'both',
         }}
       >
-        <img
-          src={src}
-          alt={altText}
-          style={{
-            width: width === 'inherit' ? '100%' : width,
-            height: height === 'inherit' ? 'auto' : height,
-            display: 'block',
-          }}
-          className="max-w-full h-auto rounded-lg pointer-events-none"
-          draggable={false}
-        />
+        {displaySrc ? (
+          <img
+            src={displaySrc}
+            alt={altText}
+            onError={() => {
+              setLoadFailed(true);
+              setDisplaySrc('');
+            }}
+            style={{
+              width: width === 'inherit' ? '100%' : width,
+              height: height === 'inherit' ? 'auto' : height,
+              display: 'block',
+            }}
+            className="max-w-full h-auto rounded-lg pointer-events-none"
+            draggable={false}
+          />
+        ) : (
+          <div className="flex min-h-32 min-w-56 items-center justify-center rounded-lg bg-surface-light-elevated px-5 text-sm text-text-light-secondary dark:bg-surface-dark-elevated dark:text-text-dark-secondary">
+            {loadFailed ? '图片数据不可用，可删除后重新插入' : '正在恢复本地图片…'}
+          </div>
+        )}
       </div>
 
       {/* Hover controls - positioned below image with proper spacing */}
       {isHovered && !showAltEditor && (
-        <div className="flex items-center justify-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="flex items-center justify-center gap-2 mt-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-200">
           <button
             onClick={() => setShowAltEditor(true)}
-            className="px-3 py-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary hover:bg-accent-blue hover:text-white transition-colors shadow-elevated"
-            title="Edit alt text"
+            className="rounded-lg border border-border-light bg-surface-light px-3 py-1 text-sm text-text-light-primary shadow-elevated transition-colors hover:bg-accent-primary hover:text-white dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+            title="编辑替代文本"
           >
-            ✏️ Alt text
+            ✏️ 替代文本
           </button>
           <button
             onClick={handleDeleteClick}
             className="px-3 py-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary hover:bg-accent-red hover:text-white transition-colors shadow-elevated"
-            title="Delete image"
+            title="删除图片"
           >
-            🗑️ Delete
+            🗑️ 删除
           </button>
         </div>
       )}
@@ -276,9 +315,9 @@ function ImageComponent({
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={confirmDelete}
-        title="Delete Image"
-        message="Delete this image? This cannot be undone."
-        confirmText="Delete"
+        title="删除图片"
+        message="确定删除这张图片？此操作无法撤销。"
+        confirmText="删除"
         variant="danger"
       />
 
@@ -287,13 +326,13 @@ function ImageComponent({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-dark/50" onClick={() => setShowAltEditor(false)}>
           <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-elevated p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-              Edit Alt Text
+              编辑替代文本
             </h3>
             <textarea
               value={editedAltText}
               onChange={(e) => setEditedAltText(e.target.value)}
-              className="w-full h-24 px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary resize-none focus:outline-none focus:ring-2 focus:ring-accent-blue"
-              placeholder="Describe this image for screen readers..."
+              className="h-24 w-full resize-none rounded-lg border border-border-light bg-surface-light-elevated px-3 py-2 text-text-light-primary focus:outline-none focus:ring-2 focus:ring-accent-primary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-primary"
+              placeholder="为屏幕阅读器描述这张图片…"
               autoFocus
             />
             <div className="flex items-center justify-end gap-2 mt-4">
@@ -301,13 +340,13 @@ function ImageComponent({
                 onClick={() => setShowAltEditor(false)}
                 className="px-4 py-2 text-sm text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleSaveAltText}
-                className="px-4 py-2 bg-accent-blue text-white rounded-lg text-sm hover:bg-accent-blue-hover transition-colors"
+                className="rounded-lg bg-accent-primary px-4 py-2 text-sm text-white transition-opacity hover:opacity-90"
               >
-                Save
+                保存
               </button>
             </div>
           </div>

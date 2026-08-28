@@ -116,8 +116,8 @@ export function SpreadsheetSheetTabs({
             {sheets.length > 1 && !isEditing && (
               <button
                 onClick={(e) => handleDelete(e, index)}
-                className="opacity-0 group-hover:opacity-100 p-0.5 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error transition-opacity"
-                title="Delete sheet"
+                className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 p-0.5 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error transition-opacity"
+                title="删除工作表"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -130,7 +130,7 @@ export function SpreadsheetSheetTabs({
       <button
         onClick={onAdd}
         className="p-1.5 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary hover:bg-surface-light-alt dark:hover:bg-surface-dark-elevated rounded transition-colors"
-        title="Add sheet"
+        title="添加工作表"
       >
         <Plus className="w-4 h-4" />
       </button>
@@ -139,9 +139,9 @@ export function SpreadsheetSheetTabs({
         isOpen={sheetToDelete !== null}
         onClose={() => setSheetToDelete(null)}
         onConfirm={confirmDelete}
-        title="Delete Sheet"
-        message={sheetToDelete !== null ? `Delete "${sheets[sheetToDelete]?.name}"? This cannot be undone.` : ''}
-        confirmText="Delete"
+        title="删除工作表"
+        message={sheetToDelete !== null ? `删除“${sheets[sheetToDelete]?.name}”？此操作无法撤销。` : ''}
+        confirmText="删除"
         variant="danger"
       />
     </div>

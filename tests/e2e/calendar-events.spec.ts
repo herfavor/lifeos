@@ -14,7 +14,7 @@ test.describe('Calendar Events', () => {
     await navigateTo(page, '/schedule?tab=calendar');
 
     // Ensure we're on Calendar tab
-    const calendarTab = page.getByRole('button', { name: /calendar/i });
+    const calendarTab = page.getByRole('button', { name: /日历/i });
     if (await calendarTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await calendarTab.click();
       await page.waitForTimeout(500);
@@ -23,7 +23,7 @@ test.describe('Calendar Events', () => {
 
   test('can create a new calendar event', async ({ page }) => {
     // Look for add event button or click on a date cell
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
 
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
@@ -39,18 +39,18 @@ test.describe('Calendar Events', () => {
     await page.waitForTimeout(500);
 
     // Fill in event details
-    const titleInput = page.getByPlaceholder(/title|event.*name|what/i);
+    const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
     if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await titleInput.fill('E2E Test Event');
 
       // Fill in description if available
-      const descInput = page.getByPlaceholder(/description|notes|details/i);
+      const descInput = page.getByPlaceholder(/添加此事件的详细信息…/);
       if (await descInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await descInput.fill('This is a test event created by E2E tests');
       }
 
       // Save the event
-      const saveButton = page.getByRole('button', { name: /save|create|add/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建|添加/i });
       if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await saveButton.click();
         await page.waitForTimeout(500);
@@ -63,12 +63,12 @@ test.describe('Calendar Events', () => {
 
   test('can edit an existing event', async ({ page }) => {
     // Create an event first
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       await titleInput.fill('Event to Edit');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -79,13 +79,13 @@ test.describe('Calendar Events', () => {
     await page.waitForTimeout(500);
 
     // Look for edit button
-    const editButton = page.getByRole('button', { name: /edit/i });
+    const editButton = page.getByRole('button', { name: /编辑/i });
     if (await editButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await editButton.click();
       await page.waitForTimeout(300);
 
       // Update the title
-      const titleInput = page.getByPlaceholder(/title|event.*name/i).or(
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/).or(
         page.getByDisplayValue('Event to Edit')
       );
 
@@ -95,7 +95,7 @@ test.describe('Calendar Events', () => {
         await page.keyboard.type('Updated Event Title');
 
         // Save changes
-        const saveButton = page.getByRole('button', { name: /save|update/i });
+        const saveButton = page.getByRole('button', { name: /保存/i });
         if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveButton.click();
           await page.waitForTimeout(500);
@@ -109,12 +109,12 @@ test.describe('Calendar Events', () => {
 
   test('can delete an event', async ({ page }) => {
     // Create an event first
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       await titleInput.fill('Event to Delete');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -125,12 +125,12 @@ test.describe('Calendar Events', () => {
     await page.waitForTimeout(500);
 
     // Look for delete button
-    const deleteButton = page.getByRole('button', { name: /delete|remove/i });
+    const deleteButton = page.getByRole('button', { name: /删除|移除/i });
     if (await deleteButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await deleteButton.click();
 
       // Confirm deletion if there's a dialog
-      const confirmButton = page.getByRole('button', { name: /confirm|yes|delete/i });
+      const confirmButton = page.getByRole('button', { name: /确认|删除/i });
       if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await confirmButton.click();
       }
@@ -144,7 +144,7 @@ test.describe('Calendar Events', () => {
 
   test('can import ICS file', async ({ page }) => {
     // Look for import button
-    const importButton = page.getByRole('button', { name: /import|upload|ics/i });
+    const importButton = page.getByRole('button', { name: /导入/i });
 
     if (await importButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await importButton.click();
@@ -180,7 +180,7 @@ END:VCALENDAR`;
         await page.waitForTimeout(1000);
 
         // Look for success message or verify event appears
-        const successMessage = page.getByText(/import.*success|imported|added/i);
+        const successMessage = page.getByText(/已导入/i);
         if (await successMessage.isVisible({ timeout: 2000 }).catch(() => false)) {
           await expect(successMessage).toBeVisible();
         }
@@ -196,12 +196,12 @@ END:VCALENDAR`;
 
   test('DayDetailModal shows both tasks and events', async ({ page }) => {
     // Create an event
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       await titleInput.fill('Day Detail Test Event');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -217,13 +217,13 @@ END:VCALENDAR`;
 
       if (await dayDetailModal.isVisible({ timeout: 2000 }).catch(() => false)) {
         // Verify events section exists
-        const eventsSection = page.getByText(/events/i);
+        const eventsSection = page.getByText(/事件/i);
         if (await eventsSection.isVisible({ timeout: 1000 }).catch(() => false)) {
           await expect(eventsSection).toBeVisible();
         }
 
         // Verify tasks section exists
-        const tasksSection = page.getByText(/tasks/i);
+        const tasksSection = page.getByText(/任务/i);
         if (await tasksSection.isVisible({ timeout: 1000 }).catch(() => false)) {
           await expect(tasksSection).toBeVisible();
         }
@@ -236,20 +236,20 @@ END:VCALENDAR`;
 
   test('can create recurring event', async ({ page }) => {
     // Look for add event button
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
 
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
       await page.waitForTimeout(300);
 
       // Fill in event details
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       if (await titleInput.isVisible({ timeout: 1000 }).catch(() => false)) {
         await titleInput.fill('Recurring Event Test');
 
         // Look for recurrence/repeat option
-        const recurrenceToggle = page.getByRole('button', { name: /repeat|recurring|recurrence/i }).or(
-          page.locator('input[type="checkbox"]').filter({ has: page.getByText(/repeat|recurring/i) })
+        const recurrenceToggle = page.getByRole('button', { name: /重复/i }).or(
+          page.locator('input[type="checkbox"]').filter({ has: page.getByText(/重复/i) })
         );
 
         if (await recurrenceToggle.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -257,13 +257,13 @@ END:VCALENDAR`;
           await page.waitForTimeout(300);
 
           // Select recurrence pattern (daily, weekly, etc.)
-          const weeklyOption = page.getByText(/weekly/i);
+          const weeklyOption = page.getByText(/每周/i);
           if (await weeklyOption.isVisible({ timeout: 1000 }).catch(() => false)) {
             await weeklyOption.click();
           }
 
           // Save the event
-          const saveButton = page.getByRole('button', { name: /save|create/i });
+          const saveButton = page.getByRole('button', { name: /保存|创建/i });
           await saveButton.click();
           await page.waitForTimeout(500);
 
@@ -276,10 +276,10 @@ END:VCALENDAR`;
 
   test('can navigate between months in calendar', async ({ page }) => {
     // Look for previous/next month navigation buttons
-    const nextMonthButton = page.getByRole('button', { name: /next.*month|►|→/i }).or(
+    const nextMonthButton = page.getByRole('button', { name: /下一个|►|→/i }).or(
       page.locator('[data-next-month]')
     );
-    const prevMonthButton = page.getByRole('button', { name: /prev.*month|◄|←/i }).or(
+    const prevMonthButton = page.getByRole('button', { name: /上一个|◄|←/i }).or(
       page.locator('[data-prev-month]')
     );
 
@@ -309,15 +309,15 @@ END:VCALENDAR`;
 
   test('calendar displays event colors and categories', async ({ page }) => {
     // Create an event with a category/color
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件/i });
 
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       await titleInput.fill('Colored Event');
 
       // Look for category or color picker
-      const categorySelect = page.getByLabel(/category|type/i);
+      const categorySelect = page.getByLabel(/颜色类别/i);
       const colorPicker = page.locator('input[type="color"], .color-picker').first();
 
       if (await categorySelect.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -329,7 +329,7 @@ END:VCALENDAR`;
         await colorPicker.click();
       }
 
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
 

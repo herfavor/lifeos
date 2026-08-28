@@ -58,13 +58,13 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
       <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-            Create Flashcards
+            创建闪卡
           </h2>
 
           {/* Deck selector */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Deck
+              牌组
             </label>
             <div className="flex gap-2">
               <select
@@ -91,7 +91,7 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                   type="text"
                   value={newDeckName}
                   onChange={(e) => setNewDeckName(e.target.value)}
-                  placeholder="New deck name..."
+                  placeholder="新牌组名称…"
                   className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
                   onKeyDown={(e) => e.key === 'Enter' && handleCreateDeck()}
                 />
@@ -100,7 +100,7 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                   disabled={!newDeckName.trim()}
                   className="px-3 py-1.5 text-sm bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 disabled:opacity-50 transition-colors"
                 >
-                  Create
+                  创建
                 </button>
               </div>
             )}
@@ -116,7 +116,7 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                   : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-alt dark:hover:bg-surface-dark'
               }`}
             >
-              Single Card
+              单张卡片
             </button>
             <button
               onClick={() => setBulkMode(true)}
@@ -126,7 +126,7 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                   : 'text-text-light-tertiary dark:text-text-dark-tertiary hover:bg-surface-light-alt dark:hover:bg-surface-dark'
               }`}
             >
-              Bulk Import
+              批量导入
             </button>
           </div>
 
@@ -134,12 +134,12 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
             <>
               <div className="mb-2">
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Cards (one per line, separated by | or ::)
+                  卡片（每行一张，用 | 或 :: 分隔）
                 </label>
                 <textarea
                   value={bulkText}
                   onChange={(e) => setBulkText(e.target.value)}
-                  placeholder={"What is React? | A JavaScript UI library\nJSX stands for :: JavaScript XML"}
+                  placeholder={"React 是什么？ | 一个 JavaScript UI 库\nJSX 代表 :: JavaScript XML"}
                   rows={8}
                   className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary resize-none text-sm font-mono"
                 />
@@ -149,31 +149,31 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                 disabled={!bulkText.trim()}
                 className="w-full py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 disabled:opacity-50 transition-colors"
               >
-                Import Cards
+                导入卡片
               </button>
             </>
           ) : (
             <>
               <div className="mb-3">
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Front (Question)
+                  正面（问题）
                 </label>
                 <textarea
                   value={front}
                   onChange={(e) => setFront(e.target.value)}
-                  placeholder="What is the capital of France?"
+                  placeholder="法国的首都是什么？"
                   rows={3}
                   className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary resize-none"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Back (Answer)
+                  背面（答案）
                 </label>
                 <textarea
                   value={back}
                   onChange={(e) => setBack(e.target.value)}
-                  placeholder="Paris"
+                  placeholder="巴黎"
                   rows={3}
                   className="w-full px-3 py-2 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary resize-none"
                 />
@@ -184,14 +184,14 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
                 className="w-full py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Add Card
+                添加卡片
               </button>
             </>
           )}
 
           {addedCount > 0 && (
             <p className="mt-3 text-sm text-status-success text-center">
-              {addedCount} card{addedCount !== 1 ? 's' : ''} added
+              {addedCount} 张卡片已添加
             </p>
           )}
         </div>
@@ -201,7 +201,7 @@ export function FlashcardCreator({ onClose }: FlashcardCreatorProps) {
             onClick={onClose}
             className="px-4 py-2 text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark rounded-lg transition-colors"
           >
-            Done
+            完成
           </button>
         </div>
       </div>

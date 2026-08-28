@@ -86,7 +86,7 @@ export const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
 
   const menuItems = [
     {
-      label: 'New Subfolder',
+      label: '新建子文件夹',
       icon: FolderPlus,
       onClick: () => {
         onCreateSubfolder(folderId);
@@ -94,7 +94,7 @@ export const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
       },
     },
     {
-      label: 'Rename',
+      label: '重命名',
       icon: Edit2,
       onClick: () => {
         onRename(folderId, folderName);
@@ -102,7 +102,7 @@ export const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
       },
     },
     {
-      label: 'Move to...',
+      label: '移动到…',
       icon: FolderInput,
       onClick: () => {
         onMoveTo(folderId);
@@ -110,7 +110,7 @@ export const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
       },
     },
     {
-      label: 'Delete',
+      label: '删除',
       icon: Trash2,
       onClick: () => {
         onDelete(folderId, folderName);
@@ -129,7 +129,7 @@ export const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
         top: adjustedPosition.y,
       }}
       role="menu"
-      aria-label="Folder context menu"
+      aria-label="文件夹右键菜单"
     >
       {menuItems.map((item) => (
         <button

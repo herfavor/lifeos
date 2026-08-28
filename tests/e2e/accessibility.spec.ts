@@ -16,13 +16,13 @@ test.describe('Accessibility - ARIA Landmarks', () => {
 
   test('sidebar has proper aria-label', async ({ page }) => {
     await navigateTo(page, '/');
-    const sidebar = page.locator('aside[aria-label="Main navigation sidebar"]');
+    const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
     await expect(sidebar).toBeVisible();
   });
 
   test('primary nav has proper aria-label', async ({ page }) => {
     await navigateTo(page, '/');
-    const nav = page.locator('nav[aria-label="Primary navigation"]');
+    const nav = page.locator('nav[aria-label="主导航"]');
     await expect(nav).toBeVisible();
   });
 });
@@ -45,7 +45,7 @@ test.describe('Accessibility - Focus Management', () => {
 
     // Open Command Palette
     await page.keyboard.press('Control+k');
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).toBeVisible();
 
     // The input should be focused
     const input = page.getByRole('combobox');
@@ -68,14 +68,14 @@ test.describe('Accessibility - Task Tabs', () => {
   test('tasks page has proper tablist role', async ({ page }) => {
     await navigateTo(page, '/tasks');
 
-    const tablist = page.locator('[role="tablist"][aria-label="Tasks navigation"]');
+    const tablist = page.locator('[role="tablist"][aria-label="任务导航"]');
     await expect(tablist).toBeVisible();
   });
 
   test('active tab has aria-selected=true', async ({ page }) => {
     await navigateTo(page, '/tasks');
 
-    const activeTab = page.getByRole('tab', { name: 'Tasks' });
+    const activeTab = page.getByRole('tab', { name: '任务' });
     await expect(activeTab).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -91,7 +91,7 @@ test.describe('Accessibility - Notes Tabs', () => {
   test('notes page has proper tablist', async ({ page }) => {
     await navigateTo(page, '/notes');
 
-    const tablist = page.locator('[role="tablist"][aria-label="Notes navigation"]');
+    const tablist = page.locator('[role="tablist"][aria-label="笔记导航"]');
     await expect(tablist).toBeVisible();
   });
 });
@@ -101,7 +101,7 @@ test.describe('Accessibility - Command Palette', () => {
     await navigateTo(page, '/');
     await page.keyboard.press('Control+k');
 
-    const dialog = page.getByRole('dialog', { name: 'Synapse search' });
+    const dialog = page.getByRole('dialog', { name: 'Synapse 搜索' });
     await expect(dialog).toBeVisible();
 
     const combobox = page.getByRole('combobox');

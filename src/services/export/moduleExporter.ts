@@ -112,7 +112,7 @@ export async function exportNotesAsMarkdown(): Promise<{ filename: string; noteC
   const zipBlob = createZipBlob(files);
 
   const timestamp = format(new Date(), 'yyyy-MM-dd');
-  const filename = `NeumanOS-notes-${timestamp}.zip`;
+  const filename = `LifeOS-notes-${timestamp}.zip`;
   triggerDownload(zipBlob, filename);
 
   log.info('Notes exported as markdown ZIP', { noteCount: notes.length });
@@ -150,7 +150,7 @@ export function exportTasksAsCSV(): { filename: string; taskCount: number } {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
   const timestamp = format(new Date(), 'yyyy-MM-dd');
-  const filename = `NeumanOS-tasks-${timestamp}.csv`;
+  const filename = `LifeOS-tasks-${timestamp}.csv`;
   triggerDownload(blob, filename);
 
   log.info('Tasks exported as CSV', { taskCount: allTasks.length });
@@ -165,11 +165,11 @@ export function exportCalendarAsICS(): { filename: string; eventCount: number } 
   const result = exportToICS(events);
 
   if (!result.success || !result.data) {
-    throw new Error(result.error || 'Failed to export calendar events');
+    throw new Error(result.error || '导出日历事件失败');
   }
 
   const eventCount = Object.values(events).reduce((acc, arr) => acc + arr.length, 0);
-  const filename = `NeumanOS-calendar-${format(new Date(), 'yyyy-MM-dd')}.ics`;
+  const filename = `LifeOS-calendar-${format(new Date(), 'yyyy-MM-dd')}.ics`;
   downloadICS(result.data, filename);
 
   log.info('Calendar exported as ICS', { eventCount });
@@ -207,7 +207,7 @@ export function exportTimeEntriesAsCSV(): { filename: string; entryCount: number
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
   const timestamp = format(new Date(), 'yyyy-MM-dd');
-  const filename = `NeumanOS-time-entries-${timestamp}.csv`;
+  const filename = `LifeOS-time-entries-${timestamp}.csv`;
   triggerDownload(blob, filename);
 
   log.info('Time entries exported as CSV', { entryCount: entries.length });
@@ -246,7 +246,7 @@ export function exportHabitsAsCSV(): { filename: string; habitCount: number } {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
   const timestamp = format(new Date(), 'yyyy-MM-dd');
-  const filename = `NeumanOS-habits-${timestamp}.csv`;
+  const filename = `LifeOS-habits-${timestamp}.csv`;
   triggerDownload(blob, filename);
 
   log.info('Habits exported as CSV', { habitCount: habits.length });

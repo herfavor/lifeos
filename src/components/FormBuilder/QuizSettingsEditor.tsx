@@ -42,7 +42,7 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
     <div className="space-y-4 p-4 border border-border-light dark:border-border-dark rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-          Quiz Settings
+          测验设置
         </h4>
         {quizSettings && (
           <button
@@ -50,7 +50,7 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
             onClick={handleRemove}
             className="text-xs text-accent-red hover:underline"
           >
-            Remove Quiz Settings
+            移除测验设置
           </button>
         )}
       </div>
@@ -61,14 +61,14 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
           onClick={() => handleChange({})}
           className="w-full px-4 py-2 bg-accent-primary text-white rounded-lg hover:opacity-90"
         >
-          Enable Quiz Mode for This Field
+          为此字段启用测验模式
         </button>
       ) : (
         <>
           {/* Correct Answer */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Correct Answer *
+              正确答案 *
             </label>
 
             {/* Text-based fields */}
@@ -77,7 +77,7 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
                 type={field.type === 'number' ? 'number' : 'text'}
                 value={String(quizSettings.correctAnswer || '')}
                 onChange={(e) => handleChange({ correctAnswer: field.type === 'number' ? Number(e.target.value) : e.target.value })}
-                placeholder="Enter the correct answer"
+                placeholder="输入正确答案"
                 className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
                 required
               />
@@ -91,7 +91,7 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
                 className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
                 required
               >
-                <option value="">Select correct answer</option>
+                <option value="">选择正确答案</option>
                 {field.options?.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -132,8 +132,8 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
                 onChange={(e) => handleChange({ correctAnswer: e.target.value === 'true' })}
                 className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
               >
-                <option value="true">Checked (true)</option>
-                <option value="false">Unchecked (false)</option>
+                <option value="true">已勾选 (true)</option>
+                <option value="false">未勾选 (false)</option>
               </select>
             )}
 
@@ -145,7 +145,7 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
                 onChange={(e) => handleChange({ correctAnswer: Number(e.target.value) })}
                 min={1}
                 max={field.type === 'rating' ? 5 : 10}
-                placeholder={`Enter correct ${field.type} (${field.type === 'rating' ? '1-5' : '1-10'})`}
+                placeholder={`输入正确的${field.type === 'rating' ? '评分' : '量表'}值（${field.type === 'rating' ? '1-5' : '1-10'}）`}
                 className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
                 required
               />
@@ -176,14 +176,14 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
           {/* Points */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Points *
+              分值 *
             </label>
             <input
               type="number"
               value={quizSettings.points || 1}
               onChange={(e) => handleChange({ points: Number(e.target.value) || 1 })}
               min={1}
-              placeholder="Points for this question"
+              placeholder="此问题的分值"
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
               required
             />
@@ -192,12 +192,12 @@ export function QuizSettingsEditor({ field, onSettingsChange }: QuizSettingsEdit
           {/* Feedback (Optional) */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-              Feedback Message (Optional)
+              反馈消息（可选）
             </label>
             <textarea
               value={quizSettings.feedback || ''}
               onChange={(e) => handleChange({ feedback: e.target.value })}
-              placeholder="Optional feedback shown after submission (e.g., 'The capital of France is Paris!')"
+              placeholder="提交后显示的可选反馈（例如：'法国的首都是巴黎！'）"
               rows={2}
               className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary"
             />

@@ -66,7 +66,7 @@ export function MetricCard({ title, value, icon: Icon, trend, subtitle, color = 
         <div className={`flex items-center gap-1 text-xs font-medium ${trendColorClasses[trend.direction]}`}>
           <TrendIcon className="w-3 h-3" />
           <span>{Math.abs(trend.value).toFixed(1)}%</span>
-          <span className="text-text-light-tertiary dark:text-text-dark-tertiary">vs last period</span>
+          <span className="text-text-light-tertiary dark:text-text-dark-tertiary">较上期</span>
         </div>
       )}
     </div>

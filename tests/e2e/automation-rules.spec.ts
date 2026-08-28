@@ -19,43 +19,43 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('can create a new automation rule', async ({ page }) => {
     // Look for create rule button
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule|\+/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule|\+/i });
 
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
       await page.waitForTimeout(300);
 
       // Fill in rule details
-      const nameInput = page.getByPlaceholder(/name|title|rule.*name/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await nameInput.fill('E2E Test Automation Rule');
 
         // Select a trigger
-        const triggerSelect = page.getByLabel(/trigger|when|event/i);
+        const triggerSelect = page.getByLabel(/触发器|当/i);
         if (await triggerSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
           await triggerSelect.click();
 
           // Select task.completed trigger
-          const taskCompletedOption = page.getByText(/task.*completed|task.*complete/i);
+          const taskCompletedOption = page.getByText(/任务已完成|任务.*完成/i);
           if (await taskCompletedOption.isVisible({ timeout: 1000 }).catch(() => false)) {
             await taskCompletedOption.click();
           }
         }
 
         // Select an action
-        const actionSelect = page.getByLabel(/action|then|do/i);
+        const actionSelect = page.getByLabel(/操作|然后/i);
         if (await actionSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
           await actionSelect.click();
 
           // Select create task action
-          const createTaskAction = page.getByText(/create.*task/i);
+          const createTaskAction = page.getByText(/创建.*任务|新建.*任务/i);
           if (await createTaskAction.isVisible({ timeout: 1000 }).catch(() => false)) {
             await createTaskAction.click();
           }
         }
 
         // Save the rule
-        const saveButton = page.getByRole('button', { name: /save|create|add/i });
+        const saveButton = page.getByRole('button', { name: /保存|创建|添加/i });
         if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await saveButton.click();
           await page.waitForTimeout(500);
@@ -69,20 +69,20 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('can edit an existing automation rule', async ({ page }) => {
     // Create a rule first
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Rule to Edit');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
 
     // Find the rule and click edit
     const ruleItem = page.getByText('Rule to Edit').locator('..');
-    const editButton = ruleItem.locator('button').filter({ hasText: /edit/i }).or(
-      page.getByRole('button', { name: /edit/i }).first()
+    const editButton = ruleItem.locator('button').filter({ hasText: /编辑/i }).or(
+      page.getByRole('button', { name: /编辑/i }).first()
     );
 
     if (await editButton.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -90,7 +90,7 @@ test.describe('Automation Rules - User Flows', () => {
       await page.waitForTimeout(300);
 
       // Update the name
-      const nameInput = page.getByPlaceholder(/name|title/i).or(
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i).or(
         page.getByDisplayValue('Rule to Edit')
       );
 
@@ -100,7 +100,7 @@ test.describe('Automation Rules - User Flows', () => {
         await page.keyboard.type('Updated Rule Name');
 
         // Save changes
-        const saveButton = page.getByRole('button', { name: /save|update/i });
+        const saveButton = page.getByRole('button', { name: /保存|更新/i });
         await saveButton.click();
         await page.waitForTimeout(500);
 
@@ -112,12 +112,12 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('can disable and enable automation rule', async ({ page }) => {
     // Create a rule first
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Toggle Test Rule');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -127,7 +127,7 @@ test.describe('Automation Rules - User Flows', () => {
 
     // Look for enable/disable toggle
     const toggleSwitch = ruleItem.locator('input[type="checkbox"], [role="switch"]').first().or(
-      ruleItem.locator('button').filter({ hasText: /enable|disable/i })
+      ruleItem.locator('button').filter({ hasText: /启用|禁用/i })
     );
 
     if (await toggleSwitch.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -154,27 +154,27 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('can delete an automation rule', async ({ page }) => {
     // Create a rule first
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Rule to Delete');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
 
     // Find and delete the rule
     const ruleItem = page.getByText('Rule to Delete').locator('..');
-    const deleteButton = ruleItem.locator('button').filter({ hasText: /delete|remove/i }).or(
-      page.getByRole('button', { name: /delete/i }).first()
+    const deleteButton = ruleItem.locator('button').filter({ hasText: /删除|移除/i }).or(
+      page.getByRole('button', { name: /删除/i }).first()
     );
 
     if (await deleteButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await deleteButton.click();
 
       // Confirm deletion
-      const confirmButton = page.getByRole('button', { name: /confirm|yes|delete/i });
+      const confirmButton = page.getByRole('button', { name: /确认|是|删除/i });
       if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await confirmButton.click();
       }
@@ -188,35 +188,35 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('automation rule trigger fires when condition is met', async ({ page }) => {
     // Create an automation rule that creates a task when another task is completed
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
 
       // Set up rule: When task completed → Create follow-up task
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Auto Create Follow-up');
 
       // Select trigger
-      const triggerSelect = page.getByLabel(/trigger|when/i);
+      const triggerSelect = page.getByLabel(/触发器|当/i);
       if (await triggerSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
         await triggerSelect.click();
-        const taskCompletedOption = page.getByText(/task.*completed/i);
+        const taskCompletedOption = page.getByText(/任务已完成|任务.*完成/i);
         if (await taskCompletedOption.isVisible({ timeout: 1000 }).catch(() => false)) {
           await taskCompletedOption.click();
         }
       }
 
       // Select action
-      const actionSelect = page.getByLabel(/action|then/i);
+      const actionSelect = page.getByLabel(/操作|然后/i);
       if (await actionSelect.isVisible({ timeout: 1000 }).catch(() => false)) {
         await actionSelect.click();
-        const createTaskAction = page.getByText(/create.*task/i);
+        const createTaskAction = page.getByText(/创建.*任务|新建.*任务/i);
         if (await createTaskAction.isVisible({ timeout: 1000 }).catch(() => false)) {
           await createTaskAction.click();
         }
       }
 
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -224,10 +224,10 @@ test.describe('Automation Rules - User Flows', () => {
     // Navigate to tasks and create + complete a task
     await navigateTo(page, '/tasks');
 
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加.*任务|新建.*任务/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/标题|任务.*名称/i);
       await titleInput.fill('Trigger Task');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -247,11 +247,11 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('automation action executes correctly', async ({ page }) => {
     // This is a smoke test to verify actions can be configured
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
 
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Action Test Rule');
 
       // Configure action parameters (implementation-specific)
@@ -261,7 +261,7 @@ test.describe('Automation Rules - User Flows', () => {
         await expect(actionConfig).toBeVisible();
       }
 
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await saveButton.click();
       }
@@ -269,11 +269,11 @@ test.describe('Automation Rules - User Flows', () => {
   });
 
   test('can add conditions to automation rule', async ({ page }) => {
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
 
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Conditional Rule');
 
       // Look for add condition button
@@ -289,7 +289,7 @@ test.describe('Automation Rules - User Flows', () => {
         }
       }
 
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
         await saveButton.click();
       }
@@ -299,12 +299,12 @@ test.describe('Automation Rules - User Flows', () => {
   test('automation rules list displays all rules', async ({ page }) => {
     // Create a couple of rules
     for (let i = 1; i <= 2; i++) {
-      const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+      const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
       if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
         await createRuleButton.click();
-        const nameInput = page.getByPlaceholder(/name|title/i);
+        const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
         await nameInput.fill(`Test Rule ${i}`);
-        const saveButton = page.getByRole('button', { name: /save|create/i });
+        const saveButton = page.getByRole('button', { name: /保存|创建/i });
         await saveButton.click();
         await page.waitForTimeout(500);
       }
@@ -317,7 +317,7 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('can view automation rule execution history', async ({ page }) => {
     // Look for history/logs section
-    const historyTab = page.getByRole('button', { name: /history|logs|activity/i });
+    const historyTab = page.getByRole('button', { name: /历史|日志|动态/i });
 
     if (await historyTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await historyTab.click();
@@ -333,12 +333,12 @@ test.describe('Automation Rules - User Flows', () => {
 
   test('automation rule shows enabled/disabled status clearly', async ({ page }) => {
     // Create a rule
-    const createRuleButton = page.getByRole('button', { name: /create.*rule|new.*rule|add.*rule/i });
+    const createRuleButton = page.getByRole('button', { name: /新建规则|create.*rule|new.*rule|add.*rule/i });
     if (await createRuleButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await createRuleButton.click();
-      const nameInput = page.getByPlaceholder(/name|title/i);
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i);
       await nameInput.fill('Status Test Rule');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -348,7 +348,7 @@ test.describe('Automation Rules - User Flows', () => {
 
     // Should have some visual indicator of enabled/disabled state
     const statusIndicator = ruleItem.locator('.status, [data-status], .badge').or(
-      ruleItem.getByText(/enabled|disabled|active|inactive/i)
+      ruleItem.getByText(/已启用|已禁用|启用|禁用/i)
     );
 
     if (await statusIndicator.isVisible({ timeout: 2000 }).catch(() => false)) {

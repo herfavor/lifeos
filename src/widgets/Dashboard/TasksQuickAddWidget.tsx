@@ -31,14 +31,14 @@ export const TasksQuickAddWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Quick Add Task" icon="➕">
+    <BaseWidget title="快速添加任务" icon="➕">
       <div className="flex flex-col h-full min-h-[160px]">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && input.trim()) handleSubmit(e); }}
-          placeholder="Add a task..."
+          placeholder="添加任务…"
           className="w-full px-4 py-2.5 border rounded-button transition-all duration-standard ease-smooth
                      bg-surface-light dark:bg-surface-dark
                      text-text-light-primary dark:text-text-dark-primary
@@ -52,7 +52,7 @@ export const TasksQuickAddWidget: React.FC = () => {
           disabled={!input.trim()}
           className="w-full mt-auto px-4 py-2.5 bg-accent-blue hover:bg-accent-blue-hover disabled:bg-text-light-tertiary dark:disabled:bg-text-dark-tertiary disabled:cursor-not-allowed text-white rounded-button transition-all duration-standard ease-smooth text-sm font-medium"
         >
-          Add Task
+          添加任务
         </button>
       </div>
     </BaseWidget>

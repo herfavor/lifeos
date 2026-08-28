@@ -90,7 +90,7 @@ function extractChartData(
   // Extract headers from first row
   const headers: string[] = [];
   for (let col = startCol; col <= endCol; col++) {
-    headers.push(sheetData[startRow]?.[col] || `Column ${col + 1}`);
+    headers.push(sheetData[startRow]?.[col] || `列 ${col + 1}`);
   }
 
   // Extract data from subsequent rows
@@ -146,7 +146,7 @@ export function SpreadsheetChartRenderer({
     if (chartData.length === 0) {
       return (
         <div className="flex items-center justify-center h-full text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No data in range
+          范围内无数据
         </div>
       );
     }
@@ -300,18 +300,18 @@ export function SpreadsheetChartRenderer({
         <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary truncate">
           {chart.title}
         </h3>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(chart)}
             className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-accent-primary"
-            title="Edit chart"
+            title="编辑图表"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onDelete(chart.id)}
             className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-error"
-            title="Delete chart"
+            title="删除图表"
           >
             <X className="w-3.5 h-3.5" />
           </button>

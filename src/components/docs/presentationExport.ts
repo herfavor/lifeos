@@ -189,8 +189,8 @@ export async function exportToPPTX(
   // Create presentation
   const pptx = new PptxGenJS();
   pptx.title = title;
-  pptx.author = 'NeumanOS';
-  pptx.subject = 'Presentation';
+  pptx.author = 'LifeOS';
+  pptx.subject = '演示文稿';
 
   // Set slide size (16:9)
   pptx.defineLayout({ name: 'CUSTOM', width: 10, height: 5.625 });

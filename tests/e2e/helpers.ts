@@ -1,7 +1,7 @@
 import { type Page, type ConsoleMessage, expect } from '@playwright/test';
 
 /**
- * Shared E2E test helpers for NeumanOS
+ * Shared E2E test helpers for LifeOS
  *
  * Provides reliable modal dismissal, navigation, and common operations
  * that all test files need. Uses actual DOM selectors from the source code.
@@ -72,7 +72,7 @@ export async function dismissOnboarding(page: Page): Promise<void> {
   await page.waitForTimeout(500);
 
   // Strategy 1: Click "Skip tour" button
-  const skipButton = page.getByRole('button', { name: 'Skip tour' });
+  const skipButton = page.getByRole('button', { name: '跳过导览' });
   if (await skipButton.isVisible({ timeout: 2000 }).catch(() => false)) {
     await skipButton.click();
     await page.waitForTimeout(500);
@@ -80,7 +80,7 @@ export async function dismissOnboarding(page: Page): Promise<void> {
   }
 
   // Strategy 2: Click the X close button (aria-label="Close" on the onboarding modal)
-  const closeButton = page.locator('[aria-label="Close"]').first();
+  const closeButton = page.locator('[aria-label="关闭"]').first();
   if (await closeButton.isVisible({ timeout: 1000 }).catch(() => false)) {
     await closeButton.click();
     await page.waitForTimeout(500);
@@ -88,7 +88,7 @@ export async function dismissOnboarding(page: Page): Promise<void> {
   }
 
   // Strategy 3: Click any visible close button on a fixed overlay
-  const overlayClose = page.locator('.fixed button[aria-label="Close"], .fixed [aria-label="Close modal"]').first();
+  const overlayClose = page.locator('.fixed button[aria-label="关闭"], .fixed [aria-label="关闭弹窗"]').first();
   if (await overlayClose.isVisible({ timeout: 1000 }).catch(() => false)) {
     await overlayClose.click();
     await page.waitForTimeout(500);
@@ -111,7 +111,7 @@ export async function navigateTo(page: Page, path: string): Promise<void> {
  */
 export async function openCommandPalette(page: Page): Promise<void> {
   await page.keyboard.press('Control+k');
-  await expect(page.getByRole('dialog', { name: 'Synapse search' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).toBeVisible();
 }
 
 /**
@@ -119,14 +119,14 @@ export async function openCommandPalette(page: Page): Promise<void> {
  */
 export async function closeCommandPalette(page: Page): Promise<void> {
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('dialog', { name: 'Synapse search' })).not.toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).not.toBeVisible();
 }
 
 /**
  * Click a sidebar navigation link by exact text
  */
 export async function clickSidebarLink(page: Page, linkText: string): Promise<void> {
-  const nav = page.locator('nav[aria-label="Primary navigation"]');
+  const nav = page.locator('nav[aria-label="主导航"]');
   await nav.getByRole('link', { name: linkText, exact: true }).click();
 }
 
@@ -134,7 +134,7 @@ export async function clickSidebarLink(page: Page, linkText: string): Promise<vo
  * Ensure sidebar is expanded (not collapsed)
  */
 export async function ensureSidebarExpanded(page: Page): Promise<void> {
-  const expandButton = page.locator('button[title="Expand Sidebar"]');
+  const expandButton = page.locator('button[title="展开侧边栏"]');
   if (await expandButton.isVisible({ timeout: 1000 }).catch(() => false)) {
     await expandButton.click();
     await page.waitForTimeout(300);
@@ -146,16 +146,16 @@ export async function ensureSidebarExpanded(page: Page): Promise<void> {
  */
 export async function createTask(page: Page, title: string): Promise<void> {
   // Click "+ Add task" in the first column (To Do)
-  const addButton = page.getByRole('button', { name: '+ Add task' }).first();
+  const addButton = page.getByRole('button', { name: '+ 添加任务' }).first();
   await addButton.click();
 
   // Fill the inline input
-  const input = page.getByPlaceholder('Task title...');
+  const input = page.getByPlaceholder('任务标题…');
   await expect(input).toBeVisible();
   await input.fill(title);
 
   // Submit
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  await page.getByRole('button', { name: '添加', exact: true }).click();
 
   // Wait for task to appear
   await expect(page.getByText(title)).toBeVisible();
@@ -165,7 +165,7 @@ export async function createTask(page: Page, title: string): Promise<void> {
  * Create a note on the Notes page.
  */
 export async function createNote(page: Page, content: string): Promise<void> {
-  const createButton = page.getByRole('button', { name: /new.*note|create.*note|\+ Note/i });
+  const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记/i });
   await createButton.click();
 
   // Wait for editor to appear
@@ -191,7 +191,7 @@ export async function switchTab(page: Page, tabName: string): Promise<void> {
  * Toggle dark/light mode from sidebar
  */
 export async function toggleTheme(page: Page): Promise<void> {
-  const themeButton = page.getByRole('button', { name: /Light Mode|Dark Mode/ });
+  const themeButton = page.getByRole('button', { name: /浅色模式|深色模式/ });
   await themeButton.click();
 }
 
@@ -205,7 +205,7 @@ export async function isDarkMode(page: Page): Promise<boolean> {
 /**
  * Wait for an undo toast to appear after a destructive action.
  */
-export async function waitForToast(page: Page, textPattern: RegExp = /undo/i): Promise<boolean> {
+export async function waitForToast(page: Page, textPattern: RegExp = /撤销/i): Promise<boolean> {
   const toast = page.getByText(textPattern).first();
   return toast.isVisible({ timeout: 3000 }).catch(() => false);
 }
@@ -214,7 +214,7 @@ export async function waitForToast(page: Page, textPattern: RegExp = /undo/i): P
  * Create a calendar event from the schedule page.
  */
 export async function createEvent(page: Page, title: string): Promise<void> {
-  const createBtn = page.getByRole('button', { name: /create.*event|add.*event|new.*event|\+/i }).first();
+  const createBtn = page.getByRole('button', { name: /创建.*事件|添加.*事件|新建.*事件|\+/i }).first();
   if (await createBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await createBtn.click();
     await page.waitForTimeout(300);
@@ -222,7 +222,7 @@ export async function createEvent(page: Page, title: string): Promise<void> {
     const titleInput = page.locator('#event-title');
     if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await titleInput.fill(title);
-      const submitBtn = page.getByRole('button', { name: /create.*event/i });
+      const submitBtn = page.getByRole('button', { name: /创建.*事件/i });
       if (await submitBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
         await submitBtn.click();
         await page.waitForTimeout(300);

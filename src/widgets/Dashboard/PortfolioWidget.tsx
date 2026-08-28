@@ -19,8 +19,19 @@ function getHealthDot(completionPercent: number, overdueCount: number): string {
 
 export function PortfolioWidget() {
   const navigate = useNavigate();
-  const tasks = useKanbanStore((s) => s.tasks);
-  const allProjects = useProjectContextStore((s) => s.getAllActiveProjects());
+  const storedTasks = useKanbanStore((s) => s.tasks);
+  const projects = useProjectContextStore((s) => s.projects);
+  const tasks = useMemo(
+    () => (Array.isArray(storedTasks) ? storedTasks : []),
+    [storedTasks]
+  );
+  const allProjects = useMemo(
+    () =>
+      (Array.isArray(projects) ? projects : [])
+        .filter((project) => !project.archivedAt)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [projects]
+  );
 
   const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
@@ -53,7 +64,7 @@ export function PortfolioWidget() {
   if (allProjects.length === 0) {
     return (
       <div className="text-center py-4 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-        No projects yet
+        暂无项目
       </div>
     );
   }
@@ -72,11 +83,11 @@ export function PortfolioWidget() {
             {p.name}
           </span>
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex-shrink-0">
-            {p.openCount} open
+            {p.openCount} 个未完成
           </span>
           {p.overdueCount > 0 && (
             <span className="text-xs text-accent-red font-medium flex-shrink-0">
-              {p.overdueCount} late
+              {p.overdueCount} 个逾期
             </span>
           )}
         </button>
@@ -87,7 +98,7 @@ export function PortfolioWidget() {
           onClick={() => navigate('/portfolio')}
           className="w-full text-xs text-accent-blue hover:underline text-center pt-1"
         >
-          View all {allProjects.length} projects
+          查看全部 {allProjects.length} 个项目
         </button>
       )}
     </div>

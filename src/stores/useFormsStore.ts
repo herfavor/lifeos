@@ -16,7 +16,10 @@ interface FormsState {
   forms: FormTemplate[];
   createForm: (title: string, description?: string) => FormTemplate;
   updateForm: (id: string, updates: Partial<FormTemplate>) => void;
+  /** Recoverable delete: moves the form to the recycle bin (responses are kept). */
   deleteForm: (id: string) => void;
+  restoreForm: (id: string) => void;
+  permanentlyDeleteForm: (id: string) => void;
   getForm: (id: string) => FormTemplate | undefined;
   duplicateForm: (id: string) => FormTemplate | undefined;
 
@@ -76,8 +79,28 @@ export const useFormsStore = create<FormsState>()(
         }));
       },
 
-      // Delete form and all its responses
+      // Delete form (recoverable): move to the recycle bin, keep responses.
       deleteForm: (id) => {
+        set((state) => ({
+          forms: state.forms.map((form) =>
+            form.id === id
+              ? { ...form, deletedAt: new Date(), updatedAt: new Date() }
+              : form
+          ),
+        }));
+      },
+
+      // Restore form from the recycle bin
+      restoreForm: (id) => {
+        set((state) => ({
+          forms: state.forms.map((form) =>
+            form.id === id ? { ...form, deletedAt: undefined, updatedAt: new Date() } : form
+          ),
+        }));
+      },
+
+      // Permanently delete form and all its responses
+      permanentlyDeleteForm: (id) => {
         set((state) => ({
           forms: state.forms.filter((form) => form.id !== id),
           responses: state.responses.filter((response) => response.formId !== id),
@@ -97,7 +120,7 @@ export const useFormsStore = create<FormsState>()(
         const duplicate: FormTemplate = {
           ...original,
           id: crypto.randomUUID(),
-          title: `${original.title} (Copy)`,
+          title: `${original.title}（副本）`,
           createdAt: new Date(),
           updatedAt: new Date(),
           fields: original.fields.map((field) => ({

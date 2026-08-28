@@ -35,12 +35,12 @@ function requireWebCrypto(): void {
     const hostname = typeof window !== 'undefined' ? window.location?.hostname : 'unknown';
 
     throw new Error(
-      `WebCrypto API not available. This requires a secure context.\n` +
-      `Current: ${protocol}//${hostname} (secure: ${isSecure})\n` +
-      `Solutions:\n` +
-      `  1. Use localhost instead of IP address: http://localhost:5173\n` +
-      `  2. Use HTTPS (production deployment)\n` +
-      `  3. Access via 127.0.0.1 instead of network IP`
+      `WebCrypto API 不可用。这需要安全上下文（secure context）。\n` +
+      `当前：${protocol}//${hostname}（安全：${isSecure}）\n` +
+      `解决方案：\n` +
+      `  1. 使用 localhost 代替 IP 地址：http://localhost:5173\n` +
+      `  2. 使用 HTTPS（生产环境部署）\n` +
+      `  3. 通过 127.0.0.1 访问，而不是网络 IP`
     );
   }
 }
@@ -194,7 +194,7 @@ async function deriveKey(
  */
 export async function encrypt(plaintext: string, password: string): Promise<EncryptedData> {
   if (!plaintext || !password) {
-    throw new Error('Plaintext and password are required for encryption');
+    throw new Error('加密需要明文和密码');
   }
 
   // Generate random salt and IV
@@ -231,13 +231,13 @@ export async function encrypt(plaintext: string, password: string): Promise<Encr
  */
 export async function decrypt(encryptedData: EncryptedData, password: string): Promise<string> {
   if (!encryptedData || !password) {
-    throw new Error('Encrypted data and password are required for decryption');
+    throw new Error('解密需要加密数据和密码');
   }
 
   const { version, ciphertext, salt, iv } = encryptedData;
 
   if (!ciphertext || !salt || !iv) {
-    throw new Error('Invalid encrypted data structure');
+    throw new Error('加密数据结构无效');
   }
 
   // Use version 1 (100k iterations) for legacy data without version field
@@ -266,13 +266,13 @@ export async function decrypt(encryptedData: EncryptedData, password: string): P
     const plaintext = new TextDecoder().decode(decryptedBuffer);
 
     if (!plaintext) {
-      throw new Error('Decryption failed - invalid password or corrupted data');
+      throw new Error('解密失败——密码无效或数据已损坏');
     }
 
     return plaintext;
   } catch (error) {
     // GCM mode will throw if data has been tampered with or password is wrong
-    throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`解密失败：${error instanceof Error ? error.message : '未知错误'}`);
   }
 }
 

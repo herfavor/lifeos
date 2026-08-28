@@ -4,7 +4,7 @@ import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
 import { useCalendarStore } from '../stores/useCalendarStore';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { formatDuration } from '../utils/timeFormatters';
-import { getStandardDateKey } from '../utils/dateUtils';
+import { getStandardDateKey, parseDateKey } from '../utils/dateUtils';
 import { generateRecurringInstances, expandMultiDayEvent } from '../utils/recurrence';
 import { exportToICS, importFromICS, downloadICS, readICSFile } from '../services/icsImportExport';
 import { WeekView } from './WeekView';
@@ -22,6 +22,8 @@ interface TimeEntryCalendarProps {
   onEditEntry?: (entry: TimeEntry) => void;
   onCreateEvent?: (dateKey: string) => void;
   onEditEvent?: (event: CalendarEvent, dateKey: string) => void;
+  /** Date selected through a /schedule deep link. */
+  focusDateKey?: string;
 }
 
 /**
@@ -30,7 +32,7 @@ interface TimeEntryCalendarProps {
  * Supports 4 view modes: Monthly, Weekly, Daily, Agenda/List
  * Migrated all functionality from Planning Calendar Widget
  */
-export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: TimeEntryCalendarProps) {
+export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, focusDateKey }: TimeEntryCalendarProps) {
   const { entries, projects, loadEntries, loadProjects } = useTimeTrackingStore();
   const { events, importEvents, calendars, toggleCalendarVisibility, updateEventTime } = useCalendarStore();
   const { tasks } = useKanbanStore();
@@ -46,6 +48,14 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const [activeCategories, setActiveCategories] = useState<Set<EventColorCategory>>(new Set());
+
+  // A date deep link should land on the requested day rather than the default
+  // monthly view. It runs only when the requested key changes.
+  useEffect(() => {
+    if (!focusDateKey) return;
+    setCurrentDate(parseDateKey(focusDateKey));
+    setViewMode('daily');
+  }, [focusDateKey]);
 
   // Group tasks by their due date (convert ISO date to standard date key)
   const tasksByDate = useMemo(() => {
@@ -69,7 +79,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
       const filename = `calendar-${new Date().toISOString().split('T')[0]}.ics`;
       downloadICS(result.data, filename);
     } else {
-      setImportStatus({ message: result.error || 'Export failed', type: 'error' });
+      setImportStatus({ message: result.error || '导出失败', type: 'error' });
       setTimeout(() => setImportStatus(null), 3000);
     }
   };
@@ -82,10 +92,10 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
 
       if (result.success && result.events) {
         const count = importEvents(result.events);
-        setImportStatus({ message: `Imported ${count} calendar ${count === 1 ? 'event' : 'events'}`, type: 'success' });
+        setImportStatus({ message: `已导入 ${count} 条日历事件`, type: 'success' });
         setTimeout(() => setImportStatus(null), 3000);
       } else {
-        setImportStatus({ message: result.error || 'Import failed', type: 'error' });
+        setImportStatus({ message: result.error || '导入失败', type: 'error' });
         setTimeout(() => setImportStatus(null), 5000);
       }
     } catch (error) {
@@ -305,7 +315,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading calendar...
+          正在加载日历…
         </div>
       </div>
     );
@@ -314,7 +324,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
   // Get display text for current period
   const getDisplayText = () => {
     if (viewMode === 'monthly') {
-      return new Date(year, month, 1).toLocaleDateString('en-US', {
+      return new Date(year, month, 1).toLocaleDateString('zh-CN', {
         month: 'long',
         year: 'numeric'
       });
@@ -325,12 +335,12 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
       endOfWeek.setDate(endOfWeek.getDate() + 6);
 
       if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'long' })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+        return `${startOfWeek.toLocaleDateString('zh-CN', { month: 'long' })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
       } else {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        return `${startOfWeek.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })}`;
       }
     } else if (viewMode === 'daily') {
-      return currentDate.toLocaleDateString('en-US', {
+      return currentDate.toLocaleDateString('zh-CN', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
@@ -338,7 +348,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
       });
     } else {
       // Agenda
-      return 'Upcoming Events';
+      return '即将到来';
     }
   };
 
@@ -382,7 +392,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onCreate={onCreateEvent ? () => onCreateEvent(getStandardDateKey(new Date())) : undefined}
-        createButtonText="New Event"
+        createButtonText="新建事件"
         onPrint={handlePrint}
         onExport={handleExport}
         onImport={handleImport}
@@ -398,18 +408,18 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
       />
 
       {/* Search, Filter & Mini Calendar Row */}
-      <div className="flex items-center gap-3 flex-wrap bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark px-4 py-3">
+      <div className="flex items-center gap-2 flex-wrap border-b border-border-light pb-3 dark:border-border-dark">
         {/* Mini Calendar Toggle */}
         <div className="relative" ref={miniCalendarRef}>
           <button
             onClick={() => setShowMiniCalendar(!showMiniCalendar)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-button border transition-all duration-standard ease-smooth ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-standard ease-smooth ${
               showMiniCalendar
                 ? 'bg-accent-primary text-white border-accent-primary'
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            Mini Cal
+            迷你日历
           </button>
           {showMiniCalendar && (
             <div className="absolute top-full left-0 mt-1 z-40">
@@ -438,17 +448,17 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
               onFocus={() => {
                 if (searchQuery.trim()) setShowSearchResults(true);
               }}
-              placeholder="Search events..."
-              className="w-full pl-7 pr-3 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary"
+              placeholder="搜索事件…"
+              className="w-full pl-7 pr-3 py-1.5 text-xs bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary"
             />
           </div>
 
           {/* Search Results Dropdown */}
           {showSearchResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button shadow-lg z-50 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
               {searchResults.map(({ event, dateKey }) => {
                 const [y, m, d] = dateKey.split('-').map(Number);
-                const dateStr = new Date(y, m - 1, d).toLocaleDateString('en-US', {
+                const dateStr = new Date(y, m - 1, d).toLocaleDateString('zh-CN', {
                   month: 'short', day: 'numeric', year: 'numeric',
                 });
                 return (
@@ -472,9 +482,9 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
           )}
 
           {showSearchResults && searchQuery.trim() && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-button shadow-lg z-50 p-3">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-lg z-50 p-3">
               <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-                No events found
+                未找到事件
               </p>
             </div>
           )}
@@ -504,7 +514,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
                     : 'opacity-40 hover:opacity-70'
                 }`}
                 style={{ backgroundColor: cat.hex, color: '#fff' }}
-                title={`${isActive ? 'Hide' : 'Show'} ${cat.label} events`}
+                title={`${isActive ? '隐藏' : '显示'} ${cat.label} 事件`}
               >
                 {cat.label}
               </button>
@@ -515,7 +525,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
               onClick={() => setActiveCategories(new Set())}
               className="px-2 py-0.5 text-[10px] font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
             >
-              Clear
+              清除
             </button>
           )}
         </div>
@@ -531,7 +541,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
                   cal.visible ? 'text-white' : 'opacity-30'
                 }`}
                 style={{ backgroundColor: cal.color }}
-                title={`${cal.visible ? 'Hide' : 'Show'} ${cal.name}`}
+                title={`${cal.visible ? '隐藏' : '显示'} ${cal.name}`}
               >
                 {cal.visible ? <Eye className="w-2.5 h-2.5" /> : <EyeOff className="w-2.5 h-2.5" />}
                 {cal.name}
@@ -542,12 +552,15 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
       </div>
 
       {/* View Content with Calendar Layers Sidebar */}
-      <div className="flex">
-        <CalendarLayersSidebar />
+      <div className="flex gap-4">
+        <div className="hidden 2xl:block">
+          <CalendarLayersSidebar />
+        </div>
         <div className="flex-1 min-w-0">
       {viewMode === 'monthly' ? (
-        /* Monthly View - Using shared MonthlyCalendarGrid component */
-        <MonthlyCalendarGrid
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <MonthlyCalendarGrid
+          compact
           year={year}
           month={month}
           onDayClick={handleDayClick}
@@ -560,8 +573,8 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
 
             if (!hasContent) {
               return (
-                <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100">
-                  Click to add
+                <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100">
+                  点击添加
                 </div>
               );
             }
@@ -576,30 +589,49 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
                   </div>
                 )}
 
-                {/* Entry Count */}
-                {dayEntries.length > 0 && (
-                  <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">
-                    {dayEntries.length} {dayEntries.length === 1 ? 'entry' : 'entries'}
+                {dayEvents.slice(0, 2).map((event) => (
+                  <div key={event.id} className="truncate text-[10px] leading-4 text-text-light-secondary dark:text-text-dark-secondary">
+                    {event.startTime ? <span className="mr-1 font-medium text-accent-primary">{event.startTime}</span> : null}
+                    {event.title}
                   </div>
+                ))}
+                {dayEvents.length > 2 && (
+                  <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">+{dayEvents.length - 2} 个日程</div>
                 )}
-
-                {/* Event Count */}
-                {dayEvents.length > 0 && (
-                  <div className="text-[10px] text-accent-purple">
-                    {dayEvents.length} {dayEvents.length === 1 ? 'event' : 'events'}
-                  </div>
-                )}
-
-                {/* Task Count */}
-                {dayTasks.length > 0 && (
-                  <div className="text-[10px] text-accent-blue">
-                    {dayTasks.length} {dayTasks.length === 1 ? 'task' : 'tasks'}
+                {dayEvents.length === 0 && dayTasks.length > 0 && (
+                  <div className="truncate text-[10px] leading-4 text-text-light-secondary dark:text-text-dark-secondary">
+                    · {dayTasks[0].title}
+                    {dayTasks.length > 1 ? ` +${dayTasks.length - 1}` : ''}
                   </div>
                 )}
               </div>
             );
           }}
         />
+          <aside className="min-h-0 rounded-xl border border-border-light bg-surface-light p-3 dark:border-border-dark dark:bg-surface-dark">
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">近期安排</h3>
+                <p className="mt-0.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">未来 14 天的已承诺日程</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewMode('agenda')}
+                className="text-xs font-medium text-accent-primary hover:opacity-80"
+              >
+                展开
+              </button>
+            </div>
+            <div className="max-h-[470px] overflow-y-auto pr-1">
+              <AgendaView
+                events={filteredEvents}
+                currentDate={new Date()}
+                daysToShow={14}
+                onEventClick={handleEventClick}
+              />
+            </div>
+          </aside>
+        </div>
       ) : viewMode === 'weekly' ? (
         /* Weekly View */
         <WeekView
@@ -641,9 +673,9 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
 
       {/* Legend */}
       {projects.filter(p => p.active && !p.archived).length > 0 && (
-        <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-4">
+        <div className="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark p-4">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-            Project Legend
+            项目图例
           </h3>
           <div className="flex flex-wrap gap-3">
             {projects.filter(p => p.active && !p.archived).map(project => (
@@ -658,9 +690,9 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent }: T
               </div>
             ))}
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-button bg-text-light-tertiary dark:bg-text-dark-tertiary" />
+              <div className="w-3 h-3 rounded-lg bg-text-light-tertiary dark:bg-text-dark-tertiary" />
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                No Project
+                无项目
               </span>
             </div>
           </div>

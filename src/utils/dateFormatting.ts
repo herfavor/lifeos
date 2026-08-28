@@ -92,9 +92,9 @@ export function formatRelativeDate(date: Date | string | number): string {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const isTomorrow = d.toDateString() === tomorrow.toDateString();
 
-  if (isToday) return 'Today';
-  if (isYesterday) return 'Yesterday';
-  if (isTomorrow) return 'Tomorrow';
+  if (isToday) return '今天';
+  if (isYesterday) return '昨天';
+  if (isTomorrow) return '明天';
 
   return formatDate(d);
 }

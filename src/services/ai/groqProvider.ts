@@ -24,11 +24,11 @@ const METADATA: AIProviderMetadata = {
   id: 'groq',
   name: 'Groq',
   displayName: 'Groq',
-  description: 'Fastest AI inference in the industry. Powered by custom LPU hardware.',
+  description: '业界最快的 AI 推理。由自研 LPU 硬件驱动。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://console.groq.com/keys',
-  apiKeyLabel: 'Groq API Key',
+  apiKeyLabel: 'Groq API 密钥',
 
   hasFreeModels: true,
   freeModelIds: [
@@ -40,7 +40,7 @@ const METADATA: AIProviderMetadata = {
   freeTierLimits: {
     requestsPerMinute: 30,
     tokensPerMinute: 6000,
-    description: 'Free tier: 30 RPM, 6,000 TPM. Higher limits on Developer tier.',
+    description: '免费层级：30 RPM、6,000 TPM。开发者层级限额更高。',
   },
 
   supportsCORS: false,
@@ -67,7 +67,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'reasoning', 'analysis'],
-    description: 'Meta\'s Llama 3.3 70B on Groq\'s LPUs. Extremely fast with excellent quality.',
+    description: '运行在 Groq LPU 上的 Meta Llama 3.3 70B。速度极快且质量出色。',
   },
   {
     id: 'llama-3.1-8b-instant',
@@ -81,7 +81,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'quick-tasks', 'code'],
-    description: 'Small, incredibly fast model for instant responses.',
+    description: '小巧且极快的模型，可实现即时响应。',
   },
   {
     id: 'mixtral-8x7b-32768',
@@ -95,7 +95,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'code', 'multilingual'],
-    description: 'Mistral\'s mixture-of-experts model. Fast and capable.',
+    description: 'Mistral 的专家混合模型。快速且能力强。',
   },
   {
     id: 'gemma2-9b-it',
@@ -109,7 +109,7 @@ const FREE_MODELS: AIModel[] = [
     isFree: true,
     requiresApiKey: true,
     useCases: ['chat', 'quick-tasks'],
-    description: 'Google\'s Gemma model. Good for simple tasks.',
+    description: 'Google 的 Gemma 模型。适合简单任务。',
   },
 ];
 
@@ -203,7 +203,7 @@ export class GroqProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'Groq provider not configured. Please add your API key.',
+        'Groq 提供商尚未配置。请添加你的 API 密钥。',
         'groq'
       );
     }
@@ -292,38 +292,38 @@ export class GroqProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('Invalid API Key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid Groq API key. Please check your API key and try again.',
+          'Groq API 密钥无效。请检查你的 API 密钥后重试。',
           'groq'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate_limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'Groq rate limit exceeded. Please wait a moment and try again.',
+          '已超出 Groq 速率限制。请稍等片刻后重试。',
           'groq',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('quota')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'Groq quota exceeded. Please upgrade your plan or wait for reset.',
+          'Groq 配额已用尽。请升级你的套餐或等待重置。',
           'groq'
         );
       } else if (err?.status === 404 || err?.message?.includes('model')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on Groq.`,
+          `Groq 上未找到模型“${model}”。`,
           'groq'
         );
       } else if (err?.message?.includes('CORS') || err?.message?.includes('fetch')) {
         throw new ProviderError(
           ProviderErrorType.NETWORK_ERROR,
-          'Groq requires backend proxy for browser use. CORS error encountered.',
+          'Groq 在浏览器中使用需要后端代理。遇到 CORS 错误。',
           'groq'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `Groq error: ${err?.message || 'Unknown error occurred'}`,
+          `Groq 错误：${err?.message || '发生未知错误'}`,
           'groq'
         );
       }

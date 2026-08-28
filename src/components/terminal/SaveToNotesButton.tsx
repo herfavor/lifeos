@@ -68,8 +68,8 @@ export const SaveToNotesButton: React.FC<SaveToNotesButtonProps> = ({
           focus:outline-none focus:ring-2 focus:ring-accent-blue/50
           ${className}
         `}
-        title={justSaved ? 'Saved to notes' : 'Save to notes'}
-        aria-label={justSaved ? 'Saved to notes' : 'Save to notes'}
+        title={justSaved ? '已保存到笔记' : '保存到笔记'}
+        aria-label={justSaved ? '已保存到笔记' : '保存到笔记'}
       >
         {justSaved ? (
           <Check className="w-4 h-4" />

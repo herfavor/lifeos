@@ -137,13 +137,25 @@ const createDefaultPlan = (): DayPlan => ({
 
 // ==================== STORE ====================
 
+/**
+ * Shared empty-plan instance.
+ *
+ * getPlan() is also used directly as a zustand selector
+ * (`useDailyPlanningStore((s) => s.getPlan(dateKey))`). React's
+ * useSyncExternalStore requires a stable snapshot: returning a freshly created
+ * default object on every call for dates without a plan made the selector
+ * unstable and crashed pages with "Maximum update depth exceeded".
+ * All write paths replace plans immutably via set(), so sharing one instance is safe.
+ */
+const EMPTY_PLAN = createDefaultPlan();
+
 export const useDailyPlanningStore = create<DailyPlanningStore>()(
   persist(
     (set, get) => ({
       plans: {},
 
       getPlan: (dateKey) => {
-        return get().plans[dateKey] || createDefaultPlan();
+        return get().plans[dateKey] || EMPTY_PLAN;
       },
 
       // ==================== GOAL ACTIONS ====================

@@ -26,7 +26,7 @@ export const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Manage Projects"
+      title="管理项目"
       maxWidth="xl"
     >
       <ProjectSettings />

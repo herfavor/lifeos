@@ -78,25 +78,25 @@ export const MemoryGameWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Memory Game" icon="🧠">
+    <BaseWidget title="记忆游戏" icon="🧠">
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            Moves: {moves}
+            步数：{moves}
           </span>
           <button
             onClick={initGame}
             className="px-3 py-1 text-xs bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
           >
-            New Game
+            新游戏
           </button>
         </div>
 
         {won && (
           <div className="bg-status-success/10 border border-status-success rounded-button p-2 text-center transition-all duration-standard ease-smooth">
-            <div className="text-status-success font-semibold">You won!</div>
+            <div className="text-status-success font-semibold">你赢了！</div>
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              {moves} moves
+              共 {moves} 步
             </div>
           </div>
         )}

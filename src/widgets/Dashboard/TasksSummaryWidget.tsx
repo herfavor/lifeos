@@ -30,19 +30,19 @@ export const TasksSummaryWidget: React.FC = () => {
 
   if (tasks.length === 0) {
     return (
-      <BaseWidget title="Tasks Summary" icon="📊">
+      <BaseWidget title="任务概览" icon="📊">
         <WidgetEmptyState
           icon="📊"
-          message="No tasks yet"
-          hint="Create your first task to see your progress overview"
-          action={{ label: 'Go to Tasks', onClick: () => navigate('/tasks') }}
+          message="暂无任务"
+          hint="创建你的第一个任务，查看进度概览"
+          action={{ label: '前往任务', onClick: () => navigate('/tasks') }}
         />
       </BaseWidget>
     );
   }
 
   return (
-    <BaseWidget title="Tasks Summary" icon="📊">
+    <BaseWidget title="任务概览" icon="📊">
       <div className="flex flex-col h-full min-h-[160px]">
         {/* Task Counts Grid */}
         <div className="grid grid-cols-4 gap-3 mb-4">
@@ -51,7 +51,7 @@ export const TasksSummaryWidget: React.FC = () => {
               {dueToday.length}
             </div>
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              Due Today
+              今日截止
             </div>
           </div>
           <div className="text-center">
@@ -59,7 +59,7 @@ export const TasksSummaryWidget: React.FC = () => {
               {todo.length}
             </div>
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              To Do
+              待办
             </div>
           </div>
           <div className="text-center">
@@ -67,7 +67,7 @@ export const TasksSummaryWidget: React.FC = () => {
               {inProgress.length}
             </div>
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              In Progress
+              进行中
             </div>
           </div>
           <div className="text-center">
@@ -75,7 +75,7 @@ export const TasksSummaryWidget: React.FC = () => {
               {completed.length}
             </div>
             <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              Completed
+              已完成
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ export const TasksSummaryWidget: React.FC = () => {
           onClick={() => navigate('/tasks')}
           className="w-full mt-auto px-4 py-2.5 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth text-sm font-medium"
         >
-          View All Tasks →
+          查看全部任务 →
         </button>
       </div>
     </BaseWidget>

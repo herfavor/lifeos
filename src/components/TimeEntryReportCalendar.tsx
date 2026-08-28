@@ -104,7 +104,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
       const project = projects.find(p => p.id === entry.projectId);
       result[dateKey].push({
         id: entry.id,
-        title: entry.description || 'No description',
+        title: entry.description || '无描述',
         startTime: entry.startTime,
         endTime: entry.endTime || undefined,
         color: project?.color || '#9CA3AF',
@@ -157,9 +157,9 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
     if (result.success && result.data) {
       const filename = `time-entries-${new Date().toISOString().split('T')[0]}.csv`;
       downloadCSV(result.data, filename);
-      setImportStatus({ message: `Exported ${entries.length} entries`, type: 'success' });
+      setImportStatus({ message: `已导出 ${entries.length} 条记录`, type: 'success' });
     } else {
-      setImportStatus({ message: result.error || 'Export failed', type: 'error' });
+      setImportStatus({ message: result.error || '导出失败', type: 'error' });
     }
     setTimeout(() => setImportStatus(null), 3000);
   };
@@ -179,15 +179,15 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
         }
 
         const message = result.skipped
-          ? `Imported ${importedCount} entries (${result.skipped} skipped)`
-          : `Imported ${importedCount} entries`;
+          ? `已导入 ${importedCount} 条记录（跳过 ${result.skipped} 条）`
+          : `已导入 ${importedCount} 条记录`;
         setImportStatus({ message, type: 'success' });
 
         // Reload data
         const monthlyReport = await getMonthlyReport(year, month);
         setReport(monthlyReport);
       } else {
-        setImportStatus({ message: result.error || 'Import failed', type: 'error' });
+        setImportStatus({ message: result.error || '导入失败', type: 'error' });
       }
     } catch (error) {
       setImportStatus({ message: String(error), type: 'error' });
@@ -215,15 +215,15 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
 
   // Get project name and color by ID
   const getProject = (projectId: string | null | undefined) => {
-    if (!projectId) return { name: 'No Project', color: '#9CA3AF' };
+    if (!projectId) return { name: '无项目', color: '#9CA3AF' };
     const project = projects.find(p => p.id === projectId);
-    return project ? { name: project.name, color: project.color } : { name: 'Unknown', color: '#9CA3AF' };
+    return project ? { name: project.name, color: project.color } : { name: '未知', color: '#9CA3AF' };
   };
 
   // Get display text for current period
   const getDisplayText = () => {
     if (viewMode === 'monthly') {
-      return new Date(year, month, 1).toLocaleDateString('en-US', {
+      return new Date(year, month, 1).toLocaleDateString('zh-CN', {
         month: 'long',
         year: 'numeric'
       });
@@ -234,19 +234,19 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
       endOfWeek.setDate(endOfWeek.getDate() + 6);
 
       if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'long' })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+        return `${startOfWeek.toLocaleDateString('zh-CN', { month: 'long' })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
       } else {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        return `${startOfWeek.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })}`;
       }
     } else if (viewMode === 'daily') {
-      return currentDate.toLocaleDateString('en-US', {
+      return currentDate.toLocaleDateString('zh-CN', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
         year: 'numeric'
       });
     } else {
-      return 'Time Entries';
+      return '时间记录';
     }
   };
 
@@ -254,7 +254,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-light-secondary dark:text-text-dark-secondary">
-          Loading time entries...
+          正在加载时间记录…
         </div>
       </div>
     );
@@ -273,12 +273,12 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onCreate={onAddEntry ? () => onAddEntry(getStandardDateKey(new Date())) : undefined}
-        createButtonText="New Entry"
+        createButtonText="新建记录"
         onPrint={handlePrint}
         onExport={handleExport}
-        exportTooltip="Export to CSV"
+        exportTooltip="导出为 CSV"
         onImport={handleImport}
-        importTooltip="Import from CSV"
+        importTooltip="从 CSV 导入"
         importAccept=".csv"
         statusMessage={importStatus && (
           <span className={`text-xs px-2 py-1 rounded ${
@@ -296,7 +296,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
             <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Total Time
+              总时长
             </div>
             <div className="text-3xl font-bold text-accent-primary">
               {formatDuration(report.totalDuration, { showSeconds: false })}
@@ -305,7 +305,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
 
           <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
             <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Total Entries
+              记录总数
             </div>
             <div className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
               {report.entryCount}
@@ -314,7 +314,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
 
           <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
             <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Billable Revenue
+              可计费收入
             </div>
             <div className="text-3xl font-bold text-status-success-text">
               ${(() => {
@@ -332,14 +332,14 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
               {(() => {
                 const billableCount = entries.filter(e => e.billable).length;
                 const billableHours = entries.filter(e => e.billable).reduce((sum, e) => sum + e.duration, 0);
-                return `${billableCount} billable (${formatDuration(billableHours, { showSeconds: false })})`;
+                return `${billableCount} 条可计费（${formatDuration(billableHours, { showSeconds: false })}）`;
               })()}
             </div>
           </div>
 
           <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
             <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              Avg Time/Day
+              日均时长
             </div>
             <div className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
               {formatDuration(
@@ -357,7 +357,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
         <>
           <div>
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-              Daily Breakdown
+              每日明细
             </h3>
             <MonthlyCalendarGrid
               year={year}
@@ -369,8 +369,8 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
 
                 if (!hasEntries) {
                   return (
-                    <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100">
-                      No entries
+                    <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100">
+                      无记录
                     </div>
                   );
                 }
@@ -382,7 +382,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                       {formatDuration(daySummary.totalDuration, { showSeconds: false })}
                     </div>
                     <div className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary">
-                      {daySummary.entryCount} {daySummary.entryCount === 1 ? 'entry' : 'entries'}
+                      {daySummary.entryCount} 条记录
                     </div>
                   </div>
                 );
@@ -394,7 +394,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
           {report && report.projectBreakdown.length > 0 && (
             <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-6">
               <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-                Time by Project
+                各项目用时
               </h3>
 
               <div className="space-y-3">
@@ -412,7 +412,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                       </div>
                       <div className="flex items-center gap-4">
                         <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                          {project.entryCount} {project.entryCount === 1 ? 'entry' : 'entries'}
+                          {project.entryCount} 条记录
                         </span>
                         <span className="text-sm font-mono font-semibold text-accent-primary min-w-[80px] text-right">
                           {formatDuration(project.totalDuration, { showSeconds: false })}
@@ -479,7 +479,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
             <div className="flex items-center justify-between px-6 py-4 border-b border-border-light dark:border-border-dark">
               <div>
                 <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                  {new Date(selectedDay.date + 'T00:00:00').toLocaleDateString('en-US', {
+                  {new Date(selectedDay.date + 'T00:00:00').toLocaleDateString('zh-CN', {
                     weekday: 'long',
                     month: 'long',
                     day: 'numeric',
@@ -487,13 +487,13 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                   })}
                 </h2>
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  {selectedDay.entries.length} {selectedDay.entries.length === 1 ? 'entry' : 'entries'} • {formatDuration(selectedDay.totalDuration, { showSeconds: false })}
+                  {selectedDay.entries.length} 条记录 • {formatDuration(selectedDay.totalDuration, { showSeconds: false })}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedDay(null)}
                 className="p-2 rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-all"
-                aria-label="Close"
+                aria-label="关闭"
               >
                 <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
               </button>
@@ -516,15 +516,15 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                         />
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                            {entry.description || 'No description'}
+                            {entry.description || '无描述'}
                           </div>
                           <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
                             {project.name}
                           </div>
                           <div className="flex items-center gap-4 mt-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
                             <span>
-                              {new Date(entry.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                              {entry.endTime && ` - ${new Date(entry.endTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`}
+                              {new Date(entry.startTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                              {entry.endTime && ` - ${new Date(entry.endTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`}
                             </span>
                             <span className="font-mono text-accent-primary">
                               {formatDuration(entry.duration, { showSeconds: false })}
@@ -537,7 +537,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                 })
               ) : (
                 <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
-                  No time entries for this day
+                  当天暂无时间记录
                 </div>
               )}
             </div>
@@ -553,7 +553,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium transition-all"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Time Entry
+                  添加时间记录
                 </button>
               </div>
             )}
@@ -565,7 +565,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
       {projects.filter(p => p.active && !p.archived).length > 0 && (
         <div className="bg-surface-light dark:bg-surface-dark rounded-button border border-border-light dark:border-border-dark p-4">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-            Project Legend
+            项目图例
           </h3>
           <div className="flex flex-wrap gap-3">
             {projects.filter(p => p.active && !p.archived).map(project => (
@@ -582,7 +582,7 @@ export function TimeEntryReportCalendar({ onAddEntry }: TimeEntryReportCalendarP
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-text-light-tertiary dark:bg-text-dark-tertiary" />
               <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                No Project
+                无项目
               </span>
             </div>
           </div>

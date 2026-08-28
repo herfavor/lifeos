@@ -127,7 +127,7 @@ export function TagFilter({ activeTags, onAddTag, onRemoveTag, onClearAll }: Tag
         <div className="flex items-center gap-2">
           <TagIcon className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-            Filter by Tags
+            按标签筛选
           </h3>
         </div>
         {activeTags.length > 0 && (
@@ -135,7 +135,7 @@ export function TagFilter({ activeTags, onAddTag, onRemoveTag, onClearAll }: Tag
             onClick={onClearAll}
             className="text-xs text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary transition-colors"
           >
-            Clear all
+            全部清除
           </button>
         )}
       </div>
@@ -144,7 +144,7 @@ export function TagFilter({ activeTags, onAddTag, onRemoveTag, onClearAll }: Tag
       {activeTags.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-            Active Filters ({activeTags.length})
+            当前筛选 ({activeTags.length})
           </div>
           <div className="flex flex-wrap gap-1">
             {activeTags.map((tag) => {
@@ -172,7 +172,7 @@ export function TagFilter({ activeTags, onAddTag, onRemoveTag, onClearAll }: Tag
       {tagTree.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-            Available Tags
+            可用标签
           </div>
           <div className="max-h-64 overflow-y-auto">
             {tagTree.map(node => renderTagNode(node))}
@@ -183,14 +183,14 @@ export function TagFilter({ activeTags, onAddTag, onRemoveTag, onClearAll }: Tag
       {/* Empty State */}
       {tagCounts.length === 0 && (
         <div className="text-center py-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          No tags yet
+          还没有标签
         </div>
       )}
 
       {/* Info Text */}
       {activeTags.length > 1 && (
         <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Showing notes with <span className="font-medium">all</span> selected tags
+          仅显示包含<span className="font-medium">全部</span>所选标签的笔记
         </div>
       )}
     </div>

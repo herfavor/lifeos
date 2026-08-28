@@ -15,11 +15,11 @@ interface StatusBreakdownProps {
 }
 
 const STATUS_LABELS = {
-  backlog: 'Backlog',
-  todo: 'To Do',
-  inprogress: 'In Progress',
-  review: 'Review',
-  done: 'Done',
+  backlog: '积压',
+  todo: '待办',
+  inprogress: '进行中',
+  review: '审核',
+  done: '已完成',
 };
 
 const STATUS_COLORS = {
@@ -43,6 +43,16 @@ export function StatusBreakdown({ tasks, dateRange }: StatusBreakdownProps) {
     ];
   }, [tasks, dateRange]);
 
+  const hasSample = chartData.some((entry) => entry.count > 0);
+
+  if (!hasSample) {
+    return (
+      <div className="flex h-64 w-full flex-col items-center justify-center text-center">
+        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">所选时间段内暂无任务样本</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-64">
       <ResponsiveContainer width="100%" height="100%">
@@ -56,7 +66,7 @@ export function StatusBreakdown({ tasks, dateRange }: StatusBreakdownProps) {
           <YAxis
             tick={{ fontSize: 12 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
-            label={{ value: 'Task Count', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
+            label={{ value: '任务数量', angle: -90, position: 'insideLeft', className: 'fill-text-light-secondary dark:fill-text-dark-secondary' }}
           />
           <Tooltip
             contentStyle={{
@@ -64,7 +74,7 @@ export function StatusBreakdown({ tasks, dateRange }: StatusBreakdownProps) {
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${value ?? 0} tasks`, 'Count']}
+            formatter={(value) => [`${value ?? 0} 个任务`, '数量']}
           />
           <Bar dataKey="count" radius={[4, 4, 0, 0]}>
             {chartData.map((entry, index) => (

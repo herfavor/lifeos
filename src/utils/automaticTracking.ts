@@ -31,18 +31,18 @@ export function useAutomaticPageTracking() {
 
     // Get page name from pathname
     const path = location.pathname;
-    let pageName = 'Unknown';
+    let pageName = '未知';
 
-    if (path === '/') pageName = 'Dashboard';
-    else if (path.startsWith('/tasks')) pageName = 'Tasks';
-    else if (path.startsWith('/notes')) pageName = 'Notes';
-    else if (path.startsWith('/schedule')) pageName = 'Schedule';
-    else if (path.startsWith('/diagrams')) pageName = 'Diagrams';
-    else if (path.startsWith('/links')) pageName = 'Links';
-    else if (path.startsWith('/automations')) pageName = 'Automations';
-    else if (path.startsWith('/forms')) pageName = 'Forms';
-    else if (path.startsWith('/settings')) pageName = 'Settings';
-    else if (path.startsWith('/graph')) pageName = 'Graph View';
+  if (path === '/') pageName = '首页';
+    else if (path.startsWith('/tasks')) pageName = '任务';
+    else if (path.startsWith('/notes')) pageName = '笔记';
+    else if (path.startsWith('/schedule')) pageName = '日程';
+    else if (path.startsWith('/diagrams')) pageName = '绘图';
+    else if (path.startsWith('/links')) pageName = '链接库';
+    else if (path.startsWith('/automations')) pageName = '自动化';
+    else if (path.startsWith('/forms')) pageName = '表单';
+    else if (path.startsWith('/settings')) pageName = '设置';
+    else if (path.startsWith('/graph')) pageName = '图谱视图';
 
     // Update context immediately
     updateContext({

@@ -15,9 +15,9 @@ test.describe('Schedule Page - Tab Navigation', () => {
   test('shows schedule tabs', async ({ page }) => {
     // The schedule page should have Calendar, Timer, Pomodoro tabs
     // These may be rendered as tabs or sidebar links
-    const calendarTab = page.getByRole('tab', { name: /Calendar/i });
-    const timerTab = page.getByRole('tab', { name: /Timer/i });
-    const pomodoroTab = page.getByRole('tab', { name: /Pomodoro/i });
+    const calendarTab = page.getByRole('tab', { name: /日历/i });
+    const timerTab = page.getByRole('tab', { name: /时间跟踪/i });
+    const pomodoroTab = page.getByRole('tab', { name: /番茄钟/i });
 
     // At least one should be visible
     const hasCalendar = await calendarTab.isVisible({ timeout: 2000 }).catch(() => false);
@@ -41,17 +41,17 @@ test.describe('Schedule Page - Calendar', () => {
 
   test('can create a new event', async ({ page }) => {
     // Look for an add event button
-    const addEventBtn = page.getByRole('button', { name: /add.*event|new.*event|create.*event|\+/i });
+    const addEventBtn = page.getByRole('button', { name: /添加.*事件|新建.*事件|创建.*事件|\+/i });
     if (await addEventBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventBtn.click();
 
       // Event form should appear
-      const titleInput = page.getByPlaceholder(/title|event/i);
+      const titleInput = page.getByPlaceholder(/团队会议、研讨会等/);
       await expect(titleInput).toBeVisible();
       await titleInput.fill('E2E Test Event');
 
       // Save
-      const saveBtn = page.getByRole('button', { name: /save|create/i });
+      const saveBtn = page.getByRole('button', { name: /保存|创建/i });
       await saveBtn.click();
 
       // Event should appear on the calendar

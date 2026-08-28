@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const nordTheme: ThemeDefinition = {
   id: 'nord',
   name: 'Nord',
-  description: 'Cool arctic blues and soft snowstorm whites',
+  description: '冷冽北极蓝与柔和暴雪白',
   category: 'professional',
   preview: {
     primary: '#88C0D0',

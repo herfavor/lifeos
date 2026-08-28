@@ -56,7 +56,7 @@ export const CustomCSSEditor: React.FC = () => {
       {/* Warning Banner */}
       <div className="p-3 rounded-lg bg-status-warning-bg dark:bg-status-warning-bg-dark border border-status-warning-border dark:border-status-warning-border-dark">
         <p className="text-sm text-status-warning-text dark:text-status-warning-text-dark">
-          Custom CSS may break the UI. Use at your own risk. Certain patterns (imports, external URLs) are stripped for security.
+          自定义 CSS 可能会破坏界面，请自行承担使用风险。出于安全考虑，某些模式（imports、外部 URL）会被移除。
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export const CustomCSSEditor: React.FC = () => {
               enabled ? 'bg-accent-primary' : 'bg-text-light-tertiary dark:bg-text-dark-tertiary'
             }`}
           />
-          {enabled ? 'Enabled' : 'Disabled'}
+          {enabled ? '已启用' : '已禁用'}
         </button>
 
         {/* Live Preview Toggle */}
@@ -87,7 +87,7 @@ export const CustomCSSEditor: React.FC = () => {
             onChange={(e) => setLivePreview(e.target.checked)}
             className="rounded"
           />
-          Live preview
+          实时预览
         </label>
 
         {/* Snippets Dropdown */}
@@ -97,7 +97,7 @@ export const CustomCSSEditor: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:border-accent-primary/50 transition-colors"
           >
             <Code className="w-3.5 h-3.5" />
-            Snippets
+            代码片段
             <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showSnippets ? 'rotate-180' : ''}`} />
           </button>
 
@@ -136,7 +136,7 @@ export const CustomCSSEditor: React.FC = () => {
           disabled={!isDirty || isOverLimit}
           className="px-4 py-1.5 rounded-lg text-sm font-medium bg-accent-primary text-white hover:bg-accent-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          Save
+          保存
         </button>
 
         {/* Reset Button */}
@@ -147,22 +147,22 @@ export const CustomCSSEditor: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-status-error hover:bg-status-error-bg dark:hover:bg-status-error-bg-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset
+            重置
           </button>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-status-error">Are you sure?</span>
+            <span className="text-xs text-status-error">确定吗？</span>
             <button
               onClick={handleReset}
               className="px-3 py-1 rounded text-xs font-medium bg-status-error text-white hover:bg-status-error/80 transition-colors"
             >
-              Yes, reset
+              是，重置
             </button>
             <button
               onClick={() => setShowResetConfirm(false)}
               className="px-3 py-1 rounded text-xs text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
             >
-              Cancel
+              取消
             </button>
           </div>
         )}
@@ -173,7 +173,7 @@ export const CustomCSSEditor: React.FC = () => {
         <textarea
           value={draft}
           onChange={(e) => handleDraftChange(e.target.value)}
-          placeholder={`/* Enter custom CSS here */\n\n.bento-card {\n  border-radius: 1rem;\n}`}
+          placeholder={`/* 在此输入自定义 CSS */\n\n.bento-card {\n  border-radius: 1rem;\n}`}
           spellCheck={false}
           className={`w-full h-64 p-4 rounded-lg font-mono text-sm leading-relaxed resize-y bg-[#1e1e2e] text-[#cdd6f4] border ${
             isOverLimit
@@ -198,7 +198,7 @@ export const CustomCSSEditor: React.FC = () => {
       {/* Last Updated */}
       {lastUpdated && (
         <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          Last saved: {new Date(lastUpdated).toLocaleString()}
+          上次保存：{new Date(lastUpdated).toLocaleString()}
         </p>
       )}
     </div>

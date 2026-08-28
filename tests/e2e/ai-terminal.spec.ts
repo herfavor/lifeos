@@ -15,7 +15,7 @@ test.describe('AI Terminal', () => {
   });
 
   test('has AI terminal or chat widget', async ({ page }) => {
-    const aiWidget = page.getByText(/AI|Terminal|Chat|Assistant/i).first();
+    const aiWidget = page.getByText(/AI|终端|聊天|助手/i).first();
     if (await aiWidget.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(aiWidget).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('AI Terminal', () => {
   });
 
   test('AI terminal has input field', async ({ page }) => {
-    const input = page.getByPlaceholder(/ask|type|message|chat/i).first();
+    const input = page.getByPlaceholder(/配置提供商|输入|聊天/i).first();
     if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(input).toBeVisible();
     }
@@ -31,8 +31,8 @@ test.describe('AI Terminal', () => {
   });
 
   test('AI terminal has send button', async ({ page }) => {
-    const sendBtn = page.getByRole('button', { name: /send/i }).first()
-      .or(page.locator('[aria-label*="send"], [aria-label*="Send"]').first());
+    const sendBtn = page.getByRole('button', { name: /发送/i }).first()
+      .or(page.locator('[aria-label*="发送"]').first());
     if (await sendBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(sendBtn).toBeVisible();
     }
@@ -40,7 +40,7 @@ test.describe('AI Terminal', () => {
   });
 
   test('can type in AI terminal', async ({ page }) => {
-    const input = page.getByPlaceholder(/ask|type|message|chat/i).first();
+    const input = page.getByPlaceholder(/配置提供商|输入|聊天/i).first();
     if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
       await input.click();
       await input.fill('Hello AI');

@@ -6,8 +6,8 @@ export interface CSSSnippet {
 
 export const cssSnippets: CSSSnippet[] = [
   {
-    name: 'Compact Mode',
-    description: 'Reduces padding and margins throughout the UI',
+    name: '紧凑模式',
+    description: '减小整个界面的内边距与边距',
     css: `/* Compact Mode */
 .bento-card { padding: 0.75rem !important; }
 .space-y-6 > * + * { margin-top: 0.75rem !important; }
@@ -18,16 +18,16 @@ export const cssSnippets: CSSSnippet[] = [
 .p-4 { padding: 0.5rem !important; }`,
   },
   {
-    name: 'Larger Text',
-    description: 'Increases the base font size for better readability',
+    name: '更大的文字',
+    description: '增大基础字号以提高可读性',
     css: `/* Larger Text */
 html { font-size: 18px !important; }
 .text-sm { font-size: 0.95rem !important; }
 .text-xs { font-size: 0.85rem !important; }`,
   },
   {
-    name: 'Hide Animations',
-    description: 'Disables all transitions and animations',
+    name: '隐藏动画',
+    description: '禁用所有过渡效果和动画',
     css: `/* Hide Animations */
 *, *::before, *::after {
   animation-duration: 0s !important;
@@ -37,16 +37,16 @@ html { font-size: 18px !important; }
 }`,
   },
   {
-    name: 'Custom Accent Color',
-    description: 'Changes the accent color to a custom value',
+    name: '自定义强调色',
+    description: '将强调色改为自定义值',
     css: `/* Custom Accent Color — change the hex to your preferred color */
 :root {
   --accent-primary: #e11d48 !important;
 }`,
   },
   {
-    name: 'Rounded Everything',
-    description: 'Applies maximum border-radius to all elements',
+    name: '全部圆角',
+    description: '为所有元素应用最大圆角半径',
     css: `/* Rounded Everything */
 .bento-card,
 [class*="rounded"] {
@@ -57,8 +57,8 @@ button, input, select, textarea {
 }`,
   },
   {
-    name: 'Flat Design',
-    description: 'Removes all shadows and gradients for a flat look',
+    name: '扁平化设计',
+    description: '移除所有阴影与渐变，呈现扁平外观',
     css: `/* Flat Design */
 * {
   box-shadow: none !important;
@@ -72,8 +72,8 @@ button, input, select, textarea {
 }`,
   },
   {
-    name: 'Focus Mode Typography',
-    description: 'Uses a larger serif font optimized for reading notes',
+    name: '专注模式排版',
+    description: '使用更适合阅读笔记的大号衬线字体',
     css: `/* Focus Mode Typography */
 .ProseMirror,
 [class*="editor"],
@@ -87,8 +87,8 @@ button, input, select, textarea {
 }`,
   },
   {
-    name: 'High Contrast',
-    description: 'Increases contrast for better accessibility',
+    name: '高对比度',
+    description: '提高对比度，改善无障碍体验',
     css: `/* High Contrast */
 :root {
   --text-light-primary: #000000 !important;

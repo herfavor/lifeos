@@ -77,10 +77,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
         const columnTasks = allTasks.filter((t) => t.status === selectedColumn);
 
         if (columnTasks.length === 0) {
-          throw new Error('No tasks in selected column');
+          throw new Error('所选列中没有任务');
         }
 
-        setExportProgress(`Exporting ${columnTasks.length} tasks...`);
+        setExportProgress(`正在导出 ${columnTasks.length} 个任务…`);
 
         if (exportFormat === 'single') {
           // Single file export
@@ -105,10 +105,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
       } else {
         // Board export (all tasks)
         if (allTasks.length === 0) {
-          throw new Error('No tasks to export');
+          throw new Error('没有可导出的任务');
         }
 
-        setExportProgress(`Exporting ${allTasks.length} tasks...`);
+        setExportProgress(`正在导出 ${allTasks.length} 个任务…`);
 
         if (exportFormat === 'single') {
           // Single file with all tasks
@@ -151,10 +151,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
       }
 
       // Success message
-      setExportProgress(`Successfully exported tasks!`);
+      setExportProgress('已成功导出任务！');
       setTimeout(() => onClose(), 1500);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Export failed';
+      const message = err instanceof Error ? err.message : '导出失败';
       log.error('Export failed', { error: err });
       setError(message);
     } finally {
@@ -169,16 +169,15 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
     const count = taskCounts[exportScope];
     if (count === 0) {
       if (exportScope === 'column')
-        return `No tasks in ${getColumnName(selectedColumn)}`;
-      return 'No tasks to export';
+        return `${getColumnName(selectedColumn)}中没有任务`;
+      return '没有可导出的任务';
     }
 
-    const taskText = count === 1 ? 'task' : 'tasks';
     const scopeLabel =
       exportScope === 'column'
-        ? ` from ${getColumnName(selectedColumn)}`
-        : ' from all columns';
-    return `${count} ${taskText} will be exported${scopeLabel}`;
+        ? `，来自${getColumnName(selectedColumn)}`
+        : '，来自全部列';
+    return `将导出 ${count} 个任务${scopeLabel}`;
   };
 
   const canExport = taskCounts[exportScope] > 0;
@@ -197,13 +196,13 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
           <div className="flex items-center gap-2">
             <FileDown className="w-5 h-5 text-accent-blue" />
             <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-              Export Tasks
+              导出任务
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button transition-colors"
-            aria-label="Close"
+            aria-label="关闭"
           >
             <X className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -214,7 +213,7 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
           {/* Export Scope Selection */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-              What to export?
+              导出什么？
             </label>
             <div className="space-y-2">
               {/* Column Option */}
@@ -237,10 +236,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
                 />
                 <div className="flex-1">
                   <div className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Current column
+                    当前列
                   </div>
                   <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    Export tasks from a specific column
+                    导出指定列中的任务
                   </div>
                   {exportScope === 'column' && (
                     <select
@@ -279,10 +278,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
                 />
                 <div className="flex-1">
                   <div className="font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Entire board
+                    整个看板
                   </div>
                   <div className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    Export all tasks across all columns
+                    导出所有列中的所有任务
                   </div>
                 </div>
               </label>
@@ -292,7 +291,7 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
           {/* Export Format */}
           <div>
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-              Export format
+              导出格式
             </label>
             <div className="space-y-2">
               <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated cursor-pointer">
@@ -307,10 +306,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
                 />
                 <div className="flex-1">
                   <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Separate files by status
+                    按状态分文件导出
                   </div>
                   <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    Creates individual files: backlog.md, todo.md, etc.
+                    生成单独的文件：backlog.md、todo.md 等
                   </div>
                 </div>
               </label>
@@ -326,10 +325,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
                 />
                 <div className="flex-1">
                   <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                    Single file (all tasks)
+                    单个文件（全部任务）
                   </div>
                   <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                    One markdown file with table of contents
+                    一个带目录的 Markdown 文件
                   </div>
                 </div>
               </label>
@@ -339,7 +338,7 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
           {/* Export Options */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-              Export options
+              导出选项
             </label>
 
             {/* Include Archived */}
@@ -352,10 +351,10 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
               />
               <div className="flex-1">
                 <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                  Include archived tasks
+                  包含已归档任务
                 </div>
                 <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                  Export archived tasks along with active tasks
+                  连同当前任务一起导出已归档任务
                 </div>
               </div>
             </label>
@@ -371,8 +370,8 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
             </div>
             <div className="mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
               {exportFormat === 'separate'
-                ? 'ZIP file will contain separate files grouped by status'
-                : 'Single markdown file with all tasks'}
+                ? 'ZIP 文件将包含按状态分组的独立文件'
+                : '包含全部任务的单个 Markdown 文件'}
             </div>
           </div>
 
@@ -400,7 +399,7 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated">
           <Button variant="outline" onClick={onClose} disabled={isExporting}>
-            Cancel
+            取消
           </Button>
           <Button
             variant="primary"
@@ -409,7 +408,7 @@ export function ExportTasksModal({ isOpen, onClose }: ExportTasksModalProps) {
             loading={isExporting}
             leftIcon={<FileDown className="w-4 h-4" />}
           >
-            Export Tasks
+            导出任务
           </Button>
         </div>
       </div>

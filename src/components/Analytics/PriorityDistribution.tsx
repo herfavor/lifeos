@@ -21,9 +21,9 @@ const COLORS = {
 };
 
 const LABELS = {
-  high: 'High Priority',
-  medium: 'Medium Priority',
-  low: 'Low Priority',
+  high: '高优先级',
+  medium: '中优先级',
+  low: '低优先级',
 };
 
 export function PriorityDistribution({ tasks, dateRange }: PriorityDistributionProps) {
@@ -41,7 +41,7 @@ export function PriorityDistribution({ tasks, dateRange }: PriorityDistributionP
     return (
       <div className="w-full h-64 flex items-center justify-center">
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No tasks in selected period
+          所选时间段内暂无任务
         </p>
       </div>
     );
@@ -71,7 +71,7 @@ export function PriorityDistribution({ tasks, dateRange }: PriorityDistributionP
               border: '1px solid var(--border-light)',
               borderRadius: '8px',
             }}
-            formatter={(value) => [`${value ?? 0} tasks`, 'Count']}
+            formatter={(value) => [`${value ?? 0} 个任务`, '数量']}
           />
           <Legend
             wrapperStyle={{

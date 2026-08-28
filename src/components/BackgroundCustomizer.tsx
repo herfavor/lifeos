@@ -10,27 +10,27 @@ export interface BackgroundSettings {
 // Gradient presets
 const GRADIENT_PRESETS = [
   {
-    name: 'Purple Bliss',
+    name: '紫色梦幻',
     value: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   },
   {
-    name: 'Sunrise',
+    name: '日出',
     value: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
   },
   {
-    name: 'Ocean',
+    name: '海洋',
     value: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
   },
   {
-    name: 'Sunset',
+    name: '日落',
     value: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
   },
   {
-    name: 'Forest',
+    name: '森林',
     value: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
   },
   {
-    name: 'Aurora',
+    name: '极光',
     value: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
   },
 ];
@@ -122,12 +122,12 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark">
           <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Customize Background
+            自定义背景
           </h2>
           <button
             onClick={onClose}
             className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
-            aria-label="Close background customizer"
+            aria-label="关闭背景自定义"
           >
             ✕
           </button>
@@ -138,7 +138,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {/* Background Type Selector */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-              Background Type
+              背景类型
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -149,7 +149,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                None
+                无
               </button>
               <button
                 onClick={() => handleTypeChange('gradient')}
@@ -159,7 +159,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                Gradient
+                渐变
               </button>
               <button
                 onClick={() => handleTypeChange('image')}
@@ -169,7 +169,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                Image
+                图片
               </button>
               <button
                 onClick={() => handleTypeChange('pattern')}
@@ -179,9 +179,9 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
                 disabled
-                title="Pattern backgrounds coming soon"
+                title="图案背景即将推出"
               >
-                Pattern (Soon)
+                图案（即将推出）
               </button>
             </div>
           </div>
@@ -190,7 +190,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {localSettings.type === 'gradient' && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Select Gradient
+                选择渐变
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {GRADIENT_PRESETS.map((preset) => (
@@ -214,7 +214,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {localSettings.type === 'image' && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Upload Image
+                上传图片
               </label>
               <label className="block w-full px-4 py-8 border-2 border-dashed border-border-light dark:border-border-dark rounded-button cursor-pointer hover:border-accent-primary transition-all duration-standard ease-smooth text-center">
                 {imageFile ? (
@@ -224,7 +224,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                       style={{ backgroundImage: `url(${imageFile})` }}
                     />
                     <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                      Click to change image
+                      点击更换图片
                     </span>
                   </div>
                 ) : (
@@ -243,7 +243,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                       />
                     </svg>
                     <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                      Click to upload image
+                      点击上传图片
                     </span>
                   </div>
                 )}
@@ -261,7 +261,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {localSettings.type !== 'none' && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Opacity: {localSettings.opacity}%
+                不透明度：{localSettings.opacity}%
               </label>
               <input
                 type="range"
@@ -283,7 +283,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {localSettings.type !== 'none' && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Blur: {localSettings.blur}px
+                模糊：{localSettings.blur}px
               </label>
               <input
                 type="range"
@@ -305,7 +305,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
           {localSettings.type !== 'none' && (
             <div className="mb-6">
               <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-                Preview
+                预览
               </label>
               <div className="relative h-32 rounded-button overflow-hidden border border-border-light dark:border-border-dark">
                 <div
@@ -320,7 +320,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
                 />
                 <div className="relative z-10 flex items-center justify-center h-full">
                   <div className="bg-surface-light/80 dark:bg-surface-dark/80 px-4 py-2 rounded">
-                    <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">Sample Content</p>
+                    <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">示例内容</p>
                   </div>
                 </div>
               </div>
@@ -334,20 +334,20 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
             onClick={handleReset}
             className="px-4 py-2 bg-accent-red hover:bg-accent-red-hover text-white rounded-button font-medium"
           >
-            Reset
+            重置
           </button>
           <div className="flex gap-2">
             <button
               onClick={onClose}
               className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button font-medium"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleSave}
               className="px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium"
             >
-              Apply
+              应用
             </button>
           </div>
         </div>

@@ -33,7 +33,7 @@ export const HackerNewsWidget: React.FC = () => {
       const topStoriesResponse = await fetch(
         'https://hacker-news.firebaseio.com/v0/topstories.json'
       );
-      if (!topStoriesResponse.ok) throw new Error('Failed to fetch top stories');
+      if (!topStoriesResponse.ok) throw new Error('无法获取热门故事');
 
       const topStoryIds: number[] = await topStoriesResponse.json();
 
@@ -48,7 +48,7 @@ export const HackerNewsWidget: React.FC = () => {
       const fetchedStories = await Promise.all(storyPromises);
       setStories(fetchedStories);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load stories');
+      setError(err instanceof Error ? err.message : '无法加载故事');
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export const HackerNewsWidget: React.FC = () => {
                   <div className="flex items-center gap-2 mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
                     <span>↑ {story.score}</span>
                     <span>•</span>
-                    <span>by {story.by}</span>
+                    <span>作者 {story.by}</span>
                   </div>
                 </div>
               </div>

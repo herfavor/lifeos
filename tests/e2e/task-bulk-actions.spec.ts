@@ -15,7 +15,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('tasks page loads', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: /Tasks/i }).first();
+    const heading = page.getByRole('heading', { name: /任务/i }).first();
     if (await heading.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
@@ -23,7 +23,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has select all checkbox or button', async ({ page }) => {
-    const selectAll = page.locator('[aria-label*="select all"], [title*="Select all"], input[type="checkbox"]').first();
+    const selectAll = page.locator('[aria-label*="全选"], [title*="全选"], input[type="checkbox"]').first();
     if (await selectAll.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(selectAll).toBeVisible();
     }
@@ -31,7 +31,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has sort options', async ({ page }) => {
-    const sortBtn = page.getByRole('button', { name: /sort/i }).first();
+    const sortBtn = page.getByRole('button', { name: /排序/i }).first();
     if (await sortBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(sortBtn).toBeVisible();
     }
@@ -39,7 +39,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has filter options', async ({ page }) => {
-    const filterBtn = page.getByRole('button', { name: /filter/i }).first();
+    const filterBtn = page.getByRole('button', { name: /筛选/i }).first();
     if (await filterBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(filterBtn).toBeVisible();
     }
@@ -47,8 +47,8 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has view toggle (list/kanban/gantt)', async ({ page }) => {
-    const listView = page.getByRole('button', { name: /list/i }).first();
-    const kanbanView = page.getByRole('button', { name: /kanban|board/i }).first();
+    const listView = page.getByRole('button', { name: /列表/i }).first();
+    const kanbanView = page.getByRole('button', { name: /看板/i }).first();
     if (await listView.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(listView).toBeVisible();
     }
@@ -64,7 +64,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has search input', async ({ page }) => {
-    const searchInput = page.getByPlaceholder(/search/i).first();
+    const searchInput = page.getByPlaceholder(/搜索/i).first();
     if (await searchInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(searchInput).toBeVisible();
     }
@@ -72,7 +72,7 @@ test.describe('Task Bulk Actions', () => {
   });
 
   test('has group by options', async ({ page }) => {
-    const groupBtn = page.getByRole('button', { name: /group/i });
+    const groupBtn = page.getByRole('button', { name: /分组/i });
     if (await groupBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(groupBtn).toBeVisible();
     }

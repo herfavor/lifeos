@@ -116,7 +116,7 @@ export const CalculatorWidget: React.FC = () => {
   );
 
   return (
-    <BaseWidget title="Calculator" icon="🔢">
+    <BaseWidget title="计算器" icon="🔢">
       <div className="space-y-3">
         {/* Display */}
         <div className="bg-surface-light dark:bg-surface-dark p-4 rounded-button transition-all duration-standard ease-smooth text-right">

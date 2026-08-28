@@ -116,13 +116,13 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-lg shadow-xl w-full max-w-md mx-4 p-6 text-center">
           <p className="text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            No habits found in this routine. Some may have been deleted.
+            此日常惯例中没有找到习惯，有些可能已被删除。
           </p>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>
@@ -152,7 +152,7 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
         <div className="px-4 pt-4">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-text-light-secondary dark:text-text-dark-secondary">
-              {completedCount} / {routineHabits.length} completed
+              已完成 {completedCount} / {routineHabits.length}
             </span>
             <div className="flex items-center gap-1 text-text-light-tertiary dark:text-text-dark-tertiary">
               <Clock className="w-3.5 h-3.5" />
@@ -174,19 +174,19 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
               <Trophy className="w-10 h-10 text-status-success" />
             </div>
             <h3 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">
-              Routine Complete!
+              日常惯例完成！
             </h3>
             <p className="text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              All {routineHabits.length} habits done in {formatElapsed(elapsedSeconds)}
+              全部 {routineHabits.length} 个习惯在 {formatElapsed(elapsedSeconds)} 内完成
             </p>
             <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-              Great work on your {routine.name}!
+              你的 {routine.name} 完成得很棒！
             </p>
             <button
               onClick={onClose}
               className="mt-6 px-6 py-2 bg-accent-primary text-white rounded-lg hover:bg-accent-primary/90 transition-colors"
             >
-              Done
+              完成
             </button>
           </div>
         ) : (
@@ -195,7 +195,7 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
             {currentHabit && (
               <div className="p-6">
                 <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary uppercase tracking-wider mb-3">
-                  Step {currentStep + 1} of {routineHabits.length}
+                  第 {currentStep + 1} 步，共 {routineHabits.length} 步
                 </p>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-surface-light-alt dark:bg-surface-dark border-2 border-border-light dark:border-border-dark"
@@ -223,7 +223,7 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
                     className="flex-1 flex items-center justify-center gap-2 py-3 bg-status-success text-white rounded-xl font-medium hover:bg-status-success/90 transition-colors disabled:opacity-50"
                   >
                     <Check className="w-5 h-5" />
-                    {isCompletedOnDate(currentHabit.id, todayKey) ? 'Done' : 'Complete'}
+                    {isCompletedOnDate(currentHabit.id, todayKey) ? '已完成' : '完成'}
                   </button>
                   <button
                     onClick={handleSkip}
@@ -231,7 +231,7 @@ export function RoutineRunner({ routine, onClose }: RoutineRunnerProps) {
                     className="flex items-center justify-center gap-2 px-4 py-3 border border-border-light dark:border-border-dark rounded-xl text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark transition-colors disabled:opacity-30"
                   >
                     <SkipForward className="w-4 h-4" />
-                    Skip
+                    跳过
                   </button>
                 </div>
               </div>

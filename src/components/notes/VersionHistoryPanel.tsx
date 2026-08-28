@@ -5,7 +5,7 @@
  * Allows viewing and restoring previous versions.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { History, ChevronDown, ChevronRight, RotateCcw, Trash2, Clock, Diff } from 'lucide-react';
 import { useNoteVersionStore } from '../../stores/useNoteVersionStore';
 import { useNotesStore } from '../../stores/useNotesStore';
@@ -17,6 +17,11 @@ interface VersionHistoryPanelProps {
   noteId: string;
 }
 
+// React 19 requires external-store selectors to return a stable snapshot.
+// Keeping this fallback outside the selector prevents an empty history from
+// allocating a new array on every getSnapshot call.
+const EMPTY_VERSIONS: NoteVersion[] = [];
+
 function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - new Date(date).getTime();
@@ -24,10 +29,10 @@ function formatRelativeTime(date: Date): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes} 分钟前`;
+  if (hours < 24) return `${hours} 小时前`;
+  if (days < 7) return `${days} 天前`;
   return new Date(date).toLocaleDateString();
 }
 
@@ -37,14 +42,11 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
   const [diffVersion, setDiffVersion] = useState<NoteVersion | null>(null);
 
-  const getVersions = useNoteVersionStore((state) => state.getVersions);
+  const versions = useNoteVersionStore((state) => state.versions[noteId] ?? EMPTY_VERSIONS);
   const getVersion = useNoteVersionStore((state) => state.getVersion);
   const deleteVersion = useNoteVersionStore((state) => state.deleteVersion);
   const updateNote = useNotesStore((state) => state.updateNote);
-  const getNote = useNotesStore((state) => state.getNote);
-  const note = getNote(noteId);
-
-  const versions = useMemo(() => getVersions(noteId), [noteId, getVersions]);
+  const note = useNotesStore((state) => state.notes[noteId]);
 
   const handleRestore = (versionId: string) => {
     const version = getVersion(noteId, versionId);
@@ -81,7 +83,7 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
           <ChevronRight className="w-4 h-4" />
         )}
         <History className="w-4 h-4" />
-        <span className="font-medium">Version History</span>
+        <span className="font-medium">版本历史</span>
         <span className="px-1.5 py-0.5 text-xs bg-accent-blue/10 text-accent-blue rounded">
           {versions.length}
         </span>
@@ -95,13 +97,13 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
             <div className="mb-3 p-3 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
-                  Preview: {formatRelativeTime(previewVersion.savedAt)}
+                  预览：{formatRelativeTime(previewVersion.savedAt)}
                 </span>
                 <button
                   onClick={() => setPreviewVersionId(null)}
                   className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary"
                 >
-                  Close
+                  关闭
                 </button>
               </div>
               <div className="text-sm text-text-light-primary dark:text-text-dark-primary line-clamp-6 whitespace-pre-wrap font-mono text-xs">
@@ -124,7 +126,7 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
                   contentText: note.contentText,
                   savedAt: note.updatedAt,
                   wordCount: note.contentText.trim().split(/\s+/).filter(Boolean).length,
-                  changeSummary: 'Current version',
+                  changeSummary: '当前版本',
                 }}
                 onClose={() => setDiffVersion(null)}
               />
@@ -151,10 +153,10 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
                     {formatRelativeTime(version.savedAt)}
                   </div>
                   <div className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                    {version.changeSummary} &middot; {version.wordCount} words
+                    {version.changeSummary} &middot; {version.wordCount} 字
                   </div>
                 </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -162,7 +164,7 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
                       setPreviewVersionId(null);
                     }}
                     className="p-1 rounded hover:bg-accent-blue/20 text-accent-blue transition-colors"
-                    title="Compare with current"
+                    title="与当前版本比较"
                   >
                     <Diff className="w-3.5 h-3.5" />
                   </button>
@@ -172,7 +174,7 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
                       setRestoreConfirm(version.id);
                     }}
                     className="p-1 rounded hover:bg-accent-primary/20 text-accent-primary transition-colors"
-                    title="Restore this version"
+                    title="恢复此版本"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
@@ -182,7 +184,7 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
                       deleteVersion(noteId, version.id);
                     }}
                     className="p-1 rounded hover:bg-accent-red/20 text-accent-red transition-colors"
-                    title="Delete this version"
+                    title="删除此版本"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -199,9 +201,9 @@ export const VersionHistoryPanel: React.FC<VersionHistoryPanelProps> = ({ noteId
           isOpen={true}
           onClose={() => setRestoreConfirm(null)}
           onConfirm={() => handleRestore(restoreConfirm)}
-          title="Restore Version"
-          message="Are you sure you want to restore this version? Your current content will be replaced. A version of the current content will be saved automatically."
-          confirmText="Restore"
+          title="恢复版本"
+          message="确定要恢复此版本吗？当前内容将被替换。系统会自动保存当前内容的一个版本。"
+          confirmText="恢复"
           variant="danger"
         />
       )}

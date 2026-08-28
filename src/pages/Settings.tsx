@@ -6,7 +6,7 @@ import {
   Settings as SettingsIcon,
   Clock,
   CheckSquare,
-  FileText,
+  CalendarDays,
   HardDrive,
   Bot,
   Sliders,
@@ -20,6 +20,8 @@ import {
   PenTool,
   ChevronDown,
   Code,
+  Search,
+  RotateCcw,
 } from 'lucide-react';
 import {
   exportBrainFile,
@@ -33,6 +35,7 @@ import {
   shouldShowBackupReminder,
   getTimeSinceLastBackup,
   addHistoryEntry,
+  resetPreferencesToDefaults,
   type BackupPreferences,
   type BackupHistoryEntry,
 } from '../services/backupPreferences';
@@ -44,7 +47,6 @@ import { useCalendarStore } from '../stores/useCalendarStore';
 import { BackupSettings } from '../components/BackupSettings';
 import { PresetManager } from '../components/PresetManager';
 import { logger } from '../services/logger';
-import { ImportData } from '../widgets/Settings/ImportData';
 import { DailyNotesSettings } from '../widgets/Settings/DailyNotesSettings';
 import { TemplateSettings } from '../widgets/Settings/TemplateSettings';
 import { ExportSettings } from '../widgets/Settings/ExportSettings';
@@ -59,7 +61,6 @@ import { BackupHistorySection } from '../widgets/Settings/BackupHistorySection';
 import { BackupOptionsSection } from '../widgets/Settings/BackupOptionsSection';
 import { TimeTrackingPanelSettings } from '../widgets/Settings/TimeTrackingPanelSettings';
 import CustomFieldsSettings from '../components/CustomFieldsSettings';
-import MemberSettings from '../components/MemberSettings';
 import { AutoTrackingSettings } from '../components/AutoTrackingSettings';
 import { AITerminalSettingsSection } from '../widgets/Settings/AITerminalSettingsSection';
 import { StorageInfoSection } from '../widgets/Settings/StorageInfoSection';
@@ -70,17 +71,23 @@ import { CalendarManagementSection } from '../widgets/Settings/CalendarManagemen
 import { WidgetSettingsSection } from '../widgets/Settings/WidgetSettingsSection';
 import { ProjectSettings } from '../widgets/Settings/ProjectSettings';
 import { DataManagementSection } from '../widgets/Settings/DataManagementSection';
-import { MarkdownImportSection } from '../widgets/Settings/MarkdownImportSection';
-import { NotionImportSection } from '../widgets/Settings/NotionImportSection';
 import { KeyboardShortcutsSection } from '../widgets/Settings/KeyboardShortcutsSection';
-import { AccentColorSection } from '../widgets/Settings/AccentColorSection';
-import { SelectiveExportSection } from '../widgets/Settings/SelectiveExportSection';
+import { AccentColorSection, resetAccentColor } from '../widgets/Settings/AccentColorSection';
 import { NotificationPreferencesSection } from '../widgets/Settings/NotificationPreferencesSection';
 import { DefaultViewsSection } from '../widgets/Settings/DefaultViewsSection';
 import { AppPreferencesSection } from '../widgets/Settings/AppPreferencesSection';
 import { SavedLayoutsSection } from '../widgets/Settings/SavedLayoutsSection';
 import { ImportExportPanel } from '../components/settings/ImportExportPanel';
 import { CustomCSSEditor } from '../components/settings/CustomCSSEditor';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { useSettingsStore } from '../stores/useSettingsStore';
+import { useThemeStore } from '../stores/useThemeStore';
+import { useWidgetStore } from '../stores/useWidgetStore';
+import { useCustomCSSStore } from '../stores/useCustomCSSStore';
+import { useNotificationStore } from '../stores/useNotificationStore';
+import { useTimeTrackingPanelStore } from '../stores/useTimeTrackingPanelStore';
+import { useKeyboardShortcutsStore } from '../stores/useKeyboardShortcutsStore';
+import { useTerminalStore } from '../stores/useTerminalStore';
 
 const log = logger.module('Settings');
 
@@ -88,23 +95,74 @@ const log = logger.module('Settings');
  * Settings Tab Configuration
  */
 const SETTINGS_TABS = [
-  { id: 'general', label: 'General', icon: SettingsIcon },
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'editor', label: 'Editor', icon: PenTool },
-  { id: 'projects', label: 'Projects', icon: FolderTree },
-  { id: 'time', label: 'Time Tracking', icon: Clock },
-  { id: 'tasks', label: 'Tasks', icon: CheckSquare },
-  { id: 'notes', label: 'Notes & Calendar', icon: FileText },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'data', label: 'Data Management', icon: Database },
-  { id: 'backup', label: 'Backup & Data', icon: HardDrive },
-  { id: 'shortcuts', label: 'Keyboard Shortcuts', icon: Keyboard },
-  { id: 'ai', label: 'AI Providers', icon: Bot },
-  { id: 'advanced', label: 'Advanced', icon: Sliders },
-  { id: 'about', label: 'About', icon: Info },
+  { id: 'general', label: '个人与应用', icon: SettingsIcon, group: '基础' },
+  { id: 'appearance', label: '外观', icon: Palette, group: '基础' },
+  { id: 'workspace', label: '工作区', icon: FolderTree, group: '工作区' },
+  { id: 'notifications', label: '通知', icon: Bell, group: '工作区' },
+  { id: 'ai', label: 'AI 提供商', icon: Bot, group: '数据与连接' },
+  { id: 'data', label: '导入与导出', icon: Database, group: '数据与连接' },
+  { id: 'backup', label: '备份', icon: HardDrive, group: '数据与连接' },
+  { id: 'system', label: '系统与关于', icon: Sliders, group: '系统' },
 ] as const;
 
 type SettingsTabId = (typeof SETTINGS_TABS)[number]['id'];
+type WorkspaceSectionId = 'editor' | 'tasks' | 'projects' | 'calendar' | 'time';
+type SystemSectionId = 'shortcuts' | 'advanced' | 'about';
+
+const WORKSPACE_SECTIONS: Array<{ id: WorkspaceSectionId; label: string; icon: typeof PenTool }> = [
+  { id: 'editor', label: '笔记与模板', icon: PenTool },
+  { id: 'tasks', label: '任务', icon: CheckSquare },
+  { id: 'projects', label: '项目', icon: FolderTree },
+  { id: 'calendar', label: '日历与事件', icon: CalendarDays },
+  { id: 'time', label: '时间跟踪', icon: Clock },
+];
+
+const SYSTEM_SECTIONS: Array<{ id: SystemSectionId; label: string; icon: typeof Keyboard }> = [
+  { id: 'shortcuts', label: '键盘快捷键', icon: Keyboard },
+  { id: 'advanced', label: '高级', icon: Sliders },
+  { id: 'about', label: '关于', icon: Info },
+];
+
+const LEGACY_SETTINGS_ROUTES: Record<string, { tab: SettingsTabId; section?: WorkspaceSectionId | SystemSectionId }> = {
+  notes: { tab: 'workspace', section: 'editor' },
+  editor: { tab: 'workspace', section: 'editor' },
+  tasks: { tab: 'workspace', section: 'tasks' },
+  projects: { tab: 'workspace', section: 'projects' },
+  calendar: { tab: 'workspace', section: 'calendar' },
+  time: { tab: 'workspace', section: 'time' },
+  shortcuts: { tab: 'system', section: 'shortcuts' },
+  advanced: { tab: 'system', section: 'advanced' },
+  about: { tab: 'system', section: 'about' },
+};
+
+interface SettingsSearchEntry {
+  label: string;
+  keywords: string;
+  tab: SettingsTabId;
+  section?: WorkspaceSectionId | SystemSectionId;
+}
+
+const SETTINGS_SEARCH_ENTRIES: SettingsSearchEntry[] = [
+  { label: '个人资料与应用偏好', keywords: '本机 名称 语言 默认视图 首页 组件 布局', tab: 'general' as SettingsTabId },
+  { label: '主题、强调色与自定义 CSS', keywords: '深色 浅色 字号 外观', tab: 'appearance' as SettingsTabId },
+  ...WORKSPACE_SECTIONS.map((section) => ({ label: section.label, keywords: section.label, tab: 'workspace' as SettingsTabId, section: section.id })),
+  { label: '浏览器通知与日历提醒', keywords: '权限 提醒 通知', tab: 'notifications' as SettingsTabId },
+  { label: 'AI 提供商与本地密钥', keywords: '模型 API key 上下文', tab: 'ai' as SettingsTabId },
+  { label: '导入、导出与本地存储', keywords: 'Markdown Notion ICS 数据 迁移', tab: 'data' as SettingsTabId },
+  { label: '备份、恢复与自动保存', keywords: 'brain 历史 文件夹', tab: 'backup' as SettingsTabId },
+  ...SYSTEM_SECTIONS.map((section) => ({ label: section.label, keywords: section.label, tab: 'system' as SettingsTabId, section: section.id })),
+];
+
+const SETTINGS_DESCRIPTIONS: Record<SettingsTabId, string> = {
+  general: '控制仅存于本机的个人资料、应用偏好与首页默认行为。',
+  appearance: '调整主题、强调色与显示方式，不改变任何内容数据。',
+  workspace: '管理笔记、任务、项目、日历与时间跟踪的默认行为。',
+  notifications: '控制仅在浏览器允许且 LifeOS 打开时触发的本机提醒。',
+  ai: '配置可选 AI 服务商；测试连接会向所选服务商发起网络请求。',
+  data: '处理模块级导入、导出与本地存储，不等同于完整备份。',
+  backup: '创建或恢复完整 .brain 备份，并管理本机自动保存。',
+  system: '管理快捷键、高级字段与版本信息。',
+};
 
 /**
  * Collapsible Advanced Customization section for the Appearance tab.
@@ -121,10 +179,10 @@ const AdvancedCustomizationSection: React.FC = () => {
         <Code className="w-5 h-5 text-accent-primary" />
         <div className="flex-1">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Advanced Customization
+            高级自定义
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            Inject custom CSS for power users
+            为高级用户注入自定义 CSS
           </p>
         </div>
         <ChevronDown
@@ -158,7 +216,25 @@ const AdvancedCustomizationSection: React.FC = () => {
  */
 export const Settings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentTab = (searchParams.get('tab') as SettingsTabId) || 'general';
+  const requestedTab = searchParams.get('tab');
+  const legacyRoute = requestedTab ? LEGACY_SETTINGS_ROUTES[requestedTab] : undefined;
+  const currentTab: SettingsTabId = SETTINGS_TABS.some((tab) => tab.id === requestedTab)
+    ? requestedTab as SettingsTabId
+    : legacyRoute?.tab ?? 'general';
+  const requestedSection = searchParams.get('section');
+  const workspaceSection: WorkspaceSectionId = WORKSPACE_SECTIONS.some((section) => section.id === requestedSection)
+    ? requestedSection as WorkspaceSectionId
+    : legacyRoute?.tab === 'workspace' && legacyRoute.section
+      ? legacyRoute.section as WorkspaceSectionId
+      : 'editor';
+  const systemSection: SystemSectionId = SYSTEM_SECTIONS.some((section) => section.id === requestedSection)
+    ? requestedSection as SystemSectionId
+    : legacyRoute?.tab === 'system' && legacyRoute.section
+      ? legacyRoute.section as SystemSectionId
+      : 'shortcuts';
+  const [settingsSearch, setSettingsSearch] = useState('');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetRevision, setResetRevision] = useState(0);
 
   // State management
   const [isExporting, setIsExporting] = useState(false);
@@ -240,13 +316,107 @@ export const Settings: React.FC = () => {
 
   // Load data on mount
   useEffect(() => {
-    document.title = 'Settings - NeumanOS';
+    document.title = '设置 - LifeOS';
     loadAllData();
   }, [loadAllData]);
+
+  useEffect(() => {
+    if (legacyRoute) {
+      setSearchParams({
+        tab: legacyRoute.tab,
+        ...(legacyRoute.section ? { section: legacyRoute.section } : {}),
+      }, { replace: true });
+    } else if (requestedTab && !SETTINGS_TABS.some((tab) => tab.id === requestedTab)) {
+      setSearchParams({ tab: 'general' }, { replace: true });
+    }
+  }, [legacyRoute, requestedTab, setSearchParams]);
 
   // Handle tab change
   const setTab = (tabId: SettingsTabId) => {
     setSearchParams({ tab: tabId });
+  };
+
+  const setWorkspaceSection = (section: WorkspaceSectionId) => {
+    setSearchParams({ tab: 'workspace', section });
+  };
+
+  const setSystemSection = (section: SystemSectionId) => {
+    setSearchParams({ tab: 'system', section });
+  };
+
+  const matchingSettings = settingsSearch.trim()
+    ? SETTINGS_SEARCH_ENTRIES.filter((entry) => {
+        const query = settingsSearch.trim().toLocaleLowerCase();
+        return `${entry.label} ${entry.keywords}`.toLocaleLowerCase().includes(query);
+      }).slice(0, 8)
+    : [];
+
+  const resetTarget = currentTab === 'workspace'
+    ? WORKSPACE_SECTIONS.find((section) => section.id === workspaceSection)?.label ?? '工作区'
+    : currentTab === 'system'
+      ? SYSTEM_SECTIONS.find((section) => section.id === systemSection)?.label ?? '系统'
+      : SETTINGS_TABS.find((tab) => tab.id === currentTab)?.label ?? '当前分类';
+  const resetAvailable = currentTab !== 'data' &&
+    !(currentTab === 'workspace' && (workspaceSection === 'projects' || workspaceSection === 'calendar')) &&
+    !(currentTab === 'system' && systemSection !== 'shortcuts');
+  const resetUnavailableReason = currentTab === 'data'
+    ? '此分类仅包含数据操作，没有可恢复的偏好'
+    : currentTab === 'workspace'
+      ? '项目和日历条目属于用户数据，不会通过设置重置'
+      : '此区域不包含可安全重置的偏好';
+
+  const handleResetCurrentCategory = async () => {
+    try {
+      if (currentTab === 'general') {
+        useSettingsStore.getState().resetGeneralPreferences();
+        useWidgetStore.setState({ enabledWidgets: [], widgetSizes: {} });
+        localStorage.removeItem('dashboard-background');
+      } else if (currentTab === 'appearance') {
+        useThemeStore.getState().setColorMode('system');
+        useThemeStore.getState().setBrandTheme('ink-wash');
+        useCustomCSSStore.getState().resetCSS();
+        resetAccentColor();
+      } else if (currentTab === 'workspace' && (workspaceSection === 'editor' || workspaceSection === 'tasks' || workspaceSection === 'time')) {
+        useSettingsStore.getState().resetWorkspacePreferences(workspaceSection);
+        if (workspaceSection === 'time') useTimeTrackingPanelStore.getState().resetToDefaults();
+      } else if (currentTab === 'notifications') {
+        useNotificationStore.getState().updatePrefs({
+          enabled: false,
+          habitReminders: true,
+          taskDueReminders: true,
+          eventReminders: true,
+          quietHoursStart: '22:00',
+          quietHoursEnd: '08:00',
+          soundEnabled: true,
+        });
+      } else if (currentTab === 'ai') {
+        useTerminalStore.setState({
+          providers: {},
+          activeProvider: 'gemini',
+          activeModel: 'gemini-1.5-flash',
+          model: 'gemini-1.5-flash',
+          fallbackEnabled: true,
+          fallbackOrder: ['openrouter', 'groq', 'huggingface', 'mistral', 'gemini'],
+          notifyOnFallback: true,
+          enableCrossModuleContext: false,
+          customInstructions: '',
+        });
+      } else if (currentTab === 'backup') {
+        await resetPreferencesToDefaults();
+        await loadAllData();
+      } else if (currentTab === 'system' && systemSection === 'shortcuts') {
+        useKeyboardShortcutsStore.getState().resetAll();
+      } else {
+        return;
+      }
+      setResetRevision((value) => value + 1);
+      setMessage({ type: 'success', text: `${resetTarget}已恢复默认；内容数据未被删除。` });
+    } catch (error) {
+      log.error('Failed to reset settings category', { currentTab, error });
+      setMessage({ type: 'error', text: `恢复默认失败：${error}` });
+    } finally {
+      setShowResetConfirm(false);
+    }
   };
 
   // Export handler
@@ -269,13 +439,13 @@ export const Settings: React.FC = () => {
       await loadAllData(); // Refresh
 
       const sizeInfo = formatFileSize(result.size);
-      const compressionNote = compressed ? ' (compressed)' : '';
+      const compressionNote = compressed ? ' (已压缩)' : '';
       setMessage({
         type: 'success',
-        text: `Brain data exported successfully! File size: ${sizeInfo}${compressionNote}`
+        text: `知识库数据导出成功！文件大小：${sizeInfo}${compressionNote}`
       });
     } catch (error) {
-      setMessage({ type: 'error', text: `Export failed: ${error}` });
+      setMessage({ type: 'error', text: `导出失败：${error}` });
     } finally {
       setIsExporting(false);
     }
@@ -299,7 +469,7 @@ export const Settings: React.FC = () => {
       if (validation.info) {
         setMessage({
           type: 'info',
-          text: `Found ${validation.info.itemCount} items (${validation.info.fileSize}) from ${new Date(validation.info.exportDate).toLocaleString()}. Importing...`,
+          text: `找到 ${validation.info.itemCount} 个项目（${validation.info.fileSize}），导出时间：${new Date(validation.info.exportDate).toLocaleString()}。正在导入…`,
         });
       }
 
@@ -311,7 +481,7 @@ export const Settings: React.FC = () => {
         setMessage({ type: 'error', text: result.message });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: `Import failed: ${error}` });
+      setMessage({ type: 'error', text: `导入失败：${error}` });
     } finally {
       setIsImporting(false);
     }
@@ -326,7 +496,7 @@ export const Settings: React.FC = () => {
       const result = exportToICS(events);
 
       if (!result.success || !result.data) {
-        setMessage({ type: 'error', text: result.error || 'Export failed' });
+        setMessage({ type: 'error', text: result.error || '导出失败' });
         return;
       }
 
@@ -335,10 +505,10 @@ export const Settings: React.FC = () => {
       const eventCount = Object.values(events).reduce((acc, arr) => acc + arr.length, 0);
       setMessage({
         type: 'success',
-        text: `Calendar exported successfully! ${eventCount} events saved to .ics file.`
+        text: `日历导出成功！${eventCount} 个事件已保存到 .ics 文件。`
       });
     } catch (error) {
-      setMessage({ type: 'error', text: `Calendar export failed: ${error}` });
+      setMessage({ type: 'error', text: `日历导出失败：${error}` });
     } finally {
       setIsExportingCalendar(false);
     }
@@ -356,7 +526,7 @@ export const Settings: React.FC = () => {
       const result = importFromICS(icsData);
 
       if (!result.success || !result.events) {
-        setMessage({ type: 'error', text: result.error || 'Import failed' });
+        setMessage({ type: 'error', text: result.error || '导入失败' });
         return;
       }
 
@@ -364,10 +534,10 @@ export const Settings: React.FC = () => {
 
       setMessage({
         type: 'success',
-        text: `Calendar imported successfully! ${count} events added.`
+        text: `日历导入成功！已添加 ${count} 个事件。`
       });
     } catch (error) {
-      setMessage({ type: 'error', text: `Calendar import failed: ${error}` });
+      setMessage({ type: 'error', text: `日历导入失败：${error}` });
     } finally {
       setIsImportingCalendar(false);
       // Reset input value to allow re-importing same file
@@ -384,19 +554,19 @@ export const Settings: React.FC = () => {
       setMessage({
         type: granted ? 'success' : 'warning',
         text: granted
-          ? 'Notifications enabled! You will now receive event reminders.'
-          : 'Notification permission denied. You can enable it later in your browser settings.',
+          ? '通知已启用！您将开始接收事件提醒。'
+          : '通知权限被拒绝。您可以稍后在浏览器设置中启用。',
       });
     } catch (error) {
       log.error('Failed to request notification permission', { error });
-      setMessage({ type: 'error', text: 'Failed to request notification permission' });
+      setMessage({ type: 'error', text: '请求通知权限失败' });
     } finally {
       setRequestingPermission(false);
     }
   };
 
   if (!preferences) {
-    return <div className="p-6">Loading...</div>;
+    return <div className="p-6">加载中…</div>;
   }
 
   return (
@@ -437,66 +607,135 @@ export const Settings: React.FC = () => {
               onClick={() => handleExport(preferences.compressionEnabled)}
               className="mt-2 text-sm underline hover:no-underline"
             >
-              Create Backup Now
+              立即创建备份
             </button>
           </div>
         </motion.div>
       )}
 
+      <div className="relative mb-5">
+        <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-text-light-tertiary dark:text-text-dark-tertiary" />
+        <input
+          type="search"
+          value={settingsSearch}
+          onChange={(event) => setSettingsSearch(event.target.value)}
+          placeholder="搜索设置，例如“备份”“模板”“通知”"
+          aria-label="搜索设置"
+          className="h-10 w-full rounded-xl border border-border-light bg-surface-light pl-10 pr-3 text-sm text-text-light-primary outline-none focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20 dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
+        />
+        {settingsSearch.trim() && (
+          <div className="absolute left-0 right-0 top-12 z-20 overflow-hidden rounded-xl border border-border-light bg-surface-light shadow-xl dark:border-border-dark dark:bg-surface-dark">
+            {matchingSettings.length === 0 ? (
+              <p className="px-4 py-3 text-sm text-text-light-secondary dark:text-text-dark-secondary">没有匹配的设置</p>
+            ) : matchingSettings.map((entry) => (
+              <button
+                key={`${entry.tab}-${entry.section ?? entry.label}`}
+                type="button"
+                onClick={() => {
+                  setSearchParams({ tab: entry.tab, ...(entry.section ? { section: entry.section } : {}) });
+                  setSettingsSearch('');
+                }}
+                className="block w-full px-4 py-3 text-left text-sm text-text-light-primary hover:bg-surface-light-elevated dark:text-text-dark-primary dark:hover:bg-surface-dark-elevated"
+              >
+                {entry.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Main Layout: Sidebar + Content */}
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 md:flex-row">
         {/* Tab Navigation Sidebar */}
-        <nav className="w-56 flex-shrink-0 hidden md:block">
+        <nav className="w-48 flex-shrink-0 hidden md:block">
           <div className="sticky top-4 space-y-1">
-            {SETTINGS_TABS.map((tab) => {
+            {SETTINGS_TABS.map((tab, index) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.id;
+              const showGroup = index === 0 || SETTINGS_TABS[index - 1].group !== tab.group;
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => setTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left transition-all duration-200 ${
-                    isActive
-                      ? 'bg-accent-primary/10 text-accent-primary font-medium'
-                      : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated hover:text-text-light-primary dark:hover:text-text-dark-primary'
-                  }`}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="flex-1">{tab.label}</span>
-                  {isActive && (
-                    <ChevronRight className="w-4 h-4 opacity-50" />
+                <React.Fragment key={tab.id}>
+                  {showGroup && (
+                    <p className={`${index === 0 ? '' : 'pt-3'} px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary`}>
+                      {tab.group}
+                    </p>
                   )}
-                </button>
+                  <button
+                    onClick={() => setTab(tab.id)}
+                    className={`w-full flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-sm transition-all duration-200 ${
+                      isActive
+                        ? 'bg-accent-primary/10 text-accent-primary font-medium'
+                        : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated hover:text-text-light-primary dark:hover:text-text-dark-primary'
+                    }`}
+                  >
+                    <Icon className="h-4.5 w-4.5 flex-shrink-0" />
+                    <span className="flex-1">{tab.label}</span>
+                    {isActive && <ChevronRight className="w-4 h-4 opacity-50" />}
+                  </button>
+                </React.Fragment>
               );
             })}
           </div>
         </nav>
 
-        {/* Mobile Tab Selector */}
-        <div className="md:hidden mb-4 w-full">
-          <select
-            value={currentTab}
-            onChange={(e) => setTab(e.target.value as SettingsTabId)}
-            className="w-full px-4 py-3 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary"
-          >
-            {SETTINGS_TABS.map((tab) => (
-              <option key={tab.id} value={tab.id}>
-                {tab.label}
-              </option>
-            ))}
-          </select>
+        {/* Mobile Tab Selector — scrollable grouped chips (easier reach than a <select>) */}
+        <div className="mb-4 w-full md:hidden" role="tablist" aria-label="设置分类">
+          {Array.from(new Set(SETTINGS_TABS.map((t) => t.group))).map((group) => (
+            <div key={group} className="mb-2 last:mb-0">
+              <p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary">
+                {group}
+              </p>
+              <div className="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {SETTINGS_TABS.filter((t) => t.group === group).map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = currentTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setTab(tab.id)}
+                      className={`inline-flex shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-2 text-sm transition-all duration-200 ${
+                        isActive
+                          ? 'border-accent-primary bg-accent-primary/10 font-medium text-accent-primary'
+                          : 'border-border-light bg-surface-light text-text-light-secondary hover:bg-surface-light-elevated dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated'
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 max-w-[920px]">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-light bg-surface-light-elevated/45 px-4 py-3 dark:border-border-dark dark:bg-surface-dark-elevated/35">
+            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{SETTINGS_DESCRIPTIONS[currentTab]}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="shrink-0 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">更改即时保存到本机</span>
+              <button
+                type="button"
+                disabled={!resetAvailable}
+                title={resetAvailable ? `恢复${resetTarget}默认设置` : resetUnavailableReason}
+                onClick={() => setShowResetConfirm(true)}
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-light-secondary hover:border-accent-primary hover:text-accent-primary disabled:cursor-not-allowed disabled:opacity-45 dark:border-border-dark dark:text-text-dark-secondary"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />恢复默认
+              </button>
+            </div>
+          </div>
           <AnimatePresence mode="wait">
             <motion.div
-              key={currentTab}
+              key={`${currentTab}-${resetRevision}`}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.15 }}
-              className="space-y-6"
+              className="space-y-5"
             >
               {/* General Settings */}
               {currentTab === 'general' && (
@@ -522,51 +761,43 @@ export const Settings: React.FC = () => {
                 </>
               )}
 
-              {/* Editor Settings */}
-              {currentTab === 'editor' && (
+              {/* Workspace settings: five related areas behind one stable category. */}
+              {currentTab === 'workspace' && (
                 <>
-                  <div className="bento-card p-6">
-                    <DailyNotesSettings />
+                  <div className="flex flex-wrap gap-2 rounded-xl border border-border-light bg-surface-light-elevated/50 p-2 dark:border-border-dark dark:bg-surface-dark-elevated/40" role="tablist" aria-label="工作区设置">
+                    {WORKSPACE_SECTIONS.map((section) => {
+                      const Icon = section.icon;
+                      const active = workspaceSection === section.id;
+                      return <button key={section.id} type="button" role="tab" aria-selected={active} onClick={() => setWorkspaceSection(section.id)} className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3 py-2 text-sm ${active ? 'bg-accent-primary text-white' : 'text-text-light-secondary hover:bg-surface-light dark:text-text-dark-secondary dark:hover:bg-surface-dark'}`}><Icon className="h-3.5 w-3.5" />{section.label}</button>;
+                    })}
                   </div>
-                  <div className="bento-card p-6">
-                    <TemplateSettings />
-                  </div>
-                  <div className="bento-card p-6">
-                    <ExportSettings />
-                  </div>
-                </>
-              )}
 
-              {/* Projects Settings */}
-              {currentTab === 'projects' && <ProjectSettings />}
-
-              {/* Time Tracking Settings */}
-              {currentTab === 'time' && (
-                <>
-                  <div className="bento-card p-6">
-                    <TimeTrackingPanelSettings />
-                  </div>
-                  <div className="bento-card p-6">
-                    <AutoTrackingSettings />
-                  </div>
-                </>
-              )}
-
-              {/* Task Settings */}
-              {currentTab === 'tasks' && (
-                <TaskManagementSettings />
-              )}
-
-              {/* Notes & Calendar Settings */}
-              {currentTab === 'notes' && (
-                <>
-                  <CalendarManagementSection />
-                  <CalendarImportExportSection
-                    isExporting={isExportingCalendar}
-                    isImporting={isImportingCalendar}
-                    onExport={handleExportCalendar}
-                    onImport={handleICSFileSelect}
-                  />
+                  {workspaceSection === 'editor' && (
+                    <>
+                      <div className="bento-card p-6"><DailyNotesSettings /></div>
+                      <div className="bento-card p-6"><TemplateSettings /></div>
+                      <div className="bento-card p-6"><ExportSettings /></div>
+                    </>
+                  )}
+                  {workspaceSection === 'tasks' && <TaskManagementSettings />}
+                  {workspaceSection === 'projects' && <ProjectSettings />}
+                  {workspaceSection === 'calendar' && (
+                    <>
+                      <CalendarManagementSection />
+                      <CalendarImportExportSection
+                        isExporting={isExportingCalendar}
+                        isImporting={isImportingCalendar}
+                        onExport={handleExportCalendar}
+                        onImport={handleICSFileSelect}
+                      />
+                    </>
+                  )}
+                  {workspaceSection === 'time' && (
+                    <>
+                      <div className="bento-card p-6"><TimeTrackingPanelSettings /></div>
+                      <div className="bento-card p-6"><AutoTrackingSettings /></div>
+                    </>
+                  )}
                 </>
               )}
 
@@ -582,27 +813,19 @@ export const Settings: React.FC = () => {
                 </>
               )}
 
-              {/* Data Management Settings */}
+              {/* Data migration: one coherent surface instead of overlapping import/export widgets. */}
               {currentTab === 'data' && (
                 <>
-                  <DataManagementSection
-                    onMessage={setMessage}
-                  />
-                  <ImportExportPanel
-                    onMessage={setMessage}
-                  />
-                  <SelectiveExportSection
-                    onMessage={setMessage}
-                  />
-                  <MarkdownImportSection
-                    onMessage={setMessage}
-                  />
-                  <NotionImportSection
-                    onMessage={setMessage}
-                  />
-                  <div className="bento-card p-6">
-                    <ImportData />
-                  </div>
+                  <ImportExportPanel onMessage={setMessage} />
+                  <StorageInfoSection storageInfo={storageInfo} />
+                  <details className="rounded-xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark">
+                    <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-text-light-secondary hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary">
+                      高级数据管理
+                    </summary>
+                    <div className="border-t border-border-light p-4 dark:border-border-dark">
+                      <DataManagementSection onMessage={setMessage} />
+                    </div>
+                  </details>
                 </>
               )}
 
@@ -612,8 +835,8 @@ export const Settings: React.FC = () => {
                   {/* Privacy Notice */}
                   <div className="p-4 rounded-lg bg-status-success-bg dark:bg-status-success-bg-dark border border-status-success-border dark:border-status-success-border-dark">
                     <p className="text-sm text-status-success-text dark:text-status-success-text-dark">
-                      <strong>🔒 100% Private:</strong> All data stored locally in your browser using IndexedDB (50GB+ capacity).
-                      No cloud dependencies, no tracking, no third-party services.
+                      <strong>🔒 本地优先：</strong>核心数据存储在您的浏览器中，使用 IndexedDB（50GB+ 容量），无需云端账户且不进行行为追踪。
+                      只有您主动启用 AI、天气等外部能力时，相关请求才会发往所选服务商。
                     </p>
                   </div>
 
@@ -628,17 +851,17 @@ export const Settings: React.FC = () => {
                         <span className="text-3xl flex-shrink-0">⚠️</span>
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-status-warning-text dark:text-status-warning-text-dark mb-2">
-                            First Time in This Browser?
+                            首次使用此浏览器？
                           </h3>
                           <p className="text-sm text-status-warning-text dark:text-status-warning-text-dark mb-3">
-                            Your data is stored locally in each browser. Export from your other browser and import here.
+                            您的数据分别存储在各浏览器中。请从其他浏览器导出，再在此处导入。
                           </p>
                           <div className="flex flex-wrap gap-2">
                             <button
                               onClick={() => setShowNewBrowserWarning(false)}
                               className="px-4 py-2 bg-status-warning text-white rounded-lg font-medium transition-colors"
                             >
-                              Got It
+                              知道了
                             </button>
                             <button
                               onClick={() => {
@@ -647,7 +870,7 @@ export const Settings: React.FC = () => {
                               }}
                               className="px-4 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
                             >
-                              Don't Show Again
+                              不再显示
                             </button>
                           </div>
                         </div>
@@ -680,54 +903,37 @@ export const Settings: React.FC = () => {
                     <BackupSettings />
                   </div>
 
-                  <div className="bento-card p-6">
-                    <ImportData />
-                  </div>
                 </>
               )}
 
-              {/* Keyboard Shortcuts */}
-              {currentTab === 'shortcuts' && (
-                <KeyboardShortcutsSection />
-              )}
-
-              {/* AI Terminal Settings */}
+              {/* AI Command Center provider settings */}
               {currentTab === 'ai' && (
                 <AITerminalSettingsSection />
               )}
 
-              {/* Advanced Settings */}
-              {currentTab === 'advanced' && (
+              {/* System settings and About share one low-frequency category. */}
+              {currentTab === 'system' && (
                 <>
-                  <div className="bento-card p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-2xl">🏷️</span>
-                      <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                        Custom Fields
-                      </h2>
-                    </div>
-                    <CustomFieldsSettings />
+                  <div className="flex flex-wrap gap-2 rounded-xl border border-border-light bg-surface-light-elevated/50 p-2 dark:border-border-dark dark:bg-surface-dark-elevated/40" role="tablist" aria-label="系统设置">
+                    {SYSTEM_SECTIONS.map((section) => {
+                      const Icon = section.icon;
+                      const active = systemSection === section.id;
+                      return <button key={section.id} type="button" role="tab" aria-selected={active} onClick={() => setSystemSection(section.id)} className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3 py-2 text-sm ${active ? 'bg-accent-primary text-white' : 'text-text-light-secondary hover:bg-surface-light dark:text-text-dark-secondary dark:hover:bg-surface-dark'}`}><Icon className="h-3.5 w-3.5" />{section.label}</button>;
+                    })}
                   </div>
 
-                  <div className="bento-card p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-2xl">👥</span>
-                      <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-                        Team Members
-                      </h2>
+                  {systemSection === 'shortcuts' && <KeyboardShortcutsSection />}
+                  {systemSection === 'advanced' && (
+                    <div className="bento-card p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-2xl">🏷️</span>
+                        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">自定义字段</h2>
+                      </div>
+                      <CustomFieldsSettings />
                     </div>
-                    <MemberSettings />
-                  </div>
-
-                  <StorageInfoSection storageInfo={storageInfo} />
+                  )}
+                  {systemSection === 'about' && <AboutSettings />}
                 </>
-              )}
-
-              {/* About */}
-              {currentTab === 'about' && (
-                <div className="bento-card p-6">
-                  <AboutSettings />
-                </div>
               )}
             </motion.div>
           </AnimatePresence>
@@ -738,6 +944,17 @@ export const Settings: React.FC = () => {
       <PresetManager
         isOpen={showPresetManager}
         onClose={() => setShowPresetManager(false)}
+      />
+      <ConfirmDialog
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleResetCurrentCategory}
+        title={`恢复${resetTarget}默认设置`}
+        message={currentTab === 'ai'
+          ? '将清除本机保存的 AI 服务商密钥并恢复 AI 偏好；会话内容不会删除。是否继续？'
+          : `将恢复${resetTarget}的偏好设置。项目、任务、笔记、模板和其他内容数据不会删除。是否继续？`}
+        confirmText="恢复默认"
+        variant="danger"
       />
     </PageContent>
   );

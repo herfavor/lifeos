@@ -1,86 +1,89 @@
-# Contributing to NeumanOS
+# 参与贡献
 
-Thank you for your interest in contributing to NeumanOS! This document provides guidelines for contributing.
+感谢你参与 LifeOS。
 
-## Getting Started
+## 环境
 
-1. Fork the repository
-2. Clone your fork:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/neumanos.git
-   cd neumanos
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the dev server:
-   ```bash
-   npm run dev
-   ```
+- Node.js 22（见 `.node-version`）
+- npm
 
-## Development
+```bash
+git clone https://github.com/YOUR_USERNAME/lifeos.git
+cd lifeos
+npm ci
+npm run dev
+```
 
-### Prerequisites
+## 分支与 PR
 
-- Node.js 22+ (see `.node-version`)
-- npm 10+
+不要把长期开发直接堆在 `main`。
 
-### Scripts
+推荐分支名：
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server (port 5173) |
-| `npm run build` | Type-check and build for production |
-| `npm run test` | Run unit tests (Vitest) |
-| `npm run type-check` | TypeScript type checking |
-| `npm run lint` | ESLint |
-| `npm run test:browser:inventory` | Static browser-test inventory (no browser launch) |
-| `npm run test:e2e` | Hosted GitHub Actions only; fails closed outside the approved runner |
+```text
+feat/...
+fix/...
+refactor/...
+docs/...
+```
 
-Browser tests run only through the repository's manual **Hosted browser tests** GitHub Actions workflow. Do not install or launch Playwright browsers locally, and never point the suite at production or provide account credentials. The hosted workflow builds a local production preview and uses synthetic test data.
+完成后：
 
-### Before Submitting
+1. 开 Pull Request；
+2. 说明“为什么改 / 改了什么 / 如何验证”；
+3. 等 CI 通过；
+4. merge；
+5. 删除已合并分支。
 
-1. Run tests: `npm run test`
-2. Run type-check: `npm run type-check`
-3. Ensure the build succeeds: `npm run build`
+用户可见行为变化必须同步更新 README / `docs/*.md`。
 
-## Code Style
+## 提交前
 
-- TypeScript strict mode — no `any` types
-- Tailwind CSS with semantic tokens (no hardcoded colors)
-- Zustand for state management
-- Zod for validation at I/O boundaries
-- Small functions (<50 lines), small files (<300 lines)
+```bash
+npm run type-check
+npm test -- --run
+npm run build
+npm run lint
+npm run lint:design-tokens
+```
 
-## Architecture
+`npm run test:browser:inventory` 可检查浏览器测试清单。
 
-NeumanOS is a local-first application. All data stays on the user's device via IndexedDB (Dexie). There is no backend server.
+完整 Playwright 浏览器矩阵通过 GitHub Actions 的 **Hosted browser tests** 手动运行；不要把浏览器测试指向真实生产数据或真实账户。
 
-Key principles:
-- **Privacy first** — no PII collection, no server data exfiltration
-- **Local-first** — works offline, all data in IndexedDB
-- **Build, don't wrap** — we build features, we use utility libraries
+## 代码约定
 
-The codebase uses React 19, TypeScript 5.9 (strict), Vite 7, and Zustand 5 for state management. Data persistence is handled by Dexie (IndexedDB wrapper).
+- TypeScript 严格模式
+- Tailwind 使用现有语义 token
+- Zustand 负责业务状态
+- Dexie / IndexedDB 负责主要持久化
+- Zod 用在 I/O 与 AI tool 参数边界
+- AI executor 复用业务 store，不复制业务逻辑
+- 新功能必须考虑 local-first、备份、迁移和回滚
+- 不要通过第二入口重新暴露 `hidden` feature
 
-## Pull Requests
+## 文档约定
 
-- Keep PRs focused and atomic
-- Include a clear description of what changed and why
-- Update tests for new behavior
-- Update relevant documentation if feature behavior changed
+`README.md` 和 `docs/*.md` 属于用户文档，会被平台文档插件读取。
 
-## Reporting Issues
+`docs/technical/*.md` 属于开发者文档，不进入普通应用文档中心。
 
-Open an issue at [github.com/travisjneuman/neumanos/issues](https://github.com/travisjneuman/neumanos/issues).
+历史审计文档必须标注“历史快照”，不能用旧设计描述当前产品。
 
-Include:
-- Steps to reproduce
-- Expected vs actual behavior
-- Browser and OS
+## CI
 
-## License
+`.github/workflows/ci.yml` 在 PR 与 main push 上执行：
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+- Node 22
+- `npm ci`
+- `npm run type-check`
+- `npm test -- --run`
+- `npm run build`
+
+## Repository settings
+
+推荐启用 main branch protection / ruleset，并打开 Automatically delete head branches。当前建议与检查结果见 [Repository governance](docs/technical/REPOSITORY_GOVERNANCE.md)。
+
+## 许可证
+
+贡献内容以 MIT License 发布。

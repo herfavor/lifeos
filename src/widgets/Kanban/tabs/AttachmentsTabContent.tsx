@@ -33,7 +33,7 @@ export const AttachmentsTabContent: React.FC<AttachmentsTabContentProps> = ({
       {/* File Upload */}
       <div>
         <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-          Upload Files
+          上传文件
         </h4>
         <FileUpload onUpload={onUpload} />
       </div>
@@ -41,7 +41,7 @@ export const AttachmentsTabContent: React.FC<AttachmentsTabContentProps> = ({
       {/* Attachment List */}
       <div>
         <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-          Attachments ({attachments.length})
+          附件（{attachments.length}）
         </h4>
         <AttachmentList
           attachments={attachments}
@@ -54,10 +54,10 @@ export const AttachmentsTabContent: React.FC<AttachmentsTabContentProps> = ({
       {hasImageAttachments && (
         <div>
           <h4 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3">
-            Card Cover Display
+            卡片封面显示
           </h4>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Choose how the first image appears on the card
+            选择卡片上第一张图片的显示方式
           </p>
           <div className="flex gap-2">
             <button
@@ -68,7 +68,7 @@ export const AttachmentsTabContent: React.FC<AttachmentsTabContentProps> = ({
                   : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              Fit (show full image)
+              适应（显示完整图片）
             </button>
             <button
               onClick={() => onCoverModeChange('fill')}
@@ -78,7 +78,7 @@ export const AttachmentsTabContent: React.FC<AttachmentsTabContentProps> = ({
                   : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
               }`}
             >
-              Fill (crop to fit)
+              填充（裁剪以适应）
             </button>
           </div>
         </div>

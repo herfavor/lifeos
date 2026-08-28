@@ -34,31 +34,31 @@ export function getSmartDateSuggestions(context?: SuggestionContext): DateSugges
   // Core suggestions (always show)
   const coreSuggestions: DateSuggestion[] = [
     {
-      label: 'Today',
+      label: '今天',
       nlText: 'today',
       date: startOfDay(now),
       category: 'relative',
     },
     {
-      label: 'Tomorrow',
+      label: '明天',
       nlText: 'tomorrow',
       date: startOfDay(addDays(now, 1)),
       category: 'relative',
     },
     {
-      label: 'In 3 days',
+      label: '3 天后',
       nlText: 'in 3 days',
       date: startOfDay(addDays(now, 3)),
       category: 'offset',
     },
     {
-      label: 'Next week',
+      label: '下周',
       nlText: 'next week',
       date: startOfDay(addWeeks(now, 1)),
       category: 'offset',
     },
     {
-      label: 'In 2 weeks',
+      label: '2 周后',
       nlText: 'in 2 weeks',
       date: startOfDay(addWeeks(now, 2)),
       category: 'offset',
@@ -68,19 +68,19 @@ export function getSmartDateSuggestions(context?: SuggestionContext): DateSugges
   // Additional suggestions (not shown in quick mode)
   const additionalSuggestions: DateSuggestion[] = [
     {
-      label: 'Next month',
+      label: '下个月',
       nlText: 'next month',
       date: startOfDay(addMonths(now, 1)),
       category: 'offset',
     },
     {
-      label: 'In 3 months',
+      label: '3 个月后',
       nlText: 'in 3 months',
       date: startOfDay(addMonths(now, 3)),
       category: 'offset',
     },
     {
-      label: 'Custom',
+      label: '自定义',
       nlText: '',
       date: now,
       category: 'relative',

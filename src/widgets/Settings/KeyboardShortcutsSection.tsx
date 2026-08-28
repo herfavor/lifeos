@@ -26,41 +26,41 @@ interface ShortcutGroup {
 // Additional shortcuts from across the app (not all registered centrally)
 const EXTENDED_SHORTCUTS: ShortcutDefinition[] = [
   // Global
-  { id: 'toggle-sidebar', keys: ['mod', 'b'], label: 'Toggle sidebar', context: 'global' },
-  { id: 'go-dashboard', keys: ['g', 'd'], label: 'Go to Dashboard', context: 'global' },
-  { id: 'go-tasks', keys: ['g', 't'], label: 'Go to Tasks', context: 'global' },
-  { id: 'go-notes', keys: ['g', 'n'], label: 'Go to Notes', context: 'global' },
-  { id: 'go-calendar', keys: ['g', 'c'], label: 'Go to Calendar', context: 'global' },
-  { id: 'go-settings', keys: ['g', 's'], label: 'Go to Settings', context: 'global' },
+  { id: 'toggle-sidebar', keys: ['mod', 'b'], label: '切换侧边栏', context: 'global' },
+  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往首页', context: 'global' },
+  { id: 'go-tasks', keys: ['g', 't'], label: '前往任务', context: 'global' },
+  { id: 'go-notes', keys: ['g', 'n'], label: '前往笔记', context: 'global' },
+  { id: 'go-calendar', keys: ['g', 'c'], label: '前往日历', context: 'global' },
+  { id: 'go-settings', keys: ['g', 's'], label: '前往设置', context: 'global' },
 
   // Notes
-  { id: 'new-note', keys: ['mod', 'n'], label: 'Create new note', context: 'notes' },
-  { id: 'save-note', keys: ['mod', 's'], label: 'Save note', context: 'notes' },
-  { id: 'search-notes', keys: ['mod', 'f'], label: 'Search in notes', context: 'notes' },
-  { id: 'bold', keys: ['mod', 'b'], label: 'Bold text', context: 'notes' },
-  { id: 'italic', keys: ['mod', 'i'], label: 'Italic text', context: 'notes' },
-  { id: 'underline', keys: ['mod', 'u'], label: 'Underline text', context: 'notes' },
+  { id: 'new-note', keys: ['mod', 'n'], label: '新建笔记', context: 'notes' },
+  { id: 'save-note', keys: ['mod', 's'], label: '保存笔记', context: 'notes' },
+  { id: 'search-notes', keys: ['mod', 'f'], label: '在笔记中搜索', context: 'notes' },
+  { id: 'bold', keys: ['mod', 'b'], label: '加粗文本', context: 'notes' },
+  { id: 'italic', keys: ['mod', 'i'], label: '斜体文本', context: 'notes' },
+  { id: 'underline', keys: ['mod', 'u'], label: '下划线文本', context: 'notes' },
 
   // Tasks / Kanban
-  { id: 'new-task', keys: ['n'], label: 'Create new task', context: 'kanban' },
-  { id: 'search-tasks', keys: ['/'], label: 'Search tasks', context: 'kanban' },
+  { id: 'new-task', keys: ['n'], label: '新建任务', context: 'kanban' },
+  { id: 'search-tasks', keys: ['/'], label: '搜索任务', context: 'kanban' },
 
   // Calendar
-  { id: 'new-event', keys: ['n'], label: 'Create new event', context: 'calendar' },
-  { id: 'today-view', keys: ['t'], label: 'Go to today', context: 'calendar' },
-  { id: 'prev-period', keys: ['left'], label: 'Previous period', context: 'calendar' },
-  { id: 'next-period', keys: ['right'], label: 'Next period', context: 'calendar' },
+  { id: 'new-event', keys: ['n'], label: '新建事件', context: 'calendar' },
+  { id: 'today-view', keys: ['t'], label: '前往今天', context: 'calendar' },
+  { id: 'prev-period', keys: ['left'], label: '上一个周期', context: 'calendar' },
+  { id: 'next-period', keys: ['right'], label: '下一个周期', context: 'calendar' },
 ];
 
 const ALL_SHORTCUTS = [...DEFAULT_SHORTCUTS, ...EXTENDED_SHORTCUTS];
 
 const CONTEXT_LABELS: Record<ShortcutContext, string> = {
-  global: 'Global',
-  kanban: 'Tasks / Kanban',
-  notes: 'Notes Editor',
-  calendar: 'Calendar',
-  diagram: 'Diagrams',
-  modal: 'Modals',
+  global: '全局',
+  kanban: '任务 / 看板',
+  notes: '笔记编辑器',
+  calendar: '日历',
+  diagram: '绘图',
+  modal: '弹窗',
 };
 
 function groupShortcuts(shortcuts: ShortcutDefinition[]): ShortcutGroup[] {
@@ -134,7 +134,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
       const conflictLabel = checkConflict(newKeys, rebindingId);
 
       if (conflictLabel) {
-        setConflictWarning(`Conflicts with "${conflictLabel}"`);
+        setConflictWarning(`与“${conflictLabel}”冲突`);
         // Still allow the binding, just warn
       } else {
         setConflictWarning(null);
@@ -188,7 +188,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
         <div className="flex items-center gap-3">
           <Keyboard className="w-5 h-5 text-accent-primary" />
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Keyboard Shortcuts
+            键盘快捷键
           </h2>
         </div>
         {hasCustomBindings && (
@@ -197,12 +197,12 @@ export const KeyboardShortcutsSection: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
-            Reset All
+            全部重置
           </button>
         )}
       </div>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-        View and customize keyboard shortcuts. Click a shortcut to rebind it.
+        查看并自定义键盘快捷键。点击快捷键可重新绑定。
       </p>
 
       {/* Search */}
@@ -212,7 +212,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search shortcuts..."
+          placeholder="搜索快捷键…"
           className="w-full pl-9 pr-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary"
         />
       </div>
@@ -270,7 +270,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {isRebinding ? (
                         <span className="px-3 py-1 text-xs font-medium rounded bg-accent-primary/20 text-accent-primary animate-pulse">
-                          Press a key combination...
+                          按下组合键…
                         </span>
                       ) : (
                         <button
@@ -280,7 +280,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
                               ? 'bg-accent-primary/10 text-accent-primary border border-accent-primary/30'
                               : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-border-light dark:border-border-dark hover:border-accent-primary'
                           }`}
-                          title="Click to rebind"
+                          title="点击重新绑定"
                         >
                           {formatShortcut(effectiveKeys)}
                         </button>
@@ -290,7 +290,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
                         <button
                           onClick={() => handleResetShortcut(shortcut.id)}
                           className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-                          title="Reset to default"
+                          title="重置为默认"
                         >
                           <RotateCcw className="w-3 h-3" />
                         </button>
@@ -305,7 +305,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
 
         {filteredGroups.length === 0 && (
           <p className="text-center text-sm text-text-light-tertiary dark:text-text-dark-tertiary py-8">
-            No shortcuts match your search
+            没有匹配搜索的快捷键
           </p>
         )}
       </div>

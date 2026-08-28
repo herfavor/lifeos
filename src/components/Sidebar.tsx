@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useRef, lazy, Suspense, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarStore } from '../stores/useSidebarStore';
 import { useSidebarNavStore } from '../stores/useSidebarNavStore';
@@ -10,343 +10,164 @@ import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, us
 import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  AlarmClock,
+  BatteryCharging,
+  Bookmark,
+  CalendarCheck2,
+  CalendarDays,
+  CalendarRange,
+  ChartNoAxesCombined,
+  FileStack,
+  FolderKanban,
+  GanttChartSquare,
+  Home,
+  Inbox,
+  ListChecks,
+  Moon,
+  Network,
+  NotebookPen,
+  PackageOpen,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Repeat2,
+  Settings,
+  Settings2,
+  Sparkles,
+  Sun,
+  Target,
+  Timer,
+  Dumbbell,
+  Workflow,
+  Briefcase,
+} from 'lucide-react';
+import {
+  CORE_FEATURES,
+  DRAGGABLE_CORE_IDS,
+  DRAGGABLE_CORE_FEATURES,
+  ADVANCED_FEATURES,
+  type FeatureDefinition,
+} from '../config/features';
 
 // Lazy load sidebar panels to reduce initial bundle
 const PageSettingsPanel = lazy(() => import('./PageSettingsPanel').then(m => ({ default: m.PageSettingsPanel })));
-const TimeTrackingPanel = lazy(() => import('./TimeTrackingPanel').then(m => ({ default: m.TimeTrackingPanel })));
+const ActiveTimerIndicator = lazy(() => import('./ActiveTimerIndicator').then(m => ({ default: m.ActiveTimerIndicator })));
 
-/**
- * FOUNDATIONAL: NavItem interface with expandable support
- * Any nav item can have sub-pages by adding `children`.
- */
-interface NavItem {
-  icon: string;
-  label: string;
-  path: string;
-  shortcut?: string;
-  hasSettings?: boolean; // Whether this page has custom settings
-  children?: NavItem[]; // Sub-pages (expandable)
-  defaultExpanded?: boolean; // Initial expansion state
-}
+// Storage key used inside useNavExpansionStore for the "更多功能" panel state
+const MORE_PANEL_KEY = '__lifeos-more';
 
-// Fixed navigation items (always at top, not draggable)
-const fixedNavigation: NavItem[] = [
-  {
-    icon: '🏠',
-    label: 'Dashboard',
-    path: '/',
-    shortcut: 'D',
-    hasSettings: true,
-    defaultExpanded: true,
-    children: [
-      { icon: '📆', label: 'Today', path: '/today' },
-      { icon: '🔗', label: 'Link Library', path: '/links' },
-      { icon: '📊', label: 'Activity', path: '/activity' },
-    ],
-  },
-];
+/** Shared row styling for navigation entries */
+const NAV_ROW_CLASS = `
+  flex items-center gap-3 px-3 h-11 rounded-button
+  transition-all duration-standard ease-smooth
+  relative group w-full text-left
+`;
 
-// Draggable navigation items (user can reorganize)
-// Structure per Option A from sidebar-navigation-review.md:
-// - Parent becomes Tab 1, children become subsequent tabs left-to-right
-// - Schedule: Calendar (parent), Timer, Pomodoro (simplified from 10 tabs)
-// - Notes: Notes (parent), Daily Notes, Graph (Diagrams/Forms moved to Create)
-// - Tasks: Tasks (parent), Timeline, Habits (moved here from standalone)
-// - Create: All (parent), Documents, Spreadsheets, Presentations, Diagrams, Forms
-const draggableNavigation: NavItem[] = [
-  {
-    icon: '📅',
-    label: 'Schedule',
-    path: '/schedule',
-    shortcut: 'S',
-    hasSettings: false,
-    defaultExpanded: false,
-    children: [
-      { icon: '⏱️', label: 'Timer', path: '/schedule?tab=timer' },
-      { icon: '🍅', label: 'Pomodoro', path: '/schedule?tab=pomodoro' },
-      { icon: '⚡', label: 'Energy', path: '/energy' },
-      { icon: '📋', label: 'Availability', path: '/availability' },
-    ],
-  },
-  {
-    icon: '📝',
-    label: 'Notes',
-    path: '/notes',
-    shortcut: 'N',
-    hasSettings: false,
-    defaultExpanded: false,
-    children: [
-      { icon: '📅', label: 'Daily Notes', path: '/notes?tab=daily' },
-      { icon: '🕸️', label: 'Graph', path: '/notes?tab=graph' },
-    ],
-  },
-  {
-    icon: '✓',
-    label: 'Tasks',
-    path: '/tasks',
-    shortcut: 'T',
-    hasSettings: false,
-    defaultExpanded: false,
-    children: [
-      { icon: '📊', label: 'Timeline', path: '/tasks?tab=timeline' },
-      { icon: '🎯', label: 'Habits', path: '/tasks?tab=habits' },
-      { icon: '📈', label: 'PM Dashboard', path: '/pm' },
-      { icon: '📂', label: 'Portfolio', path: '/portfolio' },
-    ],
-  },
-  {
-    icon: '✨',
-    label: 'Create',
-    path: '/create',
-    shortcut: 'C',
-    hasSettings: false,
-    defaultExpanded: false,
-    children: [
-      { icon: '📝', label: 'Documents', path: '/create?tab=documents' },
-      { icon: '📊', label: 'Spreadsheets', path: '/create?tab=spreadsheets' },
-      { icon: '📽️', label: 'Presentations', path: '/create?tab=presentations' },
-      { icon: '🔷', label: 'Diagrams', path: '/create?tab=diagrams' },
-      { icon: '📋', label: 'Forms', path: '/create?tab=forms' },
-    ],
-  },
-];
+const activeRowClass = `${NAV_ROW_CLASS}
+  bg-accent-primary/10 text-accent-primary ring-1 ring-inset ring-accent-primary/15`;
 
-// Sortable Navigation Item Component
-interface SortableNavItemProps {
-  item: NavItem;
-  isCollapsed: boolean;
-  isActive: boolean;
-  onPageSettings: (e: React.MouseEvent, path: string) => void;
-  isDisablingClicks: boolean;
-}
+const inactiveRowClass = `${NAV_ROW_CLASS}
+  text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated`;
 
-const SortableNavItem: React.FC<SortableNavItemProps> = ({ item, isCollapsed, isActive, onPageSettings, isDisablingClicks }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.path });
-
-  const location = useLocation();
-  const { isExpanded, toggleExpanded } = useNavExpansionStore();
-  const hasChildren = item.children && item.children.length > 0;
-  const expanded = isExpanded(item.path);
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  // Check if any child is active
-  const isChildActive = (navItem: NavItem) => {
-    if (!navItem.children) return false;
-    return navItem.children.some((child) => {
-      // Handle paths with query params
-      if (child.path.includes('?')) {
-        const [pathname, query] = child.path.split('?');
-        if (location.pathname !== pathname) return false;
-        const params = new URLSearchParams(query);
-        const currentParams = new URLSearchParams(location.search);
-        for (const [key, value] of params.entries()) {
-          if (currentParams.get(key) !== value) return false;
-        }
-        return true;
-      }
-      return location.pathname === child.path;
-    });
-  };
-
-  const childActive = isChildActive(item);
-
-  return (
-    <li ref={setNodeRef} style={{...style, pointerEvents: isDisablingClicks ? 'none' : 'auto'}} {...attributes}>
-      <Link
-        to={item.path}
-        onClick={(e) => {
-          if (isDisablingClicks) {
-            e.preventDefault();
-            return false;
-          }
-        }}
-        className={`
-          flex items-center gap-3 px-3 h-11 rounded-button
-          transition-all duration-standard ease-smooth
-          relative group
-          ${
-            isActive || childActive
-              ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
-              : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-          }
-        `}
-        title={isCollapsed ? item.label : undefined}
-        aria-current={isActive ? 'page' : undefined}
-      >
-        {/* Active indicator (left accent) */}
-        {isActive && (
-          <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent-blue rounded-r" />
-        )}
-
-        {/* Icon - Fixed 20px size - DRAG HANDLE */}
-        <span
-          {...listeners}
-          className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-lg cursor-grab active:cursor-grabbing"
-          role="button"
-          aria-label={`Drag ${item.label} to reorder`}
-          tabIndex={0}
-        >
-          {item.icon}
-        </span>
-
-        {/* Label (hidden when collapsed) */}
-        {!isCollapsed && (
-          <>
-            <span className="flex-1 text-base leading-5 font-medium truncate">
-              {item.label}
-            </span>
-
-            {/* Page Settings Icon (shown on hover) */}
-            {item.hasSettings && (
-              <button
-                onClick={(e) => onPageSettings(e, item.path)}
-                className="
-                  opacity-0 group-hover:opacity-100
-                  w-5 h-5 flex items-center justify-center flex-shrink-0
-                  text-text-light-secondary dark:text-text-dark-secondary
-                  hover:text-text-light-primary dark:hover:text-text-dark-primary
-                  transition-opacity duration-200
-                "
-                title="Page Settings"
-                aria-label={`${item.label} page settings`}
-              >
-                <span className="text-sm">⚙</span>
-              </button>
-            )}
-
-            {/* Expand/Collapse Chevron (for items with children) */}
-            {hasChildren && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleExpanded(item.path);
-                }}
-                className="
-                  w-5 h-5 flex items-center justify-center flex-shrink-0
-                  text-text-light-secondary dark:text-text-dark-secondary
-                  hover:text-text-light-primary dark:hover:text-text-dark-primary
-                  transition-transform duration-200
-                "
-                title={expanded ? 'Collapse' : 'Expand'}
-              >
-                <span
-                  className={`text-xs transition-transform duration-200 ${
-                    expanded ? 'rotate-90' : ''
-                  }`}
-                >
-                  ▶
-                </span>
-              </button>
-            )}
-          </>
-        )}
-
-        {/* Tooltip for collapsed state */}
-        {isCollapsed && (
-          <div className="
-            absolute left-full ml-2 px-2 py-1
-            bg-surface-light-elevated dark:bg-surface-dark-elevated
-            text-text-light-primary dark:text-text-dark-primary text-xs rounded
-            opacity-0 group-hover:opacity-100
-            pointer-events-none transition-opacity duration-200
-            whitespace-nowrap z-50
-          ">
-            {item.label}
-          </div>
-        )}
-      </Link>
-
-      {/* Children (Sub-pages) - only show when expanded and not collapsed */}
-      {hasChildren && expanded && !isCollapsed && (
-        <ul className="ml-6 mt-1 space-y-1">
-          {item.children!.map((child) => (
-            <li key={child.path}>
-              <Link
-                to={child.path}
-                className={`
-                  flex items-center gap-3 px-3 h-9 rounded-button
-                  transition-all duration-standard ease-smooth
-                  relative group
-                  ${
-                    location.pathname === child.path
-                      ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
-                      : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-                  }
-                `}
-                aria-current={location.pathname === child.path ? 'page' : undefined}
-              >
-                {/* Active indicator (left accent) */}
-                {location.pathname === child.path && (
-                  <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent-blue rounded-r" />
-                )}
-
-                {/* Icon */}
-                <span className="w-4 h-4 flex items-center justify-center flex-shrink-0 text-sm" aria-hidden="true">
-                  {child.icon}
-                </span>
-
-                {/* Label */}
-                <span className="flex-1 text-sm leading-5 font-medium truncate">
-                  {child.label}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
-  );
+const NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  home: Home,
+  'ai-assistant': Sparkles,
+  today: CalendarDays,
+  inbox: Inbox,
+  projects: FolderKanban,
+  tasks: ListChecks,
+  calendar: CalendarRange,
+  notes: NotebookPen,
+  bookmarks: Bookmark,
+  review: ChartNoAxesCombined,
+  'time-tracking': Timer,
+  pomodoro: AlarmClock,
+  focus: Target,
+  habits: Dumbbell,
+  gantt: GanttChartSquare,
+  'knowledge-graph': Network,
+  retrospective: Repeat2,
+  energy: BatteryCharging,
+  availability: CalendarCheck2,
+  'docs-center': FileStack,
+  automations: Workflow,
+  portfolio: Briefcase,
 };
 
+/**
+ * LifeOS main sidebar.
+ *
+ * Navigation is driven by the central Feature Registry
+ * (src/config/features.ts):
+ *  - core features render directly in the sidebar
+ *  - advanced features live behind the "更多功能" disclosure
+ *  - hidden features are not listed here at all (routes stay available)
+ */
 export const Sidebar: React.FC = () => {
   const { isCollapsed, toggleCollapse, isMobileMenuOpen, setMobileMenuOpen } = useSidebarStore();
   const { mode, toggleTheme } = useThemeStore();
-  const logoSrc = mode === 'dark' ? '/images/logos/logo_white.png' : '/images/logos/logo_black.png';
+  const logoSrc = mode === 'dark' ? '/images/logos/lifeos-logo-white.svg' : '/images/logos/lifeos-logo.svg';
+  const iconSrc = '/images/logos/lifeos-icon.svg';
   const navOrder = useSidebarNavStore((state) => state.navOrder);
   const setNavOrder = useSidebarNavStore((state) => state.setNavOrder);
   const { isExpanded, toggleExpanded } = useNavExpansionStore();
   const location = useLocation();
   const [pageSettingsOpen, setPageSettingsOpen] = useState<string | null>(null);
   const [isDisablingClicks, setIsDisablingClicks] = useState(false);
-  const disableTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const disableTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const dailyNotesEnabled = useSettingsStore((state) => state.dailyNotes.enabled);
+  const moreExpanded = isExpanded(MORE_PANEL_KEY);
+
+  // Split core features into the three rendered groups
+  const headFeatures = useMemo(
+    () =>
+      CORE_FEATURES.filter(
+        (f) => !DRAGGABLE_CORE_IDS.includes(f.id) && f.id !== 'review'
+      ),
+    []
+  );
+
+  // Sort draggable workspace features by saved order
+  const sortedDraggableFeatures = useMemo(() => {
+    return [...DRAGGABLE_CORE_FEATURES].sort((a, b) => {
+      const aIndex = navOrder.indexOf(a.id);
+      const bIndex = navOrder.indexOf(b.id);
+      // If id not found in saved order, keep canonical order at the end
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    });
+  }, [navOrder]);
+
+  const tailFeatures = useMemo(
+    () => CORE_FEATURES.filter((f) => f.id === 'review'),
+    []
+  );
 
   // Check if a nav path is active (handles both pathname and query params)
   const isActive = (path: string) => {
-    // Handle paths with query params (e.g., /schedule?tab=calendar)
+    if (!path) return false;
+    // Handle paths with query params (e.g., /tasks?tab=inbox)
     if (path.includes('?')) {
       const [pathname, query] = path.split('?');
       if (location.pathname !== pathname) return false;
       const params = new URLSearchParams(query);
       const currentParams = new URLSearchParams(location.search);
-      // Check if all specified params match
       for (const [key, value] of params.entries()) {
         if (currentParams.get(key) !== value) return false;
       }
       return true;
     }
-    // Simple pathname match
-    return location.pathname === path;
-  };
+    if (location.pathname !== path) return false;
 
-  // Check if any child of a parent is active (for highlighting parent when child is active)
-  const isChildActive = (item: NavItem) => {
-    if (!item.children) return false;
-    return item.children.some((child) => isActive(child.path));
+    // Query-specific core entries take precedence over their parent page.
+    // Example: /tasks?tab=inbox highlights 收件箱, not both 收件箱 and 任务.
+    return !CORE_FEATURES.some((feature) => {
+      if (!feature.path?.startsWith(`${path}?`)) return false;
+      const query = feature.path.split('?')[1];
+      const expected = new URLSearchParams(query);
+      const current = new URLSearchParams(location.search);
+      return Array.from(expected.entries()).every(([key, value]) => current.get(key) === value);
+    });
   };
 
   // Configure drag sensors with keyboard support for accessibility
@@ -361,20 +182,11 @@ export const Sidebar: React.FC = () => {
     })
   );
 
-  // Sort draggable navigation items by saved order
-  const sortedDraggableNavigation = [...draggableNavigation].sort((a, b) => {
-    const aIndex = navOrder.indexOf(a.path);
-    const bIndex = navOrder.indexOf(b.path);
-    // If path not found in order, put it at the end
-    return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
-  });
-
   const handleDragStart = () => {
     // Clear any existing timeout to prevent race conditions
     if (disableTimeoutRef.current) {
       clearTimeout(disableTimeoutRef.current);
     }
-
     setIsDisablingClicks(true);
   };
 
@@ -392,7 +204,6 @@ export const Sidebar: React.FC = () => {
     }
 
     // Re-enable clicks after a delay to prevent accidental navigation
-    // Store timeout ID in ref so it survives re-renders
     disableTimeoutRef.current = setTimeout(() => {
       setIsDisablingClicks(false);
       disableTimeoutRef.current = null;
@@ -419,11 +230,6 @@ export const Sidebar: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname, setMobileMenuOpen]);
 
-  // Handler for Ctrl+D keyboard shortcut (Daily Notes)
-  const handleTodayClick = () => {
-    navigate('/notes?daily=true');
-  };
-
   // Keyboard shortcut: Cmd/Ctrl + B to toggle sidebar
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -432,7 +238,6 @@ export const Sidebar: React.FC = () => {
         toggleCollapse();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleCollapse]);
@@ -442,13 +247,132 @@ export const Sidebar: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'd' && dailyNotesEnabled) {
         e.preventDefault();
-        handleTodayClick();
+        navigate('/notes?daily=true');
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dailyNotesEnabled, handleTodayClick]);
+  }, [dailyNotesEnabled, navigate]);
+
+  /**
+   * Render one core/advanced feature row.
+   * Every feature is a plain router link. `handleProps` (dnd-kit
+   * listeners/attributes) are attached to the icon, which acts as the drag
+   * handle for draggable items.
+   */
+  const renderFeatureRow = (
+    feature: FeatureDefinition,
+    handleProps?: Record<string, unknown>
+  ) => {
+    const active = isActive(feature.path ?? '');
+    const rowClass = `${active ? activeRowClass : inactiveRowClass}${handleProps ? ' cursor-grab active:cursor-grabbing' : ''}`;
+    const FeatureIcon = NAV_ICONS[feature.id];
+
+    const content = (
+      <>
+        {/* Active indicator (left accent) */}
+        {active && feature.path && (
+          <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent-primary rounded-r" />
+        )}
+
+        {/* Icon — also the drag handle for draggable items */}
+        <span
+          {...(handleProps ?? {})}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${active ? 'bg-accent-primary text-white' : 'text-text-light-tertiary group-hover:text-text-light-primary dark:text-text-dark-tertiary dark:group-hover:text-text-dark-primary'} ${handleProps ? 'cursor-grab active:cursor-grabbing' : ''}`}
+          role={handleProps ? 'button' : undefined}
+          aria-label={handleProps ? `拖动${feature.label}以重新排序` : undefined}
+          tabIndex={handleProps ? 0 : undefined}
+          aria-hidden={handleProps ? undefined : true}
+        >
+          {FeatureIcon ? <FeatureIcon className="h-[18px] w-[18px]" /> : feature.icon}
+        </span>
+
+        {!isCollapsed && (
+          <span className="flex-1 text-base leading-5 font-medium truncate">
+            {feature.label}
+          </span>
+        )}
+
+        {/* Page Settings Icon (dashboard only, shown on hover) */}
+        {feature.id === 'home' && !isCollapsed && (
+          <button
+            onClick={(e) => handlePageSettings(e, feature.path!)}
+            className="
+              opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100
+              w-5 h-5 flex items-center justify-center flex-shrink-0
+              text-text-light-secondary dark:text-text-dark-secondary
+              hover:text-text-light-primary dark:text-text-dark-primary
+              transition-opacity duration-200
+            "
+            title="页面设置"
+            aria-label={`${feature.label}的页面设置`}
+          >
+            <Settings2 className="h-4 w-4" />
+          </button>
+        )}
+
+        {/* Tooltip for collapsed state */}
+        {isCollapsed && (
+          <span className="
+            absolute left-full ml-2 px-2 py-1
+            bg-surface-light-elevated dark:bg-surface-dark-elevated
+            text-text-light-primary dark:text-text-dark-primary text-xs rounded
+            opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100
+            pointer-events-none transition-opacity duration-200
+            whitespace-nowrap z-50
+          ">
+            {feature.label}
+          </span>
+        )}
+      </>
+    );
+
+    return (
+      <Link
+        key={feature.id}
+        to={feature.path!}
+        onClick={(e) => {
+          if (isDisablingClicks) {
+            e.preventDefault();
+          }
+        }}
+        className={rowClass}
+        style={{ pointerEvents: isDisablingClicks ? 'none' : 'auto' }}
+        title={isCollapsed ? feature.label : undefined}
+        aria-current={active ? 'page' : undefined}
+      >
+        {content}
+      </Link>
+    );
+  };
+
+  /** Sortable wrapper around a draggable feature row */
+  const SortableFeature = ({ feature }: { feature: FeatureDefinition }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: feature.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+      <li
+        ref={setNodeRef}
+        style={{ ...style, pointerEvents: isDisablingClicks ? 'none' : 'auto' }}
+        {...attributes}
+      >
+        {renderFeatureRow(feature, { ...listeners, tabIndex: 0 })}
+      </li>
+    );
+  };
 
   return (
     <>
@@ -462,15 +386,15 @@ export const Sidebar: React.FC = () => {
 
       {/* Sidebar */}
       <aside
-        aria-label="Main navigation sidebar"
+        aria-label="主导航侧边栏"
         className={`
           fixed left-0 top-0 h-screen
-          bg-surface-light-elevated dark:bg-surface-dark
+          bg-surface-light dark:bg-surface-dark
           border-r border-border-light dark:border-border-dark
           transition-all duration-200 ease-in-out
           flex flex-col
           z-40
-          ${isCollapsed ? 'w-[60px]' : 'w-[210px]'}
+          ${isCollapsed ? 'w-[64px]' : 'w-[224px]'}
 
           ${/* Mobile: slide in/out as drawer */ ''}
           md:translate-x-0
@@ -478,209 +402,108 @@ export const Sidebar: React.FC = () => {
         `}
       >
       {/* Logo Section */}
-      <div className="p-4 border-b border-border-light dark:border-border-dark">
-        <Link to="/" className="flex flex-col items-center overflow-hidden">
+      <div className="border-b border-border-light px-4 py-4 dark:border-border-dark">
+        <Link to="/" className="flex flex-col items-center overflow-hidden" aria-label="LifeOS 首页">
           {!isCollapsed ? (
             <>
               <img
                 src={logoSrc}
-                alt="NeumanOS"
+                alt="LifeOS"
                 className="w-full h-auto object-contain"
               />
-              <p className="text-[10px] tracking-[0.3em] uppercase text-text-light-secondary dark:text-text-dark-secondary text-center w-full mt-1">
-                Management Platform
+              <p className="mt-1 w-full text-center text-xs tracking-[0.18em] text-text-light-secondary dark:text-text-dark-secondary">
+                本地优先的个人管理平台
               </p>
             </>
           ) : (
             <img
-              src={logoSrc}
-              alt="NeumanOS"
-              className="w-11 h-11 object-contain"
+              src={iconSrc}
+              alt="LifeOS"
+              className="w-9 h-9 object-contain"
             />
           )}
         </Link>
       </div>
 
       {/* Navigation Items */}
-      <nav aria-label="Primary navigation" className="flex-1 overflow-y-auto overflow-x-hidden py-4">
-        <ul className="space-y-1 px-2">
-          {/* Fixed Navigation Items (Dashboard - not draggable, supports children) */}
-          {fixedNavigation.map((item) => {
-            const hasChildren = item.children && item.children.length > 0;
-            const expanded = isExpanded(item.path);
-            const parentActive = isActive(item.path);
-            const childActive = isChildActive(item);
+      <nav aria-label="主导航" className="flex-1 overflow-y-auto overflow-x-hidden py-3">
+        <ul className="space-y-1 px-2.5">
+          {/* Fixed head section (首页 / AI 指挥中心 / 今天 / 收件箱) */}
+          {headFeatures.map((f) => (
+            <li key={f.id}>{renderFeatureRow(f)}</li>
+          ))}
 
-            return (
-              <li key={item.path}>
-                {/* Parent Item */}
-                <div className="flex items-center">
-                  <Link
-                    to={item.path}
-                    className={`
-                      flex-1 flex items-center gap-3 px-3 h-11 rounded-button
-                      transition-all duration-standard ease-smooth
-                      relative group
-                      ${
-                        parentActive || childActive
-                          ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
-                          : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-                      }
-                    `}
-                    title={isCollapsed ? item.label : undefined}
-                    aria-current={parentActive ? 'page' : undefined}
-                  >
-                    {/* Active indicator (left accent) */}
-                    {parentActive && (
-                      <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent-blue rounded-r" />
-                    )}
-
-                    {/* Icon - Fixed 20px size */}
-                    <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-lg">
-                      {item.icon}
-                    </span>
-
-                    {/* Label (hidden when collapsed) */}
-                    {!isCollapsed && (
-                      <>
-                        <span className="flex-1 text-base leading-5 font-medium truncate">
-                          {item.label}
-                        </span>
-
-                        {/* Page Settings Icon (shown on hover) */}
-                        {item.hasSettings && (
-                          <button
-                            onClick={(e) => handlePageSettings(e, item.path)}
-                            className="
-                              opacity-0 group-hover:opacity-100
-                              w-5 h-5 flex items-center justify-center flex-shrink-0
-                              text-text-light-secondary dark:text-text-dark-secondary
-                              hover:text-text-light-primary dark:hover:text-text-dark-primary
-                              transition-opacity duration-200
-                            "
-                            title="Page Settings"
-                          >
-                            <span className="text-sm">⚙</span>
-                          </button>
-                        )}
-
-                        {/* Expand/Collapse Chevron (for items with children) */}
-                        {hasChildren && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleExpanded(item.path);
-                            }}
-                            className="
-                              w-5 h-5 flex items-center justify-center flex-shrink-0
-                              text-text-light-secondary dark:text-text-dark-secondary
-                              hover:text-text-light-primary dark:hover:text-text-dark-primary
-                              transition-transform duration-200
-                            "
-                            title={expanded ? 'Collapse' : 'Expand'}
-                            aria-label={expanded ? `Collapse ${item.label}` : `Expand ${item.label}`}
-                            aria-expanded={expanded}
-                          >
-                            <span
-                              className={`text-xs transition-transform duration-200 ${
-                                expanded ? 'rotate-90' : ''
-                              }`}
-                            >
-                              ▶
-                            </span>
-                          </button>
-                        )}
-                      </>
-                    )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <div className="
-                        absolute left-full ml-2 px-2 py-1
-                        bg-surface-light-elevated dark:bg-surface-dark-elevated
-                        text-text-light-primary dark:text-text-dark-primary text-xs rounded
-                        opacity-0 group-hover:opacity-100
-                        pointer-events-none transition-opacity duration-200
-                        whitespace-nowrap z-50
-                      ">
-                        {item.label}
-                      </div>
-                    )}
-                  </Link>
-                </div>
-
-                {/* Children (Sub-pages) - only show when expanded and not collapsed */}
-                {hasChildren && expanded && !isCollapsed && (
-                  <ul className="ml-6 mt-1 space-y-1">
-                    {item.children!.map((child) => (
-                      <li key={child.path}>
-                        <Link
-                          to={child.path}
-                          className={`
-                            flex items-center gap-3 px-3 h-9 rounded-button
-                            transition-all duration-standard ease-smooth
-                            relative group
-                            ${
-                              isActive(child.path)
-                                ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
-                                : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
-                            }
-                          `}
-                          aria-current={isActive(child.path) ? 'page' : undefined}
-                        >
-                          {/* Active indicator (left accent) */}
-                          {isActive(child.path) && (
-                            <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent-blue rounded-r" />
-                          )}
-
-                          {/* Icon */}
-                          <span className="w-4 h-4 flex items-center justify-center flex-shrink-0 text-sm" aria-hidden="true">
-                            {child.icon}
-                          </span>
-
-                          {/* Label */}
-                          <span className="flex-1 text-sm leading-5 font-medium truncate">
-                            {child.label}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-
-          {/* Draggable Navigation Items (Notes, Planning, Tasks) */}
+          {/* Draggable workspace section (项目 / 任务 / 日程 / 笔记 / 收藏) */}
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={navOrder} strategy={verticalListSortingStrategy}>
-              {sortedDraggableNavigation.map((item) => (
-                <SortableNavItem
-                  key={item.path}
-                  item={item}
-                  isCollapsed={isCollapsed}
-                  isActive={isActive(item.path)}
-                  onPageSettings={handlePageSettings}
-                  isDisablingClicks={isDisablingClicks}
-                />
+            <SortableContext items={sortedDraggableFeatures.map((f) => f.id)} strategy={verticalListSortingStrategy}>
+              {sortedDraggableFeatures.map((feature) => (
+                <SortableFeature key={feature.id} feature={feature} />
               ))}
             </SortableContext>
           </DndContext>
+
+          {/* Trailing section (回顾) */}
+          {tailFeatures.map((f) => (
+            <li key={f.id}>{renderFeatureRow(f)}</li>
+          ))}
+
+          {/* 更多功能 stays in the same scroll flow: expanding never covers or pushes fixed footer controls. */}
+          <li className="pt-2">
+            <button
+              onClick={() => toggleExpanded(MORE_PANEL_KEY)}
+              className={`${inactiveRowClass} ${moreExpanded ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated' : ''}`}
+              aria-expanded={moreExpanded}
+              aria-controls="lifeos-more-panel"
+              title={isCollapsed ? '更多功能' : undefined}
+            >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden="true">
+                <PackageOpen className="h-[18px] w-[18px]" />
+              </span>
+              {!isCollapsed && (
+                <>
+                  <span className="flex-1 text-sm leading-5 font-medium text-left truncate">更多功能</span>
+                  <span
+                    className={`text-xs text-text-light-secondary dark:text-text-dark-secondary transition-transform duration-200 ${moreExpanded ? 'rotate-90' : ''}`}
+                    aria-hidden="true"
+                  >
+                    ▶
+                  </span>
+                </>
+              )}
+            </button>
+
+            {moreExpanded && !isCollapsed && (
+              <div id="lifeos-more-panel" className="mt-1 space-y-0.5 pl-2">
+                {ADVANCED_FEATURES.map((f) => {
+                  const AdvancedIcon = NAV_ICONS[f.id];
+                  return (
+                    <Link
+                      key={f.id}
+                      to={f.path || '#'}
+                      className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-text-light-secondary transition-colors hover:bg-surface-light-elevated hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated dark:hover:text-text-dark-primary"
+                    >
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden="true">
+                        {AdvancedIcon ? <AdvancedIcon className="h-4 w-4" /> : f.icon}
+                      </span>
+                      <span className="truncate">{f.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </li>
         </ul>
       </nav>
 
-      {/* Time Tracking Panel - only visible when expanded */}
-      {!isCollapsed && (
-        <Suspense fallback={<div className="h-[120px] animate-pulse bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg m-2" />}>
-          <TimeTrackingPanel />
-        </Suspense>
-      )}
+      {/* Compact active-timer indicator — renders nothing while idle */}
+      <Suspense fallback={null}>
+        <ActiveTimerIndicator />
+      </Suspense>
 
       {/* Bottom Section */}
       <div className="border-t border-border-light dark:border-border-dark p-2 space-y-1">
@@ -696,29 +519,29 @@ export const Sidebar: React.FC = () => {
             transition-all duration-standard ease-smooth
             group relative
           `}
-          title={isCollapsed ? 'Settings' : undefined}
+          title={isCollapsed ? '设置' : undefined}
           aria-current={isActive('/settings') ? 'page' : undefined}
         >
           {/* Active indicator (left accent) */}
           {isActive('/settings') && (
-            <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent-blue rounded-r" />
+            <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent-primary rounded-r" />
           )}
 
-          <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-lg">⚙️</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary"><Settings className="h-[18px] w-[18px]" /></span>
           {!isCollapsed && (
             <span className="flex-1 text-base leading-5 font-medium text-left truncate">
-              Settings
+              设置
             </span>
           )}
           {isCollapsed && (
             <div className="
               absolute left-full ml-2 px-2 py-1
               bg-surface-dark text-text-dark-primary text-xs rounded
-              opacity-0 group-hover:opacity-100
+              opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100
               pointer-events-none transition-opacity duration-200
               whitespace-nowrap z-50
             ">
-              Settings
+              设置
             </div>
           )}
         </Link>
@@ -733,26 +556,26 @@ export const Sidebar: React.FC = () => {
             transition-all duration-standard ease-smooth
             group relative
           `}
-          title={isCollapsed ? (mode === 'dark' ? 'Light Mode' : 'Dark Mode') : undefined}
-          aria-label={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={isCollapsed ? (mode === 'dark' ? '浅色模式' : '深色模式') : undefined}
+          aria-label={mode === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
         >
-          <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-lg" aria-hidden="true">
-            {mode === 'dark' ? '☀️' : '🌙'}
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden="true">
+            {mode === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
           </span>
           {!isCollapsed && (
             <span className="flex-1 text-base leading-5 font-medium text-left">
-              {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              {mode === 'dark' ? '浅色模式' : '深色模式'}
             </span>
           )}
           {isCollapsed && (
             <div className="
               absolute left-full ml-2 px-2 py-1
               bg-surface-dark text-text-dark-primary text-xs rounded
-              opacity-0 group-hover:opacity-100
+              opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100
               pointer-events-none transition-opacity duration-200
               whitespace-nowrap z-50
             ">
-              {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              {mode === 'dark' ? '浅色模式' : '深色模式'}
             </div>
           )}
         </button>
@@ -767,26 +590,26 @@ export const Sidebar: React.FC = () => {
             transition-all duration-standard ease-smooth
             group relative
           `}
-          title={isCollapsed ? 'Expand Sidebar' : undefined}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={isCollapsed ? '展开侧边栏' : undefined}
+          aria-label={isCollapsed ? '展开侧边栏' : '折叠侧边栏'}
         >
-          <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-lg" aria-hidden="true">
-            {isCollapsed ? '▶' : '◀'}
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden="true">
+            {isCollapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
           </span>
           {!isCollapsed && (
             <span className="flex-1 text-base leading-5 font-medium text-left">
-              Collapse
+              折叠
             </span>
           )}
           {isCollapsed && (
             <div className="
               absolute left-full ml-2 px-2 py-1
               bg-surface-dark text-text-dark-primary text-xs rounded
-              opacity-0 group-hover:opacity-100
+              opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100
               pointer-events-none transition-opacity duration-200
               whitespace-nowrap z-50
             ">
-              Expand Sidebar
+              展开侧边栏
             </div>
           )}
         </button>

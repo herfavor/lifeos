@@ -20,10 +20,10 @@ interface SmartTemplatePickerProps {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  workflow: 'Workflows',
-  meeting: 'Meetings',
-  planning: 'Planning',
-  custom: 'Custom',
+  workflow: '工作流',
+  meeting: '会议',
+  planning: '规划',
+  custom: '自定义',
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -34,11 +34,11 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 const ACTION_TYPE_LABELS: Record<string, string> = {
-  'create-note': 'Note',
-  'create-task': 'Task',
-  'create-event': 'Event',
-  'create-doc': 'Document',
-  'start-timer': 'Timer',
+  'create-note': '笔记',
+  'create-task': '任务',
+  'create-event': '事件',
+  'create-doc': '文档',
+  'start-timer': '计时器',
 };
 
 export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
@@ -154,7 +154,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border-dark">
           <Zap className="w-5 h-5 text-accent-yellow" />
           <h2 className="text-sm font-semibold text-text-dark-primary flex-1">
-            Smart Templates
+            智能模板
           </h2>
           <span className="text-xs text-text-dark-secondary px-2 py-0.5 rounded bg-surface-dark border border-border-dark">
             Ctrl+Shift+T
@@ -175,13 +175,13 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
             </div>
             <h3 className="text-lg font-semibold text-text-dark-primary mb-2">
               {executionResult.success
-                ? 'Template Executed'
-                : 'Execution Failed'}
+                ? '模板已执行'
+                : '执行失败'}
             </h3>
             {executionResult.created.length > 0 && (
               <div className="mt-3 text-left">
                 <p className="text-xs text-text-dark-secondary mb-2">
-                  Created {executionResult.created.length} items:
+                  已创建 {executionResult.created.length} 个项目：
                 </p>
                 <ul className="space-y-1">
                   {executionResult.created.map((item, i) => (
@@ -200,7 +200,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
               onClick={onClose}
               className="mt-4 px-4 py-2 text-sm font-medium rounded-lg bg-accent-blue text-white hover:bg-accent-blue/90 transition-colors"
             >
-              Done
+              完成
             </button>
           </div>
         ) : selectedTemplate ? (
@@ -222,7 +222,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
             {selectedTemplate.variables.length > 0 && (
               <div className="space-y-3 mb-4">
                 <p className="text-xs font-medium text-text-dark-secondary uppercase tracking-wider">
-                  Fill in variables
+                  填写变量
                 </p>
                 {selectedTemplate.variables.map((v) => (
                   <VariableInput
@@ -238,7 +238,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
             {/* Actions preview */}
             <div className="mb-4">
               <p className="text-xs font-medium text-text-dark-secondary uppercase tracking-wider mb-2">
-                Will create ({selectedTemplate.actions.length} items)
+                将创建（{selectedTemplate.actions.length} 个项目）
               </p>
               <div className="space-y-1">
                 {selectedTemplate.actions.map((action) => (
@@ -252,7 +252,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                     <span className="truncate">
                       {(action.data.title as string) ||
                         (action.data.description as string) ||
-                        'Item'}
+                        '项目'}
                     </span>
                   </div>
                 ))}
@@ -265,14 +265,14 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                 onClick={() => setSelectedTemplate(null)}
                 className="flex-1 px-3 py-2 text-sm rounded-lg border border-border-dark text-text-dark-secondary hover:text-text-dark-primary hover:bg-surface-dark transition-colors"
               >
-                Back
+                返回
               </button>
               <button
                 onClick={handleExecute}
                 className="flex-1 px-3 py-2 text-sm font-medium rounded-lg bg-accent-blue text-white hover:bg-accent-blue/90 transition-colors flex items-center justify-center gap-2"
               >
                 <Play className="w-4 h-4" />
-                Execute
+                执行
               </button>
             </div>
           </div>
@@ -287,7 +287,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                   ref={inputRef}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search templates..."
+                  placeholder="搜索模板…"
                   className="w-full pl-9 pr-3 py-2 text-sm bg-surface-dark border border-border-dark rounded-lg text-text-dark-primary placeholder:text-text-dark-secondary/50 focus:outline-none focus:border-accent-blue/50"
                 />
               </div>
@@ -324,14 +324,14 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className="text-xs text-text-dark-secondary">
-                          {template.actions.length} actions
+                          {template.actions.length} 个操作
                         </span>
                         {template.usageCount > 0 && (
                           <span className="text-xs text-text-dark-secondary/60">
                             {template.usageCount}x
                           </span>
                         )}
-                        <ChevronRight className="w-4 h-4 text-text-dark-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <ChevronRight className="w-4 h-4 text-text-dark-secondary opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity" />
                       </div>
                     </button>
                   ))}
@@ -340,7 +340,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
 
               {filteredTemplates.length === 0 && (
                 <div className="text-center py-8 text-sm text-text-dark-secondary">
-                  No templates found
+                  未找到模板
                 </div>
               )}
             </div>
@@ -353,7 +353,7 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                   className="flex items-center gap-2 text-xs text-text-dark-secondary hover:text-accent-blue transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  Create custom template
+                  创建自定义模板
                 </button>
               </div>
             )}

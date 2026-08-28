@@ -54,6 +54,13 @@ export interface ExportResult {
 const APP_BUILD = BUILD_HASH;
 const BACKUP_VERSION = '1.0';
 const THEME_PREFS_KEY = 'theme-preferences';
+const BACKUP_BLOB_TYPE = 'lifeos/blob-v1';
+
+interface SerializedBackupBlob {
+  __lifeosType: typeof BACKUP_BLOB_TYPE;
+  mimeType: string;
+  base64: string;
+}
 
 /**
  * Compress data using gzip
@@ -74,13 +81,70 @@ const decompressData = async (blob: Blob): Promise<string> => {
   return new Response(decompressedStream).text();
 };
 
+/** Convert an IndexedDB value into JSON-safe backup data without losing Blobs. */
+export const serializeValueForBackup = async (value: unknown): Promise<unknown> => {
+  if (value instanceof Blob) {
+    const bytes = new Uint8Array(await value.arrayBuffer());
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+    }
+
+    return {
+      __lifeosType: BACKUP_BLOB_TYPE,
+      mimeType: value.type,
+      base64: btoa(binary),
+    } satisfies SerializedBackupBlob;
+  }
+
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+
+  return value;
+};
+
+/** Restore a JSON-safe backup value to the representation used by IndexedDB. */
+export const deserializeValueFromBackup = (value: unknown): unknown => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    (value as Partial<SerializedBackupBlob>).__lifeosType === BACKUP_BLOB_TYPE
+  ) {
+    const encoded = value as SerializedBackupBlob;
+    const binary = atob(encoded.base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return new Blob([bytes], { type: encoded.mimeType });
+  }
+
+  return typeof value === 'string' ? value : JSON.stringify(value);
+};
+
+export const serializeStoreForBackup = async (
+  data: Record<string, unknown>
+): Promise<Record<string, unknown>> => {
+  const serialized: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    serialized[key] = await serializeValueForBackup(value);
+  }
+  return serialized;
+};
+
 /**
  * Format bytes to human-readable size
  */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 字节';
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ['字节', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
 };
@@ -141,18 +205,8 @@ export const exportBrainFile = async (options: ExportOptions = {}): Promise<Expo
     log.info('Exporting brain data');
 
     // Get all data from IndexedDB
-    const allData = await indexedDBService.getAllData();
-
-    // Parse JSON values for cleaner export
-    const parsedData: Record<string, any> = {};
-    for (const [key, value] of Object.entries(allData)) {
-      try {
-        parsedData[key] = JSON.parse(value);
-      } catch {
-        // If not JSON, store as-is
-        parsedData[key] = value;
-      }
-    }
+    const allData = await indexedDBService.getAllObjects();
+    const parsedData = await serializeStoreForBackup(allData);
 
     // Create backup object
     const backup: BrainBackup = {
@@ -190,7 +244,7 @@ export const exportBrainFile = async (options: ExportOptions = {}): Promise<Expo
 
     // Generate filename with timestamp
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const filename = `NeumanOS-Backup-${timestamp}.brain`;
+    const filename = `LifeOS-Backup-${timestamp}.brain`;
     link.download = filename;
 
     // Trigger download
@@ -210,7 +264,7 @@ export const exportBrainFile = async (options: ExportOptions = {}): Promise<Expo
     };
   } catch (error) {
     log.error('Failed to export brain data', { error });
-    throw new Error(`Export failed: ${error}`);
+    throw new Error(`导出失败：${error}`);
   }
 };
 
@@ -229,7 +283,7 @@ function normalizeCalendarData(data: Record<string, unknown[]>): {
     const normalizedKey = normalizeDateKey(dateKey);
 
     if (normalizedKey !== dateKey) {
-      warnings.push(`Converted legacy date key: ${dateKey} → ${normalizedKey}`);
+      warnings.push(`已转换旧版日期键：${dateKey} → ${normalizedKey}`);
     }
 
     // Filter out null/undefined events
@@ -278,7 +332,7 @@ export const importBrainFile = async (file: File): Promise<{
         fileContent = await decompressData(file);
         wasCompressed = true;
       } catch (decompError) {
-        throw new Error('Invalid .brain file: Not valid JSON or compressed data');
+        throw new Error('.brain 文件无效：不是有效的 JSON 或压缩数据');
       }
     }
 
@@ -287,26 +341,26 @@ export const importBrainFile = async (file: File): Promise<{
     try {
       backup = JSON.parse(fileContent);
     } catch (error) {
-      throw new Error('Invalid .brain file: Not valid JSON');
+      throw new Error('.brain 文件无效：不是有效的 JSON');
     }
 
     // Validate backup structure
     if (!backup.version || !backup.data) {
-      throw new Error('Invalid .brain file: Missing required fields');
+      throw new Error('.brain 文件无效：缺少必要字段');
     }
 
     // Version compatibility check
     if (backup.version !== BACKUP_VERSION) {
       log.warn('Backup version mismatch', { fileVersion: backup.version, currentVersion: BACKUP_VERSION });
-      warnings.push(`Backup version mismatch: file v${backup.version}, current v${BACKUP_VERSION}`);
+      warnings.push(`备份版本不匹配：文件 v${backup.version}，当前 v${BACKUP_VERSION}`);
     }
 
     // Create rollback snapshot before modifying data
-    const rollbackData = await indexedDBService.getAllData();
+    const rollbackData = await indexedDBService.getAllObjects();
     log.info('Created rollback snapshot', { itemCount: Object.keys(rollbackData).length });
 
     // Process and validate each data type
-    const itemsToImport: Record<string, string> = {};
+    const itemsToImport: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(backup.data)) {
       let processedValue = value;
@@ -363,38 +417,36 @@ export const importBrainFile = async (file: File): Promise<{
         }
       }
 
-      // Convert to JSON string for storage
-      const jsonString = typeof processedValue === 'string' ? processedValue : JSON.stringify(processedValue);
-      itemsToImport[key] = jsonString;
+      itemsToImport[key] = deserializeValueFromBackup(processedValue);
     }
 
     // Write all items in a single transaction
     try {
-      await indexedDBService.setItemsBatch(itemsToImport);
+      await indexedDBService.setObjectsBatch(itemsToImport);
     } catch (importError) {
       // Rollback on failure
       log.error('Import failed, rolling back', { error: importError });
-      await indexedDBService.setItemsBatch(rollbackData);
-      throw new Error(`Import failed, data restored: ${importError}`);
+      await indexedDBService.setObjectsBatch(rollbackData);
+      throw new Error(`导入失败，数据已恢复：${importError}`);
     }
 
     // Restore theme preferences if present in backup
-    if (itemsToImport[THEME_PREFS_KEY]) {
+    if (typeof itemsToImport[THEME_PREFS_KEY] === 'string') {
       try {
-        const themeData = JSON.parse(itemsToImport[THEME_PREFS_KEY]);
+        const themeData = JSON.parse(itemsToImport[THEME_PREFS_KEY] as string);
         const { restoreThemeFromBackup } = await import('../stores/useThemeStore');
         restoreThemeFromBackup(themeData);
         log.info('Theme preferences restored from backup');
       } catch (themeError) {
         log.warn('Failed to restore theme preferences', { error: themeError });
-        warnings.push('Theme preferences could not be restored');
+        warnings.push('无法恢复主题偏好设置');
       }
     }
 
     const itemsImported = Object.keys(itemsToImport).length;
-    const compressionNote = wasCompressed ? ' (compressed)' : '';
-    const warningNote = warnings.length > 0 ? ` with ${warnings.length} warnings` : '';
-    const message = `Successfully imported ${itemsImported} items from ${file.name}${compressionNote}${warningNote}`;
+    const compressionNote = wasCompressed ? '（已压缩）' : '';
+    const warningNote = warnings.length > 0 ? `（含 ${warnings.length} 条警告）` : '';
+    const message = `已从 ${file.name} 成功导入 ${itemsImported} 项${compressionNote}${warningNote}`;
     log.info(message);
 
     return {
@@ -406,7 +458,7 @@ export const importBrainFile = async (file: File): Promise<{
       validationErrors: validationErrors.length > 0 ? validationErrors : undefined,
     };
   } catch (error) {
-    const errorMessage = `Import failed: ${error}`;
+    const errorMessage = `导入失败：${error}`;
     log.error(errorMessage);
     return {
       success: false,
@@ -437,7 +489,7 @@ export const validateBrainFile = async (file: File): Promise<{
     if (!file.name.endsWith('.brain')) {
       return {
         valid: false,
-        message: 'File must have .brain extension',
+        message: '文件必须具有 .brain 扩展名',
       };
     }
 
@@ -452,7 +504,7 @@ export const validateBrainFile = async (file: File): Promise<{
       } catch {
         return {
           valid: false,
-          message: 'Invalid .brain file: Not valid JSON or compressed data',
+          message: '.brain 文件无效：不是有效的 JSON 或压缩数据',
         };
       }
     }
@@ -463,13 +515,13 @@ export const validateBrainFile = async (file: File): Promise<{
     if (!backup.version || !backup.data) {
       return {
         valid: false,
-        message: 'Invalid .brain file: Missing required fields',
+        message: '.brain 文件无效：缺少必要字段',
       };
     }
 
     return {
       valid: true,
-      message: 'Valid .brain file',
+      message: '.brain 文件有效',
       info: {
         version: backup.version,
         exportDate: backup.exportDate,
@@ -481,7 +533,7 @@ export const validateBrainFile = async (file: File): Promise<{
   } catch (error) {
     return {
       valid: false,
-      message: `Invalid .brain file: ${error}`,
+      message: `.brain 文件无效：${error}`,
     };
   }
 };
@@ -489,7 +541,7 @@ export const validateBrainFile = async (file: File): Promise<{
 /**
  * Auto-save to a user-selected directory using File System Access API
  * Uses single file + hidden versioning strategy:
- * - Main file: User's custom filename (e.g., "NeumanOS") - always overwritten
+ * - Main file: User's custom filename (e.g., "LifeOS") - always overwritten
  * - Versions: Hidden .neuman-backups/ folder with timestamped backups
  * - Auto-cleanup: Keeps only last N versions (user configurable)
  */
@@ -498,19 +550,12 @@ export const autoSave = async (directoryHandle: FileSystemDirectoryHandle): Prom
     // Load preferences for custom filename and version count
     const { loadPreferences } = await import('./backupPreferences');
     const preferences = await loadPreferences();
-    const customFilename = preferences.customFilename || 'NeumanOS';
+    const customFilename = preferences.customFilename || 'LifeOS';
     const versionCount = preferences.versionCount || 7;
 
     // Export data
-    const allData = await indexedDBService.getAllData();
-    const parsedData: Record<string, any> = {};
-    for (const [key, value] of Object.entries(allData)) {
-      try {
-        parsedData[key] = JSON.parse(value);
-      } catch {
-        parsedData[key] = value;
-      }
-    }
+    const allData = await indexedDBService.getAllObjects();
+    const parsedData = await serializeStoreForBackup(allData);
 
     const backup: BrainBackup = {
       version: BACKUP_VERSION,
@@ -587,7 +632,7 @@ export const autoSave = async (directoryHandle: FileSystemDirectoryHandle): Prom
     };
   } catch (error) {
     log.error('Auto-save failed', { error });
-    throw new Error(`Auto-save failed: ${error}`);
+    throw new Error(`自动保存失败：${error}`);
   }
 };
 
@@ -603,11 +648,11 @@ export const isFileSystemAccessSupported = (): boolean => {
  */
 export const requestAutoSaveDirectory = async (): Promise<FileSystemDirectoryHandle> => {
   if (!isFileSystemAccessSupported()) {
-    throw new Error('File System Access API not supported in this browser');
+    throw new Error('当前浏览器不支持文件系统访问 API');
   }
 
   if (!window.showDirectoryPicker) {
-    throw new Error('Directory picker not available');
+    throw new Error('目录选择器不可用');
   }
 
   try {
@@ -617,7 +662,7 @@ export const requestAutoSaveDirectory = async (): Promise<FileSystemDirectoryHan
     return dirHandle;
   } catch (error) {
     if ((error as Error).name === 'AbortError') {
-      throw new Error('Directory selection cancelled');
+      throw new Error('已取消选择目录');
     }
     throw error;
   }
@@ -636,7 +681,7 @@ export const saveDirectoryHandle = async (
     log.info('Directory handle saved to IndexedDB');
   } catch (error) {
     log.error('Failed to save directory handle', { error });
-    throw new Error(`Failed to save directory handle: ${error}`);
+    throw new Error(`保存目录句柄失败：${error}`);
   }
 };
 

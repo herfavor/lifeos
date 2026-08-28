@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const draculaTheme: ThemeDefinition = {
   id: 'dracula',
   name: 'Dracula',
-  description: 'Dark purple with vibrant neon accents',
+  description: '深紫色搭配鲜亮霓虹点缀',
   category: 'tech',
   preview: {
     primary: '#BD93F9',

@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   quality:
-    if: github.repository == 'travisjneuman/neumanos'
+    if: github.repository == 'herfavor/lifeos'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -36,7 +36,7 @@ jobs:
 
   browser:
     name: Browser tests (${{ matrix.lane.name }}, shard ${{ matrix.shard }}/4)
-    if: github.repository == 'travisjneuman/neumanos'
+    if: github.repository == 'herfavor/lifeos'
     needs: quality
     runs-on: ubuntu-24.04
     timeout-minutes: 120
@@ -86,7 +86,7 @@ jobs:
           retention-days: 3
 
   critical-coverage-readiness:
-    if: always() && github.repository == 'travisjneuman/neumanos'
+    if: always() && github.repository == 'herfavor/lifeos'
     needs:
       - quality
       - browser

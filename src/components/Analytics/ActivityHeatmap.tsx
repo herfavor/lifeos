@@ -56,10 +56,10 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({ days: initialD
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Activity Heatmap
+            活动热力图
           </h3>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            {totalEvents} event{totalEvents !== 1 ? 's' : ''} in the last {days} days
+            过去 {days} 天共 {totalEvents} 个事件
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({ days: initialD
                   : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
               }`}
             >
-              {d === 30 ? '30d' : d === 90 ? '90d' : '1y'}
+              {d === 30 ? '30天' : d === 90 ? '90天' : '1年'}
             </button>
           ))}
         </div>
@@ -113,9 +113,9 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({ days: initialD
               transform: 'translateX(-50%)',
             }}
           >
-            <span className="font-medium">{hoveredCell.count} event{hoveredCell.count !== 1 ? 's' : ''}</span>
+            <span className="font-medium">{hoveredCell.count} 个事件</span>
             <span className="text-text-dark-secondary ml-1.5">
-              {new Date(hoveredCell.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              {new Date(hoveredCell.date + 'T00:00:00').toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           </div>
         )}
@@ -123,11 +123,11 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({ days: initialD
 
       {/* Legend */}
       <div className="flex items-center gap-1.5 mt-3 justify-end">
-        <span className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary mr-1">Less</span>
+        <span className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary mr-1">更少</span>
         {INTENSITY_CLASSES.map((cls, i) => (
           <div key={i} className={`w-3 h-3 rounded-sm ${cls}`} />
         ))}
-        <span className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary ml-1">More</span>
+        <span className="text-[10px] text-text-light-tertiary dark:text-text-dark-tertiary ml-1">更多</span>
       </div>
     </div>
   );

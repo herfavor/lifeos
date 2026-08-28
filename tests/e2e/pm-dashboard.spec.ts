@@ -18,13 +18,13 @@ test.describe('PM Dashboard', () => {
 
   test('shows project stats', async ({ page }) => {
     // Should show stat cards: Total Tasks, Completed, In Progress, Overdue
-    const statsSection = page.getByText(/Total|Completed|In Progress|Overdue/i).first();
+    const statsSection = page.getByText(/任务总数|已完成|进行中|逾期/i).first();
     await expect(statsSection).toBeVisible();
   });
 
   test('has project selector', async ({ page }) => {
     // Project selector dropdown
-    const projectSelector = page.getByText(/All Projects|Select Project/i).first();
+    const projectSelector = page.getByText(/全部项目|选择项目/i).first();
     if (await projectSelector.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(projectSelector).toBeVisible();
     }

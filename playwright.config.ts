@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright E2E Test Configuration for NeumanOS
+ * Playwright E2E Test Configuration for LifeOS
  *
  * This configuration is hosted-CI-only. It must not run on TJNMPM or target
  * a remote/production deployment.
@@ -16,7 +16,7 @@ const isApprovedHostedRunner =
   process.env.RUNNER_ENVIRONMENT === 'github-hosted' &&
   process.env.RUNNER_OS === 'Linux' &&
   process.env.GITHUB_EVENT_NAME === 'workflow_dispatch' &&
-  process.env.GITHUB_REPOSITORY === 'travisjneuman/neumanos' &&
+  process.env.GITHUB_REPOSITORY === 'herfavor/lifeos' &&
   process.env.GITHUB_WORKSPACE?.startsWith('/home/runner/work/');
 
 if (!isApprovedHostedRunner) {

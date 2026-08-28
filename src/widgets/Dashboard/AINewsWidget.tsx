@@ -86,7 +86,7 @@ export const AINewsWidget: React.FC = () => {
         if (import.meta.env.DEV) console.log('arXiv API failed, retrying...');
         setTimeout(() => fetchPapers(1), 1000);
       } else {
-        setError('Failed to load papers. Please try refreshing.');
+        setError('加载论文失败，请尝试刷新。');
       }
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export const AINewsWidget: React.FC = () => {
   }, [fetchPapers]);
 
   return (
-    <BaseWidget title="AI Research" icon="🤖" loading={loading} error={error} onRefresh={fetchPapers}>
+    <BaseWidget title="AI 研究" icon="🤖" loading={loading} error={error} onRefresh={fetchPapers}>
       <div className="space-y-3">
         {papers.map((paper, idx) => (
           <a
@@ -113,7 +113,7 @@ export const AINewsWidget: React.FC = () => {
             </h3>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mb-1">
               {paper.authors.join(', ')}
-              {paper.authors.length === 3 && ' et al.'}
+              {paper.authors.length === 3 && ' 等'}
             </p>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary line-clamp-2">
               {paper.summary}

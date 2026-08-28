@@ -25,11 +25,11 @@ const METADATA: AIProviderMetadata = {
   id: 'xai',
   name: 'xAI Grok',
   displayName: 'xAI Grok',
-  description: 'Grok models from xAI (Elon Musk). Real-time information and unique personality.',
+  description: '来自 xAI（Elon Musk）的 Grok 模型。提供实时信息和独特的个性。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://console.x.ai',
-  apiKeyLabel: 'xAI API Key',
+  apiKeyLabel: 'xAI API 密钥',
 
   hasFreeModels: false, // No permanent free tier
   freeModelIds: [],
@@ -59,7 +59,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 5.0, // Estimated, check current pricing
     requiresApiKey: true,
     useCases: ['chat', 'analysis', 'real-time-info'],
-    description: 'xAI\'s Grok model with unique personality and real-time information access.',
+    description: 'xAI 的 Grok 模型，具有独特的个性和实时信息访问能力。',
   },
   {
     id: 'grok-vision-beta',
@@ -75,7 +75,7 @@ const PAID_MODELS: AIModel[] = [
     costPer1MTokens: 5.0, // Estimated, check current pricing
     requiresApiKey: true,
     useCases: ['chat', 'multimodal', 'analysis'],
-    description: 'Grok with vision capabilities for image understanding.',
+    description: '具备视觉能力的 Grok，可用于图像理解。',
   },
 ];
 
@@ -172,7 +172,7 @@ export class XAIProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'xAI provider not configured. Please add your xAI API key.',
+        'xAI 提供商尚未配置。请添加你的 xAI API 密钥。',
         'xai'
       );
     }
@@ -261,38 +261,38 @@ export class XAIProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('Incorrect API key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid xAI API key. Please check your API key and try again.',
+          'xAI API 密钥无效。请检查你的 API 密钥后重试。',
           'xai'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'xAI rate limit exceeded. Please wait a moment and try again.',
+          '已超出 xAI 速率限制。请稍等片刻后重试。',
           'xai',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('quota') || err?.message?.includes('billing')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'xAI quota exceeded or billing issue. Please check your account.',
+          'xAI 配额已用尽或存在计费问题。请检查你的账户。',
           'xai'
         );
       } else if (err?.status === 404 || err?.message?.includes('model')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on xAI.`,
+          `xAI 上未找到模型“${model}”。`,
           'xai'
         );
       } else if (err?.message?.includes('CORS') || err?.message?.includes('fetch')) {
         throw new ProviderError(
           ProviderErrorType.NETWORK_ERROR,
-          'xAI requires backend proxy for browser use. CORS error encountered.',
+          'xAI 在浏览器中使用需要后端代理。遇到 CORS 错误。',
           'xai'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `xAI error: ${err?.message || 'Unknown error occurred'}`,
+          `xAI 错误：${err?.message || '发生未知错误'}`,
           'xai'
         );
       }

@@ -51,7 +51,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Pivot Table
+            数据透视表
           </h3>
           <button
             onClick={onClose}
@@ -66,7 +66,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                Row Field
+                行字段
               </label>
               <select
                 value={config.rowField}
@@ -75,14 +75,14 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
               >
                 {Array.from({ length: colCount }, (_, c) => (
                   <option key={c} value={c}>
-                    Column {getColumnLabel(c)}
+                    列 {getColumnLabel(c)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                Value Field
+                值字段
               </label>
               <select
                 value={config.valueField}
@@ -91,14 +91,14 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
               >
                 {Array.from({ length: colCount }, (_, c) => (
                   <option key={c} value={c}>
-                    Column {getColumnLabel(c)}
+                    列 {getColumnLabel(c)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                Aggregation
+                聚合方式
               </label>
               <select
                 value={config.aggregation}
@@ -110,11 +110,11 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
                 }
                 className={inputClass + ' w-full'}
               >
-                <option value="sum">Sum</option>
-                <option value="count">Count</option>
-                <option value="avg">Average</option>
-                <option value="min">Min</option>
-                <option value="max">Max</option>
+                <option value="sum">求和</option>
+                <option value="count">计数</option>
+                <option value="avg">平均值</option>
+                <option value="min">最小值</option>
+                <option value="max">最大值</option>
               </select>
             </div>
             <div>
@@ -130,7 +130,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
                   }}
                   className="rounded"
                 />
-                Column Field (cross-tab)
+                列字段（交叉表）
               </label>
               {useColumnField && (
                 <select
@@ -140,7 +140,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
                 >
                   {Array.from({ length: colCount }, (_, c) => (
                     <option key={c} value={c}>
-                      Column {getColumnLabel(c)}
+                      列 {getColumnLabel(c)}
                     </option>
                   ))}
                 </select>
@@ -152,7 +152,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
         {/* Preview */}
         <div className="flex-1 overflow-auto p-4">
           <p className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            Preview ({pivotResult.rows.length} rows)
+            预览（{pivotResult.rows.length} 行）
           </p>
           {pivotResult.rows.length > 0 ? (
             <div className="overflow-auto max-h-[300px] border border-border-light dark:border-border-dark rounded">
@@ -190,7 +190,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
             </div>
           ) : (
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary italic">
-              No data to pivot.
+              没有可透视的数据。
             </p>
           )}
         </div>
@@ -201,7 +201,7 @@ export function SpreadsheetPivotTable({ data, onClose }: SpreadsheetPivotTablePr
             onClick={onClose}
             className="px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-alt dark:hover:bg-surface-dark"
           >
-            Close
+            关闭
           </button>
         </div>
       </div>

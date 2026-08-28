@@ -45,10 +45,10 @@ export default defineConfig({
         'images/favicon/site.webmanifest'
       ],
       manifest: {
-        name: 'NeumanOS - Personal Command Center',
-        short_name: 'NeumanOS',
-        description: 'Your Personal Command Center for productivity and organization',
-        theme_color: '#3b82f6',
+        name: 'LifeOS — 本地优先的个人管理平台',
+        short_name: 'LifeOS',
+        description: 'A local-first personal dashboard and management workspace.',
+        theme_color: '#4F46E5',
         background_color: '#0a0e27',
         display: 'standalone',
         start_url: '/',

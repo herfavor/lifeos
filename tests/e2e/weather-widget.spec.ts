@@ -15,7 +15,7 @@ test.describe('Weather Widget', () => {
   });
 
   test('dashboard may show weather widget', async ({ page }) => {
-    const weather = page.getByText(/weather|temperature|forecast|°/i).first();
+    const weather = page.getByText(/天气|温度|预报|°/i).first();
     if (await weather.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(weather).toBeVisible();
     }

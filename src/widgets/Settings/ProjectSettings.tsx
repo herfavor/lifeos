@@ -219,13 +219,13 @@ export const ProjectSettings: React.FC = () => {
           </span>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
             <button
               type="button"
               onClick={() => handleEdit(project)}
               className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-              title="Edit project"
-              aria-label="Edit project"
+              title="编辑项目"
+              aria-label="编辑项目"
             >
               <Pencil className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -233,8 +233,8 @@ export const ProjectSettings: React.FC = () => {
               type="button"
               onClick={() => handleArchive(project.id)}
               className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-              title="Archive project"
-              aria-label="Archive project"
+              title="归档项目"
+              aria-label="归档项目"
             >
               <Archive className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
             </button>
@@ -259,10 +259,10 @@ export const ProjectSettings: React.FC = () => {
           <div>
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
               <FolderTree className="w-5 h-5" />
-              Projects
+              项目
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-              Create and organize projects to filter content across the platform.
+              创建并组织项目，以便在平台各处筛选内容。
             </p>
           </div>
           {!isCreating && !editingId && (
@@ -272,7 +272,7 @@ export const ProjectSettings: React.FC = () => {
               className="flex items-center gap-2 px-3 py-1.5 rounded-button bg-gradient-button-primary hover:shadow-glow-magenta text-white text-sm font-medium transition-all duration-standard ease-smooth"
             >
               <Plus className="w-4 h-4" />
-              New Project
+              新建项目
             </button>
           )}
         </div>
@@ -281,20 +281,20 @@ export const ProjectSettings: React.FC = () => {
         {(isCreating || editingId) && (
           <div className="mb-4 p-4 rounded-lg bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark">
             <h3 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-3">
-              {isCreating ? 'Create New Project' : 'Edit Project'}
+              {isCreating ? '创建新项目' : '编辑项目'}
             </h3>
 
             <div className="space-y-3">
               {/* Name */}
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Project Name *
+                  项目名称 *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g., Work, Personal, Client A"
+                  placeholder="例如：工作、个人、客户 A"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                   autoFocus
                 />
@@ -303,7 +303,7 @@ export const ProjectSettings: React.FC = () => {
               {/* Color */}
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Color
+                  颜色
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {PROJECT_COLORS.map((color) => (
@@ -325,7 +325,7 @@ export const ProjectSettings: React.FC = () => {
               {/* Icon */}
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Icon (optional)
+                  图标（可选）
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {PROJECT_ICONS.map((icon) => (
@@ -348,14 +348,14 @@ export const ProjectSettings: React.FC = () => {
               {/* Parent */}
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Parent Project (optional)
+                  上级项目（可选）
                 </label>
                 <select
                   value={formData.parentId || ''}
                   onChange={(e) => setFormData({ ...formData, parentId: e.target.value || null })}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                 >
-                  <option value="">None (Root Project)</option>
+                  <option value="">无（根项目）</option>
                   {getParentOptions().map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -367,12 +367,12 @@ export const ProjectSettings: React.FC = () => {
               {/* Description */}
               <div>
                 <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-                  Description (optional)
+                  描述（可选）
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief description of this project..."
+                  placeholder="此项目的简要描述..."
                   rows={2}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue focus:border-transparent resize-none"
                 />
@@ -385,7 +385,7 @@ export const ProjectSettings: React.FC = () => {
                   onClick={handleCancel}
                   className="px-3 py-1.5 text-sm rounded-button border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 >
-                  Cancel
+                  取消
                 </button>
                 <button
                   type="button"
@@ -393,7 +393,7 @@ export const ProjectSettings: React.FC = () => {
                   disabled={!formData.name.trim()}
                   className="px-3 py-1.5 text-sm rounded-button bg-gradient-button-primary hover:shadow-glow-magenta text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isCreating ? 'Create' : 'Save'}
+                  {isCreating ? '创建' : '保存'}
                 </button>
               </div>
             </div>
@@ -405,10 +405,10 @@ export const ProjectSettings: React.FC = () => {
           <div className="text-center py-8">
             <FolderTree className="w-12 h-12 mx-auto mb-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-2">
-              No projects yet
+              暂无项目
             </p>
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-              Create your first project to start organizing your work
+              创建你的第一个项目，开始整理你的工作
             </p>
           </div>
         ) : (
@@ -431,7 +431,7 @@ export const ProjectSettings: React.FC = () => {
                 <ChevronRight className="w-4 h-4" />
               )}
               <Archive className="w-4 h-4" />
-              Archived ({archivedProjects.length})
+              已归档（{archivedProjects.length}）
             </button>
 
             {showArchived && (
@@ -454,8 +454,8 @@ export const ProjectSettings: React.FC = () => {
                         type="button"
                         onClick={() => handleUnarchive(project.id)}
                         className="p-1.5 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded transition-colors"
-                        title="Restore project"
-                        aria-label="Restore project"
+                        title="恢复项目"
+                        aria-label="恢复项目"
                       >
                         <ArchiveRestore className="w-3.5 h-3.5 text-text-light-secondary dark:text-text-dark-secondary" />
                       </button>
@@ -466,14 +466,14 @@ export const ProjectSettings: React.FC = () => {
                             onClick={() => handleDelete(project.id)}
                             className="px-2 py-0.5 text-xs bg-accent-red text-white rounded hover:bg-accent-red-hover transition-colors"
                           >
-                            Delete
+                            删除
                           </button>
                           <button
                             type="button"
                             onClick={() => setDeleteConfirmId(null)}
                             className="px-2 py-0.5 text-xs border border-border-light dark:border-border-dark rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                           >
-                            Cancel
+                            取消
                           </button>
                         </div>
                       ) : (
@@ -481,7 +481,7 @@ export const ProjectSettings: React.FC = () => {
                           type="button"
                           onClick={() => setDeleteConfirmId(project.id)}
                           className="p-1.5 hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded transition-colors"
-                          title="Delete permanently"
+                          title="永久删除"
                         >
                           <Trash2 className="w-3.5 h-3.5 text-accent-red" />
                         </button>
@@ -498,13 +498,13 @@ export const ProjectSettings: React.FC = () => {
       {/* Info Card */}
       <div className="bento-card p-4 bg-accent-blue/10 dark:bg-accent-blue/20 border-accent-blue/20 dark:border-accent-blue/30">
         <h3 className="text-sm font-medium text-accent-blue dark:text-accent-blue mb-2">
-          How Projects Work
+          项目的工作原理
         </h3>
         <ul className="text-xs text-text-light-secondary dark:text-text-dark-secondary space-y-1 list-disc list-inside">
-          <li>Use the project filter in the header to focus on specific projects</li>
-          <li>Assign items (tasks, notes, events, etc.) to one or more projects</li>
-          <li>Create hierarchical projects for complex organization (e.g., Work &gt; Client A)</li>
-          <li>Archived projects are hidden from the filter but preserved</li>
+          <li>使用顶部的项目筛选器专注于特定项目</li>
+          <li>将内容（任务、笔记、事件等）分配给一个或多个项目</li>
+          <li>创建层级项目以实现复杂组织（例如：工作 &gt; 客户 A）</li>
+          <li>已归档项目会从筛选中隐藏，但会被保留</li>
         </ul>
       </div>
     </div>

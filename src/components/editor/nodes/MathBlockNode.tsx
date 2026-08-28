@@ -64,7 +64,7 @@ function KaTeXRenderer({ source }: { source: string }) {
         setError(null);
       } catch (err) {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Failed to render math');
+        setError(err instanceof Error ? err.message : '公式渲染失败');
         setHtml('');
       }
     }
@@ -173,7 +173,7 @@ function MathBlockComponent({
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
         title="Remove math block"
       >
         ✕

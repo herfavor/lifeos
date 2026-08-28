@@ -25,11 +25,11 @@ const METADATA: AIProviderMetadata = {
   id: 'deepseek',
   name: 'DeepSeek',
   displayName: 'DeepSeek',
-  description: 'High-quality AI models with excellent reasoning and coding capabilities at competitive prices.',
+  description: '推理和编码能力出色、价格具有竞争力的高质量 AI 模型。',
 
   requiresApiKey: true,
   apiKeyUrl: 'https://platform.deepseek.com/api_keys',
-  apiKeyLabel: 'DeepSeek API Key',
+  apiKeyLabel: 'DeepSeek API 密钥',
 
   hasFreeModels: false,
   freeModelIds: [],
@@ -59,7 +59,7 @@ const MODELS: AIModel[] = [
     costPer1MTokens: 0.28, // Output price, input is ~$0.14
     requiresApiKey: true,
     useCases: ['chat', 'reasoning', 'analysis', 'creative'],
-    description: 'DeepSeek-V3: Flagship model rivaling GPT-4 with excellent reasoning.',
+    description: 'DeepSeek-V3：旗舰模型，推理能力出色，可与 GPT-4 媲美。',
   },
   {
     id: 'deepseek-coder',
@@ -74,7 +74,7 @@ const MODELS: AIModel[] = [
     costPer1MTokens: 0.28,
     requiresApiKey: true,
     useCases: ['code', 'debugging', 'refactoring', 'explanation'],
-    description: 'DeepSeek-Coder-V2: Specialized for code generation and understanding.',
+    description: 'DeepSeek-Coder-V2：专为代码生成和理解而设计。',
   },
   {
     id: 'deepseek-reasoner',
@@ -89,7 +89,7 @@ const MODELS: AIModel[] = [
     costPer1MTokens: 2.19, // R1 is more expensive
     requiresApiKey: true,
     useCases: ['reasoning', 'math', 'logic', 'analysis'],
-    description: 'DeepSeek-R1: Advanced reasoning model for complex problem-solving.',
+    description: 'DeepSeek-R1：用于解决复杂问题的高级推理模型。',
   },
 ];
 
@@ -186,7 +186,7 @@ export class DeepSeekProvider implements AIProvider {
     if (!this.client) {
       throw new ProviderError(
         ProviderErrorType.INVALID_API_KEY,
-        'DeepSeek provider not configured. Please add your DeepSeek API key.',
+        'DeepSeek 提供商尚未配置。请添加你的 DeepSeek API 密钥。',
         'deepseek'
       );
     }
@@ -275,38 +275,38 @@ export class DeepSeekProvider implements AIProvider {
       if (err?.status === 401 || err?.message?.includes('Incorrect API key') || err?.message?.includes('invalid_api_key')) {
         throw new ProviderError(
           ProviderErrorType.INVALID_API_KEY,
-          'Invalid DeepSeek API key. Please check your API key and try again.',
+          'DeepSeek API 密钥无效。请检查你的 API 密钥后重试。',
           'deepseek'
         );
       } else if (err?.status === 429 || err?.message?.includes('rate limit')) {
         throw new ProviderError(
           ProviderErrorType.RATE_LIMIT,
-          'DeepSeek rate limit exceeded. Please wait a moment and try again.',
+          '已超出 DeepSeek 速率限制。请稍等片刻后重试。',
           'deepseek',
           true // retryable
         );
       } else if (err?.status === 402 || err?.message?.includes('quota') || err?.message?.includes('insufficient_balance')) {
         throw new ProviderError(
           ProviderErrorType.QUOTA_EXCEEDED,
-          'DeepSeek quota exceeded or insufficient balance. Please check your account.',
+          'DeepSeek 配额已用尽或余额不足。请检查你的账户。',
           'deepseek'
         );
       } else if (err?.status === 404 || err?.message?.includes('model')) {
         throw new ProviderError(
           ProviderErrorType.MODEL_NOT_FOUND,
-          `Model "${model}" not found on DeepSeek.`,
+          `DeepSeek 上未找到模型“${model}”。`,
           'deepseek'
         );
       } else if (err?.message?.includes('CORS') || err?.message?.includes('fetch')) {
         throw new ProviderError(
           ProviderErrorType.NETWORK_ERROR,
-          'DeepSeek requires backend proxy for browser use. CORS error encountered.',
+          'DeepSeek 在浏览器中使用需要后端代理。遇到 CORS 错误。',
           'deepseek'
         );
       } else {
         throw new ProviderError(
           ProviderErrorType.UNKNOWN,
-          `DeepSeek error: ${err?.message || 'Unknown error occurred'}`,
+          `DeepSeek 错误：${err?.message || '发生未知错误'}`,
           'deepseek'
         );
       }

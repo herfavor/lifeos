@@ -6,7 +6,7 @@
  * per-module exports (Markdown, CSV, ICS); and automated backups.
  */
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload,
@@ -19,9 +19,7 @@ import {
   BarChart3,
   Check,
   AlertTriangle,
-  HardDrive,
   RefreshCw,
-  Trash2,
   Archive,
 } from 'lucide-react';
 import {
@@ -48,17 +46,6 @@ import {
   exportTimeEntriesAsCSV,
   exportHabitsAsCSV,
 } from '../../services/export/moduleExporter';
-import {
-  loadAutoBackupConfig,
-  saveAutoBackupConfig,
-  selectBackupFolder,
-  getBackupFolderName,
-  runAutoBackup,
-  clearBackupFolder,
-  isFileSystemAccessSupported,
-  downloadBackup,
-  type AutoBackupConfig,
-} from '../../services/backup/autoBackup';
 import { useNotesStore } from '../../stores/useNotesStore';
 import { useFoldersStore } from '../../stores/useFoldersStore';
 import { useKanbanStore } from '../../stores/useKanbanStore';
@@ -102,11 +89,6 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
   // Export state
   const [isExporting, setIsExporting] = useState<string | null>(null);
 
-  // Backup state
-  const [backupConfig, setBackupConfig] = useState<AutoBackupConfig | null>(null);
-  const [backupFolderName, setBackupFolderName] = useState<string | null>(null);
-  const [isBackingUp, setIsBackingUp] = useState(false);
-
   // File input refs
   const notionFileRef = useRef<HTMLInputElement>(null);
   const obsidianFolderRef = useRef<HTMLInputElement>(null);
@@ -118,12 +100,6 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
   const createFolder = useFoldersStore((s) => s.createFolder);
   const folders = useFoldersStore((s) => s.folders);
   const addTask = useKanbanStore((s) => s.addTask);
-
-  // Load backup config on mount
-  useEffect(() => {
-    loadAutoBackupConfig().then(setBackupConfig);
-    getBackupFolderName().then(setBackupFolderName);
-  }, []);
 
   const resetImport = useCallback(() => {
     setImportSource(null);
@@ -168,7 +144,7 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('preview');
     } catch (err) {
       log.error('Notion import parsing failed', { error: err });
-      onMessage({ type: 'error', text: `Failed to parse Notion export: ${err}` });
+      onMessage({ type: 'error', text: `无法解析 Notion 导出内容：${err}` });
       setImportStage('idle');
       setImportSource(null);
     }
@@ -256,13 +232,13 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('complete');
       onMessage({
         type: 'success',
-        text: `Imported ${noteEntries.length} notes and ${taskEntries.length} tasks from Notion.`,
+        text: `已从 Notion 导入 ${noteEntries.length} 条笔记和 ${taskEntries.length} 个任务。`,
       });
     } catch (err) {
       log.error('Notion import failed during creation', { error: err });
       onMessage({
         type: 'error',
-        text: `Import partially failed: ${count} items imported. Error: ${err}`,
+        text: `导入部分失败：已导入 ${count} 个项目。错误：${err}`,
       });
       setImportStage('complete');
     }
@@ -291,7 +267,7 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('preview');
     } catch (err) {
       log.error('Obsidian import parsing failed', { error: err });
-      onMessage({ type: 'error', text: `Failed to parse Obsidian vault: ${err}` });
+      onMessage({ type: 'error', text: `无法解析 Obsidian 库：${err}` });
       setImportStage('idle');
       setImportSource(null);
     }
@@ -352,13 +328,13 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('complete');
       onMessage({
         type: 'success',
-        text: `Imported ${count} notes, ${folderPaths.length} folders, ${linkedNotesMap.size} wiki-links remapped from Obsidian.`,
+        text: `已从 Obsidian 导入 ${count} 条笔记、${folderPaths.length} 个文件夹，并重新映射了 ${linkedNotesMap.size} 个 Wiki 链接。`,
       });
     } catch (err) {
       log.error('Obsidian import failed during creation', { error: err });
       onMessage({
         type: 'error',
-        text: `Import partially failed: ${count} notes imported. Error: ${err}`,
+        text: `导入部分失败：已导入 ${count} 条笔记。错误：${err}`,
       });
       setImportStage('complete');
     }
@@ -383,7 +359,7 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('preview');
     } catch (err) {
       log.error('Todoist import parsing failed', { error: err });
-      onMessage({ type: 'error', text: `Failed to parse Todoist CSV: ${err}` });
+      onMessage({ type: 'error', text: `无法解析 Todoist CSV：${err}` });
       setImportStage('idle');
       setImportSource(null);
     }
@@ -414,13 +390,13 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setImportStage('complete');
       onMessage({
         type: 'success',
-        text: `Imported ${count} tasks from Todoist.`,
+        text: `已从 Todoist 导入 ${count} 个任务。`,
       });
     } catch (err) {
       log.error('Todoist import failed during creation', { error: err });
       onMessage({
         type: 'error',
-        text: `Import partially failed: ${count} of ${todoistTasks.length} tasks imported. Error: ${err}`,
+        text: `导入部分失败：已导入 ${todoistTasks.length} 个任务中的 ${count} 个。错误：${err}`,
       });
       setImportStage('complete');
     }
@@ -432,68 +408,16 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       setIsExporting(type);
       onMessage(null);
       const result = await exportFn();
-      onMessage({ type: 'success', text: `Exported to ${result.filename}` });
+      onMessage({ type: 'success', text: `已导出到 ${result.filename}` });
     } catch (err) {
       log.error(`Export failed: ${type}`, { error: err });
-      onMessage({ type: 'error', text: `Export failed: ${err}` });
+      onMessage({ type: 'error', text: `导出失败：${err}` });
     } finally {
       setIsExporting(null);
     }
   };
 
   // --- BACKUP HANDLERS ---
-  const handleSelectBackupFolder = async () => {
-    const selected = await selectBackupFolder();
-    if (selected) {
-      const name = await getBackupFolderName();
-      setBackupFolderName(name);
-      onMessage({ type: 'success', text: `Backup folder set to: ${name}` });
-    }
-  };
-
-  const handleRunBackup = async () => {
-    setIsBackingUp(true);
-    try {
-      if (isFileSystemAccessSupported() && backupFolderName) {
-        const filename = await runAutoBackup();
-        if (filename) {
-          onMessage({ type: 'success', text: `Backup saved: ${filename}` });
-          const config = await loadAutoBackupConfig();
-          setBackupConfig(config);
-        } else {
-          onMessage({ type: 'warning', text: 'Backup failed. You may need to re-select the backup folder.' });
-        }
-      } else {
-        const filename = await downloadBackup();
-        if (filename) {
-          onMessage({ type: 'success', text: `Backup downloaded: ${filename}` });
-        }
-      }
-    } catch (err) {
-      onMessage({ type: 'error', text: `Backup failed: ${err}` });
-    } finally {
-      setIsBackingUp(false);
-    }
-  };
-
-  const handleClearBackupFolder = async () => {
-    await clearBackupFolder();
-    setBackupFolderName(null);
-    if (backupConfig) {
-      const updated = { ...backupConfig, enabled: false };
-      await saveAutoBackupConfig(updated);
-      setBackupConfig(updated);
-    }
-    onMessage({ type: 'info', text: 'Backup folder cleared.' });
-  };
-
-  const handleUpdateBackupConfig = async (updates: Partial<AutoBackupConfig>) => {
-    if (!backupConfig) return;
-    const updated = { ...backupConfig, ...updates };
-    await saveAutoBackupConfig(updated);
-    setBackupConfig(updated);
-  };
-
   // Determine total items for import
   const totalImportItems = importSource === 'notion'
     ? notionEntries.length
@@ -502,29 +426,29 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
       : todoistTasks.length;
 
   return (
-    <div className="space-y-6">
+    <div className="divide-y divide-border-light dark:divide-border-dark">
       {/* IMPORT SECTION */}
-      <div className="bento-card p-6">
+      <section className="py-6 first:pt-0">
         <div className="flex items-center gap-3 mb-1">
           <Upload className="w-5 h-5 text-accent-primary" />
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Import Data
+          <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
+            导入数据
           </h2>
         </div>
-        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-          Import notes and tasks from other productivity tools.
+        <p className="mb-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          从其他生产力工具导入笔记和任务。
         </p>
 
         {/* Import Source Selection (when idle) */}
         {importStage === 'idle' && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-2">
             {/* Notion Import */}
-            <label className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border-light dark:border-border-dark hover:border-accent-primary/50 cursor-pointer transition-colors text-center">
-              <Archive className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary" />
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-border-light px-3 py-3 text-left transition-colors hover:border-accent-primary/40 hover:bg-surface-light-elevated dark:border-border-dark dark:hover:bg-surface-dark-elevated">
+              <Archive className="h-5 w-5 shrink-0 text-text-light-tertiary dark:text-text-dark-tertiary" />
               <div>
                 <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">Notion</p>
-                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                  ZIP or CSV export
+                <p className="mt-0.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                  ZIP 或 CSV 导出
                 </p>
               </div>
               <input
@@ -538,12 +462,12 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
             </label>
 
             {/* Obsidian Import */}
-            <label className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border-light dark:border-border-dark hover:border-accent-primary/50 cursor-pointer transition-colors text-center">
-              <FolderOpen className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary" />
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-border-light px-3 py-3 text-left transition-colors hover:border-accent-primary/40 hover:bg-surface-light-elevated dark:border-border-dark dark:hover:bg-surface-dark-elevated">
+              <FolderOpen className="h-5 w-5 shrink-0 text-text-light-tertiary dark:text-text-dark-tertiary" />
               <div>
                 <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">Obsidian</p>
-                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                  Vault folder (.md files)
+                <p className="mt-0.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                  库文件夹（.md 文件）
                 </p>
               </div>
               <input
@@ -558,12 +482,12 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
             </label>
 
             {/* Todoist Import */}
-            <label className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border-light dark:border-border-dark hover:border-accent-primary/50 cursor-pointer transition-colors text-center">
-              <CheckSquare className="w-8 h-8 text-text-light-tertiary dark:text-text-dark-tertiary" />
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-border-light px-3 py-3 text-left transition-colors hover:border-accent-primary/40 hover:bg-surface-light-elevated dark:border-border-dark dark:hover:bg-surface-dark-elevated">
+              <CheckSquare className="h-5 w-5 shrink-0 text-text-light-tertiary dark:text-text-dark-tertiary" />
               <div>
                 <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">Todoist</p>
-                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                  CSV export
+                <p className="mt-0.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
+                  CSV 导出
                 </p>
               </div>
               <input
@@ -588,7 +512,7 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
               />
             </div>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Parsing {importProgress.current} of {importProgress.total} files...
+              正在解析文件 {importProgress.current} / {importProgress.total}…
             </p>
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1 truncate">
               {importProgress.file}
@@ -607,61 +531,61 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
               {/* Notion Preview */}
               {importSource === 'notion' && (
                 <ImportPreview
-                  title="Notion Import Preview"
+                  title="Notion 导入预览"
                   stats={[
-                    { label: 'Notes', value: notionEntries.filter((e) => e.type === 'note').length, icon: FileText },
-                    { label: 'Tasks', value: notionEntries.filter((e) => e.type === 'task').length, icon: CheckSquare },
+                    { label: '笔记', value: notionEntries.filter((e) => e.type === 'note').length, icon: FileText },
+                    { label: '任务', value: notionEntries.filter((e) => e.type === 'task').length, icon: CheckSquare },
                   ]}
                   errors={notionErrors}
                   samples={notionEntries.slice(0, 5).map((e) => ({
                     title: e.title,
-                    subtitle: `${e.type} ${e.tags.length > 0 ? `| Tags: ${e.tags.join(', ')}` : ''}`,
+                    subtitle: `${e.type} ${e.tags.length > 0 ? `| 标签：${e.tags.join(', ')}` : ''}`,
                   }))}
                   totalItems={notionEntries.length}
                   onConfirm={handleNotionConfirmImport}
                   onCancel={resetImport}
-                  confirmLabel={`Import ${notionEntries.length} Items`}
+                  confirmLabel={`导入 ${notionEntries.length} 个项目`}
                 />
               )}
 
               {/* Obsidian Preview */}
               {importSource === 'obsidian' && (
                 <ImportPreview
-                  title="Obsidian Import Preview"
+                  title="Obsidian 导入预览"
                   stats={[
-                    { label: 'Notes', value: obsidianNotes.length, icon: FileText },
-                    { label: 'Wiki Links', value: obsidianStats.wikiLinks, icon: FileText },
-                    { label: 'Attachments Skipped', value: obsidianStats.attachmentsSkipped, icon: FileText },
+                    { label: '笔记', value: obsidianNotes.length, icon: FileText },
+                    { label: 'Wiki 链接', value: obsidianStats.wikiLinks, icon: FileText },
+                    { label: '跳过的附件', value: obsidianStats.attachmentsSkipped, icon: FileText },
                   ]}
                   errors={obsidianErrors}
                   samples={obsidianNotes.slice(0, 5).map((n) => ({
                     title: n.title,
-                    subtitle: `${n.folderPath || 'Root'} ${n.tags.length > 0 ? `| Tags: ${n.tags.join(', ')}` : ''}`,
+                    subtitle: `${n.folderPath || '根目录'} ${n.tags.length > 0 ? `| 标签：${n.tags.join(', ')}` : ''}`,
                   }))}
                   totalItems={obsidianNotes.length}
                   onConfirm={handleObsidianConfirmImport}
                   onCancel={resetImport}
-                  confirmLabel={`Import ${obsidianNotes.length} Notes`}
+                  confirmLabel={`导入 ${obsidianNotes.length} 条笔记`}
                 />
               )}
 
               {/* Todoist Preview */}
               {importSource === 'todoist' && (
                 <ImportPreview
-                  title="Todoist Import Preview"
+                  title="Todoist 导入预览"
                   stats={[
-                    { label: 'Tasks', value: todoistTasks.length, icon: CheckSquare },
-                    { label: 'Projects', value: todoistProjects.length, icon: FolderOpen },
+                    { label: '任务', value: todoistTasks.length, icon: CheckSquare },
+                    { label: '项目', value: todoistProjects.length, icon: FolderOpen },
                   ]}
                   errors={todoistErrors}
                   samples={todoistTasks.slice(0, 5).map((t) => ({
                     title: t.title,
-                    subtitle: `${t.priority} priority ${t.projectName ? `| ${t.projectName}` : ''} ${t.dueDate ? `| Due: ${t.dueDate}` : ''}`,
+                    subtitle: `${t.priority} 优先级 ${t.projectName ? `| ${t.projectName}` : ''} ${t.dueDate ? `| 截止：${t.dueDate}` : ''}`,
                   }))}
                   totalItems={todoistTasks.length}
                   onConfirm={handleTodoistConfirmImport}
                   onCancel={resetImport}
-                  confirmLabel={`Import ${todoistTasks.length} Tasks`}
+                  confirmLabel={`导入 ${todoistTasks.length} 个任务`}
                 />
               )}
             </motion.div>
@@ -679,7 +603,7 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
               />
             </div>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Creating item {importedCount} of {totalImportItems}...
+              正在创建项目 {importedCount} / {totalImportItems}…
             </p>
           </div>
         )}
@@ -689,195 +613,72 @@ export const ImportExportPanel: React.FC<ImportExportPanelProps> = ({ onMessage 
           <div className="text-center py-8">
             <Check className="w-12 h-12 mx-auto mb-4 text-accent-green" />
             <p className="text-sm text-text-light-primary dark:text-text-dark-primary font-medium mb-2">
-              Import Complete
+              导入完成
             </p>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-              {importedCount} items imported successfully
+              {importedCount} 个项目已成功导入
             </p>
             <button
               onClick={resetImport}
               className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
             >
-              Import More
+              继续导入
             </button>
           </div>
         )}
-      </div>
+      </section>
 
       {/* EXPORT SECTION */}
-      <div className="bento-card p-6">
+      <section className="py-6 first:pt-0">
         <div className="flex items-center gap-3 mb-1">
           <Download className="w-5 h-5 text-accent-primary" />
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Export by Module
+          <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
+            按模块导出
           </h2>
         </div>
-        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-          Export individual modules in standard formats for use with other tools.
+        <p className="mb-4 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          以标准格式导出各个模块，便于在其他工具中使用。
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-2">
           <ExportButton
             icon={FileText}
-            label="Notes"
+            label="笔记"
             format="Markdown ZIP"
             isExporting={isExporting === 'notes'}
             onClick={() => handleExport('notes', exportNotesAsMarkdown)}
           />
           <ExportButton
             icon={CheckSquare}
-            label="Tasks"
+            label="任务"
             format="CSV"
             isExporting={isExporting === 'tasks'}
             onClick={() => handleExport('tasks', () => exportTasksAsCSV())}
           />
           <ExportButton
             icon={Calendar}
-            label="Calendar"
+            label="日历"
             format="ICS"
             isExporting={isExporting === 'calendar'}
             onClick={() => handleExport('calendar', () => exportCalendarAsICS())}
           />
           <ExportButton
             icon={Clock}
-            label="Time Entries"
+            label="时间记录"
             format="CSV"
             isExporting={isExporting === 'time'}
             onClick={() => handleExport('time', () => exportTimeEntriesAsCSV())}
           />
           <ExportButton
             icon={BarChart3}
-            label="Habits"
+            label="习惯"
             format="CSV"
             isExporting={isExporting === 'habits'}
             onClick={() => handleExport('habits', () => exportHabitsAsCSV())}
           />
         </div>
-      </div>
+      </section>
 
-      {/* AUTO BACKUP SECTION */}
-      <div className="bento-card p-6">
-        <div className="flex items-center gap-3 mb-1">
-          <HardDrive className="w-5 h-5 text-accent-primary" />
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Automated Backups
-          </h2>
-        </div>
-        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
-          {isFileSystemAccessSupported()
-            ? 'Automatically save backups to a folder on your computer.'
-            : 'Your browser does not support folder selection. Use the download button for manual backups.'}
-        </p>
-
-        {/* Backup Folder Selection */}
-        {isFileSystemAccessSupported() && (
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex-1 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
-                <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">Backup Folder</p>
-                <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                  {backupFolderName || 'Not configured'}
-                </p>
-              </div>
-              <button
-                onClick={handleSelectBackupFolder}
-                className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
-              >
-                <FolderOpen className="w-4 h-4" />
-              </button>
-              {backupFolderName && (
-                <button
-                  onClick={handleClearBackupFolder}
-                  className="px-4 py-2.5 text-status-error hover:bg-status-error-bg dark:hover:bg-status-error-bg-dark rounded-lg transition-colors"
-                  title="Clear backup folder"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {/* Backup Frequency */}
-            {backupConfig && backupFolderName && (
-              <div className="space-y-4">
-                {/* Enable toggle */}
-                <label className="flex items-center justify-between">
-                  <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                    Enable automatic backups
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={backupConfig.enabled}
-                    onChange={(e) => handleUpdateBackupConfig({ enabled: e.target.checked })}
-                    className="w-4 h-4 rounded border-border-light dark:border-border-dark text-accent-primary focus:ring-accent-primary"
-                  />
-                </label>
-
-                {/* Frequency */}
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    Backup every
-                  </span>
-                  <select
-                    value={backupConfig.frequencyMinutes}
-                    onChange={(e) => handleUpdateBackupConfig({ frequencyMinutes: parseInt(e.target.value, 10) })}
-                    className="px-3 py-1.5 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary"
-                  >
-                    <option value="30">30 minutes</option>
-                    <option value="60">1 hour</option>
-                    <option value="120">2 hours</option>
-                    <option value="360">6 hours</option>
-                    <option value="720">12 hours</option>
-                    <option value="1440">24 hours</option>
-                  </select>
-                </div>
-
-                {/* Max backups */}
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    Keep last
-                  </span>
-                  <select
-                    value={backupConfig.maxBackups}
-                    onChange={(e) => handleUpdateBackupConfig({ maxBackups: parseInt(e.target.value, 10) })}
-                    className="px-3 py-1.5 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary"
-                  >
-                    <option value="3">3 backups</option>
-                    <option value="5">5 backups</option>
-                    <option value="10">10 backups</option>
-                    <option value="20">20 backups</option>
-                  </select>
-                </div>
-
-                {/* Last backup info */}
-                {backupConfig.lastBackupTime && (
-                  <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-                    Last backup: {new Date(backupConfig.lastBackupTime).toLocaleString()}
-                    {backupConfig.lastBackupFilename && ` (${backupConfig.lastBackupFilename})`}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Manual Backup Button */}
-        <button
-          onClick={handleRunBackup}
-          disabled={isBackingUp}
-          className="flex items-center gap-2 px-4 py-2.5 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-        >
-          {isBackingUp ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4" />
-          )}
-          {isBackingUp
-            ? 'Backing up...'
-            : isFileSystemAccessSupported() && backupFolderName
-              ? 'Backup Now'
-              : 'Download Backup'}
-        </button>
-      </div>
     </div>
   );
 };
@@ -940,7 +741,7 @@ const ImportPreview: React.FC<ImportPreviewProps> = ({
     {samples.length > 0 && (
       <div className="mb-6">
         <h4 className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Sample Items (first {Math.min(samples.length, 5)})
+          示例项目（前 {Math.min(samples.length, 5)} 个）
         </h4>
         <div className="space-y-2">
           {samples.map((item, i) => (
@@ -954,7 +755,7 @@ const ImportPreview: React.FC<ImportPreviewProps> = ({
           ))}
           {totalItems > 5 && (
             <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary text-center">
-              ...and {totalItems - 5} more
+              ……还有 {totalItems - 5} 个
             </p>
           )}
         </div>
@@ -975,7 +776,7 @@ const ImportPreview: React.FC<ImportPreviewProps> = ({
         onClick={onCancel}
         className="px-4 py-2.5 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark text-text-light-primary dark:text-text-dark-primary rounded-lg font-medium transition-colors border border-border-light dark:border-border-dark"
       >
-        Cancel
+        取消
       </button>
     </div>
   </div>
@@ -993,7 +794,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ icon: Icon, label, format, 
   <button
     onClick={onClick}
     disabled={isExporting}
-    className="flex items-center gap-3 px-4 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-border-light dark:hover:bg-border-dark rounded-lg transition-colors border border-transparent hover:border-border-light dark:hover:border-border-dark disabled:opacity-50 text-left"
+    className="flex items-center gap-3 rounded-lg border border-border-light bg-surface-light px-3 py-2.5 text-left transition-colors hover:border-accent-primary/40 disabled:opacity-50 dark:border-border-dark dark:bg-surface-dark"
   >
     <Icon className="w-5 h-5 text-accent-primary flex-shrink-0" />
     <div className="flex-1 min-w-0">

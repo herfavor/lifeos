@@ -15,57 +15,57 @@ interface TaskTemplate {
 const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'bug-report',
-    name: 'Bug Report',
+    name: '缺陷报告',
     icon: '🐛',
-    description: 'Track and resolve a bug with structured subtasks',
+    description: '以结构化子任务跟踪并修复缺陷',
     defaultPriority: 'high',
     defaultTags: ['bug'],
-    subtasks: ['Reproduce the issue', 'Investigate root cause', 'Implement fix', 'Write tests', 'Deploy fix'],
+    subtasks: ['复现问题', '调查根本原因', '实施修复', '编写测试', '部署修复'],
   },
   {
     id: 'feature-request',
-    name: 'Feature Request',
+    name: '功能需求',
     icon: '✨',
-    description: 'Plan and implement a new feature end-to-end',
+    description: '端到端规划并实现一个新功能',
     defaultPriority: 'medium',
     defaultTags: ['feature'],
-    subtasks: ['Design & spec', 'Implement core functionality', 'Write tests', 'Update documentation', 'Code review'],
+    subtasks: ['设计与规格说明', '实现核心功能', '编写测试', '更新文档', '代码审查'],
   },
   {
     id: 'sprint-planning',
-    name: 'Sprint Planning',
+    name: '冲刺规划',
     icon: '🏃',
-    description: 'Organize a sprint planning session',
+    description: '组织一次冲刺规划会议',
     defaultPriority: 'high',
     defaultTags: ['planning'],
-    subtasks: ['Review backlog', 'Estimate stories', 'Assign tasks', 'Set sprint goals', 'Create sprint board'],
+    subtasks: ['审查待办列表', '估算故事点', '分配任务', '设定冲刺目标', '创建冲刺看板'],
   },
   {
     id: 'code-review',
-    name: 'Code Review',
+    name: '代码审查',
     icon: '🔍',
-    description: 'Structured code review process',
+    description: '结构化的代码审查流程',
     defaultPriority: 'medium',
     defaultTags: ['review'],
-    subtasks: ['Read PR description', 'Check code changes', 'Run tests locally', 'Leave review comments', 'Approve or request changes'],
+    subtasks: ['阅读 PR 描述', '检查代码变更', '本地运行测试', '留下审查意见', '批准或请求修改'],
   },
   {
     id: 'deployment',
-    name: 'Deployment',
+    name: '部署',
     icon: '🚀',
-    description: 'Deploy to production checklist',
+    description: '部署到生产环境的检查清单',
     defaultPriority: 'high',
     defaultTags: ['deploy'],
-    subtasks: ['Run full test suite', 'Review staging environment', 'Create deployment tag', 'Deploy to production', 'Verify in production', 'Monitor metrics'],
+    subtasks: ['运行完整测试套件', '检查预发布环境', '创建部署标签', '部署到生产环境', '在生产环境验证', '监控指标'],
   },
   {
     id: 'research',
-    name: 'Research Spike',
+    name: '调研冲刺',
     icon: '🔬',
-    description: 'Time-boxed investigation of a technical question',
+    description: '对技术问题进行限时调研',
     defaultPriority: 'medium',
     defaultTags: ['research'],
-    subtasks: ['Define research question', 'Gather sources', 'Evaluate options', 'Write findings summary', 'Present recommendations'],
+    subtasks: ['明确调研问题', '收集资料', '评估方案', '撰写调研总结', '提出建议'],
   },
 ];
 
@@ -121,10 +121,10 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
       >
         <div className="p-4 border-b border-border-light dark:border-border-dark">
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Create from Template
+            从模板创建
           </h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1">
-            Start with a pre-built task structure
+            从预置的任务结构开始
           </p>
         </div>
 
@@ -134,7 +134,7 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
             type="text"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
-            placeholder="Custom task title (optional)..."
+            placeholder="自定义任务标题（可选）…"
             className="w-full px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-blue"
           />
         </div>
@@ -162,7 +162,7 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
                         ? 'bg-status-error/10 text-status-error'
                         : 'bg-status-warning/10 text-status-warning-text dark:text-status-warning-text-dark'
                     }`}>
-                      {template.defaultPriority}
+                      {template.defaultPriority === 'high' ? '高' : '中'}
                     </span>
                     {template.defaultTags.map((tag) => (
                       <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-accent-blue/10 text-accent-blue">
@@ -170,7 +170,7 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
                       </span>
                     ))}
                     <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary ml-auto">
-                      {template.subtasks.length} subtasks
+                      {template.subtasks.length} 个子任务
                     </span>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
             onClick={onClose}
             className="w-full px-4 py-2 text-sm rounded-lg border border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
           >
-            Cancel
+            取消
           </button>
         </div>
       </div>

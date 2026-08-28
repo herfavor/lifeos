@@ -42,7 +42,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
 
     // Always start with Home
     segments.push({
-      label: 'Home',
+      label: '首页',
       path: '/',
       icon: <Home className="w-3.5 h-3.5" />,
     });
@@ -67,7 +67,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
       segments.push({ label: baseTitle, path: tab || activeNoteId ? '/notes' : null });
 
       if (tab === 'graph') {
-        segments.push({ label: 'Graph View', path: null });
+        segments.push({ label: '图谱视图', path: null });
       } else if (activeNoteId) {
         // Find the active note
         const activeNote = notes[activeNoteId];
@@ -83,7 +83,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
             });
           }
           segments.push({
-            label: activeNote.title || 'Untitled Note',
+            label: activeNote.title || '未命名笔记',
             path: null,
           });
         }
@@ -92,43 +92,43 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
       segments.push({ label: baseTitle, path: tab ? '/tasks' : null });
 
       if (tab === 'habits') {
-        segments.push({ label: 'Habits', path: null });
-      } else if (tab === 'gantt') {
-        segments.push({ label: 'Gantt Chart', path: null });
+        segments.push({ label: '习惯', path: null });
+      } else if (tab === 'gantt' || tab === 'timeline') {
+        segments.push({ label: '甘特图', path: null });
       } else if (tab === 'archive') {
-        segments.push({ label: 'Archive', path: null });
+        segments.push({ label: '归档', path: null });
       }
     } else if (basePath === '/create') {
-      segments.push({ label: 'Create', path: pathParts.length > 1 ? '/create' : null });
+      segments.push({ label: baseTitle || '文档', path: pathParts.length > 1 ? '/create' : null });
 
       if (tab === 'diagrams') {
-        segments.push({ label: 'Diagrams', path: null });
+        segments.push({ label: '绘图', path: null });
       } else if (tab === 'forms') {
-        segments.push({ label: 'Forms', path: null });
+        segments.push({ label: '表单', path: null });
       } else if (pathParts.length > 1) {
         // Editing a specific document
         const docId = pathParts[pathParts.length === 3 ? 2 : 1];
         const doc = docs.find((d) => d.id === docId);
         if (doc) {
-          segments.push({ label: doc.title || 'Untitled', path: null });
+          segments.push({ label: doc.title || '未命名', path: null });
         }
       }
     } else if (basePath === '/diagrams' && pathParts.length > 1) {
-      segments.push({ label: 'Diagrams', path: '/create?tab=diagrams' });
+      segments.push({ label: '绘图', path: '/create?tab=diagrams' });
       const diagram = diagrams.find((d) => d.id === pathParts[1]);
       if (diagram) {
-        segments.push({ label: diagram.title || 'Untitled Diagram', path: null });
+        segments.push({ label: diagram.title || '未命名绘图', path: null });
       }
     } else if (basePath === '/forms' && pathParts.length > 1) {
-      segments.push({ label: 'Forms', path: '/create?tab=forms' });
+      segments.push({ label: '表单', path: '/create?tab=forms' });
       // Form editing/filling/responses
       const suffix = pathParts[pathParts.length - 1];
       if (suffix === 'edit') {
-        segments.push({ label: 'Edit Form', path: null });
+        segments.push({ label: '编辑表单', path: null });
       } else if (suffix === 'fill') {
-        segments.push({ label: 'Fill Form', path: null });
+        segments.push({ label: '填写表单', path: null });
       } else if (suffix === 'responses') {
-        segments.push({ label: 'Responses', path: null });
+        segments.push({ label: '回复', path: null });
       }
     } else if (basePath === '/schedule') {
       segments.push({ label: baseTitle, path: null });
@@ -170,7 +170,7 @@ export const Breadcrumbs: React.FC = () => {
 
   return (
     <nav
-      aria-label="Breadcrumb"
+      aria-label="面包屑导航"
       className="flex items-center gap-1 text-sm text-text-light-secondary dark:text-text-dark-secondary mb-1 overflow-x-auto"
     >
       {segments.map((segment, index) => {

@@ -16,7 +16,7 @@ test.describe('Form Builder', () => {
   });
 
   test('can navigate to forms tab', async ({ page }) => {
-    const formsTab = page.getByRole('tab', { name: 'Forms' });
+    const formsTab = page.getByRole('tab', { name: '表单' });
     if (await formsTab.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(formsTab).toHaveAttribute('aria-selected', 'true');
     }
@@ -25,7 +25,7 @@ test.describe('Form Builder', () => {
 
   test('can create a new form', async ({ page }) => {
     // Look for new form button
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
@@ -35,19 +35,19 @@ test.describe('Form Builder', () => {
 
   test('form has title and description inputs', async ({ page }) => {
     // Open/create a form first
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const titleInput = page.getByPlaceholder('Form Title');
+    const titleInput = page.getByPlaceholder('表单标题');
     if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(titleInput).toBeVisible();
       await titleInput.fill('E2E Test Form');
     }
 
-    const descInput = page.getByPlaceholder('Description (optional)');
+    const descInput = page.getByPlaceholder('描述（可选）');
     if (await descInput.isVisible({ timeout: 1000 }).catch(() => false)) {
       await expect(descInput).toBeVisible();
     }
@@ -55,13 +55,13 @@ test.describe('Form Builder', () => {
   });
 
   test('has Add Field button', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+    const addFieldBtn = page.getByRole('button', { name: '添加字段' });
     if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(addFieldBtn).toBeVisible();
     }
@@ -69,19 +69,19 @@ test.describe('Form Builder', () => {
   });
 
   test('can open field editor modal', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+    const addFieldBtn = page.getByRole('button', { name: '添加字段' });
     if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addFieldBtn.click();
       await page.waitForTimeout(300);
 
       // Field editor modal should open
-      const heading = page.getByText('Add Field');
+      const heading = page.getByText('添加字段');
       if (await heading.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(heading).toBeVisible();
       }
@@ -90,13 +90,13 @@ test.describe('Form Builder', () => {
   });
 
   test('field editor has field type selector with all types', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+    const addFieldBtn = page.getByRole('button', { name: '添加字段' });
     if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addFieldBtn.click();
       await page.waitForTimeout(300);
@@ -117,24 +117,24 @@ test.describe('Form Builder', () => {
   });
 
   test('can add a text field', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+    const addFieldBtn = page.getByRole('button', { name: '添加字段' });
     if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addFieldBtn.click();
       await page.waitForTimeout(300);
 
       // Fill label
-      const labelInput = page.getByPlaceholder(/How many hours/);
+      const labelInput = page.getByPlaceholder(/例如：.*小时.*？/i);
       if (await labelInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await labelInput.fill('Full Name');
 
         // Click Add Field button in modal
-        const submitBtn = page.getByRole('button', { name: 'Add Field' }).last();
+        const submitBtn = page.getByRole('button', { name: '添加字段' }).last();
         if (await submitBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
           await submitBtn.click();
           await page.waitForTimeout(300);
@@ -145,13 +145,13 @@ test.describe('Form Builder', () => {
   });
 
   test('field editor has Required checkbox', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const addFieldBtn = page.getByRole('button', { name: 'Add Field' });
+    const addFieldBtn = page.getByRole('button', { name: '添加字段' });
     if (await addFieldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addFieldBtn.click();
       await page.waitForTimeout(300);
@@ -165,13 +165,13 @@ test.describe('Form Builder', () => {
   });
 
   test('has Show Preview toggle', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const previewBtn = page.getByRole('button', { name: /Show Preview|Hide Preview/ });
+    const previewBtn = page.getByRole('button', { name: /显示预览|隐藏预览/ });
     if (await previewBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(previewBtn).toBeVisible();
     }
@@ -179,13 +179,13 @@ test.describe('Form Builder', () => {
   });
 
   test('has Save button', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const saveBtn = page.getByRole('button', { name: 'Save', exact: true });
+    const saveBtn = page.getByRole('button', { name: '保存', exact: true });
     if (await saveBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(saveBtn).toBeVisible();
     }
@@ -193,13 +193,13 @@ test.describe('Form Builder', () => {
   });
 
   test('has back button to forms list', async ({ page }) => {
-    const newFormBtn = page.getByRole('button', { name: /new.*form|create.*form|\+/i }).first();
+    const newFormBtn = page.getByRole('button', { name: /新建.*表单|创建.*表单|\+/i }).first();
     if (await newFormBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await newFormBtn.click();
       await page.waitForTimeout(500);
     }
 
-    const backBtn = page.locator('[aria-label="Back to forms"]');
+    const backBtn = page.locator('[aria-label="返回表单"]');
     if (await backBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await expect(backBtn).toBeVisible();
     }

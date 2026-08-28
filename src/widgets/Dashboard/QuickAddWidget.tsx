@@ -30,13 +30,13 @@ export const QuickAddWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Quick Add" icon="➕">
+    <BaseWidget title="快速添加" icon="➕">
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Add a task..."
+          placeholder="添加任务…"
           className="w-full px-4 py-2 border rounded-button transition-all duration-standard ease-smooth
                      bg-surface-light dark:bg-surface-dark
                      text-text-light-primary dark:text-text-dark-primary
@@ -47,10 +47,10 @@ export const QuickAddWidget: React.FC = () => {
           type="submit"
           className="w-full px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
         >
-          Add Task
+          添加任务
         </button>
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Press Enter to add quickly
+          按 Enter 快速添加
         </p>
       </form>
     </BaseWidget>

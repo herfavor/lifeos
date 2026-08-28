@@ -30,15 +30,15 @@ interface SpreadsheetSortFilterProps {
 }
 
 const FILTER_OPERATORS: { value: FilterOperator; label: string }[] = [
-  { value: 'contains', label: 'Contains' },
-  { value: 'not-contains', label: 'Does not contain' },
-  { value: 'equals', label: 'Equals' },
-  { value: 'not-equals', label: 'Does not equal' },
-  { value: 'greater-than', label: 'Greater than' },
-  { value: 'less-than', label: 'Less than' },
-  { value: 'between', label: 'Between' },
-  { value: 'empty', label: 'Is empty' },
-  { value: 'not-empty', label: 'Is not empty' },
+  { value: 'contains', label: '包含' },
+  { value: 'not-contains', label: '不包含' },
+  { value: 'equals', label: '等于' },
+  { value: 'not-equals', label: '不等于' },
+  { value: 'greater-than', label: '大于' },
+  { value: 'less-than', label: '小于' },
+  { value: 'between', label: '介于' },
+  { value: 'empty', label: '为空' },
+  { value: 'not-empty', label: '不为空' },
 ];
 
 function getColumnLabel(index: number): string {
@@ -119,7 +119,7 @@ export function SpreadsheetSortFilter({
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Sort & Filter
+            排序与筛选
           </h3>
           <button
             onClick={onClose}
@@ -133,11 +133,11 @@ export function SpreadsheetSortFilter({
         <div className="flex gap-1 px-4 pt-2 border-b border-border-light dark:border-border-dark">
           <button onClick={() => setActiveTab('sort')} className={tabClass(activeTab === 'sort')}>
             <ArrowUpDown className="w-3.5 h-3.5" />
-            Sort
+            排序
           </button>
           <button onClick={() => setActiveTab('filter')} className={tabClass(activeTab === 'filter')}>
             <Filter className="w-3.5 h-3.5" />
-            Filter
+            筛选
           </button>
         </div>
 
@@ -147,13 +147,13 @@ export function SpreadsheetSortFilter({
             <>
               {sortRules.length === 0 && (
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  No sort rules. Click &quot;Add Rule&quot; to sort data.
+                  没有排序规则。点击“添加规则”对数据进行排序。
                 </p>
               )}
               {sortRules.map((rule, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary w-12">
-                    {i === 0 ? 'Sort by' : 'Then by'}
+                    {i === 0 ? '排序依据' : '次要依据'}
                   </span>
                   <select
                     value={rule.column}
@@ -162,7 +162,7 @@ export function SpreadsheetSortFilter({
                   >
                     {Array.from({ length: colCount }, (_, c) => (
                       <option key={c} value={c}>
-                        Column {getColumnLabel(c)}
+                        列 {getColumnLabel(c)}
                       </option>
                     ))}
                   </select>
@@ -187,7 +187,7 @@ export function SpreadsheetSortFilter({
                 className="flex items-center gap-1 text-sm text-accent-primary hover:underline"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Add Rule
+                添加规则
               </button>
             </>
           )}
@@ -196,7 +196,7 @@ export function SpreadsheetSortFilter({
             <>
               {filterRules.length === 0 && (
                 <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                  No filter rules. Click &quot;Add Rule&quot; to filter data.
+                  没有筛选规则。点击“添加规则”对数据进行筛选。
                 </p>
               )}
               {filterRules.map((rule, i) => (
@@ -208,7 +208,7 @@ export function SpreadsheetSortFilter({
                   >
                     {Array.from({ length: colCount }, (_, c) => (
                       <option key={c} value={c}>
-                        Col {getColumnLabel(c)}
+                        列 {getColumnLabel(c)}
                       </option>
                     ))}
                   </select>
@@ -228,7 +228,7 @@ export function SpreadsheetSortFilter({
                       type="text"
                       value={rule.value}
                       onChange={(e) => updateFilterRule(i, { value: e.target.value })}
-                      placeholder="Value"
+                      placeholder="值"
                       className={inputClass + ' flex-1 min-w-[80px]'}
                     />
                   )}
@@ -237,7 +237,7 @@ export function SpreadsheetSortFilter({
                       type="text"
                       value={rule.value2 ?? ''}
                       onChange={(e) => updateFilterRule(i, { value2: e.target.value })}
-                      placeholder="Value 2"
+                      placeholder="值 2"
                       className={inputClass + ' w-20'}
                     />
                   )}
@@ -254,7 +254,7 @@ export function SpreadsheetSortFilter({
                 className="flex items-center gap-1 text-sm text-accent-primary hover:underline"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Add Rule
+                添加规则
               </button>
             </>
           )}
@@ -266,20 +266,20 @@ export function SpreadsheetSortFilter({
             onClick={handleClear}
             className="px-3 py-1.5 text-sm rounded text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark"
           >
-            Clear All
+            全部清除
           </button>
           <div className="flex gap-2">
             <button
               onClick={onClose}
               className="px-3 py-1.5 text-sm rounded border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-alt dark:hover:bg-surface-dark"
             >
-              Cancel
+              取消
             </button>
             <button
               onClick={handleApply}
               className="px-3 py-1.5 text-sm rounded bg-accent-primary text-white hover:bg-accent-primary/90"
             >
-              Apply
+              应用
             </button>
           </div>
         </div>

@@ -1,12 +1,12 @@
-# Security headers for Cloudflare Pages
+# Security headers for static hosting
 #
 # CSP Future Work:
 # - The unsafe-* directives in script-src are required for current functionality:
 #   * WebContainers (Phantom Shell) need code evaluation capabilities for in-browser
 #     Vite HMR. Future mitigation: isolate Phantom Shell on a separate subdomain
-#     (shell.os.neuman.dev) via iframe, scoping the permissive policy to that origin only.
-#   * Vite + Tailwind CSS on static hosting (Cloudflare Pages) need inline scripts.
-#     Future mitigation: Cloudflare Workers nonce injection or build-time CSP hash
+#     via iframe, scoping the permissive policy to that origin only.
+#   * Vite + Tailwind CSS on static hosting need inline scripts.
+#     Future mitigation: edge-worker nonce injection or build-time CSP hash
 #     generation to replace inline permissions with specific hashes.
 /*
   X-Frame-Options: DENY
@@ -27,18 +27,18 @@
   Cross-Origin-Opener-Policy: same-origin
   # Content Security Policy
   # - default-src 'self': Only allow resources from same origin by default
-  # - script-src: Allow self, inline (Vite/React), unsafe-eval (WebContainers*), unpkg.com (Leaflet), cloudflareinsights.com (analytics)
+  # - script-src: Allow self, inline (Vite/React), unsafe-eval (WebContainers*), unpkg.com (Leaflet)
   #   * unsafe-eval REQUIRED for Phantom Shell (WebContainers): WebContainers run Node.js/Vite in-browser
   #     via WebAssembly. The bundled Vite uses eval() for HMR and dynamic code execution.
   #     Removing unsafe-eval breaks Phantom Shell functionality entirely.
   #     See: https://webcontainers.io/guides/configuring-headers
   # - style-src: Allow self, inline (Tailwind), fonts.googleapis.com, unpkg.com (Leaflet CSS)
   # - img-src: Allow self, data URIs, blobs, maps, Unsplash, GitHub, favicons (search engines, bookmarks)
-  # - connect-src: Allow self, AI providers, widget APIs, nominatim (geocoding), unpkg (Leaflet maps), cloudflareinsights (analytics), fonts (Google Fonts), map tiles (OSM)
+  # - connect-src: Allow self, AI providers, widget APIs, nominatim (geocoding), unpkg (Leaflet maps), fonts (Google Fonts), map tiles (OSM)
   # - font-src: Allow self, data URIs, fonts.gstatic.com (Inter font), fonts.googleapis.com
   # - worker-src: Allow self and blobs for web workers
   # - frame-src: Disallow iframes (security)
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com https://source.unsplash.com https://images.unsplash.com https://*.githubusercontent.com https://www.google.com https://upload.wikimedia.org https://icons.duckduckgo.com https://duckduckgo.com https://www.bing.com https://brave.com https://www.ecosia.org https://www.startpage.com https://en.wikipedia.org https://github.com https://github.githubassets.com https://cdn.sstatic.net https://www.youtube.com https://cdn.oaistatic.com https://uxwing.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.deepseek.com https://api.mistral.ai https://openrouter.ai https://api.x.ai https://generativelanguage.googleapis.com https://api.groq.com https://api-inference.huggingface.co https://api.together.xyz https://www.boredapi.com https://dev.to https://uselessfacts.jsph.pl https://ipapi.co https://www.producthunt.com https://en.wikipedia.org https://api.coingecko.com https://api.exchangerate-api.com https://hn.algolia.com https://www.reddit.com https://api.github.com https://api.quotable.io https://api.dictionaryapi.dev https://api.open-meteo.com https://air-quality-api.open-meteo.com https://nominatim.openstreetmap.org https://unpkg.com https://cloudflareinsights.com https://fonts.googleapis.com https://fonts.gstatic.com https://*.tile.openstreetmap.org; worker-src 'self' blob:; frame-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com https://source.unsplash.com https://images.unsplash.com https://*.githubusercontent.com https://www.google.com https://upload.wikimedia.org https://icons.duckduckgo.com https://duckduckgo.com https://www.bing.com https://brave.com https://www.ecosia.org https://www.startpage.com https://en.wikipedia.org https://github.com https://github.githubassets.com https://cdn.sstatic.net https://www.youtube.com https://cdn.oaistatic.com https://uxwing.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.openai.com https://api.anthropic.com https://api.deepseek.com https://api.mistral.ai https://openrouter.ai https://api.x.ai https://generativelanguage.googleapis.com https://api.groq.com https://api-inference.huggingface.co https://api.together.xyz https://www.boredapi.com https://dev.to https://uselessfacts.jsph.pl https://ipapi.co https://www.producthunt.com https://en.wikipedia.org https://api.coingecko.com https://api.exchangerate-api.com https://hn.algolia.com https://www.reddit.com https://api.github.com https://api.quotable.io https://api.dictionaryapi.dev https://api.open-meteo.com https://air-quality-api.open-meteo.com https://nominatim.openstreetmap.org https://unpkg.com https://fonts.googleapis.com https://fonts.gstatic.com https://*.tile.openstreetmap.org; worker-src 'self' blob:; frame-src 'none'
 
 # Cache static assets aggressively
 /assets/*

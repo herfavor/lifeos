@@ -20,14 +20,14 @@ export function TemplatePicker({ value, onChange, templates }: TemplatePickerPro
   return (
     <div>
       <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-        Template
+        模板
       </label>
       <select
         value={value || ''}
         onChange={(e) => onChange(e.target.value || undefined)}
         className="w-full p-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue outline-none"
       >
-        <option value="">None</option>
+        <option value="">无</option>
         {templates.map((template) => (
           <option key={template.id} value={template.id}>
             {template.name}
@@ -36,7 +36,7 @@ export function TemplatePicker({ value, onChange, templates }: TemplatePickerPro
       </select>
       {value && (
         <p className="mt-1 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          Template will be applied to each new task instance
+          模板将应用于每个新的任务实例
         </p>
       )}
     </div>

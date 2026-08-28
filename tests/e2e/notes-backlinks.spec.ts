@@ -17,7 +17,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('backlinks panel shows all linked references', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -40,7 +40,7 @@ test.describe('Notes Backlinks Panel', () => {
     await page.waitForTimeout(500);
 
     // Look for backlinks panel
-    const backlinksSection = page.getByText(/backlinks|linked references/i);
+    const backlinksSection = page.getByText(/反向链接|链接引用/i);
 
     if (await backlinksSection.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Verify all three source notes appear in backlinks
@@ -64,7 +64,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('backlinks panel detects unlinked mentions', async ({ page }) => {
     // Create a target note with a unique title
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -92,7 +92,7 @@ test.describe('Notes Backlinks Panel', () => {
     }
 
     // Look for unlinked mentions section
-    const unlinkedSection = page.getByText(/unlinked mentions|unlinked references/i);
+    const unlinkedSection = page.getByText(/未链接提及/);
 
     if (await unlinkedSection.isVisible({ timeout: 2000 }).catch(() => false)) {
       // Verify the mention appears
@@ -102,7 +102,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('can convert unlinked mention to wiki link using Link button', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -130,7 +130,7 @@ test.describe('Notes Backlinks Panel', () => {
     }
 
     // Look for the "Link" button in unlinked mentions
-    const linkButton = page.getByRole('button', { name: /^link$|convert.*link/i });
+    const linkButton = page.getByRole('button', { name: /^链接$|转换.*链接/i });
 
     if (await linkButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await linkButton.click();
@@ -138,7 +138,7 @@ test.describe('Notes Backlinks Panel', () => {
 
       // After conversion, the mention should move from unlinked to linked references
       // Verify it now appears in the linked references section
-      const linkedSection = page.getByText(/^backlinks$|linked references/i);
+      const linkedSection = page.getByText(/反向链接|链接引用/i);
       await expect(linkedSection).toBeVisible();
       await expect(page.getByText(/Unlinked mention of Link Conversion Target/)).toBeVisible();
     }
@@ -146,7 +146,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('backlinks update in real-time when links are added', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -167,7 +167,7 @@ test.describe('Notes Backlinks Panel', () => {
     }
 
     // Initially, there should be no backlinks
-    const noBacklinksMsg = page.getByText(/no.*backlinks|no.*references/i);
+    const noBacklinksMsg = page.getByText(/暂无.*链接|无.*引用/i);
     if (await noBacklinksMsg.isVisible({ timeout: 1000 }).catch(() => false)) {
       await expect(noBacklinksMsg).toBeVisible();
     }
@@ -189,7 +189,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('backlinks panel shows note preview context', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -226,7 +226,7 @@ test.describe('Notes Backlinks Panel', () => {
 
   test('clicking backlink navigates to source note', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();

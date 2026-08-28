@@ -1,3 +1,3 @@
-Contact: mailto:security@neuman.dev
+Contact: https://github.com/herfavor/lifeos/security/advisories/new
 Expires: 2029-03-06T00:00:00.000Z
-Preferred-Languages: en
+Preferred-Languages: en, zh

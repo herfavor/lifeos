@@ -313,7 +313,7 @@ export function PresentationPresenter({
                   setIsTimerRunning((prev) => !prev);
                 }}
                 className="p-1 hover:bg-white/20 rounded"
-                title={isTimerRunning ? 'Pause timer' : 'Resume timer'}
+                title={isTimerRunning ? '暂停计时' : '继续计时'}
               >
                 {isTimerRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
               </button>
@@ -336,7 +336,7 @@ export function PresentationPresenter({
             className={`p-2 rounded transition-colors ${
               showNotes ? 'bg-white/20' : 'hover:bg-white/10'
             }`}
-            title="Toggle speaker notes (N)"
+            title="切换演讲者备注 (N)"
           >
             <FileText className="w-4 h-4" />
           </button>
@@ -350,7 +350,7 @@ export function PresentationPresenter({
             className={`p-2 rounded transition-colors ${
               showTimer ? 'bg-white/20' : 'hover:bg-white/10'
             }`}
-            title="Toggle timer (T)"
+            title="切换计时器 (T)"
           >
             <Clock className="w-4 h-4" />
           </button>
@@ -362,7 +362,7 @@ export function PresentationPresenter({
               toggleFullscreen();
             }}
             className="p-2 hover:bg-white/10 rounded"
-            title="Toggle fullscreen (F)"
+            title="切换全屏 (F)"
           >
             {isFullscreen ? (
               <Minimize className="w-4 h-4" />
@@ -378,7 +378,7 @@ export function PresentationPresenter({
               onClose();
             }}
             className="p-2 hover:bg-white/10 rounded"
-            title="Exit presentation (Esc)"
+            title="退出演示 (Esc)"
           >
             <X className="w-4 h-4" />
           </button>
@@ -434,7 +434,7 @@ export function PresentationPresenter({
           >
             {/* Next slide preview */}
             <div className="p-4 border-b border-gray-700">
-              <h3 className="text-white/60 text-xs uppercase mb-2">Next Slide</h3>
+              <h3 className="text-white/60 text-xs uppercase mb-2">下一张幻灯片</h3>
               {nextSlide ? (
                 <div className="bg-black rounded overflow-hidden">
                   <PresentationCanvas
@@ -450,17 +450,17 @@ export function PresentationPresenter({
                 </div>
               ) : (
                 <div className="bg-black rounded h-[158px] flex items-center justify-center text-white/40 text-sm">
-                  End of presentation
+                  演示已结束
                 </div>
               )}
             </div>
 
             {/* Notes */}
             <div className="flex-1 p-4 overflow-y-auto">
-              <h3 className="text-white/60 text-xs uppercase mb-2">Speaker Notes</h3>
+              <h3 className="text-white/60 text-xs uppercase mb-2">演讲者备注</h3>
               <div className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap">
                 {currentSlide.speakerNotes || (
-                  <span className="text-white/40 italic">No speaker notes for this slide</span>
+                  <span className="text-white/40 italic">此幻灯片没有演讲者备注</span>
                 )}
               </div>
             </div>
@@ -468,7 +468,7 @@ export function PresentationPresenter({
             {/* Quick info */}
             <div className="p-4 border-t border-gray-700 text-white/40 text-xs">
               <div className="flex items-center justify-between">
-                <span>Slide {currentIndex + 1} of {slides.length}</span>
+                <span>幻灯片 {currentIndex + 1} / {slides.length}</span>
                 <span>{formatTime(elapsedSeconds)}</span>
               </div>
             </div>
@@ -485,7 +485,7 @@ export function PresentationPresenter({
           }}
           disabled={currentIndex === 0}
           className="p-3 bg-black/50 rounded-full text-white/80 hover:bg-black/70 disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Previous slide (←)"
+          title="上一张幻灯片 (←)"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -497,7 +497,7 @@ export function PresentationPresenter({
           }}
           disabled={currentIndex === slides.length - 1}
           className="p-3 bg-black/50 rounded-full text-white/80 hover:bg-black/70 disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Next slide (→)"
+          title="下一张幻灯片 (→)"
         >
           <ChevronRight className="w-6 h-6" />
         </button>

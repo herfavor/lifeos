@@ -56,7 +56,7 @@ export function PomodoroWidget({ onClick }: PomodoroWidgetProps) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 border border-border-light dark:border-border-dark hover:bg-surface-light-tertiary dark:hover:bg-surface-dark-tertiary transition-colors"
+      className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
     >
       {/* Mode Icon */}
       <span className="text-lg">{modeIcons[mode]}</span>
@@ -69,7 +69,7 @@ export function PomodoroWidget({ onClick }: PomodoroWidgetProps) {
       {/* Play/Pause Button */}
       <button
         onClick={handlePlayPause}
-        className="p-1 rounded hover:bg-surface-light-primary/10 dark:hover:bg-surface-dark-primary/10 transition-colors"
+        className="p-1 rounded hover:bg-surface-light/10 dark:hover:bg-surface-dark/10 transition-colors"
       >
         {isRunning && !isPaused ? (
           <Pause className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />

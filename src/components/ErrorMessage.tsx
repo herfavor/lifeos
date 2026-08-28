@@ -167,12 +167,12 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
                 {showDetails ? (
                   <>
                     <ChevronUp className="w-4 h-4" />
-                    Hide details
+                    隐藏详情
                   </>
                 ) : (
                   <>
                     <ChevronDown className="w-4 h-4" />
-                    Show details
+                    显示详情
                   </>
                 )}
               </button>
@@ -196,7 +196,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
                   className={`${sizeStyles.button} inline-flex items-center gap-1 ${variantStyles.message} bg-surface-light dark:bg-surface-dark hover:opacity-75 border border-current rounded transition-opacity font-medium`}
                 >
                   <RefreshCw className="w-4 h-4" />
-                  Retry
+                  重试
                 </button>
               )}
               {onDismiss && (
@@ -204,7 +204,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
                   onClick={onDismiss}
                   className={`${sizeStyles.button} ${variantStyles.message} hover:opacity-75 transition-opacity`}
                 >
-                  Dismiss
+                  关闭
                 </button>
               )}
             </div>

@@ -146,7 +146,7 @@ export function BurndownChart({
         style={{ height: `${height}px` }}
       >
         <p className="text-text-light-tertiary dark:text-text-dark-tertiary text-sm">
-          No sprint data available
+          暂无冲刺数据
         </p>
       </div>
     );
@@ -186,7 +186,7 @@ export function BurndownChart({
             tick={{ fontSize: 11 }}
             className="fill-text-light-secondary dark:fill-text-dark-secondary"
             label={{
-              value: 'Remaining',
+              value: '剩余',
               angle: -90,
               position: 'insideLeft',
               className:
@@ -202,16 +202,16 @@ export function BurndownChart({
               borderRadius: '8px',
               fontSize: '12px',
             }}
-            labelFormatter={(label) => `Date: ${label}`}
+            labelFormatter={(label) => `日期：${label}`}
             formatter={(value, name) => {
               const displayName =
                 name === 'ideal'
-                  ? 'Ideal'
+                  ? '理想'
                   : name === 'actual'
-                    ? 'Actual'
+                    ? '实际'
                     : String(name ?? '');
               return [
-                `${value ?? 0} ${chartData.totalPoints > tasks.length ? 'pts' : 'tasks'}`,
+                `${value ?? 0} ${chartData.totalPoints > tasks.length ? '点' : '个任务'}`,
                 displayName,
               ];
             }}
@@ -223,7 +223,7 @@ export function BurndownChart({
               stroke="var(--accent-secondary)"
               strokeDasharray="4 4"
               label={{
-                value: 'Today',
+                value: '今天',
                 position: 'top',
                 fill: 'var(--accent-secondary)',
                 fontSize: 10,

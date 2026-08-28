@@ -18,11 +18,11 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
   return (
     <div className="bento-card p-6">
       <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-        Backup History
+        备份历史
       </h2>
 
       {backupHistory.length === 0 ? (
-        <p className="text-text-light-secondary dark:text-text-dark-secondary">No backups yet</p>
+        <p className="text-text-light-secondary dark:text-text-dark-secondary">暂无备份</p>
       ) : (
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {backupHistory.map((entry) => {
@@ -34,13 +34,13 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
               entry.destination === 'google-drive'
                 ? 'Google Drive'
                 : entry.destination === 'local'
-                  ? 'Local Folder'
-                  : 'Download';
+                  ? '本地文件夹'
+                  : '下载';
             const attemptsLabel =
               entry.attempts && entry.attempts > 1
-                ? `${entry.attempts} attempts`
+                ? `${entry.attempts} 次尝试`
                 : entry.attempts === 1
-                  ? '1 attempt'
+                  ? '1 次尝试'
                   : undefined;
             const icon =
               entry.destination === 'google-drive'
@@ -58,10 +58,10 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
                   <p className="font-medium text-text-light-primary dark:text-text-dark-primary">{entry.filename}</p>
                   <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
                     {new Date(entry.timestamp).toLocaleString()} • {formatFileSize(entry.size)}
-                    {entry.compressed && ' • Compressed'} • {destinationLabel}
+                    {entry.compressed && ' • 已压缩'} • {destinationLabel}
                   </p>
                   <p className={`text-sm ${statusClasses}`}>
-                    {entry.status === 'success' ? 'Success' : 'Failed'}
+                    {entry.status === 'success' ? '成功' : '失败'}
                     {attemptsLabel ? ` • ${attemptsLabel}` : ''}
                   </p>
                   {entry.errorMessage && (
@@ -73,7 +73,7 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
                 <div className="text-right flex flex-col items-end gap-1">
                   <span className="text-2xl">{icon}</span>
                   <span className={`text-xs font-semibold ${statusClasses}`}>
-                    {entry.status === 'success' ? 'SUCCESS' : 'FAILED'}
+                    {entry.status === 'success' ? '成功' : '失败'}
                   </span>
                 </div>
               </div>

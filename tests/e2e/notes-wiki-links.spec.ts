@@ -15,7 +15,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('can create a wiki link using [[brackets]]', async ({ page }) => {
     // Create a source note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -35,7 +35,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('can navigate by clicking a wiki link', async ({ page }) => {
     // Create a target note first
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -68,7 +68,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('backlink panel updates when wiki links are created', async ({ page }) => {
     // Create a target note
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     let editor = page.locator('[contenteditable="true"]').first();
@@ -97,7 +97,7 @@ test.describe('Notes Wiki Links', () => {
 
       // Look for backlinks panel or section
       // This might be in a sidebar, collapsible panel, or metadata section
-      const backlinksSection = page.getByText(/backlinks|linked references/i);
+      const backlinksSection = page.getByText(/反向链接|链接引用/i);
 
       if (await backlinksSection.isVisible({ timeout: 2000 }).catch(() => false)) {
         // Verify the source note appears in backlinks
@@ -116,7 +116,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('can create links to non-existent notes', async ({ page }) => {
     // Create a note with a link to a note that doesn't exist yet
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();
@@ -135,7 +135,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('wiki links are case-sensitive', async ({ page }) => {
     // Create notes with different cases
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
 
     // Create "lowercase note"
     await createButton.click();
@@ -161,7 +161,7 @@ test.describe('Notes Wiki Links', () => {
 
   test('can create multiple wiki links in a single note', async ({ page }) => {
     // Create a note with multiple wiki links
-    const createButton = page.getByRole('button', { name: /new.*note|create.*note|add.*note/i });
+    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
     await createButton.click();
 
     const editor = page.locator('[contenteditable="true"]').first();

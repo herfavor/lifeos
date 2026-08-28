@@ -78,23 +78,23 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-accent-primary" />
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
-            Timeline View
+            时间线视图
           </h2>
           <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            ({tasksWithDates.length} {tasksWithDates.length === 1 ? 'task' : 'tasks'})
+            ({tasksWithDates.length} 个任务)
           </span>
         </div>
 
         {/* Zoom controls */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary mr-2">
-            Zoom:
+            缩放：
           </span>
           <button
             onClick={handleZoomIn}
             disabled={currentZoomIndex === 0}
             className="p-1.5 rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-standard ease-smooth"
-            aria-label="Zoom in"
+            aria-label="放大"
           >
             <ZoomIn className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -109,7 +109,7 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
                     : 'bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
                 }`}
               >
-                {level.charAt(0).toUpperCase() + level.slice(1)}
+                {{ day: '日', week: '周', month: '月' }[level]}
               </button>
             ))}
           </div>
@@ -117,7 +117,7 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
             onClick={handleZoomOut}
             disabled={currentZoomIndex === zoomLevels.length - 1}
             className="p-1.5 rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-standard ease-smooth"
-            aria-label="Zoom out"
+            aria-label="缩小"
           >
             <ZoomOut className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
@@ -131,13 +131,13 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
                 ? 'bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark border border-status-error-border dark:border-status-error-border-dark'
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark'
             }`}
-            aria-label="Toggle critical path"
+            aria-label="切换关键路径"
           >
-            🔴 Critical Path
+            🔴 关键路径
           </button>
           {showCriticalPath && criticalTaskIds.length > 0 && (
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              ({criticalTaskIds.length} critical)
+              ({criticalTaskIds.length} 个关键任务)
             </span>
           )}
 
@@ -148,12 +148,12 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
               <button
                 onClick={clearBaseline}
                 className="px-3 py-1.5 text-xs font-medium rounded-button transition-all duration-standard ease-smooth bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark"
-                aria-label="Clear baseline"
+                aria-label="清除基线"
               >
-                Clear Baseline
+                清除基线
               </button>
               <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                (Set {new Date(baseline.setAt).toLocaleDateString()})
+                (设定于 {new Date(baseline.setAt).toLocaleDateString()})
               </span>
             </>
           ) : (
@@ -161,9 +161,9 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
               onClick={setBaseline}
               disabled={tasksWithDates.length === 0}
               className="px-3 py-1.5 text-xs font-medium rounded-button transition-all duration-standard ease-smooth bg-accent-primary text-white hover:bg-accent-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Set baseline"
+              aria-label="设置基线"
             >
-              📊 Set Baseline
+              📊 设置基线
             </button>
           )}
         </div>
@@ -186,21 +186,21 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
       {/* Legend */}
       <div className="px-4 py-2 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
         <div className="flex items-center gap-4 text-xs">
-          <span className="text-text-light-secondary dark:text-text-dark-secondary">Priority:</span>
+          <span className="text-text-light-secondary dark:text-text-dark-secondary">优先级：</span>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-sm bg-status-error" />
-            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">High</span>
+            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">高</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-sm bg-accent-primary" />
-            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">Medium</span>
+            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">中</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-sm bg-status-info" />
-            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">Low</span>
+            <span className="text-text-light-tertiary dark:text-text-dark-tertiary">低</span>
           </div>
           <div className="ml-4 text-text-light-tertiary dark:text-text-dark-tertiary italic">
-            Drag bars to reschedule • Drag right edge to resize
+            拖动条块调整日程 • 拖动右边缘调整大小
           </div>
         </div>
       </div>

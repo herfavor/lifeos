@@ -14,11 +14,11 @@ test.describe('Global Keyboard Shortcuts', () => {
 
   test('Ctrl+K opens Command Palette', async ({ page }) => {
     await page.keyboard.press('Control+k');
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).toBeVisible();
   });
 
   test('Ctrl+B toggles sidebar', async ({ page }) => {
-    const sidebar = page.locator('aside[aria-label="Main navigation sidebar"]');
+    const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
     await expect(sidebar).toBeVisible();
 
     // Toggle off
@@ -34,11 +34,11 @@ test.describe('Global Keyboard Shortcuts', () => {
   test('Escape closes modals', async ({ page }) => {
     // Open Command Palette
     await page.keyboard.press('Control+k');
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).toBeVisible();
 
     // Escape should close it
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('dialog', { name: 'Synapse search' })).not.toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Synapse 搜索' })).not.toBeVisible();
   });
 
   test('Ctrl+D creates/opens daily note', async ({ page }) => {
@@ -56,11 +56,11 @@ test.describe('Focus Mode Keyboard Shortcuts', () => {
   test('Space toggles timer', async ({ page }) => {
     // Start
     await page.keyboard.press('Space');
-    await expect(page.locator('button[aria-label="Pause timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="暂停计时器"]')).toBeVisible();
 
     // Pause
     await page.keyboard.press('Space');
-    await expect(page.locator('button[aria-label="Start timer"]')).toBeVisible();
+    await expect(page.locator('button[aria-label="启动计时器"]')).toBeVisible();
   });
 
   test('R resets session', async ({ page }) => {

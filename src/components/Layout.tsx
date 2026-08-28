@@ -1,14 +1,12 @@
 import React, { Suspense, lazy, useState, useCallback, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { PageHeader } from './PageHeader';
-import { Footer as SaveStatusFooter } from './Footer';
 import { ErrorToastContainer } from './ErrorToast';
-import { PWAPrompts } from './PWAPrompts';
+import { PWAUpdatePrompt } from './PWAPrompts';
 import { OfflineIndicator } from './OfflineIndicator';
 import { NaturalLanguageBar } from './NaturalLanguageBar';
 import { useSidebarStore } from '../stores/useSidebarStore';
-import { useTerminalStore } from '../stores/useTerminalStore';
 import { useProjectContextStore } from '../stores/useProjectContextStore';
 import { useNotesStore } from '../stores/useNotesStore';
 import { useGlobalShortcuts } from '../hooks/useGlobalShortcuts';
@@ -19,14 +17,10 @@ import { BottomNav } from './BottomNav';
 import { isInputElement } from '../services/shortcuts';
 
 // Lazy load heavy components to reduce initial bundle size
-// AITerminal: 900KB+ of AI provider SDKs
-const AITerminal = lazy(() => import('./AITerminal').then(m => ({ default: m.AITerminal })));
 // CommandPalette: imports all stores for global search
 const CommandPalette = lazy(() => import('./CommandPalette').then(m => ({ default: m.CommandPalette })));
 // Modals: only needed when opened
 const SupportModal = lazy(() => import('./SupportModal').then(m => ({ default: m.SupportModal })));
-const AboutModal = lazy(() => import('./AboutModal').then(m => ({ default: m.AboutModal })));
-const PrivacyModal = lazy(() => import('./PrivacyModal').then(m => ({ default: m.PrivacyModal })));
 const OnboardingModal = lazy(() => import('./OnboardingModal').then(m => ({ default: m.OnboardingModal })));
 const QuickAddModal = lazy(() => import('../widgets/Kanban/QuickAddModal').then(m => ({ default: m.QuickAddModal })));
 const SmartTemplatePicker = lazy(() => import('./SmartTemplatePicker').then(m => ({ default: m.SmartTemplatePicker })));
@@ -41,14 +35,12 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isCollapsed, toggleMobileMenu } = useSidebarStore();
-  const { isOpen: isTerminalOpen, toggleTerminal, hasOpenedTerminal } = useTerminalStore();
   const toggleProjectDropdown = useProjectContextStore((s) => s.toggleDropdown);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportModalTab, setSupportModalTab] = useState<'report' | 'help' | 'docs'>('report');
   const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const [showAboutModal, setShowAboutModal] = useState(false);
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [showQuickAddTask, setShowQuickAddTask] = useState(false);
   const [showSmartTemplatePicker, setShowSmartTemplatePicker] = useState(false);
@@ -67,10 +59,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     setShowCommandPalette(false);
     switch (modalId) {
       case 'about':
-        setShowAboutModal(true);
+        navigate('/about');
         break;
       case 'privacy':
-        setShowPrivacyModal(true);
+        navigate('/privacy');
         break;
       case 'onboarding':
         setShowOnboardingModal(true);
@@ -84,7 +76,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       default:
         break;
     }
-  }, []);
+  }, [navigate]);
 
   // Inject user custom CSS when enabled
   useCustomCSS();
@@ -100,8 +92,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'open-command-palette',
     keys: ['mod', 'k'],
-    label: 'Open command palette',
-    description: 'Search notes, tasks, and run actions',
+    label: '打开命令面板',
+    description: '搜索笔记、任务并执行操作',
     handler: useCallback(() => setShowCommandPalette(true), []),
     priority: 100,
   });
@@ -109,8 +101,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'open-help-f1',
     keys: ['f1'],
-    label: 'Open help',
-    description: 'Show keyboard shortcuts and documentation',
+    label: '打开帮助',
+    description: '显示键盘快捷键和文档',
     handler: useCallback(() => setShowSupportModal(true), []),
     priority: 50,
   });
@@ -118,8 +110,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'open-help-slash',
     keys: ['mod', '/'],
-    label: 'Open help',
-    description: 'Show keyboard shortcuts and documentation',
+    label: '打开帮助',
+    description: '显示键盘快捷键和文档',
     handler: useCallback(() => setShowSupportModal(true), []),
     priority: 50,
   });
@@ -127,8 +119,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'toggle-project-context',
     keys: ['mod', 'shift', 'p'],
-    label: 'Toggle project context',
-    description: 'Open project context dropdown',
+    label: '切换项目上下文',
+    description: '打开项目上下文下拉菜单',
     handler: toggleProjectDropdown,
     priority: 50,
   });
@@ -136,8 +128,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'quick-add-task',
     keys: ['c'],
-    label: 'Quick add task',
-    description: 'Create a new task from anywhere',
+    label: '快速添加任务',
+    description: '随时随地创建新任务',
     handler: useCallback(() => setShowQuickAddTask(true), []),
     priority: 40,
   });
@@ -146,8 +138,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-dashboard',
     keys: ['mod', '1'],
-    label: 'Go to Dashboard',
-    description: 'Navigate to Dashboard',
+    label: '前往首页',
+    description: '导航至首页',
     handler: useCallback(() => navigate('/'), [navigate]),
     priority: 30,
   });
@@ -155,8 +147,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-today',
     keys: ['mod', '2'],
-    label: 'Go to Today',
-    description: 'Navigate to Today page',
+    label: '前往今日',
+    description: '导航至今日页面',
     handler: useCallback(() => navigate('/today'), [navigate]),
     priority: 30,
   });
@@ -164,8 +156,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-notes',
     keys: ['mod', '3'],
-    label: 'Go to Notes',
-    description: 'Navigate to Notes',
+    label: '前往笔记',
+    description: '导航至笔记',
     handler: useCallback(() => navigate('/notes'), [navigate]),
     priority: 30,
   });
@@ -173,8 +165,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-tasks',
     keys: ['mod', '4'],
-    label: 'Go to Tasks',
-    description: 'Navigate to Tasks',
+    label: '前往任务',
+    description: '导航至任务',
     handler: useCallback(() => navigate('/tasks'), [navigate]),
     priority: 30,
   });
@@ -182,8 +174,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-schedule',
     keys: ['mod', '5'],
-    label: 'Go to Schedule',
-    description: 'Navigate to Schedule',
+    label: '前往日程',
+    description: '导航至日程',
     handler: useCallback(() => navigate('/schedule'), [navigate]),
     priority: 30,
   });
@@ -191,8 +183,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-create',
     keys: ['mod', '6'],
-    label: 'Go to Create',
-    description: 'Navigate to Create page',
+    label: '前往创建',
+    description: '导航至创建页面',
     handler: useCallback(() => navigate('/create'), [navigate]),
     priority: 30,
   });
@@ -200,8 +192,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-links',
     keys: ['mod', '7'],
-    label: 'Go to Links',
-    description: 'Navigate to Link Library',
+    label: '前往链接',
+    description: '导航至链接库',
     handler: useCallback(() => navigate('/links'), [navigate]),
     priority: 30,
   });
@@ -209,8 +201,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-settings',
     keys: ['mod', '8'],
-    label: 'Go to Settings',
-    description: 'Navigate to Settings',
+    label: '前往设置',
+    description: '导航至设置',
     handler: useCallback(() => navigate('/settings'), [navigate]),
     priority: 30,
   });
@@ -219,8 +211,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'create-new-note',
     keys: ['mod', 'n'],
-    label: 'New note',
-    description: 'Create a new note',
+    label: '新建笔记',
+    description: '创建新笔记',
     handler: useCallback(() => {
       const { createNote, setActiveNote } = useNotesStore.getState();
       const note = createNote({ title: '', content: '', contentText: '', tags: [] });
@@ -233,8 +225,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'create-new-task',
     keys: ['mod', 't'],
-    label: 'New task',
-    description: 'Quick add a new task',
+    label: '新建任务',
+    description: '快速添加新任务',
     handler: useCallback(() => setShowQuickAddTask(true), []),
     priority: 45,
     allowInInput: false,
@@ -243,8 +235,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'create-new-event',
     keys: ['mod', 'e'],
-    label: 'New event',
-    description: 'Navigate to calendar to create event',
+    label: '新建事件',
+    description: '导航至日历以创建事件',
     handler: useCallback(() => navigate('/schedule'), [navigate]),
     priority: 45,
   });
@@ -252,17 +244,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'toggle-ai-terminal',
     keys: ['mod', 'shift', 'a'],
-    label: 'Toggle AI Terminal',
-    description: 'Open or close the AI Terminal',
-    handler: toggleTerminal,
+    label: '前往 AI 指挥中心',
+    description: '打开 AI 指挥中心',
+    handler: useCallback(() => navigate('/ai'), [navigate]),
     priority: 60,
   });
 
   useShortcut({
     id: 'open-smart-templates',
     keys: ['mod', 'shift', 't'],
-    label: 'Smart Templates',
-    description: 'Open smart template picker',
+    label: '智能模板',
+    description: '打开智能模板选择器',
     handler: useCallback(() => setShowSmartTemplatePicker(true), []),
     priority: 55,
   });
@@ -270,8 +262,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'toggle-sidebar',
     keys: ['mod', 'b'],
-    label: 'Toggle sidebar',
-    description: 'Show or hide the sidebar',
+    label: '切换侧边栏',
+    description: '显示或隐藏侧边栏',
     handler: useCallback(() => useSidebarStore.getState().toggleCollapse(), []),
     priority: 40,
   });
@@ -279,8 +271,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'open-natural-language-bar',
     keys: ['mod', 'shift', 'n'],
-    label: 'Natural language input',
-    description: 'Create tasks, events, or notes from natural language',
+    label: '自然语言输入',
+    description: '通过自然语言创建任务、事件或笔记',
     handler: useCallback(() => setShowNaturalLanguageBar(true), []),
     priority: 55,
   });
@@ -342,21 +334,30 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, [navigate]);
 
+  const isStandaloneRoute =
+    location.pathname === '/focus' ||
+    /^\/diagrams\/[^/]+$/.test(location.pathname) ||
+    /^\/forms\/[^/]+\/(edit|fill|responses)$/.test(location.pathname);
+
+  if (isStandaloneRoute) {
+    return <div className="h-screen min-h-0 overflow-hidden bg-surface-light dark:bg-surface-dark">{children}</div>;
+  }
+
   return (
     <div className="app h-screen bg-surface-light dark:bg-surface-dark flex overflow-hidden">
       {/* Skip to main content link - visible on focus for keyboard users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent-blue focus:text-white focus:rounded-button focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent-primary focus:text-white focus:rounded-button focus:shadow-lg"
       >
-        Skip to main content
+        跳转到主要内容
       </a>
 
       {/* Mobile hamburger button - hidden on small screens (BottomNav handles it) and on desktop (sidebar always visible) */}
       <button
         onClick={toggleMobileMenu}
         className="hidden md:block lg:hidden fixed top-4 left-4 z-50 p-2 min-w-[44px] min-h-[44px] rounded-button bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark shadow-lg transition-all duration-standard ease-smooth"
-        aria-label="Toggle navigation menu"
+        aria-label="切换导航菜单"
       >
         <span className="text-xl" aria-hidden="true">{'\u2630'}</span>
       </button>
@@ -370,13 +371,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           ${/* Mobile: no margin (sidebars are overlays) */ ''}
           ml-0 mr-0
           ${/* Desktop (md+): left margin for navigation sidebar */ ''}
-          ${isCollapsed ? 'md:ml-[60px]' : 'md:ml-[210px]'}
-          ${/* Desktop (lg+): right margin for AI terminal */ ''}
-          ${isTerminalOpen ? 'lg:mr-[375px]' : 'lg:mr-0'}
+          ${isCollapsed ? 'md:ml-[64px]' : 'md:ml-[224px]'}
         `}
       >
         {/* Sticky PageHeader - persists across page navigation */}
-        <header className="sticky top-0 z-30 bg-surface-light dark:bg-surface-dark px-6 pt-6 pb-2">
+        <header className="sticky top-0 z-30 border-b border-border-light/70 bg-surface-light/95 px-4 py-3 backdrop-blur md:px-6 dark:border-border-dark/70 dark:bg-surface-dark/95">
           <PageHeader />
         </header>
 
@@ -386,7 +385,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           tabIndex={-1}
           className="flex-1 flex flex-col min-h-0 overflow-hidden focus:outline-none"
         >
-          <div className="w-full h-full flex-1 flex flex-col min-h-0 px-4 md:px-6 pb-20 md:pb-4">
+          <div className="w-full h-full flex-1 flex flex-col min-h-0 px-4 md:px-6 pb-20 md:pb-8">
             {children}
           </div>
         </main>
@@ -394,29 +393,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Bottom navigation bar for mobile (below md breakpoint) */}
       <BottomNav />
-
-      {/* Save Status Footer (floating pill at bottom-center) */}
-      <SaveStatusFooter />
-
-      {/* AI Terminal Toggle Button (floating action button - right edge, below header) */}
-      {!isTerminalOpen && (
-        <button
-          onClick={toggleTerminal}
-          className="fixed top-24 right-4 w-10 h-10 rounded-full bg-gradient-to-r from-accent-blue to-accent-primary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all z-40 flex items-center justify-center"
-          title="AI Terminal (Ctrl+Shift+A)"
-          aria-label="Toggle AI Terminal"
-        >
-          🤖
-        </button>
-      )}
-
-      {/* AI Terminal Component (lazy loaded, deferred until first open) */}
-      {/* hasOpenedTerminal tracks if terminal was ever opened - prevents ~100KB+ load until needed */}
-      {(isTerminalOpen || hasOpenedTerminal) && (
-        <Suspense fallback={null}>
-          <AITerminal />
-        </Suspense>
-      )}
 
       {/* Error Toast Notifications */}
       <ErrorToastContainer />
@@ -430,16 +406,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             onClose={() => setShowSupportModal(false)}
             initialTab={supportModalTab}
           />
-        )}
-
-        {/* About Modal */}
-        {showAboutModal && (
-          <AboutModal onClose={() => setShowAboutModal(false)} />
-        )}
-
-        {/* Privacy Modal */}
-        {showPrivacyModal && (
-          <PrivacyModal onClose={() => setShowPrivacyModal(false)} />
         )}
 
         {/* Onboarding Modal */}
@@ -495,8 +461,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         onClose={() => setShowNaturalLanguageBar(false)}
       />
 
-      {/* PWA Install and Update Prompts */}
-      <PWAPrompts />
+      {/* PWA update toast (install prompt now lives in Settings → 关于) */}
+      <PWAUpdatePrompt />
 
       {/* Offline Indicator (shows when network is unavailable) */}
       <OfflineIndicator />

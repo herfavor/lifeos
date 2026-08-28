@@ -31,7 +31,7 @@ export interface BackupPreferences {
   lastAutoSave?: string;
 
   // File naming and versioning
-  customFilename?: string; // User's custom filename (default: "NeumanOS")
+  customFilename?: string; // User's custom filename (default: "LifeOS")
   versionCount?: number; // Number of backup versions to keep (default: 7)
 
   // Compression settings
@@ -42,7 +42,7 @@ export interface BackupPreferences {
   cloudProvider?: 'google-drive' | 'dropbox' | 'onedrive';
   driveParentFolderId?: string; // User-chosen parent folder in Drive
   driveParentFolderName?: string; // Display name of parent folder
-  driveBackupFolderId?: string; // Created "NeumanOS Backups" folder ID
+  driveBackupFolderId?: string; // Created "LifeOS Backups" folder ID
 
   // Reminder settings
   reminderEnabled: boolean;
@@ -61,7 +61,7 @@ const PREFERENCES_KEY = 'backup-preferences';
 const DEFAULT_PREFERENCES: BackupPreferences = {
   autoSaveEnabled: false,
   autoSaveInterval: 60, // 1 hour
-  customFilename: 'NeumanOS', // Default filename
+  customFilename: 'LifeOS', // Default filename
   versionCount: 7, // Keep last 7 versions
   compressionEnabled: true,
   cloudSyncEnabled: false,
@@ -69,6 +69,20 @@ const DEFAULT_PREFERENCES: BackupPreferences = {
   reminderDays: 7,
   backupHistory: [],
   maxHistoryEntries: 10,
+};
+
+/** Restore backup behavior defaults without deleting backup history. */
+export const resetPreferencesToDefaults = async (): Promise<void> => {
+  const current = await loadPreferences();
+  const reset: BackupPreferences = {
+    ...DEFAULT_PREFERENCES,
+    backupHistory: current.backupHistory,
+    lastManualBackup: current.lastManualBackup,
+    lastAutoSave: current.lastAutoSave,
+    lastBackupType: current.lastBackupType,
+  };
+  await indexedDBService.setItem(PREFERENCES_KEY, JSON.stringify(reset));
+  log.info('Backup preferences restored to defaults; history preserved');
 };
 
 /**
@@ -183,7 +197,7 @@ export const shouldShowBackupReminder = async (): Promise<{
   if (!lastBackupTime) {
     return {
       show: true,
-      message: 'No backups found. Create your first backup to protect your data!',
+      message: '尚未创建备份。请创建你的第一个备份以保护数据！',
     };
   }
 
@@ -195,7 +209,7 @@ export const shouldShowBackupReminder = async (): Promise<{
     return {
       show: true,
       daysSinceLastBackup: daysSince,
-      message: `It's been ${daysSince} days since your last backup. Time to create a new one!`,
+      message: `距上次备份已过去 ${daysSince} 天，该创建新备份了！`,
     };
   }
 
@@ -222,13 +236,13 @@ export const getTimeSinceLastBackup = async (): Promise<string | null> => {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `${days} day${days !== 1 ? 's' : ''} ago`;
+    return `${days} 天前`;
   } else if (hours > 0) {
-    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    return `${hours} 小时前`;
   } else if (minutes > 0) {
-    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    return `${minutes} 分钟前`;
   } else {
-    return 'just now';
+    return '刚刚';
   }
 };
 

@@ -160,7 +160,7 @@ describe('AutoSaveManager', () => {
       await autoSaveManager.disableLocal();
 
       await expect(autoSaveManager.saveNow()).rejects.toThrow(
-        'Auto-save not enabled or no directory configured'
+        '自动保存未启用或未配置保存目录'
       );
     });
   });
@@ -168,7 +168,7 @@ describe('AutoSaveManager', () => {
   describe('saveNow', () => {
     it('should throw if not enabled', async () => {
       await expect(autoSaveManager.saveNow()).rejects.toThrow(
-        'Auto-save not enabled or no directory configured'
+        '自动保存未启用或未配置保存目录'
       );
     });
 

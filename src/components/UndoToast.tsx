@@ -86,7 +86,7 @@ export const UndoToast: React.FC<UndoToastProps> = ({
               {message}
             </p>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-              {Math.ceil(timeRemaining / 1000)}s remaining
+              剩余 {Math.ceil(timeRemaining / 1000)} 秒
             </p>
           </div>
 
@@ -95,14 +95,14 @@ export const UndoToast: React.FC<UndoToastProps> = ({
             onClick={handleUndo}
             className="flex-shrink-0 px-4 py-2 rounded-button bg-accent-blue hover:bg-accent-blue-hover text-white text-sm font-medium transition-all duration-200"
           >
-            Undo
+            撤销
           </button>
 
           {/* Close Button */}
           <button
             onClick={onDismiss}
             className="flex-shrink-0 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-all duration-standard ease-smooth"
-            aria-label="Dismiss"
+            aria-label="关闭"
           >
             <svg
               className="w-5 h-5"

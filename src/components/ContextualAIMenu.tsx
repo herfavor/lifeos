@@ -25,63 +25,63 @@ interface AIAction {
 const NOTE_ACTIONS: AIAction[] = [
   {
     id: 'summarize',
-    label: 'Summarize',
+    label: '总结',
     icon: '📋',
-    instruction: 'Please summarize the following note concisely, highlighting the key points:',
+    instruction: '请对以下笔记进行简洁总结，突出关键要点：',
   },
   {
     id: 'extract-actions',
-    label: 'Extract action items',
+    label: '提取待办事项',
     icon: '✅',
-    instruction: 'Extract all action items and to-do tasks from this note. Format as a numbered list:',
+    instruction: '请从该笔记中提取所有待办事项和任务，以编号列表形式呈现：',
   },
   {
     id: 'improve-writing',
-    label: 'Improve writing',
+    label: '改进写作',
     icon: '✏️',
-    instruction: 'Improve the writing quality of this note. Fix grammar, improve clarity, and enhance readability while preserving the original meaning:',
+    instruction: '请改进该笔记的写作质量：修正语法、提升清晰度和可读性，同时保留原意：',
   },
   {
     id: 'generate-outline',
-    label: 'Generate outline',
+    label: '生成大纲',
     icon: '📑',
-    instruction: 'Generate a structured outline based on the content of this note:',
+    instruction: '请根据该笔记的内容生成结构化大纲：',
   },
 ];
 
 const TASK_ACTIONS: AIAction[] = [
   {
     id: 'break-subtasks',
-    label: 'Break into subtasks',
+    label: '拆分为子任务',
     icon: '📊',
-    instruction: 'Break this task into smaller, actionable subtasks. List each subtask with a brief description:',
+    instruction: '请将此任务拆分为更小、可执行的子任务，并为每个子任务附上简要说明：',
   },
   {
     id: 'estimate-time',
-    label: 'Estimate time',
+    label: '预估时间',
     icon: '⏱️',
-    instruction: 'Estimate the time needed to complete this task. Consider complexity and provide a range (optimistic, realistic, pessimistic):',
+    instruction: '请预估完成此任务所需的时间，考虑复杂度并给出范围（乐观、现实、悲观）：',
   },
   {
     id: 'write-description',
-    label: 'Write description',
+    label: '撰写描述',
     icon: '📝',
-    instruction: 'Write a detailed description for this task, including acceptance criteria and implementation notes:',
+    instruction: '请为此任务撰写详细描述，包括验收标准和实施说明：',
   },
 ];
 
 const CALENDAR_ACTIONS: AIAction[] = [
   {
     id: 'draft-agenda',
-    label: 'Draft meeting agenda',
+    label: '起草会议议程',
     icon: '📋',
-    instruction: 'Draft a meeting agenda for this event. Include discussion topics, time allocations, and action items to cover:',
+    instruction: '请为此事件起草会议议程，包括讨论主题、时间分配和需要涵盖的待办事项：',
   },
   {
     id: 'suggest-prep',
-    label: 'Suggest preparation',
+    label: '建议准备工作',
     icon: '📚',
-    instruction: 'Suggest preparation steps for this event. What should be ready before the meeting?',
+    instruction: '请为此事件建议准备工作：会议前应该准备好什么？',
   },
 ];
 
@@ -172,8 +172,8 @@ export const ContextualAIMenu: React.FC<ContextualAIMenuProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`p-1.5 rounded transition-all hover:bg-accent-primary/10 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-primary ${buttonClassName}`}
-        title="AI Actions"
-        aria-label="Open AI actions menu"
+        title="AI 操作"
+        aria-label="打开 AI 操作菜单"
       >
         <Sparkles size={iconSize} />
       </button>
@@ -182,7 +182,7 @@ export const ContextualAIMenu: React.FC<ContextualAIMenuProps> = ({
         <div className="absolute right-0 top-full mt-1 w-52 bg-white dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg shadow-xl z-50 py-1 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="px-3 py-1.5 border-b border-border-light dark:border-border-dark">
             <span className="text-[10px] font-medium text-text-light-secondary dark:text-text-dark-tertiary uppercase tracking-wider">
-              AI Actions
+              AI 操作
             </span>
           </div>
           {actions.map((action) => (

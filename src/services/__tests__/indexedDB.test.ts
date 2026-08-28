@@ -261,11 +261,11 @@ describe('IndexedDBService', () => {
 
   describe('formatBytes', () => {
     it('should format 0 bytes', () => {
-      expect(indexedDBService.formatBytes(0)).toBe('0 Bytes');
+      expect(indexedDBService.formatBytes(0)).toBe('0 字节');
     });
 
     it('should format bytes', () => {
-      expect(indexedDBService.formatBytes(500)).toBe('500 Bytes');
+      expect(indexedDBService.formatBytes(500)).toBe('500 字节');
     });
 
     it('should format kilobytes', () => {

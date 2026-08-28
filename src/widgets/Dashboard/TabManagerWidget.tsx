@@ -11,8 +11,10 @@ interface TabManagerWidgetProps {
   widgetId?: string;
 }
 
+const EMPTY_TABS: Array<{ name: string; url: string }> = [];
+
 export const TabManagerWidget: React.FC<TabManagerWidgetProps> = ({ widgetId = 'tabmanager' }) => {
-  const tabs = useWidgetStore((state) => state.widgetSettings[widgetId]?.tabs) || [];
+  const tabs = useWidgetStore((state) => state.widgetSettings[widgetId]?.tabs ?? EMPTY_TABS);
   const updateWidgetSettings = useWidgetStore((state) => state.updateWidgetSettings);
   const [input, setInput] = useState({ name: '', url: '' });
 
@@ -28,14 +30,14 @@ export const TabManagerWidget: React.FC<TabManagerWidgetProps> = ({ widgetId = '
   };
 
   return (
-    <BaseWidget title="Tab Manager" icon="🗂️">
+    <BaseWidget title="标签页管理" icon="🗂️">
       <div className="space-y-3">
         <div className="space-y-2">
           <input
             type="text"
             value={input.name}
             onChange={(e) => setInput({ ...input, name: e.target.value })}
-            placeholder="Tab name..."
+            placeholder="标签页名称…"
             className="w-full px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
           />
           <div className="flex gap-2">
@@ -43,11 +45,11 @@ export const TabManagerWidget: React.FC<TabManagerWidgetProps> = ({ widgetId = '
               type="url"
               value={input.url}
               onChange={(e) => setInput({ ...input, url: e.target.value })}
-              placeholder="URL..."
+              placeholder="URL…"
               className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
             />
             <button onClick={addTab} className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button text-sm font-medium transition-all duration-standard ease-smooth">
-              Add
+              添加
             </button>
           </div>
         </div>
@@ -59,7 +61,7 @@ export const TabManagerWidget: React.FC<TabManagerWidgetProps> = ({ widgetId = '
                 {tab.name}
               </a>
               <button onClick={() => removeTab(idx)} className="text-xs text-status-error hover:underline ml-2">
-                Remove
+                移除
               </button>
             </div>
           ))}
@@ -67,7 +69,7 @@ export const TabManagerWidget: React.FC<TabManagerWidgetProps> = ({ widgetId = '
 
         {tabs.length === 0 && (
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary text-center py-4">
-            Add quick links to manage
+            添加快捷链接进行管理
           </p>
         )}
       </div>

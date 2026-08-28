@@ -23,7 +23,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Dashboard link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Dashboard/i }).or(page.getByText('Dashboard').first());
+    const link = page.getByRole('link', { name: /仪表盘/i }).or(page.getByText('仪表盘').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -31,7 +31,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Tasks link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Tasks/i }).or(page.getByText('Tasks').first());
+    const link = page.getByRole('link', { name: /任务/i }).or(page.getByText('任务').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -39,7 +39,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Notes link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Notes/i }).or(page.getByText('Notes').first());
+    const link = page.getByRole('link', { name: /笔记/i }).or(page.getByText('笔记').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -47,7 +47,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Schedule link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Schedule|Calendar/i }).or(page.getByText('Schedule').first());
+    const link = page.getByRole('link', { name: /日程|日历/i }).or(page.getByText('日程').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -55,7 +55,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Focus link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Focus/i }).or(page.getByText('Focus').first());
+    const link = page.getByRole('link', { name: /专注/i }).or(page.getByText('专注').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -63,7 +63,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Today link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Today/i }).or(page.getByText('Today').first());
+    const link = page.getByRole('link', { name: /今日/i }).or(page.getByText('今日').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -71,7 +71,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has Settings link', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Settings/i }).or(page.getByText('Settings').first());
+    const link = page.getByRole('link', { name: /设置/i }).or(page.getByText('设置').first());
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(link).toBeVisible();
     }
@@ -79,7 +79,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('clicking Tasks navigates to tasks page', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Tasks/i }).first();
+    const link = page.getByRole('link', { name: /任务/i }).first();
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await link.click();
       await page.waitForTimeout(500);
@@ -89,7 +89,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('clicking Notes navigates to notes page', async ({ page }) => {
-    const link = page.getByRole('link', { name: /Notes/i }).first();
+    const link = page.getByRole('link', { name: /笔记/i }).first();
     if (await link.isVisible({ timeout: 3000 }).catch(() => false)) {
       await link.click();
       await page.waitForTimeout(500);
@@ -99,7 +99,7 @@ test.describe('Sidebar Navigation', () => {
   });
 
   test('has sidebar collapse button', async ({ page }) => {
-    const collapseBtn = page.locator('[aria-label*="collapse"], [aria-label*="Collapse"], [title*="collapse"]').first();
+    const collapseBtn = page.locator('[aria-label*="折叠"], [title*="折叠"]').first();
     if (await collapseBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(collapseBtn).toBeVisible();
     }

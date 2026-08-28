@@ -54,7 +54,7 @@ export default function FormBuilder() {
       description,
       fields: form.fields,
     });
-    toast.success('Form saved successfully');
+    toast.success('表单保存成功');
   };
 
   const handleAddField = (field: FormField) => {
@@ -109,7 +109,7 @@ export default function FormBuilder() {
     const newField = {
       ...field,
       id: crypto.randomUUID(),
-      label: `${field.label} (Copy)`,
+      label: `${field.label}（副本）`,
       order: form.fields.length,
     };
 
@@ -199,7 +199,7 @@ export default function FormBuilder() {
             <button
               onClick={() => navigate('/forms')}
               className="p-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-lg transition-colors"
-              aria-label="Back to forms"
+              aria-label="返回表单"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -211,7 +211,7 @@ export default function FormBuilder() {
                 onChange={(e) => setTitle(e.target.value)}
                 onBlur={handleSave}
                 className="text-lg font-semibold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-accent-primary rounded px-2 py-1"
-                placeholder="Form Title"
+                placeholder="表单标题"
               />
               <input
                 type="text"
@@ -219,7 +219,7 @@ export default function FormBuilder() {
                 onChange={(e) => setDescription(e.target.value)}
                 onBlur={handleSave}
                 className="text-sm text-text-light-secondary dark:text-text-dark-secondary bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-accent-primary rounded px-2 py-1 block mt-1"
-                placeholder="Description (optional)"
+                placeholder="描述（可选）"
               />
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function FormBuilder() {
                 className="w-4 h-4 rounded accent-accent-blue dark:accent-accent-blue"
               />
               <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                Show Progress Bar
+                显示进度条
               </span>
             </label>
 
@@ -247,7 +247,7 @@ export default function FormBuilder() {
                 className="w-4 h-4 rounded accent-accent-blue dark:accent-accent-blue"
               />
               <span className="text-sm text-text-light-primary dark:text-text-dark-primary">
-                Spam Protection
+                垃圾回复防护
               </span>
             </label>
 
@@ -260,14 +260,14 @@ export default function FormBuilder() {
               }`}
             >
               <Eye className="w-4 h-4" />
-              {showPreview ? 'Hide Preview' : 'Show Preview'}
+              {showPreview ? '隐藏预览' : '显示预览'}
             </button>
             <button
               onClick={handleSave}
               className="flex items-center gap-2 px-4 py-2 bg-accent-blue dark:bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
             >
               <Save className="w-4 h-4" />
-              Save
+              保存
             </button>
           </div>
         </header>
@@ -278,14 +278,14 @@ export default function FormBuilder() {
           <div className="w-1/2 p-6 overflow-y-auto border-r border-border-light dark:border-border-dark">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">
-                Fields
+                字段
               </h2>
               <button
                 onClick={() => setIsAddingField(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-accent-blue dark:bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover"
               >
                 <Plus className="w-4 h-4" />
-                Add Field
+                添加字段
               </button>
             </div>
 
@@ -304,11 +304,11 @@ export default function FormBuilder() {
             {showPreview ? (
               <>
                 <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-                  Preview
+                  预览
                 </h2>
                 <div className="max-w-2xl mx-auto bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-6">
                   <h3 className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">
-                    {title || 'Untitled Form'}
+                    {title || '未命名表单'}
                   </h3>
                   {description && (
                     <p className="text-text-light-secondary dark:text-text-dark-secondary mb-6">
@@ -318,7 +318,7 @@ export default function FormBuilder() {
                   <div className="space-y-4">
                     {form.fields.length === 0 ? (
                       <p className="text-center text-text-light-tertiary dark:text-text-dark-tertiary py-8">
-                        No fields yet. Add fields to see them here.
+                        还没有字段。添加字段后即可在此预览。
                       </p>
                     ) : (
                       form.fields
@@ -331,7 +331,7 @@ export default function FormBuilder() {
             ) : (
               <div className="flex items-center justify-center h-full">
                 <p className="text-text-light-tertiary dark:text-text-dark-tertiary">
-                  Click "Show Preview" to see how your form will look
+                  点击“显示预览”查看表单效果
                 </p>
               </div>
             )}
@@ -357,9 +357,9 @@ export default function FormBuilder() {
         isOpen={fieldToDelete !== null}
         onClose={() => setFieldToDelete(null)}
         onConfirm={confirmDeleteField}
-        title="Delete Field"
-        message="Delete this field?"
-        confirmText="Delete"
+        title="删除字段"
+        message="确定删除此字段？"
+        confirmText="删除"
         variant="danger"
       />
     </StoreErrorBoundary>
@@ -381,16 +381,16 @@ function FieldPreview({ field }: { field: FormField }) {
       )}
       <div className="px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary">
         {field.type === 'textarea'
-          ? 'Text area input...'
+          ? '文本区域输入…'
           : field.type === 'select' || field.type === 'radio' || field.type === 'multiselect'
-          ? `${field.options?.join(', ') || 'No options'}`
+          ? `${field.options?.join(', ') || '无选项'}`
           : field.type === 'checkbox'
-          ? '☐ Checkbox'
+          ? '☐ 复选框'
           : field.type === 'rating'
           ? '★★★★★'
           : field.type === 'scale'
           ? '1 2 3 4 5 6 7 8 9 10'
-          : `${field.type} input...`}
+          : `${field.type} 输入…`}
       </div>
     </div>
   );

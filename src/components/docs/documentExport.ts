@@ -186,7 +186,7 @@ export function exportToPDF(editor: Editor, title: string): void {
 
   const printWindow = window.open('', '_blank', 'width=900,height=700');
   if (!printWindow) {
-    toast.error('Please allow popups to export PDF');
+    toast.error('请允许弹窗以导出 PDF');
     return;
   }
 
@@ -195,7 +195,7 @@ export function exportToPDF(editor: Editor, title: string): void {
   // Build head
   const head = doc.createElement('head');
   const titleEl = doc.createElement('title');
-  titleEl.textContent = `Print Preview - ${title}`;
+  titleEl.textContent = `打印预览 - ${title}`;
   head.appendChild(titleEl);
 
   const style = doc.createElement('style');
@@ -210,7 +210,7 @@ export function exportToPDF(editor: Editor, title: string): void {
   controls.className = 'print-preview-controls';
 
   const leftGroup = doc.createElement('div');
-  leftGroup.textContent = `Print Preview: ${title}`;
+  leftGroup.textContent = `打印预览：${title}`;
   controls.appendChild(leftGroup);
 
   const rightGroup = doc.createElement('div');
@@ -218,13 +218,13 @@ export function exportToPDF(editor: Editor, title: string): void {
   rightGroup.style.gap = '8px';
 
   const closeBtn = doc.createElement('button');
-  closeBtn.textContent = 'Close';
+  closeBtn.textContent = '关闭';
   closeBtn.addEventListener('click', () => printWindow.close());
   rightGroup.appendChild(closeBtn);
 
   const printBtn = doc.createElement('button');
   printBtn.className = 'primary';
-  printBtn.textContent = 'Print / Save as PDF';
+  printBtn.textContent = '打印 / 另存为 PDF';
   printBtn.addEventListener('click', () => printWindow.print());
   rightGroup.appendChild(printBtn);
 
@@ -242,7 +242,7 @@ export function exportToPDF(editor: Editor, title: string): void {
 
   const meta = doc.createElement('div');
   meta.className = 'doc-meta';
-  meta.textContent = `Exported on ${new Date().toLocaleDateString(undefined, {
+  meta.textContent = `导出于 ${new Date().toLocaleDateString('zh-CN', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -439,7 +439,7 @@ function htmlToMarkdown(html: string): string {
       }
       case 'img': {
         const src = el.getAttribute('src') || '';
-        const alt = el.getAttribute('alt') || 'image';
+        const alt = el.getAttribute('alt') || '图片';
         return `![${alt}](${src})`;
       }
       case 'hr':
@@ -528,10 +528,10 @@ function escapeHtml(text: string): string {
 export type ExportFormat = 'pdf' | 'html' | 'markdown' | 'text';
 
 export const EXPORT_FORMATS: { id: ExportFormat; label: string; extension: string }[] = [
-  { id: 'pdf', label: 'PDF Document', extension: '.pdf' },
-  { id: 'html', label: 'HTML Page', extension: '.html' },
+  { id: 'pdf', label: 'PDF 文档', extension: '.pdf' },
+  { id: 'html', label: 'HTML 页面', extension: '.html' },
   { id: 'markdown', label: 'Markdown', extension: '.md' },
-  { id: 'text', label: 'Plain Text', extension: '.txt' },
+  { id: 'text', label: '纯文本', extension: '.txt' },
 ];
 
 /**

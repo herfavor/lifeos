@@ -27,12 +27,12 @@ export const CurrencyWidget: React.FC = () => {
 
     try {
       const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
-      if (!response.ok) throw new Error('Failed to fetch exchange rates');
+      if (!response.ok) throw new Error('获取汇率失败');
 
       const data = await response.json();
       setRates(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load rates');
+      setError(err instanceof Error ? err.message : '加载汇率失败');
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ export const CurrencyWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Currency Exchange"
+      title="汇率换算"
       icon="💱"
       loading={loading}
       error={error}
@@ -78,7 +78,7 @@ export const CurrencyWidget: React.FC = () => {
 
           {rates.date && (
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary text-center">
-              Updated: {rates.date}
+              更新于：{rates.date}
             </p>
           )}
         </div>

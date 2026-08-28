@@ -59,8 +59,8 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
         <button
           onClick={onSettings}
           className={`${buttonBase} hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated`}
-          title="Widget settings"
-          aria-label="Widget settings"
+          title="组件设置"
+          aria-label="组件设置"
         >
           <svg
             className="w-5 h-5 sm:w-4 sm:h-4 text-text-light-secondary dark:text-text-dark-secondary"
@@ -89,8 +89,8 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
         <button
           onClick={onExpand}
           className={`${buttonBase} hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated`}
-          title="Expand to fullscreen"
-          aria-label="Expand widget"
+          title="全屏展开"
+          aria-label="展开组件"
         >
           <svg
             className="w-5 h-5 sm:w-4 sm:h-4 text-text-light-secondary dark:text-text-dark-secondary"
@@ -112,8 +112,8 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
       <button
         onClick={() => setMenuOpen(!menuOpen)}
         className={`${buttonBase} hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated`}
-        title="Widget options"
-        aria-label="Widget options menu"
+        title="组件选项"
+        aria-label="组件选项菜单"
         aria-expanded={menuOpen}
         aria-haspopup="menu"
       >
@@ -131,7 +131,7 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
         <div
           className="absolute right-0 top-full mt-1 bg-surface-light dark:bg-surface-dark-elevated rounded-button shadow-xl border border-border-light dark:border-border-dark p-2 z-50 min-w-[140px]"
           role="menu"
-          aria-label="Widget options"
+          aria-label="组件选项"
         >
           {/* Remove button */}
           <button
@@ -139,7 +139,7 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
             className="w-full px-3 py-2 sm:px-2 sm:py-1.5 text-sm sm:text-xs text-left text-accent-red dark:text-accent-red hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded-button transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
             role="menuitem"
           >
-            Remove Widget
+            移除组件
           </button>
         </div>
       )}
@@ -149,8 +149,8 @@ export const WidgetControls: React.FC<WidgetControlsProps> = ({
         <button
           onClick={onClose}
           className={`${buttonBase} hover:bg-accent-red/10 dark:hover:bg-accent-red/20 group`}
-          title="Hide widget"
-          aria-label="Hide widget"
+          title="隐藏组件"
+          aria-label="隐藏组件"
         >
           <svg
             className="w-5 h-5 sm:w-4 sm:h-4 text-text-light-secondary dark:text-text-dark-secondary group-hover:text-accent-red dark:group-hover:text-accent-red"

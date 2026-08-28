@@ -42,7 +42,7 @@ export const PixelArtWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="Pixel Art" icon="🎨">
+    <BaseWidget title="像素画" icon="🎨">
       <div className="space-y-3">
         {/* Color palette */}
         <div className="flex gap-2 flex-wrap">
@@ -60,7 +60,7 @@ export const PixelArtWidget: React.FC = () => {
             onClick={clearCanvas}
             className="px-2 py-1 text-xs bg-surface-light-elevated dark:bg-surface-dark rounded-button text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth"
           >
-            Clear
+            清除
           </button>
         </div>
 

@@ -117,7 +117,7 @@ export function FormulaFieldEditor({
       {/* Formula Expression Input */}
       <div className="relative">
         <label className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
-          Formula Expression
+          公式表达式
         </label>
 
         <textarea
@@ -126,10 +126,10 @@ export function FormulaFieldEditor({
           onChange={(e) => handleExpressionChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onClick={(e) => setCursorPosition(e.currentTarget.selectionStart)}
-          placeholder="e.g., {field1} + {field2} * 2 or IF({status} = 'Done', 100, 0)"
+          placeholder="例如：{field1} + {field2} * 2 或 IF({status} = 'Done', 100, 0)"
           rows={4}
           className="w-full px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
-          aria-label="Formula expression"
+          aria-label="公式表达式"
         />
 
         {/* Field Picker Dropdown */}
@@ -144,11 +144,11 @@ export function FormulaFieldEditor({
                   <li key={field.id}>
                     <button
                       onClick={() => handleInsertField(field)}
-                      className="w-full px-3 py-2 text-left hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark text-text-light-primary dark:text-text-dark-primary"
+                      className="w-full px-3 py-2 text-left hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary"
                     >
                       <div className="font-medium">{field.name}</div>
                       <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                        {field.type} field
+                        {field.type} 字段
                       </div>
                     </button>
                   </li>
@@ -156,7 +156,7 @@ export function FormulaFieldEditor({
               </ul>
             ) : (
               <div className="px-3 py-4 text-center text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                No fields available to reference
+                没有可引用的字段
               </div>
             )}
           </div>
@@ -165,8 +165,8 @@ export function FormulaFieldEditor({
 
       {/* Helper Text */}
       <div className="mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary space-y-1">
-        <p>Type <code className="px-1 py-0.5 bg-surface-hover-light dark:bg-surface-hover-dark rounded">{'{'}</code> to insert a field reference</p>
-        <p>Supported: +, -, *, /, IF(), SUM(), AVERAGE(), COUNT(), DAYS_BETWEEN()</p>
+        <p>输入 <code className="px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded">{'{'}</code> 以插入字段引用</p>
+        <p>支持：+, -, *, /, IF(), SUM(), AVERAGE(), COUNT(), DAYS_BETWEEN()</p>
       </div>
 
       {/* Circular Reference Warning */}
@@ -174,18 +174,18 @@ export function FormulaFieldEditor({
         <div className="mt-3 p-3 bg-status-error/10 dark:bg-status-error/20 border border-status-error rounded-lg flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-status-error-text dark:text-status-error-text-dark shrink-0 mt-0.5" />
           <div className="text-sm text-status-error-text dark:text-status-error-text-dark">
-            <strong>Circular Reference Detected:</strong> This formula references fields that create a circular dependency.
+            <strong>检测到循环引用：</strong>此公式引用的字段会形成循环依赖。
           </div>
         </div>
       )}
 
       {/* Preview */}
       {!hasCircularRef && localExpression && (
-        <div className="mt-3 p-3 bg-surface-hover-light dark:bg-surface-hover-dark rounded-lg border border-border-light dark:border-border-dark">
+        <div className="mt-3 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
           <div className="flex items-center gap-2 mb-2">
             <Calculator className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
             <span className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase">
-              Preview
+              预览
             </span>
           </div>
 
@@ -204,7 +204,7 @@ export function FormulaFieldEditor({
                   {formatPreviewValue(evaluation.value)}
                 </div>
                 <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  Result type: {typeof evaluation.value}
+                  结果类型：{typeof evaluation.value}
                 </div>
               </div>
             </div>
@@ -216,7 +216,7 @@ export function FormulaFieldEditor({
       {referencedFields.length > 0 && (
         <div className="mt-3">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-            Referenced Fields:
+            引用的字段：
           </div>
           <div className="flex flex-wrap gap-1">
             {referencedFields.map((fieldId) => {
@@ -226,7 +226,7 @@ export function FormulaFieldEditor({
                   key={fieldId}
                   className="inline-flex items-center px-2 py-0.5 bg-accent-blue/10 dark:bg-accent-blue/20 text-accent-blue dark:text-accent-blue-hover rounded text-xs"
                 >
-                  {field ? field.name : `Unknown (${fieldId})`}
+                  {field ? field.name : `未知字段 (${fieldId})`}
                 </span>
               );
             })}

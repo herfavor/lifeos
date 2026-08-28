@@ -13,6 +13,7 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { toast } from '../stores/useToastStore';
+import { isWidgetExposed } from '../config/features';
 
 interface WidgetManagerProps {
   isOpen: boolean;
@@ -67,7 +68,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const allWidgets = getAllWidgets();
+  const allWidgets = getAllWidgets().filter((widget) => isWidgetExposed(widget.id));
   const availableWidgets = allWidgets.filter(w => !enabledWidgets.includes(w.id));
 
   // Filter available widgets by search and category
@@ -83,15 +84,15 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
 
   // Category display names with descriptions
   const categoryNames: Record<WidgetCategory, string> = {
-    core: '⭐ Core Features',
-    productivity: '💼 Productivity',
-    news: '📰 Information',
-    finance: '💰 Finance',
-    visual: '🎨 Media',
-    dev: '🔧 Developer',
-    fun: '🎮 Fun & Games',
-    utility: '🛠️ Utilities',
-    custom: '🧩 Custom',
+    core: '⭐ 核心功能',
+    productivity: '💼 效率',
+    news: '📰 资讯',
+    finance: '💰 财经',
+    visual: '🎨 媒体',
+    dev: '🔧 开发',
+    fun: '🎮 娱乐',
+    utility: '🛠️ 工具',
+    custom: '🧩 自定义',
   };
 
   const sensors = useSensors(
@@ -133,7 +134,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
 
     if (settingsPrompt.widgetId === 'github') {
       if (!githubUsername.trim()) {
-        toast.warning('Please enter at least one GitHub username');
+        toast.warning('请输入至少一个 GitHub 用户名');
         return;
       }
 
@@ -141,7 +142,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
       const usernames = githubUsername.split(',').map(u => u.trim()).filter(u => u);
 
       if (usernames.length === 0) {
-        toast.warning('Please enter valid GitHub username(s)');
+        toast.warning('请输入有效的 GitHub 用户名');
         return;
       }
 
@@ -225,7 +226,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Customize Dashboard Widgets" maxWidth="2xl">
+    <Modal isOpen={isOpen} onClose={onClose} title="自定义首页组件" maxWidth="2xl">
       <div className="w-full">
         {/* Tabs */}
         <div className="flex gap-2 mb-4 border-b border-border-light dark:border-border-dark">
@@ -233,21 +234,21 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
             onClick={() => setActiveTab('enabled')}
             className={`px-4 py-2 font-medium transition-all duration-standard ease-smooth ${
               activeTab === 'enabled'
-                ? 'text-accent-blue border-b-2 border-accent-blue'
+                ? 'text-accent-primary border-b-2 border-accent-primary'
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            Active Widgets ({enabledWidgets.length})
+            已启用组件 ({enabledWidgets.length})
           </button>
           <button
             onClick={() => setActiveTab('available')}
             className={`px-4 py-2 font-medium transition-all duration-standard ease-smooth ${
               activeTab === 'available'
-                ? 'text-accent-blue border-b-2 border-accent-blue'
+                ? 'text-accent-primary border-b-2 border-accent-primary'
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            Available ({availableWidgets.length})
+            可用组件 ({availableWidgets.length})
           </button>
         </div>
 
@@ -256,7 +257,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
           {activeTab === 'enabled' ? (
             <div className="space-y-4">
               <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                Drag to reorder widgets. Click to disable.
+                拖动以调整组件顺序。点击可停用。
               </p>
 
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -274,7 +275,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                           <button
                             onClick={() => disableWidget(id)}
                             className="p-2 text-accent-red hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded-button transition-all duration-standard ease-smooth"
-                            title="Disable widget"
+                            title="停用组件"
                           >
                             ✕
                           </button>
@@ -287,7 +288,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
 
               {enabledWidgets.length === 0 && (
                 <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
-                  No widgets enabled. Add some from the Available tab!
+                  尚未启用组件。请从“可用”标签页添加！
                 </div>
               )}
             </div>
@@ -300,8 +301,8 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search widgets... (↑↓ arrows, Enter to add, ESC to clear)"
-                className="w-full px-4 py-2 rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-blue focus:border-transparent transition-all duration-standard ease-smooth"
+                placeholder="搜索组件…（↑↓ 选择，Enter 添加，ESC 清除）"
+                className="w-full px-4 py-2 rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-standard ease-smooth"
               />
 
               {/* Category Tabs */}
@@ -310,11 +311,11 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                   onClick={() => setSelectedCategory('all')}
                   className={`px-3 py-1.5 rounded-button text-sm font-medium transition-all duration-standard ease-smooth ${
                     selectedCategory === 'all'
-                      ? 'bg-accent-blue text-white'
+                      ? 'bg-accent-primary text-white'
                       : 'bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark-elevated'
                   }`}
                 >
-                  All ({availableWidgets.length})
+                  全部 ({availableWidgets.length})
                 </button>
                 {Object.entries(categoryNames).map(([category, displayName]) => {
                   const count = availableWidgets.filter(w => w.category === category).length;
@@ -326,7 +327,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                       onClick={() => setSelectedCategory(category as WidgetCategory)}
                       className={`px-3 py-1.5 rounded-button text-sm font-medium transition-all duration-standard ease-smooth ${
                         selectedCategory === category
-                          ? 'bg-accent-blue text-white'
+                          ? 'bg-accent-primary text-white'
                           : 'bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark-elevated'
                       }`}
                     >
@@ -339,11 +340,11 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
               {/* Widget Grid */}
               {availableWidgets.length === 0 ? (
                 <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
-                  All widgets are already enabled!
+                  所有组件都已启用！
                 </div>
               ) : filteredAvailableWidgets.length === 0 ? (
                 <div className="text-center py-12 text-text-light-secondary dark:text-text-dark-secondary">
-                  No widgets found matching your search.
+                  没有找到匹配的组件。
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
@@ -387,7 +388,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
             onClick={onClose}
             className="px-4 py-2 bg-accent-blue text-white rounded-button hover:bg-accent-blue-hover transition-all duration-standard ease-smooth"
           >
-            Done
+            完成
           </button>
         </div>
       </div>
@@ -397,14 +398,14 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
           <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-card p-6 max-w-md w-full mx-4 border border-border-light dark:border-border-dark">
             <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-              Configure {settingsPrompt.widgetName}
+              配置 {settingsPrompt.widgetName}
             </h3>
 
             {settingsPrompt.widgetId === 'github' && (
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                    GitHub Username
+                    GitHub 用户名
                   </label>
                   <input
                     type="text"
@@ -415,7 +416,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                     autoFocus
                   />
                   <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                    Enter GitHub username(s). Use commas to add multiple widgets (e.g., "username1, username2")
+                    输入 GitHub 用户名。使用逗号可添加多个组件（例如："username1, username2"）
                   </p>
                 </div>
 
@@ -424,13 +425,13 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                     onClick={handleCancelSettings}
                     className="px-4 py-2 border border-border-light dark:border-border-dark rounded-button hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth text-text-light-primary dark:text-text-dark-primary"
                   >
-                    Cancel
+                    取消
                   </button>
                   <button
                     onClick={handleSaveSettings}
                     className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
                   >
-                    Save & Enable
+                    保存并启用
                   </button>
                 </div>
               </div>

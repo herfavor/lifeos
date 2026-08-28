@@ -32,8 +32,8 @@ interface LayoutOption {
 const layoutOptions: LayoutOption[] = [
   {
     id: 'three-column',
-    name: 'Three Column',
-    description: 'Apple Notes / Bear style - Folders, Notes list, and Editor in separate columns',
+    name: '三栏',
+    description: 'Apple Notes / Bear 风格——文件夹、笔记列表和编辑器分列显示',
     icon: <Columns3 className="w-5 h-5" />,
     preview: (
       <div className="flex gap-0.5 h-12 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded overflow-hidden">
@@ -57,8 +57,8 @@ const layoutOptions: LayoutOption[] = [
   },
   {
     id: 'file-tree',
-    name: 'File Tree',
-    description: 'Obsidian / VS Code style - Unified file tree with notes inside folders',
+    name: '文件树',
+    description: 'Obsidian / VS Code 风格——统一的文件树，笔记位于文件夹内',
     icon: <FolderTree className="w-5 h-5" />,
     preview: (
       <div className="flex gap-0.5 h-12 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded overflow-hidden">
@@ -79,8 +79,8 @@ const layoutOptions: LayoutOption[] = [
   },
   {
     id: 'tabbed-sidebar',
-    name: 'Tabbed Sidebar',
-    description: 'Notion style - Single sidebar with tabs for Folders, Tags, and All Notes',
+    name: '标签式侧边栏',
+    description: 'Notion 风格——单个侧边栏，含文件夹、标签和全部笔记标签页',
     icon: <LayoutList className="w-5 h-5" />,
     preview: (
       <div className="flex gap-0.5 h-12 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded overflow-hidden">
@@ -116,11 +116,10 @@ export const LayoutSwitcher: React.FC<LayoutSwitcherProps> = ({ isOpen, onClose 
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Choose Notes Layout" maxWidth="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title="选择笔记布局" maxWidth="lg">
       <div className="space-y-4">
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          Select your preferred layout style for the Notes page. Each layout offers a different way
-          to organize and navigate your notes.
+          为笔记页面选择你偏好的布局风格。每种布局都提供不同的方式来组织与浏览你的笔记。
         </p>
 
         <div className="space-y-3">
@@ -176,11 +175,11 @@ export const LayoutSwitcher: React.FC<LayoutSwitcherProps> = ({ isOpen, onClose 
 
         {/* Keyboard shortcut hint */}
         <div className="flex items-center justify-center gap-2 pt-2 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
-          <span>Tip: Press</span>
+          <span>提示：按</span>
           <kbd className="px-1.5 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded font-mono">
             Cmd+Shift+L
           </kbd>
-          <span>to cycle through layouts</span>
+          <span>可在布局之间循环切换</span>
         </div>
       </div>
     </Modal>

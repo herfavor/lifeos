@@ -37,7 +37,7 @@ test.describe('Automation Rule Builder', () => {
       await page.waitForTimeout(500);
 
       // Rule builder should show trigger section
-      const triggerLabel = page.getByText(/trigger|when/i).first();
+      const triggerLabel = page.getByText(/触发器|当/i).first();
       if (await triggerLabel.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(triggerLabel).toBeVisible();
       }
@@ -65,7 +65,7 @@ test.describe('Automation Rule Builder', () => {
       await createBtn.click();
       await page.waitForTimeout(500);
 
-      const actionLabel = page.getByText(/action|then/i).first();
+      const actionLabel = page.getByText(/操作|然后/i).first();
       if (await actionLabel.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(actionLabel).toBeVisible();
       }
@@ -79,7 +79,7 @@ test.describe('Automation Rule Builder', () => {
       await createBtn.click();
       await page.waitForTimeout(500);
 
-      const nameInput = page.getByPlaceholder(/name|rule/i).first();
+      const nameInput = page.getByPlaceholder(/例如：自动归档已完成的任务|名称/i).first();
       if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(nameInput).toBeVisible();
       }
@@ -93,7 +93,7 @@ test.describe('Automation Rule Builder', () => {
       await createBtn.click();
       await page.waitForTimeout(500);
 
-      const saveBtn = page.getByRole('button', { name: /save|create/i }).first();
+      const saveBtn = page.getByRole('button', { name: /保存|创建/i }).first();
       if (await saveBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(saveBtn).toBeVisible();
       }
@@ -102,7 +102,7 @@ test.describe('Automation Rule Builder', () => {
   });
 
   test('has automation history', async ({ page }) => {
-    const historyBtn = page.getByRole('button', { name: /history|log/i });
+    const historyBtn = page.getByRole('button', { name: /历史|日志/i });
     if (await historyBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(historyBtn).toBeVisible();
     }

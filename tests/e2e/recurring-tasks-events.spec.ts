@@ -31,8 +31,7 @@ test.describe('Recurring Tasks & Events', () => {
 
   // ==================== TEST 1: DAILY RECURRING TASK ====================
 
-  // SKIP: Recurring tasks not displaying in task list UI
-  test.skip('daily recurring task generates correctly', async ({ page }) => {
+  test('daily recurring task generates correctly', async ({ page }) => {
     const today = getTodayKey();
 
     // Step 1: Create a daily recurring task
@@ -91,7 +90,7 @@ test.describe('Recurring Tasks & Events', () => {
     await page.getByText('Daily Standup').click();
 
     const completeButton = page.getByRole('button', {
-      name: /complete|done|mark.*done/i,
+      name: /完成|已完成|标记.*完成/i,
     });
 
     if (await completeButton.isVisible()) {
@@ -109,8 +108,7 @@ test.describe('Recurring Tasks & Events', () => {
 
   // ==================== TEST 2: WEEKLY RECURRING EVENT ====================
 
-  // SKIP: Recurring events not displaying in calendar UI
-  test.skip('weekly recurring event with specific days', async ({ page }) => {
+  test('weekly recurring event with specific days', async ({ page }) => {
     const today = new Date();
     const todayKey = formatDateKey(today);
 
@@ -158,7 +156,7 @@ test.describe('Recurring Tasks & Events', () => {
     expect(recurringEvent.recurrence.daysOfWeek).toEqual([1, 3, 5]);
 
     // Step 4: Switch to monthly view to see multiple occurrences
-    const monthlyViewButton = page.getByRole('button', { name: /month/i });
+    const monthlyViewButton = page.getByRole('button', { name: /月/i });
     if (await monthlyViewButton.isVisible()) {
       await monthlyViewButton.click();
       await waitForIndexedDB(page);
@@ -171,8 +169,7 @@ test.describe('Recurring Tasks & Events', () => {
 
   // ==================== TEST 3: MONTHLY RECURRING TASK ====================
 
-  // SKIP: Recurring tasks not displaying in task list UI
-  test.skip('monthly recurring task (every 3rd Friday)', async ({ page }) => {
+  test('monthly recurring task (every 3rd Friday)', async ({ page }) => {
     const today = new Date();
     const todayKey = formatDateKey(today);
 
@@ -421,7 +418,7 @@ test.describe('Recurring Tasks & Events', () => {
         const futureDateString = `${futureDate.getFullYear()}-${String(futureDate.getMonth() + 1).padStart(2, '0')}-${String(futureDate.getDate()).padStart(2, '0')}`;
         await dateInput.fill(futureDateString);
 
-        await page.getByRole('button', { name: /save|add/i }).click();
+        await page.getByRole('button', { name: /保存|添加/i }).click();
         await waitForIndexedDB(page);
 
         // Verify new exception was added

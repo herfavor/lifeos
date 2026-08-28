@@ -13,7 +13,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Process / Action
   {
     id: 'flowchart-process',
-    name: 'Process',
+    name: '流程',
     category: 'flowchart',
     keywords: ['process', 'action', 'step', 'rectangle', 'task'],
     thumbnail: 'rectangle',
@@ -33,7 +33,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Decision / Branch
   {
     id: 'flowchart-decision',
-    name: 'Decision',
+    name: '判断',
     category: 'flowchart',
     keywords: ['decision', 'if', 'branch', 'diamond', 'condition'],
     thumbnail: 'diamond',
@@ -52,7 +52,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Data / Input/Output
   {
     id: 'flowchart-data',
-    name: 'Data',
+    name: '数据',
     category: 'flowchart',
     keywords: ['data', 'input', 'output', 'parallelogram', 'io'],
     thumbnail: 'parallelogram',
@@ -71,7 +71,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Terminator / Start/End
   {
     id: 'flowchart-terminator',
-    name: 'Terminator',
+    name: '起止',
     category: 'flowchart',
     keywords: ['terminator', 'start', 'end', 'rounded', 'pill'],
     thumbnail: 'rounded-rectangle',
@@ -91,7 +91,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Document
   {
     id: 'flowchart-document',
-    name: 'Document',
+    name: '文档',
     category: 'flowchart',
     keywords: ['document', 'file', 'paper', 'wavy'],
     thumbnail: 'document',
@@ -110,7 +110,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Manual Input
   {
     id: 'flowchart-manual-input',
-    name: 'Manual Input',
+    name: '手动输入',
     category: 'flowchart',
     keywords: ['manual', 'input', 'keyboard', 'trapezoid'],
     thumbnail: 'trapezoid',
@@ -129,7 +129,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Display / Output
   {
     id: 'flowchart-display',
-    name: 'Display',
+    name: '显示',
     category: 'flowchart',
     keywords: ['display', 'output', 'screen', 'monitor'],
     thumbnail: 'display',
@@ -148,7 +148,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Preparation
   {
     id: 'flowchart-preparation',
-    name: 'Preparation',
+    name: '准备',
     category: 'flowchart',
     keywords: ['preparation', 'setup', 'hexagon'],
     thumbnail: 'hexagon',
@@ -167,7 +167,7 @@ export const flowchartShapes: ShapeDefinition[] = [
   // Delay
   {
     id: 'flowchart-delay',
-    name: 'Delay',
+    name: '延迟',
     category: 'flowchart',
     keywords: ['delay', 'wait', 'pause', 'semi-circle'],
     thumbnail: 'delay',
@@ -192,7 +192,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Square
   {
     id: 'basic-square',
-    name: 'Square',
+    name: '方形',
     category: 'basic',
     keywords: ['square', 'rectangle', 'box'],
     thumbnail: 'square',
@@ -211,7 +211,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Circle
   {
     id: 'basic-circle',
-    name: 'Circle',
+    name: '圆形',
     category: 'basic',
     keywords: ['circle', 'round', 'dot'],
     thumbnail: 'circle',
@@ -230,7 +230,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Triangle
   {
     id: 'basic-triangle',
-    name: 'Triangle',
+    name: '三角形',
     category: 'basic',
     keywords: ['triangle', 'arrow', 'point'],
     thumbnail: 'triangle',
@@ -249,7 +249,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Diamond
   {
     id: 'basic-diamond',
-    name: 'Diamond',
+    name: '菱形',
     category: 'basic',
     keywords: ['diamond', 'rhombus'],
     thumbnail: 'diamond',
@@ -268,7 +268,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Pentagon
   {
     id: 'basic-pentagon',
-    name: 'Pentagon',
+    name: '五边形',
     category: 'basic',
     keywords: ['pentagon', '5-sided'],
     thumbnail: 'pentagon',
@@ -287,7 +287,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Hexagon
   {
     id: 'basic-hexagon',
-    name: 'Hexagon',
+    name: '六边形',
     category: 'basic',
     keywords: ['hexagon', '6-sided'],
     thumbnail: 'hexagon',
@@ -306,7 +306,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Star
   {
     id: 'basic-star',
-    name: 'Star',
+    name: '星形',
     category: 'basic',
     keywords: ['star', '5-point', 'favorite'],
     thumbnail: 'star',
@@ -325,7 +325,7 @@ export const basicShapes: ShapeDefinition[] = [
   // Arrow (right)
   {
     id: 'basic-arrow',
-    name: 'Arrow',
+    name: '箭头',
     category: 'basic',
     keywords: ['arrow', 'pointer', 'direction', 'right'],
     thumbnail: 'arrow',

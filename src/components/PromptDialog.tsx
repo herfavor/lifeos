@@ -25,8 +25,8 @@ export const PromptDialog: React.FC<PromptDialogProps> = ({
   message,
   defaultValue = '',
   placeholder = '',
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = '确认',
+  cancelText = '取消',
 }) => {
   const [value, setValue] = useState(defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,7 +70,7 @@ export const PromptDialog: React.FC<PromptDialogProps> = ({
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full px-4 py-3 rounded-button border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary-cyan focus:border-transparent transition-all duration-standard ease-smooth"
+          className="w-full px-4 py-3 rounded-button border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all duration-standard ease-smooth"
         />
 
         {/* Action Buttons */}

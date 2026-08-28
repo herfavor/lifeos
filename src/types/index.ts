@@ -735,7 +735,7 @@ export interface BackupPreferences {
   autoSaveEnabled: boolean;
   saveInterval: number; // milliseconds, default 30000
   versionsToKeep: number; // default 7
-  customFileName: string; // default "NeumanOS"
+  customFileName: string; // default "LifeOS"
   reminderPreference: 'every-session' | 'in-7-days' | 'monthly' | 'never';
   nextReminderDate: string | null; // ISO 8601 date string
 }
@@ -930,6 +930,8 @@ export interface BaseDoc {
   order: number;             // For manual sorting
   version: number;           // Document version (for history)
   projectIds: string[];      // Project context support
+  archivedAt?: string;       // ISO date - excluded from active document lists
+  deletedAt?: string;        // ISO date - recoverable recycle-bin state
 }
 
 /**

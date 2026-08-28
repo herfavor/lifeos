@@ -185,25 +185,25 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
                 {conv.title}
               </div>
               <div className="text-[10px] text-text-dark-tertiary mt-0.5">
-                {conv.messageCount} messages • {new Date(conv.updatedAt).toLocaleDateString('en-US', {
+                {conv.messageCount} 条消息 • {new Date(conv.updatedAt).toLocaleDateString('zh-CN', {
                   month: 'short',
                   day: 'numeric',
                 })}
               </div>
             </div>
-            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
               {/* Move to folder */}
               {conversationFolders.length > 0 && (
                 <select
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => { moveConversationToFolder(conv.id, e.target.value || null); e.target.value = ''; }}
                   value=""
-                  className="w-5 h-5 opacity-0 group-hover:opacity-100 cursor-pointer text-[10px] bg-transparent"
-                  title="Move to folder"
-                  aria-label="Move to folder"
+                  className="w-5 h-5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 cursor-pointer text-[10px] bg-transparent"
+                  title="移动到文件夹"
+                  aria-label="移动到文件夹"
                 >
-                  <option value="">Move...</option>
-                  <option value="">Unfiled</option>
+                  <option value="">移动…</option>
+                  <option value="">未分类</option>
                   {conversationFolders.map((f) => (
                     <option key={f.id} value={f.id}>{f.name}</option>
                   ))}
@@ -212,14 +212,14 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
               <button
                 onClick={(e) => { e.stopPropagation(); handleStartRename(conv.id, conv.title); }}
                 className="p-1 hover:bg-surface-dark-elevated rounded text-text-dark-secondary hover:text-accent-blue"
-                title="Rename"
+                title="重命名"
               >
                 <Pencil size={12} />
               </button>
               <button
                 onClick={(e) => handleDelete(conv.id, e)}
                 className="p-1 hover:bg-surface-dark-elevated rounded text-text-dark-secondary hover:text-accent-red"
-                title="Delete"
+                title="删除"
               >
                 <Trash2 size={12} />
               </button>
@@ -234,26 +234,26 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border-dark flex-shrink-0">
-        <h3 className="text-sm font-medium text-text-dark-primary">Conversations</h3>
+        <h3 className="text-sm font-medium text-text-dark-primary">对话历史</h3>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setShowNewFolder(true)}
             className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-yellow"
-            title="New Folder"
+            title="新建文件夹"
           >
             <FolderPlus size={14} />
           </button>
           <button
             onClick={handleNewConversation}
             className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-accent-green"
-            title="New Conversation"
+            title="新建对话"
           >
             <MessageSquarePlus size={16} />
           </button>
           <button
             onClick={onClose}
             className="p-1.5 hover:bg-surface-dark-elevated rounded transition-all text-text-dark-secondary hover:text-white"
-            title="Close"
+            title="关闭"
           >
             <X size={16} />
           </button>
@@ -266,9 +266,9 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
           onClick={handleSaveCurrent}
           className="mx-2 mt-2 p-2 text-left rounded-lg bg-accent-green/10 border border-accent-green/30 hover:bg-accent-green/20 transition-all"
         >
-          <div className="text-xs font-medium text-accent-green">Unsaved conversation</div>
+          <div className="text-xs font-medium text-accent-green">未保存的对话</div>
           <div className="text-[10px] text-text-dark-secondary mt-0.5">
-            {messages.length} messages - Click to save
+            {messages.length} 条消息 - 点击保存
           </div>
         </button>
       )}
@@ -287,7 +287,7 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
                 if (e.key === 'Enter') handleCreateFolder();
                 if (e.key === 'Escape') { setShowNewFolder(false); setNewFolderName(''); }
               }}
-              placeholder="Folder name..."
+              placeholder="文件夹名称..."
               className="flex-1 px-2 py-1 text-xs bg-surface-dark-elevated border border-border-dark rounded text-text-dark-primary focus:outline-none focus:ring-1 focus:ring-accent-yellow"
             />
             <button onClick={handleCreateFolder} className="p-1 text-accent-green hover:bg-accent-green/20 rounded">
@@ -301,8 +301,8 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
 
         {conversations.length === 0 && (
           <div className="text-center py-8 text-text-dark-secondary">
-            <p className="text-sm">No conversations yet</p>
-            <p className="text-xs mt-1">Start chatting to create one</p>
+            <p className="text-sm">还没有对话</p>
+            <p className="text-xs mt-1">开始聊天即可创建对话</p>
           </div>
         )}
 
@@ -337,7 +337,7 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
                     </span>
                   )}
                 </button>
-                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
                   {renamingFolderId === folder.id ? (
                     <>
                       <button onClick={handleRenameFolderConfirm} className="p-0.5 text-accent-green hover:bg-accent-green/20 rounded">
@@ -352,14 +352,14 @@ export const ConversationPanel: React.FC<ConversationPanelProps> = ({ onClose })
                       <button
                         onClick={(e) => { e.stopPropagation(); setRenamingFolderId(folder.id); setRenameFolderValue(folder.name); }}
                         className="p-0.5 hover:bg-surface-dark-elevated rounded text-text-dark-secondary hover:text-accent-blue"
-                        title="Rename folder"
+                        title="重命名文件夹"
                       >
                         <Pencil size={10} />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); deleteConversationFolder(folder.id); }}
                         className="p-0.5 hover:bg-surface-dark-elevated rounded text-text-dark-secondary hover:text-accent-red"
-                        title="Delete folder"
+                        title="删除文件夹"
                       >
                         <Trash2 size={10} />
                       </button>

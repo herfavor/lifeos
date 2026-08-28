@@ -8,7 +8,7 @@ import type { ThemeDefinition } from './types';
 export const oneDarkTheme: ThemeDefinition = {
   id: 'one-dark',
   name: 'One Dark',
-  description: 'Balanced syntax colors on a clean dark base',
+  description: '干净深色基底上的均衡语法配色',
   category: 'tech',
   preview: {
     primary: '#61AFEF',

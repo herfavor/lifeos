@@ -23,7 +23,7 @@ const log = logger.module('Validation');
  */
 export const DateKeySchema = z.string().regex(
   /^\d{4}-(1[0-2]|[1-9])-(3[01]|[12]\d|[1-9])$/,
-  'Invalid date key. Expected: YYYY-M-D (e.g., 2025-1-15)'
+  '无效的日期键。应为：YYYY-M-D（例如 2025-1-15）'
 );
 
 /**
@@ -31,7 +31,7 @@ export const DateKeySchema = z.string().regex(
  */
 export const TimeSchema = z.string().regex(
   /^([01]\d|2[0-3]):[0-5]\d$/,
-  'Invalid time. Expected: HH:mm (e.g., 14:30)'
+  '无效的时间。应为：HH:mm（例如 14:30）'
 );
 
 // ==================== CALENDAR EVENT VALIDATION ====================
@@ -47,8 +47,8 @@ export const RecurrenceSchema = z.object({
 }).optional();
 
 export const CalendarEventSchema = z.object({
-  id: z.string().min(1, 'Event ID required'),
-  title: z.string().min(1, 'Event title required'),
+  id: z.string().min(1, '事件 ID 必填'),
+  title: z.string().min(1, '事件标题必填'),
   description: z.string().optional(),
   startTime: TimeSchema.optional(),
   endTime: TimeSchema.optional(),
@@ -64,8 +64,8 @@ export const CalendarEventSchema = z.object({
 // ==================== TASK VALIDATION ====================
 
 export const TaskSchema = z.object({
-  id: z.string().min(1, 'Task ID required'),
-  title: z.string().min(1, 'Task title required'),
+  id: z.string().min(1, '任务 ID 必填'),
+  title: z.string().min(1, '任务标题必填'),
   status: z.enum(['backlog', 'todo', 'inprogress', 'review', 'done']),
   created: z.string(),
   priority: z.enum(['low', 'medium', 'high']),
@@ -74,7 +74,7 @@ export const TaskSchema = z.object({
 // ==================== NOTE VALIDATION ====================
 
 export const NoteSchema = z.object({
-  id: z.string().min(1, 'Note ID required'),
+  id: z.string().min(1, '笔记 ID 必填'),
   title: z.string(),
   content: z.string(),
   folderId: z.string().nullable(),
@@ -148,7 +148,7 @@ export function validateOrThrow<T>(
 
   if (!result.success) {
     const errorMsg = result.errors?.map(e => `${e.field}: ${e.message}`).join(', ');
-    throw new Error(`Validation failed for ${context}: ${errorMsg}`);
+    throw new Error(`${context} 验证失败：${errorMsg}`);
   }
 
   return result.data!;

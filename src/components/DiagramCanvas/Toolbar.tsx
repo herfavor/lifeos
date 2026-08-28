@@ -30,22 +30,22 @@ import {
 } from 'lucide-react';
 
 const tools: Array<{ type: ToolType; icon: React.ReactNode; label: string }> = [
-  { type: 'select', icon: <MousePointer2 className="w-5 h-5" />, label: 'Select' },
-  { type: 'rectangle', icon: <Square className="w-5 h-5" />, label: 'Rectangle' },
-  { type: 'circle', icon: <Circle className="w-5 h-5" />, label: 'Circle' },
-  { type: 'line', icon: <Minus className="w-5 h-5" />, label: 'Line' },
-  { type: 'arrow', icon: <ArrowRight className="w-5 h-5" />, label: 'Arrow' },
-  { type: 'text', icon: <Type className="w-5 h-5" />, label: 'Text' },
+  { type: 'select', icon: <MousePointer2 className="w-5 h-5" />, label: '选择' },
+  { type: 'rectangle', icon: <Square className="w-5 h-5" />, label: '矩形' },
+  { type: 'circle', icon: <Circle className="w-5 h-5" />, label: '圆形' },
+  { type: 'line', icon: <Minus className="w-5 h-5" />, label: '直线' },
+  { type: 'arrow', icon: <ArrowRight className="w-5 h-5" />, label: '箭头' },
+  { type: 'text', icon: <Type className="w-5 h-5" />, label: '文本' },
 ];
 
 const alignmentTools: Array<{ type: AlignmentType; icon: React.ReactNode; label: string }> = [
-  { type: 'left', icon: <AlignLeft className="w-5 h-5" />, label: 'Align Left' },
-  { type: 'center', icon: <AlignCenter className="w-5 h-5" />, label: 'Align Center' },
-  { type: 'right', icon: <AlignRight className="w-5 h-5" />, label: 'Align Right' },
-  { type: 'top', icon: <AlignHorizontalJustifyCenter className="w-5 h-5" style={{ transform: 'rotate(90deg)' }} />, label: 'Align Top' },
-  { type: 'middle', icon: <AlignVerticalJustifyCenter className="w-5 h-5" />, label: 'Align Middle' },
-  { type: 'bottom', icon: <AlignHorizontalJustifyCenter className="w-5 h-5" style={{ transform: 'rotate(90deg) scaleX(-1)' }} />, label: 'Align Bottom' },
-  { type: 'distribute', icon: <AlignHorizontalDistributeCenter className="w-5 h-5" />, label: 'Distribute Evenly' },
+  { type: 'left', icon: <AlignLeft className="w-5 h-5" />, label: '左对齐' },
+  { type: 'center', icon: <AlignCenter className="w-5 h-5" />, label: '水平居中' },
+  { type: 'right', icon: <AlignRight className="w-5 h-5" />, label: '右对齐' },
+  { type: 'top', icon: <AlignHorizontalJustifyCenter className="w-5 h-5" style={{ transform: 'rotate(90deg)' }} />, label: '顶部对齐' },
+  { type: 'middle', icon: <AlignVerticalJustifyCenter className="w-5 h-5" />, label: '垂直居中' },
+  { type: 'bottom', icon: <AlignHorizontalJustifyCenter className="w-5 h-5" style={{ transform: 'rotate(90deg) scaleX(-1)' }} />, label: '底部对齐' },
+  { type: 'distribute', icon: <AlignHorizontalDistributeCenter className="w-5 h-5" />, label: '均匀分布' },
 ];
 
 interface ToolbarProps {
@@ -116,8 +116,8 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
               p-3 rounded-lg transition-colors
               ${
                 currentTool === tool.type
-                  ? 'bg-primary-light dark:bg-primary-dark text-white'
-                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                  ? 'bg-accent-primary text-white'
+                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }
             `}
             title={tool.label}
@@ -141,11 +141,11 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
             ${
               selectedElementIds.length < 2
                 ? 'text-text-light-tertiary dark:text-text-dark-tertiary cursor-not-allowed opacity-50'
-                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }
           `}
-          title="Group (Ctrl+G)"
-          aria-label="Group selected elements"
+          title="组合 (Ctrl+G)"
+          aria-label="组合所选元素"
         >
           <Group className="w-5 h-5" />
         </button>
@@ -157,11 +157,11 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
             ${
               !hasGroupedSelection
                 ? 'text-text-light-tertiary dark:text-text-dark-tertiary cursor-not-allowed opacity-50'
-                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }
           `}
-          title="Ungroup (Ctrl+Shift+G)"
-          aria-label="Ungroup selected elements"
+          title="取消组合 (Ctrl+Shift+G)"
+          aria-label="取消组合所选元素"
         >
           <Ungroup className="w-5 h-5" />
         </button>
@@ -182,7 +182,7 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
               ${
                 selectedElementIds.length < 2
                   ? 'text-text-light-tertiary dark:text-text-dark-tertiary cursor-not-allowed opacity-50'
-                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }
             `}
             title={tool.label}
@@ -206,11 +206,11 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
             ${
               elements.length === 0
                 ? 'text-text-light-tertiary dark:text-text-dark-tertiary cursor-not-allowed opacity-50'
-                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }
           `}
-          title="Auto-Layout"
-          aria-label="Apply auto-layout"
+          title="自动布局"
+          aria-label="应用自动布局"
         >
           <GitBranch className="w-5 h-5" />
         </button>
@@ -242,12 +242,12 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
               p-3 rounded-lg transition-colors
               ${
                 showStyleMenu
-                  ? 'bg-primary-light dark:bg-primary-dark text-white'
-                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                  ? 'bg-accent-primary text-white'
+                  : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
               }
             `}
-            title="Drawing Style"
-            aria-label="Toggle style menu"
+            title="绘图样式"
+            aria-label="切换样式菜单"
           >
             <Palette className="w-5 h-5" />
           </button>
@@ -273,12 +273,12 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
             p-3 rounded-lg transition-colors
             ${
               layerPanelOpen
-                ? 'bg-primary-light dark:bg-primary-dark text-white'
-                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark'
+                ? 'bg-accent-primary text-white'
+                : 'text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
             }
           `}
-          title="Toggle Layers Panel"
-          aria-label="Toggle layers panel"
+          title="切换图层面板"
+          aria-label="切换图层面板"
         >
           <Layers className="w-5 h-5" />
         </button>
@@ -292,9 +292,9 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
         {onExport && (
           <button
             onClick={onExport}
-            className="p-3 rounded-lg text-text-light-primary dark:text-text-dark-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover-dark transition-colors"
-            title="Export"
-            aria-label="Export diagram"
+            className="p-3 rounded-lg text-text-light-primary dark:text-text-dark-primary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
+            title="导出"
+            aria-label="导出绘图"
           >
             <Download className="w-5 h-5" />
           </button>

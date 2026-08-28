@@ -29,7 +29,7 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
     const newValue = !preferences.compressionEnabled;
     await savePreferences({ compressionEnabled: newValue });
     onRefresh();
-    onMessage({ type: 'info', text: `Compression ${newValue ? 'enabled' : 'disabled'}` });
+    onMessage({ type: 'info', text: `压缩已${newValue ? '启用' : '禁用'}` });
 
     setRecentlySaved('compression');
     setTimeout(() => setRecentlySaved(null), 2000);
@@ -39,7 +39,7 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
     const newValue = !preferences.reminderEnabled;
     await savePreferences({ reminderEnabled: newValue });
     onRefresh();
-    onMessage({ type: 'info', text: `Backup reminders ${newValue ? 'enabled' : 'disabled'}` });
+    onMessage({ type: 'info', text: `备份提醒已${newValue ? '启用' : '禁用'}` });
 
     setRecentlySaved('reminder');
     setTimeout(() => setRecentlySaved(null), 2000);
@@ -48,22 +48,22 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
   return (
     <div className="bento-card p-6">
       <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-        Backup Options
+        备份选项
       </h2>
 
       <div className="space-y-4">
         {/* Compression */}
         <label className="flex items-center justify-between p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg cursor-pointer hover:bg-border-light dark:hover:bg-border-dark transition-colors">
           <div>
-            <p className="font-medium text-text-light-primary dark:text-text-dark-primary">Enable Compression</p>
+            <p className="font-medium text-text-light-primary dark:text-text-dark-primary">启用压缩</p>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Reduces file size by ~70% (recommended)
+              将文件大小减小约 70%（推荐）
             </p>
           </div>
           <div className="flex items-center gap-2">
             {recentlySaved === 'compression' && (
               <span className="text-sm font-medium text-status-success-text dark:text-status-success-text-dark animate-fade-in">
-                ✓ Saved
+                ✓ 已保存
               </span>
             )}
             <input
@@ -78,15 +78,15 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
         {/* Reminders */}
         <label className="flex items-center justify-between p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg cursor-pointer hover:bg-border-light dark:hover:bg-border-dark transition-colors">
           <div>
-            <p className="font-medium text-text-light-primary dark:text-text-dark-primary">Backup Reminders</p>
+            <p className="font-medium text-text-light-primary dark:text-text-dark-primary">备份提醒</p>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              Remind me every {preferences.reminderDays} days
+              每 {preferences.reminderDays} 天提醒我
             </p>
           </div>
           <div className="flex items-center gap-2">
             {recentlySaved === 'reminder' && (
               <span className="text-sm font-medium text-status-success-text dark:text-status-success-text-dark animate-fade-in">
-                ✓ Saved
+                ✓ 已保存
               </span>
             )}
             <input

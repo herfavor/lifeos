@@ -1,9 +1,9 @@
 /**
  * Obsidian Importer
  *
- * Imports an Obsidian vault (folder of .md files) into NeumanOS.
+ * Imports an Obsidian vault (folder of .md files) into LifeOS.
  * - Parses YAML frontmatter for metadata (tags, aliases, dates)
- * - Converts [[wiki-links]] to NeumanOS format
+ * - Converts [[wiki-links]] to LifeOS format
  * - Preserves folder structure
  * - Handles attachments folder (skips large files)
  */
@@ -167,9 +167,14 @@ function convertObsidianSyntax(content: string): string {
   result = result.replace(/!\[\[([^\]]+)\]\]/g, '[[$1]]');
 
   // Convert Obsidian callouts: > [!note] text -> > **Note:** text
+  const CALLOUT_LABELS: Record<string, string> = {
+    note: '备注', tip: '提示', info: '信息', warning: '警告', danger: '危险',
+    bug: '缺陷', example: '示例', quote: '引用', abstract: '摘要', todo: '待办',
+    success: '成功', failure: '失败', question: '问题',
+  };
   result = result.replace(
     /^>\s*\[!(note|tip|info|warning|danger|bug|example|quote|abstract|todo|success|failure|question)\]\s*/gim,
-    (_, type: string) => `> **${type.charAt(0).toUpperCase() + type.slice(1)}:** `
+    (_, type: string) => `> **${CALLOUT_LABELS[type] || type}：** `
   );
 
   // Remove Obsidian comments (double percent signs around text)
@@ -225,7 +230,7 @@ export async function importObsidianVault(
   }
 
   if (mdFiles.length === 0) {
-    warnings.push('No .md files found in the selected folder.');
+    warnings.push('在所选文件夹中未找到 .md 文件。');
     return { notes, summary: { errors, warnings, wikiLinksFound: 0, attachmentsSkipped } };
   }
 
@@ -319,7 +324,7 @@ export async function importObsidianVault(
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      errors.push(`Failed to parse ${relativePath}: ${msg}`);
+      errors.push(`解析 ${relativePath} 失败：${msg}`);
       log.warn('Failed to parse Obsidian file', { file: relativePath, error: msg });
     }
   }
@@ -347,7 +352,7 @@ export function collectFolderPaths(notes: ParsedObsidianNote[]): string[] {
 }
 
 /**
- * Remap wiki-link titles to NeumanOS note IDs
+ * Remap wiki-link titles to LifeOS note IDs
  */
 export function remapWikiLinks(
   notes: ParsedObsidianNote[],

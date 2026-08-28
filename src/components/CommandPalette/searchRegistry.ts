@@ -25,6 +25,7 @@ import { useDocsStore } from '../../stores/useDocsStore';
 import { useRecentItemsStore } from '../../stores/useRecentItemsStore';
 import { WIDGET_REGISTRY } from '../../widgets/Dashboard/WidgetRegistry';
 import { aboutUsContent } from '../../content/aboutUs';
+import { isFeatureExposed, isWidgetExposed } from '../../config/features';
 
 /**
  * FAQ content for search (synchronized with SupportModal FAQS)
@@ -120,7 +121,7 @@ const FAQS = [
 const HELP_TOPICS = [
   {
     title: 'Getting Started Guide',
-    description: 'Learn the basics of using NeumanOS for productivity',
+    description: 'Learn the basics of using LifeOS for productivity',
     keywords: ['getting started', 'beginner', 'tutorial', 'intro', 'basics'],
   },
   {
@@ -442,7 +443,7 @@ export function getNotesResults(navigate: (path: string) => void): SearchResult[
   return notes.map((note) => ({
     id: `note-${note.id}`,
     type: 'note' as const,
-    title: note.title || 'Untitled Note',
+    title: note.title || '未命名笔记',
     subtitle: note.contentText?.slice(0, 100) || undefined,
     icon: note.isPinned ? '📌' : note.isFavorite ? '⭐' : '📝',
     score: 0,
@@ -469,9 +470,9 @@ export function getTasksResults(navigate: (path: string) => void): SearchResult[
   const tasks = useKanbanStore.getState().tasks;
 
   return tasks.map((task) => {
-    const statusLabel = task.status === 'done' ? 'Done' : task.status === 'inprogress' ? 'In Progress' : 'To Do';
-    const dueDateLabel = task.dueDate ? ` · Due ${new Date(task.dueDate).toLocaleDateString()}` : '';
-    const priorityLabel = task.priority && task.priority !== 'medium' ? ` · ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} priority` : '';
+    const statusLabel = task.status === 'done' ? '已完成' : task.status === 'inprogress' ? '进行中' : '待办';
+    const dueDateLabel = task.dueDate ? ` · 截止 ${new Date(task.dueDate).toLocaleDateString()}` : '';
+    const priorityLabel = task.priority === 'high' ? ' · 高优先级' : task.priority === 'low' ? ' · 低优先级' : '';
 
     return {
       id: `task-${task.id}`,
@@ -683,7 +684,7 @@ export function getHelpResults(openSupportModal: (tab: 'report' | 'help' | 'docs
  * Get widget search results from WidgetRegistry
  */
 export function getWidgetsResults(navigate: (path: string) => void): SearchResult[] {
-  return Object.values(WIDGET_REGISTRY).map((widget) => ({
+  return Object.values(WIDGET_REGISTRY).filter((widget) => isWidgetExposed(widget.id)).map((widget) => ({
     id: `widget-${widget.id}`,
     type: 'widget' as const,
     title: widget.name,
@@ -773,7 +774,7 @@ const SETTINGS_AND_ACTIONS = [
   // Modals and Dialogs
   {
     id: 'action-about',
-    title: 'About NeumanOS',
+    title: '关于 LifeOS',
     description: 'View version information and credits',
     keywords: ['about', 'about us', 'version', 'credits', 'info', 'information'],
     actionType: 'modal' as const,
@@ -798,7 +799,7 @@ const SETTINGS_AND_ACTIONS = [
   {
     id: 'action-onboarding',
     title: 'Start Onboarding Tour',
-    description: 'Take a guided tour of NeumanOS features',
+    description: 'Take a guided tour of LifeOS features',
     keywords: ['onboarding', 'tour', 'tutorial', 'getting started', 'welcome', 'guide'],
     actionType: 'modal' as const,
     modalId: 'onboarding',
@@ -862,11 +863,11 @@ const SETTINGS_AND_ACTIONS = [
   },
   {
     id: 'setting-ai-terminal',
-    title: 'AI Terminal Settings',
+    title: 'AI 提供商设置',
     description: 'Configure AI providers and API keys',
     keywords: ['ai', 'terminal', 'api', 'openai', 'anthropic', 'claude'],
     actionType: 'navigate' as const,
-    path: '/settings',
+    path: '/settings?tab=ai',
   },
   {
     id: 'setting-custom-fields',
@@ -918,22 +919,6 @@ const SETTINGS_AND_ACTIONS = [
     path: '/schedule',
   },
   {
-    id: 'action-create-diagram',
-    title: 'Create New Diagram',
-    description: 'Start a new diagram',
-    keywords: ['create', 'new', 'diagram', 'flowchart', 'draw'],
-    actionType: 'navigate' as const,
-    path: '/diagrams',
-  },
-  {
-    id: 'action-create-form',
-    title: 'Create New Form',
-    description: 'Build a new form or survey',
-    keywords: ['create', 'new', 'form', 'survey', 'questionnaire'],
-    actionType: 'navigate' as const,
-    path: '/forms',
-  },
-  {
     id: 'action-create-automation',
     title: 'Create Automation Rule',
     description: 'Set up a new automation',
@@ -977,23 +962,23 @@ export function getSettingsResults(
 const ABOUT_US_CONTENT = [
   {
     id: 'about-platform',
-    title: aboutUsContent.stories.platform.title, // 'Platform & Principles'
-    subtitle: aboutUsContent.stories.platform.subtitle, // 'NeumanOS'
-    description: aboutUsContent.stories.platform.content.slice(0, 150) + '...',
+    title: aboutUsContent.stories.product.title,
+    subtitle: aboutUsContent.stories.product.subtitle,
+    description: aboutUsContent.stories.product.content.slice(0, 150) + '...',
     keywords: [
-      'about', 'about us', 'platform', 'principles', 'neumanos', 'mission',
+      'about', 'about us', 'platform', 'principles', 'lifeos', 'mission',
       'local-first', 'privacy', 'ownership', 'foundation', 'philosophy', 'values',
       'why', 'purpose', 'vision'
     ],
     modalId: 'about',
   },
   {
-    id: 'about-founder',
-    title: aboutUsContent.stories.founder.title, // 'Values & Background'
-    subtitle: aboutUsContent.stories.founder.subtitle, // 'From the Founder'
-    description: aboutUsContent.stories.founder.content.slice(0, 150) + '...',
+    id: 'about-values',
+    title: aboutUsContent.stories.values.title,
+    subtitle: aboutUsContent.stories.values.subtitle,
+    description: aboutUsContent.stories.values.content.slice(0, 150) + '...',
     keywords: [
-      'about', 'about us', 'values', 'background', 'founder', 'travis', 'neuman',
+      'about', 'about us', 'values', 'background', 'data ownership',
       'story', 'mission', 'who', 'why', 'team', 'creator', 'builder'
     ],
     modalId: 'about',
@@ -1001,7 +986,7 @@ const ABOUT_US_CONTENT = [
   {
     id: 'about-philosophy',
     title: 'Our Philosophy',
-    subtitle: 'What NeumanOS Stands For',
+    subtitle: 'LifeOS 的理念',
     description: aboutUsContent.philosophy.short,
     keywords: [
       'philosophy', 'belief', 'values', 'mission', 'about', 'why', 'purpose'
@@ -1019,7 +1004,7 @@ const KEYBOARD_SHORTCUTS = [
   { keys: 'Ctrl+B / ⌘B', description: 'Toggle Sidebar', context: 'Global', settingsSection: null },
   { keys: 'F1', description: 'Open Help & Support', context: 'Global', settingsSection: null },
   { keys: 'Ctrl+/ / ⌘/', description: 'Open Help', context: 'Global', settingsSection: null },
-  { keys: 'Ctrl+Shift+A', description: 'Toggle AI Terminal', context: 'Global', settingsSection: null },
+  { keys: 'Ctrl+Shift+A', description: 'Go to AI Command Center', context: 'Global', settingsSection: null },
   { keys: 'Ctrl+Shift+P', description: 'Toggle Project Context', context: 'Global', settingsSection: null },
   { keys: 'Escape', description: 'Close Modal/Dialog', context: 'Global', settingsSection: null },
   // Navigation (Ctrl+Number)
@@ -1042,22 +1027,22 @@ const KEYBOARD_SHORTCUTS = [
   { keys: 'G then L', description: 'Go to Links', context: 'Go To', settingsSection: null },
   { keys: 'G then F', description: 'Go to Focus', context: 'Go To', settingsSection: null },
   // Quick create
-  { keys: 'C', description: 'Quick Add Task', context: 'Global', settingsSection: null },
-  { keys: 'Ctrl+N / ⌘N', description: 'New Note', context: 'Global', settingsSection: null },
-  { keys: 'Ctrl+T / ⌘T', description: 'New Task', context: 'Global', settingsSection: null },
-  { keys: 'Ctrl+Shift+T', description: 'Smart Templates', context: 'Global', settingsSection: null },
-  { keys: 'Ctrl+E / ⌘E', description: 'New Event', context: 'Global', settingsSection: null },
+  { keys: 'C', description: '快速添加任务', context: 'Global', settingsSection: null },
+  { keys: 'Ctrl+N / ⌘N', description: '新建笔记', context: 'Global', settingsSection: null },
+  { keys: 'Ctrl+T / ⌘T', description: '新建任务', context: 'Global', settingsSection: null },
+  { keys: 'Ctrl+Shift+T', description: '智能模板', context: 'Global', settingsSection: null },
+  { keys: 'Ctrl+E / ⌘E', description: '新建事件', context: 'Global', settingsSection: null },
   // Notes editor
-  { keys: 'Ctrl+D / ⌘D', description: 'Create Daily Note', context: 'Notes', settingsSection: 'daily-notes' },
-  { keys: 'Ctrl+Shift+E', description: 'Export Notes', context: 'Notes', settingsSection: null },
-  { keys: 'Ctrl+B / ⌘B', description: 'Bold Text', context: 'Editor', settingsSection: null },
-  { keys: 'Ctrl+I / ⌘I', description: 'Italic Text', context: 'Editor', settingsSection: null },
-  { keys: 'Ctrl+U / ⌘U', description: 'Underline Text', context: 'Editor', settingsSection: null },
-  { keys: '/', description: 'Open Slash Commands', context: 'Editor', settingsSection: null },
-  { keys: '[[', description: 'Insert Wiki Link', context: 'Editor', settingsSection: null },
+  { keys: 'Ctrl+D / ⌘D', description: '创建每日笔记', context: 'Notes', settingsSection: 'daily-notes' },
+  { keys: 'Ctrl+Shift+E', description: '导出笔记', context: 'Notes', settingsSection: null },
+  { keys: 'Ctrl+B / ⌘B', description: '加粗文本', context: 'Editor', settingsSection: null },
+  { keys: 'Ctrl+I / ⌘I', description: '斜体文本', context: 'Editor', settingsSection: null },
+  { keys: 'Ctrl+U / ⌘U', description: '下划线文本', context: 'Editor', settingsSection: null },
+  { keys: '/', description: '打开斜杠命令', context: 'Editor', settingsSection: null },
+  { keys: '[[', description: '插入 Wiki 链接', context: 'Editor', settingsSection: null },
   // Synapse
-  { keys: 'Enter', description: 'Confirm/Submit', context: 'Forms', settingsSection: null },
-  { keys: '↑↓', description: 'Navigate Options', context: 'Synapse', settingsSection: 'synapse' },
+  { keys: 'Enter', description: '确认/提交', context: 'Forms', settingsSection: null },
+  { keys: '↑↓', description: '导航选项', context: 'Synapse', settingsSection: 'synapse' },
   { keys: 'Tab', description: 'Next Field/Option', context: 'Forms', settingsSection: null },
 ];
 
@@ -1144,7 +1129,7 @@ export function getDocumentsResults(navigate: (path: string) => void): SearchRes
   return docs.map((doc) => ({
     id: `document-${doc.id}`,
     type: 'document' as const,
-    title: doc.title || 'Untitled Document',
+    title: doc.title || '未命名文档',
     subtitle: `${doc.type.charAt(0).toUpperCase() + doc.type.slice(1)}${doc.updatedAt ? ` · Updated ${new Date(doc.updatedAt).toLocaleDateString()}` : ''}`,
     icon: doc.type === 'sheet' ? '📊' : doc.type === 'slides' ? '📽️' : '📄',
     score: 0,
@@ -1246,8 +1231,8 @@ export function getAllResults(
     ...getTasksResults(navigate),
     ...getEventsResults(navigate),
     ...getBookmarksResults(),
-    ...getDiagramsResults(navigate),
-    ...getFormsResults(navigate),
+    ...(isFeatureExposed('diagrams') ? getDiagramsResults(navigate) : []),
+    ...(isFeatureExposed('forms') ? getFormsResults(navigate) : []),
     ...getTimeEntriesResults(navigate),
     ...getAutomationResults(navigate),
     ...getTemplateResults(navigate),
@@ -1323,28 +1308,28 @@ export function groupResultsByType(results: SearchResult[]): Map<string, SearchR
  */
 export function getTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    page: 'Navigation',
-    note: 'Notes',
-    task: 'Tasks',
-    event: 'Events',
-    bookmark: 'Bookmarks',
-    diagram: 'Diagrams',
-    form: 'Forms',
-    'time-entry': 'Time Entries',
-    external: 'Search Web',
-    action: 'Actions',
+    page: '导航',
+    note: '笔记',
+    task: '任务',
+    event: '事件',
+    bookmark: '书签',
+    diagram: '绘图',
+    form: '表单',
+    'time-entry': '时间记录',
+    external: '搜索网络',
+    action: '操作',
     faq: 'FAQ',
-    help: 'Help',
-    widget: 'Widgets',
-    setting: 'Settings',
-    automation: 'Automations',
-    template: 'Templates',
-    project: 'Projects',
-    shortcut: 'Keyboard Shortcuts',
-    command: 'Commands',
-    recent: 'Recent',
-    habit: 'Habits',
-    document: 'Documents',
+    help: '帮助',
+    widget: '组件',
+    setting: '设置',
+    automation: '自动化',
+    template: '模板',
+    project: '项目',
+    shortcut: '键盘快捷键',
+    command: '命令',
+    recent: '最近',
+    habit: '习惯',
+    document: '文档',
   };
   return labels[type] || type;
 }
@@ -1387,9 +1372,9 @@ export function getCommands(
     // Theme commands
     {
       id: 'cmd-toggle-dark-mode',
-      name: 'Toggle Dark Mode',
+      name: '切换深色模式',
       aliases: ['dark mode', 'dark theme', 'toggle theme'],
-      description: 'Switch to dark theme',
+      description: '切换到深色主题',
       icon: '🌙',
       category: 'theme',
       keywords: ['dark', 'theme', 'mode', 'night'],
@@ -1401,9 +1386,9 @@ export function getCommands(
     },
     {
       id: 'cmd-toggle-light-mode',
-      name: 'Toggle Light Mode',
+      name: '切换浅色模式',
       aliases: ['light mode', 'light theme'],
-      description: 'Switch to light theme',
+      description: '切换到浅色主题',
       icon: '☀️',
       category: 'theme',
       keywords: ['light', 'theme', 'mode', 'day'],
@@ -1417,9 +1402,9 @@ export function getCommands(
     // View commands
     {
       id: 'cmd-toggle-sidebar',
-      name: 'Toggle Sidebar',
+      name: '切换侧边栏',
       aliases: ['collapse sidebar', 'expand sidebar', 'hide sidebar'],
-      description: 'Show or hide the sidebar',
+      description: '显示或隐藏侧边栏',
       icon: '📐',
       category: 'view',
       keywords: ['sidebar', 'collapse', 'expand', 'toggle', 'hide', 'show'],
@@ -1432,9 +1417,9 @@ export function getCommands(
     // Create commands
     {
       id: 'cmd-new-note',
-      name: 'New Note',
+      name: '新建笔记',
       aliases: ['create note', 'add note'],
-      description: 'Create a new note',
+      description: '创建一条新笔记',
       icon: '📝',
       category: 'create',
       keywords: ['new', 'create', 'note', 'add'],
@@ -1455,9 +1440,9 @@ export function getCommands(
     },
     {
       id: 'cmd-new-task',
-      name: 'New Task',
+      name: '新建任务',
       aliases: ['create task', 'add task', 'quick add'],
-      description: 'Open quick add task modal',
+      description: '打开快速添加任务弹窗',
       icon: '✅',
       category: 'create',
       keywords: ['new', 'create', 'task', 'todo', 'add'],
@@ -1468,9 +1453,9 @@ export function getCommands(
     },
     {
       id: 'cmd-new-event',
-      name: 'New Event',
+      name: '新建事件',
       aliases: ['create event', 'add event', 'schedule'],
-      description: 'Go to calendar to create event',
+      description: '前往日历创建事件',
       icon: '📅',
       category: 'create',
       keywords: ['new', 'create', 'event', 'calendar', 'schedule'],
@@ -1479,11 +1464,11 @@ export function getCommands(
         return true;
       },
     },
-    {
+    ...(isFeatureExposed('diagrams') ? [{
       id: 'cmd-new-diagram',
-      name: 'New Diagram',
+      name: '新建绘图',
       aliases: ['create diagram', 'add diagram'],
-      description: 'Create a new diagram',
+      description: '创建一张新绘图',
       icon: '📊',
       category: 'create',
       keywords: ['new', 'create', 'diagram', 'flowchart', 'draw'],
@@ -1491,14 +1476,14 @@ export function getCommands(
         navigate('/diagrams');
         return true;
       },
-    },
+    } satisfies Command] : []),
 
     // Timer commands
     {
       id: 'cmd-start-timer',
-      name: 'Start Timer',
+      name: '启动计时器',
       aliases: ['start tracking', 'begin timer'],
-      description: 'Start time tracking',
+      description: '开始时间追踪',
       icon: '▶️',
       category: 'timer',
       keywords: ['start', 'timer', 'tracking', 'time', 'begin'],
@@ -1512,9 +1497,9 @@ export function getCommands(
     },
     {
       id: 'cmd-stop-timer',
-      name: 'Stop Timer',
+      name: '停止计时器',
       aliases: ['stop tracking', 'end timer', 'pause timer'],
-      description: 'Stop time tracking',
+      description: '停止时间追踪',
       icon: '⏹️',
       category: 'timer',
       keywords: ['stop', 'timer', 'tracking', 'time', 'end', 'pause'],
@@ -1530,9 +1515,9 @@ export function getCommands(
     // Data commands
     {
       id: 'cmd-export-notes',
-      name: 'Export Notes',
+      name: '导出笔记',
       aliases: ['download notes', 'backup notes'],
-      description: 'Export notes to markdown files',
+      description: '将笔记导出为 Markdown 文件',
       icon: '📤',
       category: 'data',
       keywords: ['export', 'notes', 'markdown', 'download', 'backup'],
@@ -1545,9 +1530,9 @@ export function getCommands(
     },
     {
       id: 'cmd-export-brain',
-      name: 'Export Brain',
+      name: '导出 Brain',
       aliases: ['backup', 'export data', 'download brain'],
-      description: 'Export all data to a .brain file',
+      description: '将所有数据导出为 .brain 文件',
       icon: '🧠',
       category: 'data',
       keywords: ['export', 'brain', 'backup', 'download', 'data'],
@@ -1558,9 +1543,9 @@ export function getCommands(
     },
     {
       id: 'cmd-clear-completed',
-      name: 'Clear Completed Tasks',
+      name: '清除已完成任务',
       aliases: ['archive done', 'remove completed'],
-      description: 'Archive all completed tasks',
+      description: '归档所有已完成的任务',
       icon: '🗑️',
       category: 'data',
       keywords: ['clear', 'completed', 'done', 'archive', 'tasks'],
@@ -1575,9 +1560,9 @@ export function getCommands(
     // Focus mode
     {
       id: 'cmd-focus-mode',
-      name: 'Enter Focus Mode',
+      name: '进入专注模式',
       aliases: ['focus', 'distraction free', 'deep work'],
-      description: 'Full-screen distraction-free focus mode',
+      description: '全屏无干扰的专注模式',
       icon: '🎯',
       category: 'view',
       keywords: ['focus', 'mode', 'distraction', 'free', 'deep', 'work', 'zen'],
@@ -1590,9 +1575,9 @@ export function getCommands(
     // Navigation commands (quick jumps)
     {
       id: 'cmd-go-dashboard',
-      name: 'Go to Dashboard',
+      name: '前往首页',
       aliases: ['home', 'dashboard'],
-      description: 'Navigate to dashboard',
+      description: '跳转到首页',
       icon: '🏠',
       category: 'navigation',
       keywords: ['go', 'dashboard', 'home', 'main'],
@@ -1603,9 +1588,9 @@ export function getCommands(
     },
     {
       id: 'cmd-go-notes',
-      name: 'Go to Notes',
+      name: '前往笔记',
       aliases: ['notes', 'documents'],
-      description: 'Navigate to notes',
+      description: '跳转到笔记',
       icon: '📝',
       category: 'navigation',
       keywords: ['go', 'notes', 'documents'],
@@ -1616,9 +1601,9 @@ export function getCommands(
     },
     {
       id: 'cmd-go-tasks',
-      name: 'Go to Tasks',
+      name: '前往任务',
       aliases: ['tasks', 'kanban', 'todos'],
-      description: 'Navigate to task board',
+      description: '跳转到任务看板',
       icon: '✅',
       category: 'navigation',
       keywords: ['go', 'tasks', 'kanban', 'todos', 'board'],
@@ -1629,9 +1614,9 @@ export function getCommands(
     },
     {
       id: 'cmd-go-settings',
-      name: 'Go to Settings',
+      name: '前往设置',
       aliases: ['settings', 'preferences', 'options'],
-      description: 'Navigate to settings',
+      description: '跳转到设置',
       icon: '⚙️',
       category: 'navigation',
       keywords: ['go', 'settings', 'preferences', 'options', 'config'],

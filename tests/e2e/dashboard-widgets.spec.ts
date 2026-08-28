@@ -29,7 +29,7 @@ test.describe('Dashboard Widgets', () => {
 
       if (await widgetSelector.isVisible({ timeout: 1000 }).catch(() => false)) {
         // Select a widget (e.g., TaskSummary)
-        const taskSummaryOption = page.getByText(/task.*summary|tasks/i).first();
+        const taskSummaryOption = page.getByText(/任务概览|任务/i).first();
 
         if (await taskSummaryOption.isVisible({ timeout: 1000 }).catch(() => false)) {
           await taskSummaryOption.click();
@@ -37,7 +37,7 @@ test.describe('Dashboard Widgets', () => {
 
           // Verify widget appears on dashboard
           const widget = page.locator('[data-widget="task-summary"], [data-widget-type="TaskSummary"]').or(
-            page.getByText(/task.*summary/i)
+            page.getByText(/任务概览/i)
           );
 
           if (await widget.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -58,7 +58,7 @@ test.describe('Dashboard Widgets', () => {
       await page.waitForTimeout(300);
 
       // Look for remove/delete button
-      const removeButton = widget.locator('button').filter({ hasText: /remove|delete|×|✕/i }).or(
+      const removeButton = widget.locator('button').filter({ hasText: /移除|删除|×|✕/i }).or(
         widget.locator('[data-remove], [data-delete]')
       );
 
@@ -69,7 +69,7 @@ test.describe('Dashboard Widgets', () => {
         await removeButton.click();
 
         // Confirm removal if there's a dialog
-        const confirmButton = page.getByRole('button', { name: /confirm|yes|remove/i });
+        const confirmButton = page.getByRole('button', { name: /确认|是|移除/i });
         if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
           await confirmButton.click();
         }
@@ -123,10 +123,10 @@ test.describe('Dashboard Widgets', () => {
     await navigateTo(page, '/tasks');
 
     // Create a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/任务标题|任务.*名称/i);
       await titleInput.fill('Widget Test Task');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -137,7 +137,7 @@ test.describe('Dashboard Widgets', () => {
 
     // Find TaskSummary widget
     const taskSummaryWidget = page.locator('[data-widget="task-summary"], [data-widget-type="TaskSummary"]').or(
-      page.getByText(/task.*summary/i).locator('..')
+      page.getByText(/任务概览/i).locator('..')
     );
 
     if (await taskSummaryWidget.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -156,12 +156,12 @@ test.describe('Dashboard Widgets', () => {
     await navigateTo(page, '/schedule?tab=calendar');
 
     // Create an event
-    const addEventButton = page.getByRole('button', { name: /add.*event|new.*event|create.*event/i });
+    const addEventButton = page.getByRole('button', { name: /新建事件|创建事件|添加事件/i });
     if (await addEventButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addEventButton.click();
-      const titleInput = page.getByPlaceholder(/title|event.*name/i);
+      const titleInput = page.getByPlaceholder(/团队会议|研讨会/);
       await titleInput.fill('Widget Test Event');
-      const saveButton = page.getByRole('button', { name: /save|create/i });
+      const saveButton = page.getByRole('button', { name: /保存|创建/i });
       await saveButton.click();
       await page.waitForTimeout(500);
     }
@@ -171,7 +171,7 @@ test.describe('Dashboard Widgets', () => {
 
     // Find UpcomingEvents widget
     const upcomingEventsWidget = page.locator('[data-widget="upcoming-events"], [data-widget-type="UpcomingEvents"]').or(
-      page.getByText(/upcoming.*events|events/i).locator('..')
+      page.getByText(/即将到来的事件|事件/i).locator('..')
     );
 
     if (await upcomingEventsWidget.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -188,10 +188,10 @@ test.describe('Dashboard Widgets', () => {
     await navigateTo(page, '/tasks');
 
     // Create a task
-    const addButton = page.getByRole('button', { name: /add.*task|new.*task|create.*task/i }).first();
+    const addButton = page.getByRole('button', { name: /添加任务|新建任务|创建任务/i }).first();
     if (await addButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await addButton.click();
-      const titleInput = page.getByPlaceholder(/title|task.*name/i);
+      const titleInput = page.getByPlaceholder(/任务标题|任务.*名称/i);
       await titleInput.fill('Auto Refresh Test Task');
       await page.keyboard.press('Enter');
       await page.waitForTimeout(500);
@@ -202,7 +202,7 @@ test.describe('Dashboard Widgets', () => {
 
     // TaskSummary widget should show updated count
     const taskSummaryWidget = page.locator('[data-widget="task-summary"], [data-widget-type="TaskSummary"]').or(
-      page.getByText(/task.*summary/i).locator('..')
+      page.getByText(/任务概览/i).locator('..')
     );
 
     if (await taskSummaryWidget.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -260,7 +260,7 @@ test.describe('Dashboard Widgets', () => {
       await page.waitForTimeout(300);
 
       // Look for settings/config button
-      const settingsButton = widget.locator('button').filter({ hasText: /settings|config|⚙|options/i }).or(
+      const settingsButton = widget.locator('button').filter({ hasText: /设置|配置|⚙|选项/i }).or(
         widget.locator('[data-settings], [data-config]')
       );
 
@@ -270,14 +270,14 @@ test.describe('Dashboard Widgets', () => {
 
         // Settings modal or panel should appear
         const settingsPanel = page.locator('.widget-settings, [data-widget-settings]').or(
-          page.getByText(/widget.*settings|configuration/i)
+          page.getByText(/组件.*设置|配置/i)
         );
 
         if (await settingsPanel.isVisible({ timeout: 1000 }).catch(() => false)) {
           await expect(settingsPanel).toBeVisible();
 
           // Close settings
-          const closeButton = page.getByRole('button', { name: /close|cancel|×/i });
+          const closeButton = page.getByRole('button', { name: /关闭|取消|×/i });
           if (await closeButton.isVisible({ timeout: 1000 }).catch(() => false)) {
             await closeButton.click();
           }

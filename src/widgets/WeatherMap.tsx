@@ -60,7 +60,7 @@ export const WeatherMap: React.FC = () => {
       const data = await response.json();
 
       const weather: WeatherData = {
-        location: city || 'Unknown Location',
+        location: city || '未知位置',
         temp: Math.round(data.current.temperature_2m),
         feelsLike: Math.round(data.current.apparent_temperature),
         desc: getWeatherDescription(data.current.weather_code),
@@ -74,7 +74,7 @@ export const WeatherMap: React.FC = () => {
       setLoading(false);
     } catch (err) {
       console.error('Weather fetch error:', err);
-      setError('Failed to fetch weather data');
+      setError('获取天气数据失败');
       setLoading(false);
     }
   };
@@ -108,7 +108,7 @@ export const WeatherMap: React.FC = () => {
 
   const getUserLocation = async () => {
     if (!navigator.geolocation) {
-      setError('Geolocation not supported');
+      setError('浏览器不支持定位');
       setUseGeolocation(false);
       return;
     }
@@ -131,7 +131,7 @@ export const WeatherMap: React.FC = () => {
       },
       (error) => {
         console.error('Geolocation error:', error);
-        setError('Could not get location');
+        setError('无法获取位置');
         setUseGeolocation(false);
         setShowCityInput(true);
         setLoading(false);
@@ -179,7 +179,7 @@ export const WeatherMap: React.FC = () => {
 
     const coords = await geocodeCity(cityInput.trim());
     if (!coords) {
-      setError(`Could not find "${cityInput}"`);
+      setError(`找不到“${cityInput}”`);
       setLoading(false);
       return;
     }
@@ -223,7 +223,7 @@ export const WeatherMap: React.FC = () => {
 
     L.marker([coords.lat, coords.lng])
       .addTo(map)
-      .bindPopup(city || 'Your Location')
+      .bindPopup(city || '你的位置')
       .openPopup();
 
     leafletMapRef.current = map;
@@ -249,7 +249,7 @@ export const WeatherMap: React.FC = () => {
         });
         L.marker([coords.lat, coords.lng])
           .addTo(leafletMapRef.current)
-          .bindPopup(city || 'Your Location')
+          .bindPopup(city || '你的位置')
           .openPopup();
       }
     }
@@ -278,7 +278,7 @@ export const WeatherMap: React.FC = () => {
 
           {/* Feels like */}
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            Feels {formatTemperature(weatherData.feelsLike, temperatureUnit, false)}
+            体感 {formatTemperature(weatherData.feelsLike, temperatureUnit, false)}
           </span>
 
           {/* Divider */}
@@ -286,13 +286,13 @@ export const WeatherMap: React.FC = () => {
 
           {/* Additional stats */}
           <div className="flex gap-3 text-xs">
-            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="Precipitation probability">
+            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="降水概率">
               🌧️ {weatherData.precipProbability}%
             </span>
-            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="Humidity">
+            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="湿度">
               💧 {weatherData.humidity}%
             </span>
-            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="Wind speed">
+            <span className="text-text-light-secondary dark:text-text-dark-secondary" title="风速">
               💨 {weatherData.windSpeed} mph
             </span>
           </div>
@@ -300,11 +300,11 @@ export const WeatherMap: React.FC = () => {
           {/* Location name */}
           <div className="h-4 w-px bg-border-light dark:bg-border-dark"></div>
           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            📍 {city || 'Unknown Location'}
+            📍 {city || '未知位置'}
           </span>
         </>
       ) : loading ? (
-        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">Loading...</div>
+        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">加载中…</div>
       ) : null}
     </div>
   );
@@ -312,7 +312,7 @@ export const WeatherMap: React.FC = () => {
   return (
     <Widget
       id="weathermap"
-      title="Weather & Location"
+      title="天气与位置"
       headerAccessory={weatherStatsDisplay}
       draggable={false}
     >
@@ -344,7 +344,7 @@ export const WeatherMap: React.FC = () => {
                     type="text"
                     value={cityInput}
                     onChange={(e) => setCityInput(e.target.value)}
-                    placeholder="Enter city..."
+                    placeholder="输入城市…"
                     className="flex-1 min-w-0 px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-accent-primary shadow-lg"
                   />
                   <button
@@ -352,7 +352,7 @@ export const WeatherMap: React.FC = () => {
                     className="px-3 py-2 text-sm bg-accent-primary text-white rounded-lg hover:bg-accent-primary-hover shadow-lg"
                     disabled={loading}
                   >
-                    {loading ? '...' : 'Go'}
+                    {loading ? '...' : '前往'}
                   </button>
                   <button
                     type="button"
@@ -361,7 +361,7 @@ export const WeatherMap: React.FC = () => {
                       getUserLocation();
                     }}
                     className="px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark shadow-lg"
-                    title="Use my location"
+                    title="使用我的位置"
                   >
                     📍
                   </button>
@@ -372,7 +372,7 @@ export const WeatherMap: React.FC = () => {
                 onClick={() => setShowCityInput(true)}
                 className="absolute top-4 left-4 z-10 px-3 py-2 text-sm bg-surface-light dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark hover:text-accent-primary transition-colors rounded-lg shadow-lg border border-border-light dark:border-border-dark"
               >
-                📍 {city || 'Set Location'} ✏️
+                📍 {city || '设置位置'} ✏️
               </button>
             )}
 
@@ -381,7 +381,7 @@ export const WeatherMap: React.FC = () => {
               onClick={getUserLocation}
               disabled={loading}
               className="absolute bottom-4 right-4 z-10 p-3 bg-surface-light dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded-full shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-border-light dark:border-border-dark hover:scale-110"
-              title="Use my current location"
+              title="使用我的当前位置"
             >
               <span className="text-2xl">📍</span>
             </button>
@@ -391,11 +391,11 @@ export const WeatherMap: React.FC = () => {
         {/* Right: 5-Day Forecast Section (auto-width based on content) */}
         <div className="forecast-section flex-shrink-0 min-h-[240px] lg:min-h-[400px] overflow-y-auto p-2">
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary mb-3 text-right">
-            5-Day Forecast
+            5天预报
           </h3>
           {forecastLoading ? (
             <div className="flex items-center justify-center h-32">
-              <p className="text-text-light-secondary dark:text-text-dark-secondary">Loading forecast...</p>
+              <p className="text-text-light-secondary dark:text-text-dark-secondary">加载预报中…</p>
             </div>
           ) : forecast.length > 0 ? (
             <div className="space-y-3 flex flex-col items-start">
@@ -418,7 +418,7 @@ export const WeatherMap: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center justify-center h-32">
-              <p className="text-text-light-secondary dark:text-text-dark-secondary">No forecast data available</p>
+              <p className="text-text-light-secondary dark:text-text-dark-secondary">暂无预报数据</p>
             </div>
           )}
         </div>
@@ -429,35 +429,35 @@ export const WeatherMap: React.FC = () => {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('zh-CN', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
 function getWeatherDescription(code: number): string {
   const descriptions: Record<number, string> = {
-    0: 'Clear',
-    1: 'Mostly Clear',
-    2: 'Partly Cloudy',
-    3: 'Overcast',
-    45: 'Foggy',
-    48: 'Foggy',
-    51: 'Light Drizzle',
-    53: 'Drizzle',
-    55: 'Heavy Drizzle',
-    61: 'Light Rain',
-    63: 'Rain',
-    65: 'Heavy Rain',
-    71: 'Light Snow',
-    73: 'Snow',
-    75: 'Heavy Snow',
-    77: 'Snow Grains',
-    80: 'Rain Showers',
-    81: 'Rain Showers',
-    82: 'Heavy Rain Showers',
-    85: 'Snow Showers',
-    86: 'Heavy Snow Showers',
-    95: 'Thunderstorm',
-    96: 'Thunderstorm',
-    99: 'Severe Thunderstorm',
+    0: '晴',
+    1: '大部晴朗',
+    2: '局部多云',
+    3: '阴',
+    45: '雾',
+    48: '雾',
+    51: '小毛毛雨',
+    53: '毛毛雨',
+    55: '大毛毛雨',
+    61: '小雨',
+    63: '雨',
+    65: '大雨',
+    71: '小雪',
+    73: '雪',
+    75: '大雪',
+    77: '米雪',
+    80: '阵雨',
+    81: '阵雨',
+    82: '强阵雨',
+    85: '阵雪',
+    86: '强阵雪',
+    95: '雷暴',
+    96: '雷暴',
+    99: '强雷暴',
   };
-  return descriptions[code] || 'Unknown';
+  return descriptions[code] || '未知';
 }

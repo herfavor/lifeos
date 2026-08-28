@@ -39,20 +39,21 @@ export class WidgetErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="h-full min-h-[200px] flex flex-col items-center justify-center p-6 bg-accent-red/10 dark:bg-accent-red/20 border border-accent-red/50 dark:border-accent-red/60 rounded-button">
+        <div className="h-full min-h-[180px] flex flex-col items-center justify-center p-6 bg-status-error-bg/60 dark:bg-status-error-bg-dark/30 border border-status-error-border dark:border-status-error-border-dark rounded-xl">
           <div className="text-center">
             <span className="text-3xl mb-3 block">⚠️</span>
-            <h3 className="text-sm font-semibold text-accent-red dark:text-accent-red mb-2">
-              Widget Error
+            <h3 className="text-base font-semibold text-status-error-text dark:text-status-error-text-dark mb-2">
+              这个扩展组件暂时无法显示
             </h3>
-            <p className="text-xs text-accent-red/80 dark:text-accent-red/90 mb-4 max-w-[200px]">
-              This widget encountered an error and couldn't load.
+            <p className="text-sm text-status-error-text dark:text-status-error-text-dark mb-1 max-w-xs">
+              主页其他内容不受影响。你可以重试，或在“管理组件”中停用它。
             </p>
+            <p className="mb-4 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">模块：{this.props.widgetId}</p>
             <button
               onClick={this.handleRetry}
-              className="px-3 py-1.5 text-xs font-medium bg-accent-red hover:bg-accent-red-hover text-white rounded-button transition-colors"
+              className="px-3 py-2 text-sm font-medium bg-accent-red hover:bg-accent-red-hover text-white rounded-button transition-colors"
             >
-              Try Again
+              重试
             </button>
           </div>
         </div>

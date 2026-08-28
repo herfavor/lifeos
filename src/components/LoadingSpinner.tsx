@@ -75,7 +75,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div className={`flex flex-col items-center gap-3 ${center ? 'justify-center' : ''} ${className}`}>
       <Loader2
         className={`${sizeClasses[size]} animate-spin text-accent-primary`}
-        aria-label="Loading"
+        aria-label="加载中"
       />
       {message && (
         <p className={`${textSizeClasses[size]} text-text-light-secondary dark:text-text-dark-secondary text-center max-w-md`}>

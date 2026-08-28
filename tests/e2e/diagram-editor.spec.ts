@@ -15,7 +15,7 @@ test.describe('Diagram Editor', () => {
   });
 
   test('diagrams tab loads', async ({ page }) => {
-    const diagramsTab = page.getByRole('tab', { name: 'Diagrams' });
+    const diagramsTab = page.getByRole('tab', { name: '绘图' });
     if (await diagramsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await expect(diagramsTab).toHaveAttribute('aria-selected', 'true');
     }
@@ -23,7 +23,7 @@ test.describe('Diagram Editor', () => {
   });
 
   test('can create a new diagram', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*diagram|create.*diagram|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*绘图|创建.*绘图|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -32,7 +32,7 @@ test.describe('Diagram Editor', () => {
   });
 
   test('diagram editor has canvas', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*diagram|create.*diagram|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*绘图|创建.*绘图|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
@@ -47,13 +47,13 @@ test.describe('Diagram Editor', () => {
   });
 
   test('diagram has toolbar with tools', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /new.*diagram|create.*diagram|\+/i }).first();
+    const newBtn = page.getByRole('button', { name: /新建.*绘图|创建.*绘图|\+/i }).first();
     if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await newBtn.click();
       await page.waitForTimeout(500);
 
       // Check for toolbar buttons by title attribute
-      const selectTool = page.locator('[title="Select"]');
+      const selectTool = page.locator('[title="选择"]');
       if (await selectTool.isVisible({ timeout: 2000 }).catch(() => false)) {
         await expect(selectTool).toBeVisible();
       }

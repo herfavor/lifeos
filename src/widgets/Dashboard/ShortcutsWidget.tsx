@@ -1,23 +1,23 @@
 /**
  * Shortcuts Reference Widget
- * Quick reference for NeumanOS keyboard shortcuts
+ * Quick reference for LifeOS keyboard shortcuts
  */
 
 import React, { useState } from 'react';
 import { BaseWidget } from './BaseWidget';
 
 const shortcuts = [
-  { category: 'Navigation', items: [
-    { keys: '⌘ D', action: 'Dashboard' },
-    { keys: '⌘ N', action: 'Notes' },
-    { keys: '⌘ P', action: 'Planning' },
-    { keys: '⌘ T', action: 'Tasks' },
-    { keys: '⌘ S', action: 'Settings' },
+  { category: '导航', items: [
+    { keys: '⌘ D', action: '首页' },
+    { keys: '⌘ N', action: '笔记' },
+    { keys: '⌘ P', action: '规划' },
+    { keys: '⌘ T', action: '任务' },
+    { keys: '⌘ S', action: '设置' },
   ]},
-  { category: 'General', items: [
-    { keys: '⌘ B', action: 'Toggle Sidebar' },
-    { keys: '⌘ K', action: 'Quick Search' },
-    { keys: 'Esc', action: 'Close Modal' },
+  { category: '通用', items: [
+    { keys: '⌘ B', action: '切换侧边栏' },
+    { keys: '⌘ K', action: '快速搜索' },
+    { keys: 'Esc', action: '关闭弹窗' },
   ]},
 ];
 
@@ -33,13 +33,13 @@ export const ShortcutsWidget: React.FC = () => {
   })).filter(cat => cat.items.length > 0);
 
   return (
-    <BaseWidget title="Keyboard Shortcuts" icon="⌨️">
+    <BaseWidget title="键盘快捷键" icon="⌨️">
       <div className="space-y-3">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search shortcuts..."
+          placeholder="搜索快捷键…"
           className="w-full px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue transition-all duration-standard ease-smooth"
         />
 

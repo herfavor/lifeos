@@ -59,7 +59,7 @@ export const NoteAliasEditor: React.FC<NoteAliasEditorProps> = ({ noteId, aliase
         className="text-xs text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors flex items-center gap-1"
       >
         <span className="text-[10px]">{isExpanded ? '▾' : '▸'}</span>
-        Aliases
+        别名
         {aliases.length > 0 && (
           <span className="text-[10px] bg-surface-light-elevated dark:bg-surface-dark-elevated px-1.5 rounded-full">
             {aliases.length}
@@ -78,7 +78,7 @@ export const NoteAliasEditor: React.FC<NoteAliasEditorProps> = ({ noteId, aliase
               <button
                 onClick={() => handleRemove(alias)}
                 className="hover:text-status-error-text dark:hover:text-status-error-text-dark transition-colors text-[10px] leading-none"
-                title={`Remove alias "${alias}"`}
+                title={`移除别名“${alias}”`}
               >
                 x
               </button>
@@ -93,7 +93,7 @@ export const NoteAliasEditor: React.FC<NoteAliasEditorProps> = ({ noteId, aliase
             onBlur={() => {
               if (inputValue.trim()) handleAdd();
             }}
-            placeholder="Add alias..."
+            placeholder="添加别名…"
             className="text-xs bg-transparent border-none outline-none text-text-light-primary dark:text-text-dark-primary placeholder-text-light-tertiary dark:placeholder-text-dark-tertiary min-w-[80px] flex-shrink"
           />
         </div>

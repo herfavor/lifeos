@@ -70,13 +70,13 @@ export async function encrypt(plaintext: string, password: string): Promise<Encr
  */
 export async function decrypt(encryptedData: EncryptedData, password: string): Promise<string> {
   if (!encryptedData || !password) {
-    throw new Error('Encrypted data and password are required for decryption');
+    throw new Error('解密需要加密数据和密码');
   }
 
   const { ciphertext, salt, iv, version, pbkdf2Version } = encryptedData;
 
   if (!ciphertext || !salt || !iv) {
-    throw new Error('Invalid encrypted data structure');
+    throw new Error('加密数据结构无效');
   }
 
   // If encrypted with WebCrypto, use WebCrypto to decrypt
@@ -108,12 +108,12 @@ export async function decrypt(encryptedData: EncryptedData, password: string): P
     const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
 
     if (!plaintext) {
-      throw new Error('Decryption failed - invalid password or corrupted data');
+      throw new Error('解密失败——密码无效或数据已损坏');
     }
 
     return plaintext;
   } catch (error) {
-    throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`解密失败：${error instanceof Error ? error.message : '未知错误'}`);
   }
 }
 

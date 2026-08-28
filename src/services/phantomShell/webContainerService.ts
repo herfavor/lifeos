@@ -46,8 +46,8 @@ export const bootWebContainer = async (): Promise<WebContainer> => {
 
   // Check for Cross-Origin Isolation
   if (typeof crossOriginIsolated !== 'undefined' && !crossOriginIsolated) {
-    const error = 'WebContainer requires Cross-Origin Isolation. ' +
-      'Ensure COEP and COOP headers are set in vite.config.ts and public/_headers';
+    const error = 'WebContainer 需要跨源隔离（Cross-Origin Isolation）。' +
+      '请确保在 vite.config.ts 和 public/_headers 中设置了 COEP 和 COOP 头。';
     log.error(error);
     usePhantomShellStore.getState().setWebContainerError(error);
     throw new Error(error);
@@ -285,7 +285,7 @@ export const createProjectFromTemplate = async (
 ): Promise<void> => {
   const files = PROJECT_TEMPLATES[template];
   if (!files) {
-    throw new Error(`Unknown template: ${template}`);
+    throw new Error(`未知模板：${template}`);
   }
 
   // Deep clone to avoid mutating the template
@@ -337,14 +337,14 @@ export const isWebContainerSupported = (): {
   if (typeof SharedArrayBuffer === 'undefined') {
     return {
       supported: false,
-      reason: 'SharedArrayBuffer not available (requires Cross-Origin Isolation)',
+      reason: 'SharedArrayBuffer 不可用（需要跨源隔离）',
     };
   }
 
   if (typeof crossOriginIsolated !== 'undefined' && !crossOriginIsolated) {
     return {
       supported: false,
-      reason: 'Cross-Origin Isolation not enabled (COEP/COOP headers required)',
+      reason: '未启用跨源隔离（需要 COEP/COOP 头）',
     };
   }
 

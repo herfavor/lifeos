@@ -98,14 +98,14 @@ export const exportNoteToMarkdown = (note: Note): void => {
   const markdown = lexicalToMarkdown(note.content);
 
   // Create markdown file content with metadata
-  const fileContent = `# ${note.title || 'Untitled'}\n\n${markdown}`;
+  const fileContent = `# ${note.title || '未命名'}\n\n${markdown}`;
 
   // Create blob and download
   const blob = new Blob([fileContent], { type: 'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${note.title || 'Untitled'}.md`;
+  link.download = `${note.title || '未命名'}.md`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

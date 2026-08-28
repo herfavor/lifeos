@@ -46,7 +46,7 @@ export const AwesomeListsWidget: React.FC = () => {
           uniqueLists.push({
             name: item.name,
             category,
-            description: item.description || 'Curated list of awesome resources',
+            description: item.description || '精选 awesome 资源列表',
             stars: item.stargazers_count,
             url: item.html_url,
           });
@@ -55,7 +55,7 @@ export const AwesomeListsWidget: React.FC = () => {
 
       setLists(uniqueLists);
     } catch (err) {
-      setError('Failed to load awesome lists');
+      setError('加载 awesome 列表失败');
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export const AwesomeListsWidget: React.FC = () => {
 
   return (
     <BaseWidget
-      title="Awesome Lists"
+      title="Awesome 列表"
       icon="📋"
       loading={loading}
       error={error}

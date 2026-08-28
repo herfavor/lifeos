@@ -77,7 +77,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-accent-purple" />
           <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary text-sm">
-            Today's Focus
+            今日专注
           </h3>
           {goals.length > 0 && (
             <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
@@ -89,8 +89,8 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
           <button
             onClick={() => setIsAdding(true)}
             className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
-            title="Add goal"
-            aria-label="Add goal"
+            title="添加目标"
+            aria-label="添加目标"
           >
             <Plus className="w-4 h-4 text-text-light-secondary dark:text-text-dark-secondary" />
           </button>
@@ -102,7 +102,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
           onClick={() => setIsAdding(true)}
           className="w-full text-center py-3 text-sm text-text-light-tertiary dark:text-text-dark-tertiary hover:text-text-light-secondary dark:hover:text-text-dark-secondary transition-colors border border-dashed border-border-light dark:border-border-dark rounded-lg"
         >
-          Set your intentions for today
+          设定今日目标
         </button>
       )}
 
@@ -116,7 +116,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
                   ? 'bg-accent-green border-accent-green'
                   : 'border-border-light dark:border-border-dark hover:border-accent-green'
               }`}
-              aria-label={goal.completed ? 'Mark incomplete' : 'Mark complete'}
+              aria-label={goal.completed ? '标记为未完成' : '标记为已完成'}
             >
               {goal.completed && <Check className="w-3 h-3 text-white" />}
             </button>
@@ -143,12 +143,12 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
               </span>
             )}
 
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
               {editingId !== goal.id && (
                 <button
                   onClick={() => handleStartEdit(goal.id, goal.text)}
                   className="p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
-                  aria-label="Edit goal"
+                  aria-label="编辑目标"
                 >
                   <Pencil className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
                 </button>
@@ -156,7 +156,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
               <button
                 onClick={() => removeGoal(dateKey, goal.id)}
                 className="p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
-                aria-label="Remove goal"
+                aria-label="移除目标"
               >
                 <X className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
               </button>
@@ -172,7 +172,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
               value={newGoalText}
               onChange={(e) => setNewGoalText(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, 'add')}
-              placeholder="What's your focus?"
+              placeholder="你的专注目标是什么？"
               className="flex-1 bg-transparent text-sm text-text-light-primary dark:text-text-dark-primary placeholder:text-text-light-tertiary dark:placeholder:text-text-dark-tertiary border-b border-border-light dark:border-border-dark focus:border-accent-primary outline-none py-0.5"
               autoFocus
             />
@@ -182,7 +182,7 @@ export const TodayFocus: React.FC<TodayFocusProps> = ({ dateKey }) => {
                 setNewGoalText('');
               }}
               className="p-0.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated"
-              aria-label="Cancel"
+              aria-label="取消"
             >
               <X className="w-3 h-3 text-text-light-tertiary dark:text-text-dark-tertiary" />
             </button>
