@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { ADVANCED_FEATURES, CORE_FEATURES, getFeature, isWidgetExposed } from '../features';
+import {
+  ADVANCED_FEATURES,
+  CORE_FEATURES,
+  HIDDEN_FEATURES,
+  getFeature,
+  isFeatureExposed,
+  isWidgetExposed,
+} from '../features';
 
 describe('feature visibility', () => {
   it('keeps the default navigation focused on the daily action loop', () => {
@@ -36,11 +43,14 @@ describe('feature visibility', () => {
     expect(getFeature('pomodoro')).toMatchObject({ path: '/schedule?tab=pomodoro', tier: 'advanced' });
   });
 
-  it('applies hidden feature tiers to their dashboard widgets', () => {
+  it('keeps retired runtime features absent and fail-closed', () => {
+    expect(HIDDEN_FEATURES).toEqual([]);
+    expect(getFeature('forms')).toBeUndefined();
+    expect(getFeature('spreadsheets')).toBeUndefined();
+    expect(getFeature('presentations')).toBeUndefined();
+    expect(getFeature('diagrams')).toBeUndefined();
+    expect(isFeatureExposed('forms')).toBe(false);
     expect(isWidgetExposed('forms')).toBe(false);
-    expect(isWidgetExposed('flashcard')).toBe(false);
-    expect(isWidgetExposed('dailyquests')).toBe(false);
-    expect(isWidgetExposed('productivitykarma')).toBe(false);
     expect(isWidgetExposed('recentnotes')).toBe(true);
   });
 });

@@ -7,16 +7,12 @@
  * Tiers:
  *  - 'core'     → shown in the main sidebar by default
  *  - 'advanced' → grouped under the "更多功能" disclosure in the sidebar
- *                 (and still reachable via routes / command palette)
- *  - 'hidden'   → source code, routes and data are fully preserved, but no
- *                 entry point is exposed in the default UI. Users can still
- *                 reach these via direct URL or in-page tabs.
+ *  - 'hidden'   → reserved for a temporary compatibility gate while a feature
+ *                 is being retired. Hidden does not imply that its runtime,
+ *                 routes, or implementation must be preserved.
  *
- * IMPORTANT:
- *  - This registry only controls VISIBILITY. It never deletes code,
- *    components or persisted data.
- *  - Routes for hidden features remain registered in App.tsx.
- *  - To promote/demote a feature, change its `tier` here — nothing else.
+ * The registry is authoritative for product exposure. Unknown feature ids
+ * fail closed so stale callers cannot accidentally resurrect retired modules.
  *
  * Note on persistence: sidebar order (useSidebarNavStore) stores feature
  * ids; unknown/stale ids are ignored gracefully, so re-tiering a feature
@@ -260,9 +256,10 @@ export function getFeature(id: string): FeatureDefinition | undefined {
   return FEATURES.find((f) => f.id === id);
 }
 
-/** Whether a feature may appear in the default product UI. */
+/** Whether a registered feature may appear in the product UI. */
 export function isFeatureExposed(id: string): boolean {
-  return getFeature(id)?.tier !== 'hidden';
+  const feature = getFeature(id);
+  return feature !== undefined && feature.tier !== 'hidden';
 }
 
 /**
