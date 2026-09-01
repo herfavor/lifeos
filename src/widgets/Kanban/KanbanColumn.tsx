@@ -185,7 +185,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
       style={columnWidth ? { width: columnWidth, minWidth: columnWidth } : { width: '320px', minWidth: '320px' }}
     >
       {/* Column Header */}
-      <div className="column-header px-4 py-3 border-b border-border-light/80 dark:border-border-dark">
+      <div className="column-header group/header px-4 py-3 border-b border-border-light/80 dark:border-border-dark">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${color}`}></div>
@@ -206,7 +206,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
 
           {/* Column actions */}
           {onEditColumn && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover/header:opacity-100 group-focus-within/header:opacity-100">
               <button
                 onClick={() => onEditColumn(id)}
                 className="p-1 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue dark:hover:text-accent-blue transition-colors"

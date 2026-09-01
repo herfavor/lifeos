@@ -624,11 +624,19 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   color,
 }) => {
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       className={`
         group w-full flex items-center gap-3 px-3 py-2 rounded-button
-        text-left transition-colors
+        text-left transition-colors cursor-pointer
         ${
           isActive
             ? 'bg-accent-blue/10 text-accent-primary'
@@ -683,7 +691,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           )}
         </div>
       )}
-    </button>
+    </div>
   );
 };
 

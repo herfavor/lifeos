@@ -52,7 +52,11 @@ const EXTENDED_SHORTCUTS: ShortcutDefinition[] = [
   { id: 'next-period', keys: ['right'], label: '下一个周期', context: 'calendar' },
 ];
 
-const ALL_SHORTCUTS = [...DEFAULT_SHORTCUTS, ...EXTENDED_SHORTCUTS];
+// EXTENDED_SHORTCUTS may overlap with centrally registered shortcuts; first
+// definition wins so the list (and React keys) stays unique per shortcut id.
+const ALL_SHORTCUTS = Array.from(
+  new Map([...DEFAULT_SHORTCUTS, ...EXTENDED_SHORTCUTS].map((s) => [s.id, s])).values(),
+);
 
 const CONTEXT_LABELS: Record<ShortcutContext, string> = {
   global: '全局',
