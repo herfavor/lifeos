@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Activity, Clock, Info } from 'lucide-react';
+import { Activity, Check, Clock, Info } from 'lucide-react';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
 
@@ -164,8 +164,9 @@ export function AutoTrackingSettings() {
       {/* Preview */}
       {enabled && (
         <div className="p-4 bg-accent-green/10 border border-accent-green/20 rounded-lg">
-          <p className="text-sm font-medium text-accent-green dark:text-accent-green mb-2">
-            ✓ 自动记录已启用
+          <p className="flex items-center gap-1.5 text-sm font-medium text-accent-green dark:text-accent-green mb-2">
+            <Check className="h-4 w-4" aria-hidden />
+            自动记录已启用
           </p>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
             在页面或任务上停留 {threshold} 秒后将自动开始记录。

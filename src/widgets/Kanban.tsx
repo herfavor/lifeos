@@ -31,6 +31,7 @@ import { TaskViewSidebar } from '../components/tasks/TaskViewSidebar';
 import { TaskTemplatesPicker } from '../components/tasks/TaskTemplatesPicker';
 import type { Task, TaskStatus } from '../types';
 import { useSearchParams } from 'react-router-dom';
+import { Eye, FileText, LayoutGrid, List, Package, Search, Settings2 } from 'lucide-react';
 import { getQuickAddProjectId } from '../utils/projectTaskDeepLink';
 
 /**
@@ -411,20 +412,20 @@ export const Kanban: React.FC = () => {
             className="px-4 py-2 text-sm font-medium bg-accent-primary text-white rounded-lg hover:bg-accent-blue-hover transition-colors whitespace-nowrap"
             title="管理列"
           >
-            ⚙️ 列
+            <Settings2 className="h-4 w-4" aria-hidden /> 列
           </button>}
           {showMoreActions && <button
             onClick={() => setShowArchivedView(true)}
             className="px-4 py-2 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors whitespace-nowrap"
             title="查看已归档任务"
           >
-            📦 已归档
+            <Package className="h-4 w-4" aria-hidden /> 已归档
           </button>}
           {/* View Toggle */}
           <div className="flex rounded-lg overflow-hidden border border-border-light dark:border-border-dark">
             {([
-              { id: 'board' as const, label: '看板', icon: '▦' },
-              { id: 'list' as const, label: '列表', icon: '☷' },
+              { id: 'board' as const, label: '看板', icon: <LayoutGrid className="h-4 w-4" aria-hidden /> },
+              { id: 'list' as const, label: '列表', icon: <List className="h-4 w-4" aria-hidden /> },
             ] as const).map((v, i) => (
               <button
                 key={v.id}
@@ -448,7 +449,7 @@ export const Kanban: React.FC = () => {
             className="px-4 py-2 text-sm font-medium bg-surface-light-elevated dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-lg border border-border-light dark:border-border-dark hover:bg-surface-light dark:hover:bg-surface-dark-elevated transition-colors whitespace-nowrap"
             title="从模板创建"
           >
-            📝 模板
+            <FileText className="h-4 w-4" aria-hidden /> 模板
           </button>}
           {/* Views sidebar toggle */}
           {showMoreActions && <button
@@ -460,7 +461,7 @@ export const Kanban: React.FC = () => {
             }`}
             title="已保存的视图"
           >
-            👁 视图
+            <Eye className="h-4 w-4" aria-hidden /> 视图
           </button>}
           <button
             onClick={() => setShowMoreActions((value) => !value)}
@@ -477,7 +478,7 @@ export const Kanban: React.FC = () => {
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark'
             }`}
           >
-            🔍 筛选 {hasActiveFilters && `(${[...selectedPriorities, ...selectedTags, ...selectedAssignees].length + (showUnassigned ? 1 : 0)})`}
+            <Search className="h-4 w-4" aria-hidden /> 筛选 {hasActiveFilters && `(${[...selectedPriorities, ...selectedTags, ...selectedAssignees].length + (showUnassigned ? 1 : 0)})`}
           </button>
           {hasActiveFilters && (
             <button

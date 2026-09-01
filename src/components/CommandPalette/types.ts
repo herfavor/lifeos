@@ -6,6 +6,25 @@
  */
 
 import type { ReactNode } from 'react';
+import {
+  BarChart3,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+  Folder,
+  FolderOpen,
+  Home,
+  Inbox,
+  Link,
+  Network,
+  Search,
+  Settings2,
+  Sparkles,
+  Sun,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
 
 /**
  * Result types that can appear in search results
@@ -184,7 +203,7 @@ export interface NavigationPage {
   id: string;
   name: string;
   path: string;
-  icon: string;
+  icon: LucideIcon;
   keywords: string[];
   description?: string;
 }
@@ -197,7 +216,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'dashboard',
     name: '首页',
     path: '/',
-    icon: '🏠',
+    icon: Home,
     keywords: ['home', 'overview', 'widgets', 'main'],
     description: '收集、安排、专注与回顾的每日入口',
   },
@@ -205,7 +224,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'ai-command-center',
     name: 'AI 指挥中心',
     path: '/ai',
-    icon: '✨',
+    icon: Sparkles,
     keywords: ['ai', 'assistant', 'command', 'openai', 'claude'],
     description: '唯一的 AI 对话与管理页面',
   },
@@ -213,7 +232,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'today',
     name: '今天',
     path: '/today',
-    icon: '☀️',
+    icon: Sun,
     keywords: ['today', 'day', 'focus', 'plan'],
     description: '安排今天最值得推进的事情',
   },
@@ -221,7 +240,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'inbox',
     name: '收件箱',
     path: '/tasks?tab=inbox',
-    icon: '📥',
+    icon: Inbox,
     keywords: ['inbox', 'capture', 'collect', 'quick'],
     description: '处理尚未安排的任务',
   },
@@ -229,7 +248,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'projects',
     name: '项目',
     path: '/pm',
-    icon: '📁',
+    icon: Folder,
     keywords: ['project', 'pm', 'next action'],
     description: '把任务与进展组织成项目',
   },
@@ -237,7 +256,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'notes',
     name: '笔记',
     path: '/notes',
-    icon: '📝',
+    icon: FileText,
     keywords: ['note', 'write', 'document', 'text', 'markdown'],
     description: '创建并管理笔记',
   },
@@ -245,7 +264,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'graph',
     name: '图谱视图',
     path: '/graph',
-    icon: '🕸️',
+    icon: Network,
     keywords: ['graph', 'network', 'links', 'connections', 'knowledge'],
     description: '可视化笔记之间的关联',
   },
@@ -253,7 +272,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'tasks',
     name: '任务',
     path: '/tasks',
-    icon: '✅',
+    icon: CheckCircle2,
     keywords: ['task', 'todo', 'kanban', 'project', 'board'],
     description: '看板任务管理',
   },
@@ -261,7 +280,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'schedule',
     name: '日程',
     path: '/schedule',
-    icon: '📅',
+    icon: CalendarDays,
     keywords: ['calendar', 'schedule', 'time', 'events', 'tracking'],
     description: '日历与时间追踪',
   },
@@ -269,7 +288,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'links',
     name: '链接库',
     path: '/links',
-    icon: '🔗',
+    icon: Link,
     keywords: ['bookmark', 'link', 'url', 'web', 'save'],
     description: '保存的书签与链接',
   },
@@ -277,7 +296,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'automations',
     name: '自动化',
     path: '/automations',
-    icon: '⚡',
+    icon: Zap,
     keywords: ['automation', 'workflow', 'rule', 'trigger', 'action'],
     description: '任务自动化规则',
   },
@@ -285,7 +304,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'settings',
     name: '设置',
     path: '/settings',
-    icon: '⚙️',
+    icon: Settings2,
     keywords: ['settings', 'preferences', 'config', 'options', 'theme'],
     description: '应用设置与偏好',
   },
@@ -293,7 +312,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'activity',
     name: '回顾',
     path: '/activity',
-    icon: '📊',
+    icon: BarChart3,
     keywords: ['activity', 'feed', 'history', 'log', 'analytics', 'heatmap'],
     description: '动态流与个人分析',
   },
@@ -301,7 +320,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'portfolio',
     name: '项目组合',
     path: '/portfolio',
-    icon: '📂',
+    icon: FolderOpen,
     keywords: ['portfolio', 'projects', 'overview', 'health', 'cross-project', 'dashboard'],
     description: '跨项目组合总览',
   },
@@ -309,7 +328,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'energy',
     name: 'Energy',
     path: '/energy',
-    icon: '⚡',
+    icon: Zap,
     keywords: ['energy', 'tracking', 'burnout', 'schedule', 'productivity', 'fatigue'],
     description: 'Track energy levels and optimize scheduling',
   },
@@ -317,7 +336,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'retrospective',
     name: 'Weekly Retrospective',
     path: '/retrospective',
-    icon: '📊',
+    icon: BarChart3,
     keywords: ['retrospective', 'weekly', 'review', 'insights', 'productivity', 'score', 'retro'],
     description: 'Weekly productivity review and planning',
   },
@@ -325,7 +344,7 @@ export const NAVIGATION_PAGES: NavigationPage[] = [
     id: 'availability',
     name: 'Availability',
     path: '/availability',
-    icon: '📋',
+    icon: ClipboardList,
     keywords: ['availability', 'free', 'busy', 'share', 'schedule', 'time', 'slots', 'meeting'],
     description: 'Share your free time blocks with others',
   },
@@ -351,19 +370,19 @@ export type SearchFilterTab = 'all' | 'notes' | 'tasks' | 'events' | 'links' | '
 export interface SearchFilterTabConfig {
   id: SearchFilterTab;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   /** Which SearchResultTypes this tab includes */
   types: SearchResultType[];
 }
 
 export const SEARCH_FILTER_TABS: SearchFilterTabConfig[] = [
-  { id: 'all', label: '全部', icon: '🔍', types: [] },
-  { id: 'notes', label: '笔记', icon: '📝', types: ['note'] },
-  { id: 'tasks', label: '任务', icon: '✅', types: ['task', 'project', 'template'] },
-  { id: 'events', label: '事件', icon: '📅', types: ['event', 'time-entry'] },
-  { id: 'links', label: '链接', icon: '🔗', types: ['bookmark'] },
-  { id: 'docs', label: '文档', icon: '📄', types: ['diagram', 'form', 'document'] },
-  { id: 'other', label: '其他', icon: '⚡', types: ['page', 'action', 'setting', 'widget', 'automation', 'habit', 'faq', 'help', 'shortcut', 'command'] },
+  { id: 'all', label: '全部', icon: Search, types: [] },
+  { id: 'notes', label: '笔记', icon: FileText, types: ['note'] },
+  { id: 'tasks', label: '任务', icon: CheckCircle2, types: ['task', 'project', 'template'] },
+  { id: 'events', label: '事件', icon: CalendarDays, types: ['event', 'time-entry'] },
+  { id: 'links', label: '链接', icon: Link, types: ['bookmark'] },
+  { id: 'docs', label: '文档', icon: FileText, types: ['diagram', 'form', 'document'] },
+  { id: 'other', label: '其他', icon: Zap, types: ['page', 'action', 'setting', 'widget', 'automation', 'habit', 'faq', 'help', 'shortcut', 'command'] },
 ];
 
 /**

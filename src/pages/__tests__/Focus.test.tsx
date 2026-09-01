@@ -69,6 +69,12 @@ describe('Focus', () => {
     );
 
     await waitFor(() => expect(useTimeTrackingStore.getState().activeEntry).not.toBeNull());
+    // Sub-minute stops are discarded as accidental; make the entry older than 60s.
+    useTimeTrackingStore.setState((state) => ({
+      activeEntry: state.activeEntry
+        ? { ...state.activeEntry, startTime: new Date(Date.now() - 5 * 60 * 1000).toISOString() }
+        : state.activeEntry,
+    }));
     fireEvent.click(screen.getByRole('button', { name: '结束计时' }));
 
     await waitFor(() => expect(useTimeTrackingStore.getState().activeEntry).toBeNull());

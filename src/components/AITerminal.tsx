@@ -39,7 +39,34 @@ import {
 } from './terminal';
 import { getDefaultSystemPrompt } from '../services/systemPrompts';
 import { buildCrossModuleContext, contextToSystemPrompt } from '../services/ai/contextBuilder';
-import { MessageSquare, Settings2, BookOpen, Search, Sparkles, X, Mic } from 'lucide-react';
+import {
+  AlertTriangle,
+  BarChart3,
+  Bot,
+  BookOpen,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  Circle,
+  Eye,
+  FileText,
+  HelpCircle,
+  Keyboard,
+  MessageSquare,
+  Mic,
+  Monitor,
+  Pencil,
+  RefreshCw,
+  Save,
+  Search,
+  Settings2,
+  Shuffle,
+  Sparkles,
+  User,
+  Wrench,
+  X,
+  Zap,
+} from 'lucide-react';
 import { useVoiceInput } from '../hooks/useVoiceInput';
 import { useShortcut } from '../hooks/useShortcut';
 import {
@@ -366,7 +393,7 @@ export const AITerminal: React.FC = () => {
   const [router] = useState(() => createDefaultRouter((failedProvider, _failedModel, nextProvider, nextModel, reason) => {
     // Fallback notification callback
     setFallbackNotification(
-      `⚠️ ${failedProvider} 失败：${reason}。已切换到 ${nextProvider}（${nextModel}）。`
+      `${failedProvider} 失败：${reason}。已切换到 ${nextProvider}（${nextModel}）。`
     );
     // Clear any existing timeout to prevent memory leaks
     if (fallbackTimeoutRef.current) {
@@ -544,7 +571,7 @@ export const AITerminal: React.FC = () => {
     if (configuredProviderCount === 0) {
       addMessage({
         role: 'system',
-        content: '⚠️ 尚未配置任何 AI 提供商。点击 ⚙️ 设置按钮添加 API 密钥。',
+        content: '尚未配置任何 AI 提供商。点击 ⚙️ 设置按钮添加 API 密钥。',
       });
       return;
     }
@@ -554,7 +581,7 @@ export const AITerminal: React.FC = () => {
     if (!activeProviderObj || !activeProviderObj.isConfigured()) {
       addMessage({
         role: 'system',
-        content: `⚠️ 提供商“${activeProvider}”尚未配置。请在设置中添加 API 密钥。`,
+        content: `提供商“${activeProvider}”尚未配置。请在设置中添加 API 密钥。`,
       });
       return;
     }
@@ -631,7 +658,7 @@ export const AITerminal: React.FC = () => {
       const errorMessage = error instanceof Error ? error.message : '发生未知错误';
       addMessage({
         role: 'system',
-        content: `❌ 错误：${errorMessage}`,
+        content: `错误：${errorMessage}`,
       });
     } finally{
       setStreaming(false);
@@ -669,36 +696,39 @@ export const AITerminal: React.FC = () => {
           <div className="flex flex-1">
             <button
               onClick={() => setTerminalMode('chat')}
-              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
                 terminalMode === 'chat'
                   ? 'text-accent-green border-accent-green bg-accent-green/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-green hover:bg-accent-green/5'
               }`}
               title="AI 聊天模式"
             >
-              💬 聊天
+              <MessageSquare className="h-4 w-4" aria-hidden />
+              聊天
             </button>
             <button
               onClick={() => setTerminalMode('shell')}
-              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
                 terminalMode === 'shell'
                   ? 'text-accent-primary border-accent-primary bg-accent-primary/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-primary hover:bg-accent-primary/5'
               }`}
               title="Phantom Shell 终端"
             >
-              ⌨️ Shell
+              <Keyboard className="h-4 w-4" aria-hidden />
+              Shell
             </button>
             <button
               onClick={() => setTerminalMode('notes')}
-              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
                 terminalMode === 'notes'
                   ? 'text-accent-blue border-accent-blue bg-accent-blue/5'
                   : 'text-text-dark-secondary border-transparent hover:text-accent-blue hover:bg-accent-blue/5'
               }`}
               title="查看已保存的笔记"
             >
-              📝 笔记
+              <FileText className="h-4 w-4" aria-hidden />
+              笔记
             </button>
           </div>
           {/* Close button in tab row */}
@@ -708,7 +738,7 @@ export const AITerminal: React.FC = () => {
             title="关闭终端"
             aria-label="关闭 AI 助手"
           >
-            ✕
+            <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
 
@@ -724,8 +754,8 @@ export const AITerminal: React.FC = () => {
                     : '未配置'}
                 </span>
                 {fallbackEnabled && configuredProviderCount > 1 && (
-                  <span className="bg-accent-green/20 px-1.5 py-0.5 rounded text-accent-green" title="已启用自动回退">
-                    🔄
+                  <span className="flex items-center bg-accent-green/20 px-1.5 py-0.5 rounded text-accent-green" title="已启用自动回退">
+                    <RefreshCw className="h-3 w-3" aria-hidden />
                   </span>
                 )}
               </>
@@ -795,7 +825,7 @@ export const AITerminal: React.FC = () => {
                 title="用量统计"
                 aria-label="查看用量统计"
               >
-                📊
+                <BarChart3 size={14} />
               </button>
             )}
 
@@ -807,7 +837,7 @@ export const AITerminal: React.FC = () => {
                 title="将对话保存到笔记"
                 aria-label="将对话保存到笔记"
               >
-                💾
+                <Save size={14} />
               </button>
             )}
 
@@ -819,7 +849,7 @@ export const AITerminal: React.FC = () => {
                 title="选择模型"
                 aria-label="选择 AI 模型"
               >
-                🔀
+                <Shuffle size={14} />
               </button>
             )}
 
@@ -842,7 +872,7 @@ export const AITerminal: React.FC = () => {
               title="帮助与文档"
               aria-label="打开帮助"
             >
-              ❓
+              <HelpCircle size={14} />
             </button>
           </div>
         </div>
@@ -855,19 +885,21 @@ export const AITerminal: React.FC = () => {
           <div className="flex flex-col flex-1 overflow-hidden">
             {/* Preview Toggle Bar */}
             <div className="flex items-center justify-between px-2 py-1 bg-surface-dark-elevated border-b border-border-dark flex-shrink-0">
-              <span className="text-xs text-text-dark-secondary">
-                {phantomStore.isDevServerRunning ? '🟢 服务器运行中' : '⚫ 无服务器'}
+              <span className="flex items-center gap-1 text-xs text-text-dark-secondary">
+                <Circle className={`h-2 w-2 ${phantomStore.isDevServerRunning ? 'fill-current' : ''}`} aria-hidden />
+                {phantomStore.isDevServerRunning ? '服务器运行中' : '无服务器'}
               </span>
               <button
                 onClick={() => phantomStore.setShowPreview(!phantomStore.showPreview)}
-                className={`px-2 py-0.5 text-xs rounded transition-all ${
+                className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded transition-all ${
                   phantomStore.showPreview
                     ? 'bg-accent-primary/20 text-accent-primary'
                     : 'text-text-dark-secondary hover:text-accent-primary'
                 }`}
                 title="切换预览面板"
               >
-                {phantomStore.showPreview ? '👁 隐藏' : '👁 显示'} 预览
+                <Eye className="h-3 w-3" aria-hidden />
+                {phantomStore.showPreview ? '隐藏' : '显示'} 预览
               </button>
             </div>
 
@@ -910,9 +942,10 @@ export const AITerminal: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setShowProviderSettings(true)}
-                  className="px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button transition-all duration-standard ease-smooth"
                 >
-                  ⚙️ 配置提供商
+                  <Settings2 className="h-4 w-4" aria-hidden />
+                  配置提供商
                 </button>
                 <div className="mt-4 text-xs space-y-1">
                   <p className="font-medium">可用的免费提供商：</p>
@@ -932,11 +965,11 @@ export const AITerminal: React.FC = () => {
                 </p>
                 <p className="text-sm">有什么想问的都可以！我可以帮你：</p>
                 <ul className="text-sm mt-2 space-y-1">
-                  <li>💬 常见问题与对话</li>
-                  <li>💻 代码生成与讲解</li>
-                  <li>🔧 调试与问题排查</li>
-                  <li>📝 写作与效率</li>
-                  <li>🔄 提供商失败时自动回退</li>
+                  <li className="flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" aria-hidden />常见问题与对话</li>
+                  <li className="flex items-center gap-1.5"><Monitor className="h-3.5 w-3.5" aria-hidden />代码生成与讲解</li>
+                  <li className="flex items-center gap-1.5"><Wrench className="h-3.5 w-3.5" aria-hidden />调试与问题排查</li>
+                  <li className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" aria-hidden />写作与效率</li>
+                  <li className="flex items-center gap-1.5"><RefreshCw className="h-3.5 w-3.5" aria-hidden />提供商失败时自动回退</li>
                 </ul>
               </div>
             )}
@@ -950,7 +983,7 @@ export const AITerminal: React.FC = () => {
               >
                 {message.role !== 'user' && (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent-blue to-accent-primary flex items-center justify-center text-white flex-shrink-0">
-                    {message.role === 'system' ? '⚠️' : '🤖'}
+                    {message.role === 'system' ? <AlertTriangle className="h-4 w-4" aria-hidden /> : <Bot className="h-4 w-4" aria-hidden />}
                   </div>
                 )}
 
@@ -1037,7 +1070,7 @@ export const AITerminal: React.FC = () => {
 
                 {message.role === 'user' && (
                   <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-white flex-shrink-0">
-                    👤
+                    <User className="h-4 w-4" aria-hidden />
                   </div>
                 )}
               </div>
@@ -1047,7 +1080,7 @@ export const AITerminal: React.FC = () => {
             {isStreaming && streamingContent && (
               <div className="flex gap-3 justify-start" role="status" aria-live="polite" aria-label="AI 回复流式输出中">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent-blue to-accent-primary flex items-center justify-center text-white flex-shrink-0">
-                  🤖
+                  <Bot className="h-4 w-4" aria-hidden />
                 </div>
                 <div className="max-w-[80%] rounded-button px-4 py-2 font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated text-accent-orange dark:text-accent-green">
                   <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-accent-orange dark:prose-headings:text-accent-green prose-code:text-accent-orange dark:prose-code:text-accent-green">
@@ -1092,7 +1125,7 @@ export const AITerminal: React.FC = () => {
             <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-primary/10 border-t border-accent-primary/20 flex-shrink-0">
               <Sparkles size={12} className="text-accent-primary flex-shrink-0" />
               <span className="text-xs text-accent-primary truncate flex-1">
-                上下文：{activeContext.type === 'note' ? '📝' : '✅'} {activeContext.title}
+                上下文：{activeContext.type === 'note' ? <FileText className="inline h-3 w-3" aria-hidden /> : <CheckCircle2 className="inline h-3 w-3" aria-hidden />} {activeContext.title}
               </span>
               <button
                 onClick={() => setActiveContext(null)}
@@ -1199,27 +1232,30 @@ export const AITerminal: React.FC = () => {
                         {selectedNote.isQuickNote && selectedText && (
                           <button
                             onClick={handleMoveToDaily}
-                            className="px-2 py-1 text-xs bg-accent-orange/20 text-accent-orange hover:bg-accent-orange/30 rounded transition-all"
+                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-orange/20 text-accent-orange hover:bg-accent-orange/30 rounded transition-all"
                             title="将选中文本移动到每日笔记"
                           >
-                            📅 移至每日笔记
+                            <CalendarDays className="h-3 w-3" aria-hidden />
+                            移至每日笔记
                           </button>
                         )}
                         <button
                           onClick={handleSaveNote}
-                          className="px-2 py-1 text-xs bg-accent-green/20 text-accent-green hover:bg-accent-green/30 rounded transition-all"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-green/20 text-accent-green hover:bg-accent-green/30 rounded transition-all"
                           title="保存更改"
                         >
-                          ✓ 保存
+                          <Check className="h-3 w-3" aria-hidden />
+                          保存
                         </button>
                       </>
                     ) : (
                       <button
                         onClick={handleStartEditing}
-                        className="px-2 py-1 text-xs bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 rounded transition-all"
+                        className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 rounded transition-all"
                         title="编辑笔记"
                       >
-                        ✎ 编辑
+                        <Pencil className="h-3 w-3" aria-hidden />
+                        编辑
                       </button>
                     )}
                     <button
@@ -1324,7 +1360,7 @@ export const AITerminal: React.FC = () => {
                       className="w-full text-left p-3 rounded-lg bg-gradient-to-r from-accent-yellow/10 to-accent-orange/10 hover:from-accent-yellow/20 hover:to-accent-orange/20 border border-accent-yellow/30 hover:border-accent-yellow/50 transition-all group"
                     >
                       <div className="flex items-start gap-2">
-                        <span className="text-lg flex-shrink-0">⚡</span>
+                        <Zap className="h-5 w-5 flex-shrink-0" aria-hidden />
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-medium text-text-dark-primary group-hover:text-accent-yellow transition-colors">
                             快速笔记
@@ -1357,7 +1393,7 @@ export const AITerminal: React.FC = () => {
                   {/* Regular Notes */}
                   {aiTerminalNotes.length === 0 && !quickNote ? (
                     <div className="flex flex-col items-center justify-center p-4 text-center">
-                      <div className="text-4xl mb-3">📝</div>
+                      <FileText className="mb-3 h-8 w-8 text-text-dark-tertiary" aria-hidden />
                       <p className="text-sm font-medium text-text-dark-primary mb-1">
                         暂无笔记
                       </p>
@@ -1416,7 +1452,7 @@ export const AITerminal: React.FC = () => {
                 {/* Quick Input Footer */}
                 <div className="px-3 py-2 border-t border-border-dark bg-surface-dark-elevated flex-shrink-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg flex-shrink-0">⚡</span>
+                    <Zap className="h-5 w-5 flex-shrink-0" aria-hidden />
                     <input
                       ref={quickNoteInputRef}
                       type="text"
@@ -1492,7 +1528,7 @@ export const AITerminal: React.FC = () => {
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button"
               aria-label="关闭模型选择器"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
           <div className="p-3 overflow-y-auto flex-1">
@@ -1521,7 +1557,7 @@ export const AITerminal: React.FC = () => {
               className="p-1 hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated rounded-button"
               aria-label="关闭用量统计"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
           <div className="p-3 overflow-y-auto flex-1">

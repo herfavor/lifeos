@@ -38,15 +38,15 @@ function getFileIcon(fileType: string): string {
 function FileIcon({ type }: { type: string }) {
   const icon = getFileIcon(type);
   const colorMap: Record<string, string> = {
-    img: 'text-green-500',
-    vid: 'text-purple-500',
-    aud: 'text-pink-500',
-    pdf: 'text-red-500',
-    doc: 'text-blue-500',
-    xls: 'text-emerald-500',
-    ppt: 'text-orange-500',
-    zip: 'text-yellow-600',
-    txt: 'text-gray-500',
+    img: 'text-accent-green',
+    vid: 'text-accent-purple',
+    aud: 'text-accent-magenta',
+    pdf: 'text-accent-red',
+    doc: 'text-accent-blue',
+    xls: 'text-accent-neon-green',
+    ppt: 'text-accent-orange',
+    zip: 'text-accent-yellow',
+    txt: 'text-text-light-tertiary dark:text-text-dark-tertiary',
     file: 'text-text-light-secondary dark:text-text-dark-secondary',
   };
 
@@ -113,8 +113,8 @@ function AttachmentRow({
           onClick={handleDelete}
           className={`p-1.5 rounded transition-colors ${
             confirmDelete
-              ? 'bg-red-500/20 text-red-500'
-              : 'hover:bg-red-500/10 text-text-light-secondary dark:text-text-dark-secondary hover:text-red-500'
+              ? 'bg-status-error/15 text-status-error'
+              : 'hover:bg-status-error/10 text-text-light-secondary dark:text-text-dark-secondary hover:text-status-error'
           }`}
           title={confirmDelete ? '再次点击确认' : '删除'}
           onBlur={() => setConfirmDelete(false)}

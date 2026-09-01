@@ -13,6 +13,7 @@ import React from 'react';
 import { NaturalLanguageDateInput } from '../../../components/NaturalLanguageDateInput';
 import { formatDateForDisplay } from '../../../utils/naturalLanguageDates';
 import { differenceInDays } from 'date-fns';
+import { X } from 'lucide-react';
 import type { Task } from '../../../types';
 
 interface TaskDatesSectionProps {
@@ -81,7 +82,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
                     className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
                     aria-label="清除开始日期"
                   >
-                    ✕
+                    <X className="h-3.5 w-3.5" aria-hidden />
                   </button>
                 </>
               ) : (
@@ -158,7 +159,7 @@ export const TaskDatesSection: React.FC<TaskDatesSectionProps> = ({
                   className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-opacity"
                   aria-label="清除截止日期"
                 >
-                  ✕
+                  <X className="h-3.5 w-3.5" aria-hidden />
                 </button>
               </>
             ) : (

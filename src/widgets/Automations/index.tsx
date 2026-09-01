@@ -10,7 +10,7 @@ import { executeRule, previewRule } from '../../services/automationEngine';
 import type { AutomationRule } from '../../types/automation';
 import { toast } from '../../stores/useToastStore';
 import { PageContent } from '../../components/PageContent';
-import { Activity, Beaker, History, Plus, RefreshCw, ShieldCheck, Workflow } from 'lucide-react';
+import { Activity, Beaker, Check, History, Plus, RefreshCw, ShieldCheck, Workflow, X } from 'lucide-react';
 
 const AUTOMATION_TEMPLATES: AutomationRule[] = [
   {
@@ -229,11 +229,11 @@ export const Automations: React.FC = () => {
                         </span>
                         {log.success ? (
                           <span className="text-xs px-1.5 py-0.5 rounded bg-status-success-bg text-status-success-text">
-                            ✓ 成功
+                            <Check className="h-3 w-3" aria-hidden /> 成功
                           </span>
                         ) : (
                           <span className="text-xs px-1.5 py-0.5 rounded bg-status-error-bg text-status-error-text">
-                            ✗ 失败
+                            <X className="h-3 w-3" aria-hidden /> 失败
                           </span>
                         )}
                       </div>

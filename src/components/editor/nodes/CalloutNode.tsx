@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
+import { AlertTriangle, Info, Lightbulb, Siren, X, type LucideIcon } from 'lucide-react';
 import { DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type {
@@ -36,35 +37,35 @@ export type SerializedCalloutNode = Spread<
 
 const CALLOUT_CONFIG: Record<
   CalloutType,
-  { icon: string; label: string; borderColor: string; bgColor: string; textColor: string }
+  { icon: LucideIcon; label: string; borderColor: string; bgColor: string; textColor: string }
 > = {
   info: {
-    icon: 'ℹ️',
+    icon: Info,
     label: '信息',
-    borderColor: 'border-blue-400 dark:border-blue-500',
-    bgColor: 'bg-blue-50 dark:bg-blue-950/30',
-    textColor: 'text-blue-700 dark:text-blue-300',
+    borderColor: 'border-status-info-border dark:border-status-info-border-dark',
+    bgColor: 'bg-status-info-bg dark:bg-status-info-bg-dark',
+    textColor: 'text-status-info-text dark:text-status-info-text-dark',
   },
   warning: {
-    icon: '⚠️',
+    icon: AlertTriangle,
     label: '警告',
-    borderColor: 'border-yellow-400 dark:border-yellow-500',
-    bgColor: 'bg-yellow-50 dark:bg-yellow-950/30',
-    textColor: 'text-yellow-700 dark:text-yellow-300',
+    borderColor: 'border-status-warning-border dark:border-status-warning-border-dark',
+    bgColor: 'bg-status-warning-bg dark:bg-status-warning-bg-dark',
+    textColor: 'text-status-warning-text dark:text-status-warning-text-dark',
   },
   tip: {
-    icon: '💡',
+    icon: Lightbulb,
     label: 'Tip',
-    borderColor: 'border-green-400 dark:border-green-500',
-    bgColor: 'bg-green-50 dark:bg-green-950/30',
-    textColor: 'text-green-700 dark:text-green-300',
+    borderColor: 'border-status-success-border dark:border-status-success-border-dark',
+    bgColor: 'bg-status-success-bg dark:bg-status-success-bg-dark',
+    textColor: 'text-status-success-text dark:text-status-success-text-dark',
   },
   danger: {
-    icon: '🚨',
+    icon: Siren,
     label: '危险',
-    borderColor: 'border-red-400 dark:border-red-500',
-    bgColor: 'bg-red-50 dark:bg-red-950/30',
-    textColor: 'text-red-700 dark:text-red-300',
+    borderColor: 'border-status-error-border dark:border-status-error-border-dark',
+    bgColor: 'bg-status-error-bg dark:bg-status-error-bg-dark',
+    textColor: 'text-status-error-text dark:text-status-error-text-dark',
   },
 };
 
@@ -138,12 +139,12 @@ function CalloutComponent({
         className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs"
         title="Remove callout"
       >
-        ✕
+        <X className="w-4 h-4" />
       </button>
 
       {/* Title row */}
       <div className={`flex items-center gap-2 mb-2 ${config.textColor} font-semibold`}>
-        <span>{config.icon}</span>
+        <config.icon className="w-4 h-4 shrink-0" />
         <input
           type="text"
           value={editableTitle}

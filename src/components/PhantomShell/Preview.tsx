@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from 'react';
+import { ArrowUpRight, Rocket } from 'lucide-react';
 import { usePhantomShellStore } from '../../stores/usePhantomShellStore';
 
 interface PreviewProps {
@@ -22,7 +23,7 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
     return (
       <div className={`flex items-center justify-center bg-surface-dark ${className}`}>
         <div className="text-center text-text-dark-secondary">
-          <div className="text-4xl mb-4">🚀</div>
+          <Rocket className="w-9 h-9 mx-auto mb-4" />
           <p className="text-sm">没有正在运行的开发服务器</p>
           <p className="text-xs mt-2">
             运行 <code className="text-accent-primary">npm run dev</code> 以启动
@@ -61,7 +62,7 @@ export const Preview: React.FC<PreviewProps> = ({ className = '' }) => {
           onClick={() => window.open(devServerUrl, '_blank')}
           className="text-xs text-accent-primary hover:underline"
         >
-          打开 ↗
+          打开 <ArrowUpRight className="w-3 h-3 inline" />
         </button>
       </div>
     </div>

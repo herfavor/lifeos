@@ -6,6 +6,7 @@
 
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Download, Package } from 'lucide-react';
 
 interface QuickActionsSectionProps {
   timeSinceLastBackup: string | null;
@@ -50,13 +51,13 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
           className="p-6 rounded-card bg-gradient-button-magenta text-white transition-all duration-standard shadow-card hover:shadow-card-hover disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="text-2xl">📦</span>
+            <Package className="h-6 w-6" aria-hidden />
             <span className="text-lg font-semibold">
-              {isExporting ? '正在导出…' : '导出 Brain'}
+              {isExporting ? '正在导出…' : '导出备份'}
             </span>
           </div>
           <p className="text-sm opacity-90">
-            将你的全部数据下载为 .brain 文件
+            将你的全部数据下载为 LifeOS 备份文件
           </p>
         </motion.button>
 
@@ -69,13 +70,13 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
           className="p-6 rounded-card bg-gradient-button-cyan text-white transition-all duration-standard shadow-card hover:shadow-card-hover disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="text-2xl">📥</span>
+            <Download className="h-6 w-6" aria-hidden />
             <span className="text-lg font-semibold">
-              {isImporting ? '正在导入…' : '导入 Brain'}
+              {isImporting ? '正在导入…' : '导入备份'}
             </span>
           </div>
           <p className="text-sm opacity-90">
-            从 .brain 文件恢复数据
+            从 LifeOS 备份文件恢复数据
           </p>
         </motion.button>
 

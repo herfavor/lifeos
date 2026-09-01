@@ -300,7 +300,7 @@ export const SelectiveExportSection: React.FC<SelectiveExportSectionProps> = ({
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
             }`}
           >
-            .brain（压缩）
+            LifeOS 备份（压缩）
           </button>
           <button
             onClick={() => setExportFormat('json')}

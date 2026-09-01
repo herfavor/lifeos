@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { Archive, Check, Pencil, Star, Trash2, X } from 'lucide-react';
 import { useLinkLibraryStore } from '../stores/useLinkLibraryStore';
 import { useLinkFoldersStore } from '../stores/useLinkFoldersStore';
 import { LinkFolderTree } from './links/LinkFolderTree';
@@ -273,7 +274,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
       {/* Quick Filters */}
       <div className="p-2 border-b border-border-light dark:border-border-dark">
         <SidebarItem
-          icon="⭐"
+          icon={<Star className="h-4 w-4" aria-hidden />}
           label="星标"
           count={favoriteCount}
           isActive={activeCollectionId === 'favorites' && activeFolderId === null}
@@ -283,7 +284,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
           }}
         />
         <SidebarItem
-          icon="📥"
+          icon={<Archive className="h-4 w-4" aria-hidden />}
           label="已归档"
           count={archivedCount}
           isActive={activeCollectionId === 'archived' && activeFolderId === null}
@@ -293,7 +294,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
           }}
         />
         <SidebarItem
-          icon="🗑️"
+          icon={<Trash2 className="h-4 w-4" aria-hidden />}
           label="最近删除"
           count={deletedCount}
           isActive={activeCollectionId === 'deleted' && activeFolderId === null}
@@ -353,8 +354,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
               <button
                 onClick={handleAddFolder}
                 className="p-1 text-status-success hover:bg-status-success/10 rounded transition-colors"
+                aria-label="确认"
               >
-                ✓
+                <Check className="h-3.5 w-3.5" aria-hidden />
               </button>
               <button
                 onClick={() => {
@@ -362,8 +364,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   setNewFolderName('');
                 }}
                 className="p-1 text-status-error hover:bg-status-error/10 rounded transition-colors"
+                aria-label="取消"
               >
-                ✕
+                <X className="h-3.5 w-3.5" aria-hidden />
               </button>
             </div>
           </div>
@@ -393,8 +396,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
               <button
                 onClick={handleSaveRenameFolder}
                 className="p-1 text-status-success hover:bg-status-success/10 rounded transition-colors"
+                aria-label="确认"
               >
-                ✓
+                <Check className="h-3.5 w-3.5" aria-hidden />
               </button>
               <button
                 onClick={() => {
@@ -402,8 +406,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   setEditingFolderName('');
                 }}
                 className="p-1 text-status-error hover:bg-status-error/10 rounded transition-colors"
+                aria-label="取消"
               >
-                ✕
+                <X className="h-3.5 w-3.5" aria-hidden />
               </button>
             </div>
           </div>
@@ -448,8 +453,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
               <button
                 onClick={handleAddCollection}
                 className="p-1 text-status-success hover:bg-status-success/10 rounded transition-colors"
+                aria-label="确认"
               >
-                ✓
+                <Check className="h-3.5 w-3.5" aria-hidden />
               </button>
               <button
                 onClick={() => {
@@ -457,8 +463,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                   setNewCollectionName('');
                 }}
                 className="p-1 text-status-error hover:bg-status-error/10 rounded transition-colors"
+                aria-label="取消"
               >
-                ✕
+                <X className="h-3.5 w-3.5" aria-hidden />
               </button>
             </div>
           </div>
@@ -502,8 +509,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                     <button
                       onClick={() => handleEditCollection(collection.id)}
                       className="p-1 text-status-success hover:bg-status-success/10 rounded transition-colors"
+                      aria-label="确认"
                     >
-                      ✓
+                      <Check className="h-3.5 w-3.5" aria-hidden />
                     </button>
                     <button
                       onClick={() => {
@@ -511,8 +519,9 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
                         setEditingName('');
                       }}
                       className="p-1 text-status-error hover:bg-status-error/10 rounded transition-colors"
+                      aria-label="取消"
                     >
-                      ✕
+                      <X className="h-3.5 w-3.5" aria-hidden />
                     </button>
                   </div>
                 ) : (
@@ -594,7 +603,7 @@ export const CollectionSidebar: React.FC<CollectionSidebarProps> = ({
 // ============================================================================
 
 interface SidebarItemProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   count?: number;
   isActive: boolean;
@@ -628,7 +637,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       `}
     >
       <span
-        className="text-base"
+        className="flex items-center text-base"
         style={color ? { filter: `drop-shadow(0 0 2px ${color})` } : undefined}
       >
         {icon}
@@ -657,7 +666,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
               className="p-1 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
               title="编辑"
             >
-              <span className="text-xs">✏️</span>
+              <Pencil className="h-3.5 w-3.5" aria-hidden />
             </button>
           )}
           {onDelete && (
@@ -669,7 +678,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
               className="p-1 rounded hover:bg-status-error/20 text-status-error transition-colors"
               title="删除"
             >
-              <span className="text-xs">🗑️</span>
+              <Trash2 className="h-3.5 w-3.5" aria-hidden />
             </button>
           )}
         </div>

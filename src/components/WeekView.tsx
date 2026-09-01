@@ -601,7 +601,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                         >
                           <div className="font-medium truncate flex items-center gap-0.5">
                             {event.title}
-                            {hasConflict && <AlertCircle className="w-2.5 h-2.5 text-amber-300 flex-shrink-0" />}
+                            {hasConflict && <AlertCircle className="w-2.5 h-2.5 text-status-warning flex-shrink-0" />}
                           </div>
                           {event.startTime && (
                             <div className="text-xs opacity-90">

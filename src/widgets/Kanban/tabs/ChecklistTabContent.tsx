@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Check, X } from 'lucide-react';
 import type { ChecklistItem } from '../../../types';
 
 interface ChecklistTabContentProps {
@@ -86,13 +87,13 @@ export const ChecklistTabContent: React.FC<ChecklistTabContentProps> = ({
                   className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-accent-red hover:text-accent-red-hover transition-opacity px-2"
                   aria-label="删除项目"
                 >
-                  ✕
+                  <X className="h-3.5 w-3.5" aria-hidden />
                 </button>
               </div>
             ))
         ) : (
           <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-            ✓ 暂无清单项目
+            <Check className="h-3.5 w-3.5" aria-hidden /> 暂无清单项目
           </div>
         )}
       </div>

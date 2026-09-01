@@ -69,6 +69,12 @@ describe('PomodoroTimer shared time session', () => {
     fireEvent.click(screen.getByRole('button', { name: '继续' }));
     await waitFor(() => expect(useTimeTrackingStore.getState().activeEntry?.isPaused).toBe(false));
 
+    // Sub-minute stops are discarded as accidental; make the entry older than 60s.
+    useTimeTrackingStore.setState((state) => ({
+      activeEntry: state.activeEntry
+        ? { ...state.activeEntry, startTime: new Date(Date.now() - 5 * 60 * 1000).toISOString() }
+        : state.activeEntry,
+    }));
     fireEvent.click(screen.getByRole('button', { name: '停止' }));
     await waitFor(() => expect(useTimeTrackingStore.getState().activeEntry).toBeNull());
     expect(useTimeTrackingStore.getState().entries).toHaveLength(1);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 
 export interface BackgroundSettings {
   type: 'none' | 'gradient' | 'image' | 'pattern';
@@ -129,7 +130,7 @@ export const BackgroundCustomizer: React.FC<BackgroundCustomizerProps> = ({
             className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
             aria-label="关闭背景自定义"
           >
-            ✕
+            <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
 

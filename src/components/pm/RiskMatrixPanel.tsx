@@ -43,17 +43,17 @@ const STATUS_LABELS: Record<RiskStatus, string> = {
 };
 
 const CATEGORY_COLORS: Record<RiskCategory, string> = {
-  technical: 'bg-blue-500',
-  schedule: 'bg-purple-500',
-  budget: 'bg-amber-500',
-  resource: 'bg-emerald-500',
-  external: 'bg-rose-500',
+  technical: 'bg-accent-blue',
+  schedule: 'bg-accent-purple',
+  budget: 'bg-accent-yellow',
+  resource: 'bg-accent-green',
+  external: 'bg-accent-magenta',
 };
 
 function getCellColor(probability: number, impact: number): string {
   const score = probability * impact;
   if (score >= 15) return 'bg-status-error/20 hover:bg-status-error/30';
-  if (score >= 10) return 'bg-orange-500/20 hover:bg-orange-500/30';
+  if (score >= 10) return 'bg-status-warning/20 hover:bg-status-warning/30';
   if (score >= 5) return 'bg-status-warning/20 hover:bg-status-warning/30';
   return 'bg-status-success/20 hover:bg-status-success/30';
 }

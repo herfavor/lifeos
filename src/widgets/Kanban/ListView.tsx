@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { CustomFieldDisplay } from '../../components/CustomFieldDisplay';
 import { TaskTimerButton } from '../../components/tasks/TaskTimerButton';
@@ -207,7 +207,7 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
   // Sort indicator
   const getSortIndicator = (column: SortColumn) => {
     if (sortColumn !== column) return null;
-    return sortDirection === 'asc' ? ' ▲' : ' ▼';
+    return sortDirection === 'asc' ? <ChevronUp className="ml-1 inline h-3 w-3" aria-hidden /> : <ChevronDown className="ml-1 inline h-3 w-3" aria-hidden />;
   };
 
   const allSelected = tasks.length > 0 && selectedTaskIds.size === tasks.length;
@@ -387,7 +387,7 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
                             ? 'bg-accent-blue text-white'
                             : 'bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary'
                         }`}>
-                          ✓ {completedSubtasks}/{totalSubtasks} 个子任务
+                          <Check className="h-3 w-3" aria-hidden /> {completedSubtasks}/{totalSubtasks} 个子任务
                         </span>
                       )}
                     </td>

@@ -55,7 +55,7 @@ export function EventCreateModal({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState(toISODate(dateKey));
-  const [isAllDay, setIsAllDay] = useState(true);
+  const [isAllDay, setIsAllDay] = useState(false);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('10:00');
   const [endDate, setEndDate] = useState('');

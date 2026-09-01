@@ -4,7 +4,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { ZoomIn, ZoomOut, Calendar } from 'lucide-react';
+import { ZoomIn, ZoomOut, Calendar, BarChart3 } from 'lucide-react';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { GanttTimeline } from './GanttTimeline';
 import { getTimelineBounds, type ZoomLevel } from './utils';
@@ -133,7 +133,8 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
             }`}
             aria-label="切换关键路径"
           >
-            🔴 关键路径
+            <span className="inline-block w-2 h-2 rounded-full bg-status-error" />
+            关键路径
           </button>
           {showCriticalPath && criticalTaskIds.length > 0 && (
             <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
@@ -163,7 +164,8 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
               className="px-3 py-1.5 text-xs font-medium rounded-button transition-all duration-standard ease-smooth bg-accent-primary text-white hover:bg-accent-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="设置基线"
             >
-              📊 设置基线
+              <BarChart3 className="w-3.5 h-3.5 mr-1 inline" />
+              设置基线
             </button>
           )}
         </div>

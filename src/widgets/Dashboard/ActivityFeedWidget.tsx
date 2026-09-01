@@ -10,20 +10,21 @@ import { BaseWidget } from './BaseWidget';
 import { useActivityStore } from '../../stores/useActivityStore';
 import { useNavigate } from 'react-router-dom';
 import { WidgetEmptyState } from '../../components/WidgetEmptyState';
+import { BarChart3, Bot, CalendarDays, CheckCircle2, ClipboardList, Diamond, FileText, Link, Target, Timer } from 'lucide-react';
 import type { WidgetComponentProps } from './WidgetRegistry';
 import type { ModuleType } from '../../stores/useActivityStore';
 
-const MODULE_ICONS: Record<ModuleType, string> = {
-  notes: '📝',
-  tasks: '✅',
-  calendar: '📅',
-  docs: '📄',
-  'time-tracking': '⏱️',
-  habits: '🎯',
-  links: '🔗',
-  ai: '🤖',
-  forms: '📋',
-  diagrams: '🔷',
+const MODULE_ICONS: Record<ModuleType, React.ReactNode> = {
+  notes: <FileText className="h-3.5 w-3.5" aria-hidden />,
+  tasks: <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />,
+  calendar: <CalendarDays className="h-3.5 w-3.5" aria-hidden />,
+  docs: <FileText className="h-3.5 w-3.5" aria-hidden />,
+  'time-tracking': <Timer className="h-3.5 w-3.5" aria-hidden />,
+  habits: <Target className="h-3.5 w-3.5" aria-hidden />,
+  links: <Link className="h-3.5 w-3.5" aria-hidden />,
+  ai: <Bot className="h-3.5 w-3.5" aria-hidden />,
+  forms: <ClipboardList className="h-3.5 w-3.5" aria-hidden />,
+  diagrams: <Diamond className="h-3.5 w-3.5" aria-hidden />,
 };
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
@@ -55,7 +56,7 @@ export const ActivityFeedWidget: React.FC<WidgetComponentProps> = () => {
   const recentEvents = getActivities({ limit: 5 });
 
   return (
-    <BaseWidget title="动态" icon="📊" subtitle="最近动态">
+    <BaseWidget title="动态" icon={<BarChart3 className="h-6 w-6" aria-hidden />} subtitle="最近动态">
       <div className="flex flex-col h-full min-h-[160px]">
         {recentEvents.length > 0 ? (
           <div className="space-y-1.5 mb-4">

@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import { AlertTriangle, Info, Siren, type LucideIcon } from 'lucide-react';
 import { Modal } from './Modal';
 import { Button } from './ui';
 
@@ -13,10 +14,10 @@ interface ConfirmDialogProps {
   variant?: 'danger' | 'warning' | 'info';
 }
 
-const variantIcons: Record<string, string> = {
-  danger: '🚨',
-  warning: '⚠️',
-  info: 'ℹ️',
+const variantIcons: Record<string, LucideIcon> = {
+  danger: Siren,
+  warning: AlertTriangle,
+  info: Info,
 };
 
 /**
@@ -75,13 +76,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   // Map dialog variant to button variant
   const buttonVariant = variant === 'danger' ? 'danger' : 'primary';
+  const VariantIcon = variantIcons[variant];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="sm">
       <div className="space-y-4">
         {/* Icon + Message */}
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 text-3xl">{variantIcons[variant]}</div>
+          <VariantIcon className="h-6 w-6 flex-shrink-0" aria-hidden />
           <div className="text-text-light-secondary dark:text-text-dark-secondary flex-1">{message}</div>
         </div>
 

@@ -291,7 +291,7 @@ export const Sidebar: React.FC = () => {
         </span>
 
         {!isCollapsed && (
-          <span className="flex-1 text-base leading-5 font-medium truncate">
+          <span className="flex-1 text-sm leading-5 font-medium truncate">
             {feature.label}
           </span>
         )}
@@ -534,7 +534,7 @@ export const Sidebar: React.FC = () => {
 
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary dark:text-text-dark-tertiary"><Settings className="h-[18px] w-[18px]" /></span>
           {!isCollapsed && (
-            <span className="flex-1 text-base leading-5 font-medium text-left truncate">
+            <span className="flex-1 text-sm leading-5 font-medium text-left truncate">
               设置
             </span>
           )}
@@ -568,7 +568,7 @@ export const Sidebar: React.FC = () => {
             {mode === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
           </span>
           {!isCollapsed && (
-            <span className="flex-1 text-base leading-5 font-medium text-left">
+            <span className="flex-1 text-sm leading-5 font-medium text-left">
               {mode === 'dark' ? '浅色模式' : '深色模式'}
             </span>
           )}
@@ -602,7 +602,7 @@ export const Sidebar: React.FC = () => {
             {isCollapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
           </span>
           {!isCollapsed && (
-            <span className="flex-1 text-base leading-5 font-medium text-left">
+            <span className="flex-1 text-sm leading-5 font-medium text-left">
               折叠
             </span>
           )}

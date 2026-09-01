@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, BarChart3, CheckCircle2, ClipboardList, FileText, GraduationCap, ListTree, Pencil, Timer, type LucideIcon } from 'lucide-react';
 import { useTerminalStore } from '../stores/useTerminalStore';
 
 export type AIContextType = 'note' | 'task' | 'calendar';
@@ -18,7 +18,7 @@ export type AIContextType = 'note' | 'task' | 'calendar';
 interface AIAction {
   id: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   instruction: string;
 }
 
@@ -26,25 +26,25 @@ const NOTE_ACTIONS: AIAction[] = [
   {
     id: 'summarize',
     label: '总结',
-    icon: '📋',
+    icon: ClipboardList,
     instruction: '请对以下笔记进行简洁总结，突出关键要点：',
   },
   {
     id: 'extract-actions',
     label: '提取待办事项',
-    icon: '✅',
+    icon: CheckCircle2,
     instruction: '请从该笔记中提取所有待办事项和任务，以编号列表形式呈现：',
   },
   {
     id: 'improve-writing',
     label: '改进写作',
-    icon: '✏️',
+    icon: Pencil,
     instruction: '请改进该笔记的写作质量：修正语法、提升清晰度和可读性，同时保留原意：',
   },
   {
     id: 'generate-outline',
     label: '生成大纲',
-    icon: '📑',
+    icon: ListTree,
     instruction: '请根据该笔记的内容生成结构化大纲：',
   },
 ];
@@ -53,19 +53,19 @@ const TASK_ACTIONS: AIAction[] = [
   {
     id: 'break-subtasks',
     label: '拆分为子任务',
-    icon: '📊',
+    icon: BarChart3,
     instruction: '请将此任务拆分为更小、可执行的子任务，并为每个子任务附上简要说明：',
   },
   {
     id: 'estimate-time',
     label: '预估时间',
-    icon: '⏱️',
+    icon: Timer,
     instruction: '请预估完成此任务所需的时间，考虑复杂度并给出范围（乐观、现实、悲观）：',
   },
   {
     id: 'write-description',
     label: '撰写描述',
-    icon: '📝',
+    icon: FileText,
     instruction: '请为此任务撰写详细描述，包括验收标准和实施说明：',
   },
 ];
@@ -74,13 +74,13 @@ const CALENDAR_ACTIONS: AIAction[] = [
   {
     id: 'draft-agenda',
     label: '起草会议议程',
-    icon: '📋',
+    icon: ClipboardList,
     instruction: '请为此事件起草会议议程，包括讨论主题、时间分配和需要涵盖的待办事项：',
   },
   {
     id: 'suggest-prep',
     label: '建议准备工作',
-    icon: '📚',
+    icon: GraduationCap,
     instruction: '请为此事件建议准备工作：会议前应该准备好什么？',
   },
 ];
@@ -191,7 +191,7 @@ export const ContextualAIMenu: React.FC<ContextualAIMenuProps> = ({
               onClick={() => handleAction(action)}
               className="w-full text-left px-3 py-2 text-sm flex items-center gap-2 hover:bg-surface-light-elevated dark:hover:bg-surface-dark transition-colors text-text-light-primary dark:text-text-dark-primary"
             >
-              <span className="text-base flex-shrink-0">{action.icon}</span>
+              <action.icon className="h-4 w-4 flex-shrink-0" aria-hidden />
               <span>{action.label}</span>
             </button>
           ))}

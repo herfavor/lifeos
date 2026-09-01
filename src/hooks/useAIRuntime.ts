@@ -448,7 +448,7 @@ export function useAIRuntime() {
         log.error('Agent request failed', { error: errorMessage });
         useAIWorkspaceStore.getState().addMessage({
           role: 'assistant',
-          content: `❌ 请求失败：${errorMessage}`,
+          content: `请求失败：${errorMessage}`,
           isError: true,
         });
       } finally {

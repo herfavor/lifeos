@@ -10,6 +10,7 @@
  */
 
 import { useState } from 'react';
+import { AlertTriangle, CheckCircle2, Cloud, Folder, HelpCircle, Lightbulb, Lock, Package, Save } from 'lucide-react';
 import { Modal } from './Modal';
 import { useThemeStore } from '../stores/useThemeStore';
 import { autoSaveManager } from '../services/autoSave';
@@ -229,7 +230,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
         return (
           <div className="space-y-3">
             <div className="text-center mb-4">
-              <span className="text-5xl">💾</span>
+              <Save className="h-10 w-10" aria-hidden />
             </div>
 
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary text-center">
@@ -260,13 +261,13 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
 
               <div className="bg-status-success/10 border border-status-success rounded-button p-3 mt-3">
                 <p className="text-xs text-status-success font-medium">
-                  ✅ 每 30 秒自动备份
+                  <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" aria-hidden />每 30 秒自动备份
                   <br />
-                  ✅ 在所有设备间同步
+                  <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" aria-hidden />在所有设备间同步
                   <br />
-                  ✅ 仍然 100% 私密（文件夹由你掌控）
+                  <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" aria-hidden />仍然 100% 私密（文件夹由你掌控）
                   <br />
-                  ✅ 出问题时轻松恢复
+                  <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" aria-hidden />出问题时轻松恢复
                   <br />
                   <span className="text-status-success/80">
                     （上传由你的云盘客户端完成，LifeOS 本身不会联网上传数据）
@@ -305,11 +306,11 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
 
             <div className="grid grid-cols-1 gap-2">
               {[
-                { id: 'icloud', name: 'iCloud Drive', icon: '☁️', description: 'Apple（5GB 免费）' },
-                { id: 'google-drive', name: 'Google Drive', icon: '📁', description: 'Google（15GB 免费）' },
-                { id: 'onedrive', name: 'OneDrive', icon: '☁️', description: 'Microsoft（5GB 免费）' },
-                { id: 'proton-drive', name: 'Proton Drive', icon: '🔒', description: 'Proton（1GB 免费，加密）' },
-                { id: 'dropbox', name: 'Dropbox', icon: '📦', description: 'Dropbox（2GB 免费）' },
+                { id: 'icloud', name: 'iCloud Drive', icon: Cloud, description: 'Apple（5GB 免费）' },
+                { id: 'google-drive', name: 'Google Drive', icon: Folder, description: 'Google（15GB 免费）' },
+                { id: 'onedrive', name: 'OneDrive', icon: Cloud, description: 'Microsoft（5GB 免费）' },
+                { id: 'proton-drive', name: 'Proton Drive', icon: Lock, description: 'Proton（1GB 免费，加密）' },
+                { id: 'dropbox', name: 'Dropbox', icon: Package, description: 'Dropbox（2GB 免费）' },
               ].map((provider) => (
                 <button
                   key={provider.id}
@@ -321,7 +322,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{provider.icon}</span>
+                    <provider.icon className="h-5 w-5 shrink-0" aria-hidden />
                     <div>
                       <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
                         {provider.name}
@@ -343,7 +344,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">❓</span>
+                  <HelpCircle className="h-5 w-5 shrink-0" aria-hidden />
                   <div>
                     <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
                       我没有云存储
@@ -448,7 +449,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
 
             <div className="bg-status-info/10 border border-status-info rounded-button p-3">
               <p className="text-xs text-text-light-primary dark:text-text-dark-primary">
-                <strong>💡 提示：</strong>注册后，下载桌面应用以实现自动同步。然后回到第 2 步，在其中选择该服务。
+                <strong><Lightbulb className="mr-1 inline h-3.5 w-3.5" aria-hidden />提示：</strong>注册后，下载桌面应用以实现自动同步。然后回到第 2 步，在其中选择该服务。
               </p>
             </div>
 
@@ -522,7 +523,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
 
             <div className="bg-status-warning/10 border border-status-warning rounded-button p-3">
               <p className="text-xs text-text-light-primary dark:text-text-dark-primary">
-                <strong>⚠️ 重要：</strong>继续之前，请确保桌面应用已安装并正在同步。
+                <strong><AlertTriangle className="mr-1 inline h-3.5 w-3.5" aria-hidden />重要：</strong>继续之前，请确保桌面应用已安装并正在同步。
                 你选择的文件夹必须位于云同步文件夹内。
               </p>
             </div>
@@ -550,7 +551,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
         return (
           <div className="space-y-3">
             <div className="text-center mb-4">
-              <span className="text-5xl">📁</span>
+              <Folder className="h-10 w-10" aria-hidden />
             </div>
 
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary text-center">
@@ -563,7 +564,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
 
             <div className="bg-status-info/10 border border-status-info rounded-button p-3">
               <p className="text-xs text-text-light-primary dark:text-text-dark-primary">
-                <strong>💡 提示：</strong>进入你的云同步文件夹（iCloud Drive、Google Drive 等），
+                <strong><Lightbulb className="mr-1 inline h-3.5 w-3.5" aria-hidden />提示：</strong>进入你的云同步文件夹（iCloud Drive、Google Drive 等），
                 选择你创建的“LifeOS Backups”文件夹。
               </p>
             </div>
@@ -577,9 +578,9 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
             <button
               onClick={handleSelectFolder}
               disabled={isSelecting}
-              className="w-full px-4 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button font-semibold text-base transition-all duration-standard ease-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-button font-semibold text-base transition-all duration-standard ease-smooth disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSelecting ? '正在打开文件夹选择器…' : '📁 选择备份文件夹'}
+              {isSelecting ? '正在打开文件夹选择器…' : (<><Folder className="h-4 w-4" aria-hidden />选择备份文件夹</>)}
             </button>
 
             <div className="flex gap-2 pt-3">
@@ -599,7 +600,7 @@ export function BackupOnboardingModal({ isOpen, onClose }: BackupOnboardingModal
         return (
           <div className="space-y-3">
             <div className="text-center mb-4">
-              <span className="text-5xl">✅</span>
+              <CheckCircle2 className="h-10 w-10" aria-hidden />
             </div>
 
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary text-center">

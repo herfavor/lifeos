@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type {
@@ -97,7 +98,7 @@ function MermaidRenderer({ source }: { source: string }) {
 
   if (error) {
     return (
-      <div className="text-sm text-red-500 dark:text-red-400 font-mono p-2 bg-red-50 dark:bg-red-950/30 rounded whitespace-pre-wrap">
+      <div className="text-sm text-status-error-text dark:text-status-error-text-dark font-mono p-2 bg-status-error-bg dark:bg-status-error-bg-dark rounded whitespace-pre-wrap">
         Mermaid error: {error}
       </div>
     );
@@ -190,7 +191,7 @@ function MermaidBlockComponent({
         className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
         title="Remove diagram block"
       >
-        ✕
+        <X className="w-4 h-4" />
       </button>
 
       {/* Label */}

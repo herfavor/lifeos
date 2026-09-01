@@ -12,6 +12,7 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
+import { Check, Eye, Sparkles, Wrench, Zap } from 'lucide-react';
 import { AIProviderRouter, PROVIDER_MODELS } from '../services/ai/providerRouter';
 import type { AIModel } from '../services/ai/types';
 
@@ -245,8 +246,8 @@ export function ModelSelector({
                     )}
                   </div>
                   {isSelected && (
-                    <span className="text-[10px] px-1 py-0.5 bg-accent-blue/20 text-accent-blue rounded flex-shrink-0">
-                      ✓
+                    <span className="text-[10px] px-1 py-0.5 bg-accent-blue/20 text-accent-blue rounded flex-shrink-0 inline-flex items-center">
+                      <Check className="h-3 w-3" aria-hidden />
                     </span>
                   )}
                 </div>
@@ -258,11 +259,11 @@ export function ModelSelector({
                 {/* Compact Stats Row */}
                 <div className="flex items-center gap-3 text-[10px]">
                   <div className="flex items-center gap-1">
-                    <span className="text-text-light-secondary dark:text-text-dark-secondary">⚡</span>
+                    <Zap className="h-3 w-3 shrink-0 text-text-light-secondary dark:text-text-dark-secondary" aria-hidden />
                     {renderSpeedRating(model.speedRating)}
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-text-light-secondary dark:text-text-dark-secondary">✨</span>
+                    <Sparkles className="h-3 w-3 shrink-0 text-text-light-secondary dark:text-text-dark-secondary" aria-hidden />
                     {renderQualityRating(model.qualityRating)}
                   </div>
                   <span className="text-text-light-secondary dark:text-text-dark-secondary">
@@ -277,13 +278,15 @@ export function ModelSelector({
                 {(model.supportsVision || model.supportsFunctionCalling) && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {model.supportsVision && (
-                      <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded">
-                        👁 视觉
+                      <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded inline-flex items-center gap-0.5">
+                        <Eye className="h-2.5 w-2.5" aria-hidden />
+                        视觉
                       </span>
                     )}
                     {model.supportsFunctionCalling && (
-                      <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded">
-                        🔧 函数
+                      <span className="text-[10px] px-1 py-0.5 bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary rounded inline-flex items-center gap-0.5">
+                        <Wrench className="h-2.5 w-2.5" aria-hidden />
+                        函数
                       </span>
                     )}
                   </div>

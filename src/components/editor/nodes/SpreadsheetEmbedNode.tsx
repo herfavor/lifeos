@@ -97,7 +97,7 @@ const SpreadsheetEmbedComponent = React.memo(function SpreadsheetEmbedComponent(
 
   if (!doc) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-xs text-red-600 dark:text-red-400">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-status-error-border dark:border-status-error-border-dark bg-status-error-bg dark:bg-status-error-bg-dark text-xs text-status-error-text dark:text-status-error-text-dark">
         Spreadsheet not found
       </span>
     );
@@ -135,7 +135,7 @@ const SpreadsheetEmbedComponent = React.memo(function SpreadsheetEmbedComponent(
         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-light-elevated dark:bg-surface-dark-elevated hover:border-accent-blue/50 transition-colors cursor-pointer text-sm my-0.5"
         title="Open spreadsheet"
       >
-        <svg className="w-4 h-4 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="w-4 h-4 text-status-success-text dark:text-status-success-text-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
         </svg>
@@ -158,7 +158,7 @@ const SpreadsheetEmbedComponent = React.memo(function SpreadsheetEmbedComponent(
       title="Open spreadsheet"
     >
       <span className="flex items-center gap-2 px-3 py-1.5 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
-        <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="w-3.5 h-3.5 text-status-success-text dark:text-status-success-text-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
         </svg>

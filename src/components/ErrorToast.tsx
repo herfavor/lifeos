@@ -4,24 +4,25 @@
  */
 
 import React from 'react';
+import { AlertTriangle, Info, Siren, XCircle, type LucideIcon } from 'lucide-react';
 import { useErrorNotifications } from '../hooks/useErrorNotifications';
 import { ErrorSeverity } from '../services/errorService';
 
 /**
  * Get icon based on severity
  */
-function getSeverityIcon(severity: ErrorSeverity): string {
+function getSeverityIcon(severity: ErrorSeverity): LucideIcon {
   switch (severity) {
     case ErrorSeverity.INFO:
-      return 'ℹ️';
+      return Info;
     case ErrorSeverity.WARNING:
-      return '⚠️';
+      return AlertTriangle;
     case ErrorSeverity.ERROR:
-      return '❌';
+      return XCircle;
     case ErrorSeverity.CRITICAL:
-      return '🚨';
+      return Siren;
     default:
-      return '❌';
+      return XCircle;
   }
 }
 
@@ -73,8 +74,8 @@ export const ErrorToastContainer: React.FC = () => {
           role="alert"
         >
           <div className="flex items-start gap-3">
-            <span className="text-xl flex-shrink-0" aria-hidden="true">
-              {getSeverityIcon(notification.severity)}
+            <span className="flex-shrink-0" aria-hidden="true">
+              {React.createElement(getSeverityIcon(notification.severity), { className: 'h-5 w-5' })}
             </span>
 
             <div className="flex-1 min-w-0">

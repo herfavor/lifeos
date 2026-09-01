@@ -8,6 +8,7 @@ import React from 'react';
 import { BaseWidget } from './BaseWidget';
 import { useCalendarStore } from '../../stores/useCalendarStore';
 import { useNavigate } from 'react-router-dom';
+import { CalendarDays } from 'lucide-react';
 import { WidgetEmptyState } from '../../components/WidgetEmptyState';
 
 export const UpcomingEventsWidget: React.FC = () => {
@@ -39,7 +40,7 @@ export const UpcomingEventsWidget: React.FC = () => {
     .slice(0, 3);
 
   return (
-    <BaseWidget title="即将到来的事件" icon="📅" subtitle="接下来 3 个事件">
+    <BaseWidget title="即将到来的事件" icon={<CalendarDays className="h-6 w-6" aria-hidden />} subtitle="接下来 3 个事件">
       <div className="flex flex-col h-full min-h-[160px]">
         {upcomingEvents.length > 0 ? (
           <div className="space-y-2 mb-4">

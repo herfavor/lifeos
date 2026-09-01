@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Download, Save, X } from 'lucide-react';
 import { useWidgetStore } from '../stores/useWidgetStore';
 import { toast } from '../stores/useToastStore';
 
@@ -224,7 +225,7 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
             className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary"
             aria-label="关闭预设管理器"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -236,7 +237,8 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
               onClick={() => setShowSaveDialog(true)}
               className="w-full px-4 py-3 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-button font-medium transition-all duration-standard ease-smooth"
             >
-              💾 保存当前布局
+              <Save className="w-4 h-4 inline mr-1.5" />
+              保存当前布局
             </button>
           </div>
 
@@ -285,7 +287,8 @@ export const PresetManager: React.FC<PresetManagerProps> = ({ isOpen, onClose })
           {/* Import Preset Button */}
           <div className="mb-6">
             <label className="block w-full px-4 py-3 bg-surface-light-elevated dark:bg-surface-dark-elevated hover:bg-surface-light dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary rounded-button font-medium transition-all duration-standard ease-smooth cursor-pointer text-center">
-              📥 导入预设
+              <Download className="w-4 h-4 inline mr-1.5" />
+              导入预设
               <input
                 type="file"
                 accept=".json"

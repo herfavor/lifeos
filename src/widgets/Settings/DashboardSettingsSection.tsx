@@ -1,4 +1,5 @@
 import React from 'react';
+import { LayoutTemplate, Settings2 } from 'lucide-react';
 
 interface DashboardSettingsSectionProps {
   onOpenPresetManager: () => void;
@@ -26,7 +27,7 @@ export const DashboardSettingsSection: React.FC<DashboardSettingsSectionProps> =
         }}
         className="flex items-center gap-2 px-4 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue-hover transition-colors"
       >
-        <span>⚙️</span>
+        <Settings2 className="h-4 w-4" aria-hidden />
         <span>自定义首页组件</span>
       </button>
 
@@ -35,7 +36,7 @@ export const DashboardSettingsSection: React.FC<DashboardSettingsSectionProps> =
           onClick={onOpenPresetManager}
           className="flex items-center gap-2 px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-lg font-medium transition-colors"
         >
-          <span>📐</span>
+          <LayoutTemplate className="h-4 w-4" aria-hidden />
           <span>管理首页预设</span>
         </button>
       </div>

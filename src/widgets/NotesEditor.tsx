@@ -118,7 +118,7 @@ import { NoteAliasEditor } from '../components/notes/NoteAliasEditor';
 import OutlinePanelPlugin from '../components/editor/plugins/OutlinePanelPlugin';
 import type { OutlineHeading } from '../components/editor/plugins/OutlinePanelPlugin';
 import { NoteOutlinePanel } from '../components/editor/NoteOutlinePanel';
-import { List, Settings2 } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Info, List, Play, Redo2, Settings2, Siren, SquareCheck, Table, Undo2, Workflow, FileText, Lightbulb, ListTree, X } from 'lucide-react';
 import { useAnnounce } from '../hooks/useAnnounce';
 import { ensureLexicalContent } from '../utils/markdownToLexical';
 
@@ -410,18 +410,18 @@ const SlashCommandPlugin: React.FC = () => {
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
     }},
     { id: 'code', label: '代码块', keywords: ['code', '代码', '代码块'], icon: '</>', action: formatAsCodeBlock },
-    { id: 'table', label: '表格', keywords: ['table', 'grid', '表格'], icon: '▦', action: () => {
+    { id: 'table', label: '表格', keywords: ['table', 'grid', '表格'], icon: <Table className="h-4 w-4" aria-hidden />, action: () => {
       clearSlashCommand();
       editor.dispatchCommand(INSERT_TABLE_COMMAND, { rows: '3', columns: '3', includeHeaders: true });
     }},
     { id: 'quote', label: '引用', keywords: ['quote', 'blockquote', '引用'], icon: '"', action: formatAsQuote },
     { id: 'divider', label: '分隔线', keywords: ['divider', 'hr', '分隔线'], icon: '—', action: insertHR },
-    { id: 'callout-info', label: '提示框（信息）', keywords: ['callout', 'info', '信息'], icon: 'ℹ️', action: () => insertCallout('info') },
-    { id: 'callout-warning', label: '提示框（警告）', keywords: ['callout', 'warning', '警告'], icon: '⚠️', action: () => insertCallout('warning') },
-    { id: 'callout-tip', label: '提示框（提示）', keywords: ['callout', 'tip', '提示'], icon: '💡', action: () => insertCallout('tip') },
-    { id: 'callout-danger', label: '提示框（危险）', keywords: ['callout', 'danger', '危险'], icon: '🚨', action: () => insertCallout('danger') },
-    { id: 'toggle', label: '折叠块', keywords: ['toggle', 'details', '折叠'], icon: '▶', action: insertToggle },
-    { id: 'toc', label: '目录', keywords: ['toc', 'contents', '目录'], icon: '📑', action: () => {
+    { id: 'callout-info', label: '提示框（信息）', keywords: ['callout', 'info', '信息'], icon: <Info className="h-4 w-4" aria-hidden />, action: () => insertCallout('info') },
+    { id: 'callout-warning', label: '提示框（警告）', keywords: ['callout', 'warning', '警告'], icon: <AlertTriangle className="h-4 w-4" aria-hidden />, action: () => insertCallout('warning') },
+    { id: 'callout-tip', label: '提示框（提示）', keywords: ['callout', 'tip', '提示'], icon: <Lightbulb className="h-4 w-4" aria-hidden />, action: () => insertCallout('tip') },
+    { id: 'callout-danger', label: '提示框（危险）', keywords: ['callout', 'danger', '危险'], icon: <Siren className="h-4 w-4" aria-hidden />, action: () => insertCallout('danger') },
+    { id: 'toggle', label: '折叠块', keywords: ['toggle', 'details', '折叠'], icon: <ChevronRight className="h-4 w-4" aria-hidden />, action: insertToggle },
+    { id: 'toc', label: '目录', keywords: ['toc', 'contents', '目录'], icon: <ListTree className="h-4 w-4" aria-hidden />, action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -441,7 +441,7 @@ const SlashCommandPlugin: React.FC = () => {
         }
       });
     }},
-    { id: 'mermaid', label: 'Mermaid 图表', keywords: ['mermaid', 'diagram', '图表'], icon: '◇', action: () => {
+    { id: 'mermaid', label: 'Mermaid 图表', keywords: ['mermaid', 'diagram', '图表'], icon: <Workflow className="h-4 w-4" aria-hidden />, action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -451,7 +451,7 @@ const SlashCommandPlugin: React.FC = () => {
         }
       });
     }},
-    { id: 'video', label: '视频', keywords: ['video', 'embed', '视频'], icon: '▶', action: () => {
+    { id: 'video', label: '视频', keywords: ['video', 'embed', '视频'], icon: <Play className="h-4 w-4" aria-hidden />, action: () => {
       clearSlashCommand();
       editor.update(() => {
         const selection = $getSelection();
@@ -795,8 +795,8 @@ const EditorToolbar: React.FC<{
   return (
     <div className="border-b border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark" role="toolbar" aria-label="笔记编辑工具栏">
       <div className="flex min-h-11 items-center gap-1 overflow-x-auto px-2">
-        <button onClick={undo} className={btnClass} title="撤销 (Cmd+Z)">↶</button>
-        <button onClick={redo} className={btnClass} title="重做 (Cmd+Shift+Z)">↷</button>
+        <button onClick={undo} className={btnClass} title="撤销 (Cmd+Z)"><Undo2 className="h-4 w-4" aria-hidden /></button>
+        <button onClick={redo} className={btnClass} title="重做 (Cmd+Shift+Z)"><Redo2 className="h-4 w-4" aria-hidden /></button>
         <div className={dividerClass} />
 
         <button onClick={() => formatText('bold')} className={btnClass} title="加粗 (Cmd+B)">
@@ -808,8 +808,8 @@ const EditorToolbar: React.FC<{
         <button onClick={() => formatHeading('h2')} className={btnClass} title="二级标题">
           <span className="font-semibold">H2</span>
         </button>
-        <button onClick={formatBulletList} className={btnClass} title="项目符号列表">≡</button>
-        <button onClick={formatCheckList} className={btnClass} title="任务清单">☑</button>
+        <button onClick={formatBulletList} className={btnClass} title="项目符号列表"><List className="h-4 w-4" aria-hidden /></button>
+        <button onClick={formatCheckList} className={btnClass} title="任务清单"><SquareCheck className="h-4 w-4" aria-hidden /></button>
 
         <input
           ref={fileInputRef}
@@ -900,7 +900,7 @@ const EditorToolbar: React.FC<{
                     title={hc.label}
                   />
                 ))}
-                <button onClick={removeHighlight} className="h-6 w-6 rounded border border-border-light text-xs dark:border-border-dark" title="移除高亮">✕</button>
+                <button onClick={removeHighlight} className="h-6 w-6 rounded border border-border-light text-xs dark:border-border-dark" title="移除高亮"><X className="h-3.5 w-3.5" aria-hidden /></button>
               </div>
             )}
           </div>
@@ -1471,7 +1471,7 @@ export const NotesEditorEmpty: React.FC<NotesEditorEmptyProps> = ({ hasNotes, on
       <div className="text-center max-w-md px-8 animate-fade-in">
         <div className="flex justify-center mb-6">
           <div className="p-8 bg-gradient-to-br from-accent-primary/10 to-accent-secondary/10 rounded-3xl">
-            <div className="text-6xl">📝</div>
+            <FileText className="h-12 w-12 text-accent-primary" aria-hidden />
           </div>
         </div>
         <h2 className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4 tracking-tight">

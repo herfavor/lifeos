@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { Flag, Handshake, RefreshCw, SkipForward, type LucideIcon } from 'lucide-react';
 import type { Task, DependencyType, TaskDependency } from '../types';
 
 interface DependencyPickerProps {
@@ -13,30 +14,30 @@ interface DependencyPickerProps {
   onAdd: (dependency: TaskDependency) => void;
 }
 
-const DEPENDENCY_TYPES: Array<{ value: DependencyType; label: string; description: string; icon: string }> = [
+const DEPENDENCY_TYPES: Array<{ value: DependencyType; label: string; description: string; icon: LucideIcon }> = [
   {
     value: 'finish-to-start',
     label: '完成到开始（FS）',
     description: '当前任务在前置任务完成后开始',
-    icon: '⏭️',
+    icon: SkipForward,
   },
   {
     value: 'start-to-start',
     label: '开始到开始（SS）',
     description: '当前任务在前置任务开始时开始',
-    icon: '🤝',
+    icon: Handshake,
   },
   {
     value: 'finish-to-finish',
     label: '完成到完成（FF）',
     description: '当前任务在前置任务完成后完成',
-    icon: '🏁',
+    icon: Flag,
   },
   {
     value: 'start-to-finish',
     label: '开始到完成（SF）',
     description: '当前任务在前置任务开始时完成（很少使用）',
-    icon: '🔄',
+    icon: RefreshCw,
   },
 ];
 
@@ -111,8 +112,9 @@ export function DependencyPicker({ currentTask, availableTasks, existingDependen
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                      {type.icon} {type.label}
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+                      <type.icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {type.label}
                     </div>
                     <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
                       {type.description}

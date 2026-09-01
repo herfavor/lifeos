@@ -8,13 +8,13 @@
 import React from 'react';
 import { useWidgetStore } from '../stores/useWidgetStore';
 import { getWidget } from '../widgets/Dashboard/WidgetRegistry';
-import { LayoutGrid } from 'lucide-react';
+import { Briefcase, FolderOpen, LayoutGrid, Sparkles, Sun, type LucideIcon } from 'lucide-react';
 
 interface DashboardTemplate {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: LucideIcon;
   widgets: string[];
   sizes: Record<string, 1 | 2 | 3>;
 }
@@ -24,7 +24,7 @@ const TEMPLATES: DashboardTemplate[] = [
     id: 'lifeos-default',
     name: '我的今天',
     description: '今天、快速记录、近期日程、项目与笔记——克制的日常布局',
-    icon: '☀️',
+    icon: Sun,
     widgets: ['myday', 'quickadd', 'upcomingevents', 'portfolio', 'recentnotes'],
     sizes: {
       myday: 1,
@@ -38,7 +38,7 @@ const TEMPLATES: DashboardTemplate[] = [
     id: 'productivity',
     name: '高效专注',
     description: '任务概览、日历、番茄钟和笔记，助你高效完成工作',
-    icon: '💼',
+    icon: Briefcase,
     widgets: ['taskssummary', 'upcomingevents', 'pomodoro', 'recentnotes', 'quickadd'],
     sizes: {
       taskssummary: 1,
@@ -52,7 +52,7 @@ const TEMPLATES: DashboardTemplate[] = [
     id: 'projects',
     name: '项目总览',
     description: '项目健康度、每周洞察与近期日程，掌握整体进展',
-    icon: '📂',
+    icon: FolderOpen,
     widgets: ['portfolio', 'taskssummary', 'weeklyinsights', 'upcomingevents'],
     sizes: {
       portfolio: 2,
@@ -65,7 +65,7 @@ const TEMPLATES: DashboardTemplate[] = [
     id: 'minimal',
     name: '极简',
     description: '只保留快速记录和今天——最少干扰',
-    icon: '✨',
+    icon: Sparkles,
     widgets: ['quickadd', 'myday'],
     sizes: {
       quickadd: 2,
@@ -124,9 +124,7 @@ export const DashboardTemplatePicker: React.FC<DashboardTemplatePickerProps> = (
             className="p-5 rounded-card border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark-elevated hover:border-accent-primary/50 hover:shadow-lg transition-all duration-standard ease-smooth text-left group"
           >
             <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl group-hover:scale-110 transition-transform duration-standard ease-smooth">
-                {template.icon}
-              </span>
+              <template.icon className="h-8 w-8 text-accent-primary group-hover:scale-110 transition-transform duration-standard ease-smooth" aria-hidden />
               <div>
                 <h3 className="font-semibold text-text-light-primary dark:text-text-dark-primary">
                   {template.name}

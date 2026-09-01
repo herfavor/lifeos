@@ -4,7 +4,8 @@ import type { EnergyLog, EnergyPattern } from '../stores/useEnergyStore';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { PageContent } from '../components/PageContent';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { CalendarPlus, Pencil, Trash2 } from 'lucide-react';
+import { EmptyState } from '../components/EmptyState';
+import { CalendarPlus, Flame, Moon, Pencil, Sun, Sunrise, Trash2 } from 'lucide-react';
 import { toast } from '../stores/useToastStore';
 import type { Task } from '../types';
 
@@ -29,10 +30,10 @@ function getDateKey(date: Date): string {
 
 function getHeatmapColor(value: number): string {
   if (value === 0) return 'bg-surface-light-elevated dark:bg-surface-dark-elevated';
-  if (value <= 3) return 'bg-red-500/60';
-  if (value <= 5) return 'bg-yellow-500/60';
-  if (value <= 7) return 'bg-green-500/40';
-  return 'bg-green-500/70';
+  if (value <= 3) return 'bg-status-error/60';
+  if (value <= 5) return 'bg-status-warning/60';
+  if (value <= 7) return 'bg-status-success/40';
+  return 'bg-status-success/70';
 }
 
 // ==================== LOG FORM ====================
@@ -74,7 +75,7 @@ function EnergyLogForm() {
           value={level}
           onChange={(e) => setLevel(Number(e.target.value))}
           className="w-full h-2 rounded-full appearance-none cursor-pointer
-            bg-gradient-to-r from-red-500 via-yellow-500 to-green-500
+            bg-gradient-to-r from-status-error via-status-warning to-status-success
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-5
             [&::-webkit-slider-thumb]:h-5
@@ -92,14 +93,14 @@ function EnergyLogForm() {
             key={tod}
             type="button"
             onClick={() => setTimeOfDay(tod)}
-            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all border
+            className={`flex flex-1 items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all border
               ${timeOfDay === tod
                 ? 'bg-accent-blue/20 text-accent-blue border-accent-blue/30'
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border-border-light dark:border-border-dark'
               }
             `}
           >
-            {tod === 'morning' ? '🌅' : tod === 'afternoon' ? '☀️' : '🌙'}{' '}
+            {tod === 'morning' ? <Sunrise className="h-4 w-4 shrink-0" aria-hidden /> : tod === 'afternoon' ? <Sun className="h-4 w-4 shrink-0" aria-hidden /> : <Moon className="h-4 w-4 shrink-0" aria-hidden />}
             {TIME_OF_DAY_LABELS[tod]}
           </button>
         ))}
@@ -226,10 +227,10 @@ function EnergyTrendChart({ logs }: { logs: EnergyLog[] }) {
                 day.avg === 0
                   ? 'bg-border-light/30 dark:bg-border-dark/30'
                   : day.avg >= 7
-                    ? 'bg-green-500'
+                    ? 'bg-status-success'
                     : day.avg >= 4
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
+                      ? 'bg-status-warning'
+                      : 'bg-status-error'
               }`}
               style={{ height: `${day.avg > 0 ? (day.avg / maxVal) * 100 : 4}%` }}
             />
@@ -279,11 +280,11 @@ function LowEnergyNotice({ logs }: { logs: EnergyLog[] }) {
   if (!alert.active) return null;
 
   return (
-    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+    <div className="p-4 rounded-xl bg-status-error/10 border border-status-error/30">
       <div className="flex items-start gap-3">
-        <span className="text-xl">🔥</span>
+        <Flame className="h-6 w-6 shrink-0 text-status-error" aria-hidden />
         <div>
-          <h4 className="text-sm font-semibold text-red-400">连续低精力提醒</h4>
+          <h4 className="text-sm font-semibold text-status-error">连续低精力提醒</h4>
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
             你的精力已连续 {alert.days} 天低于 4/10。建议休息一下、调整工作量，或安排更轻松的任务。
           </p>
@@ -394,27 +395,27 @@ function TaskSuggestions({ patterns }: { patterns: EnergyPattern[] }) {
       </h3>
 
       <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-        你的精力通常在 <span className="font-medium text-green-400">{suggestions.peakDay} {TIME_OF_DAY_LABELS[suggestions.peakTime]}</span> 达到高峰（{suggestions.peakAvg}/10）
+        你的精力通常在 <span className="font-medium text-status-success">{suggestions.peakDay} {TIME_OF_DAY_LABELS[suggestions.peakTime]}</span> 达到高峰（{suggestions.peakAvg}/10）
       </div>
 
       {suggestions.highEnergyTasks.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-orange-400 mb-1">
+          <p className="text-xs font-medium text-accent-orange mb-1">
             适合高精力时段安排：
           </p>
           <ul className="space-y-1">
-            {suggestions.highEnergyTasks.map((task) => renderTask(task, 'bg-orange-400'))}
+            {suggestions.highEnergyTasks.map((task) => renderTask(task, 'bg-accent-orange'))}
           </ul>
         </div>
       )}
 
       {suggestions.lowEnergyTasks.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-blue-400 mb-1">
+          <p className="text-xs font-medium text-accent-blue mb-1">
             适合低精力时段：
           </p>
           <ul className="space-y-1">
-            {suggestions.lowEnergyTasks.map((task) => renderTask(task, 'bg-blue-400'))}
+            {suggestions.lowEnergyTasks.map((task) => renderTask(task, 'bg-accent-blue'))}
           </ul>
         </div>
       )}
@@ -461,7 +462,7 @@ function EnergyLogHistory({ logs }: { logs: EnergyLog[] }) {
       </div>
 
       {recentLogs.length === 0 ? (
-        <p className="py-6 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">还没有精力记录。</p>
+        <EmptyState icon={Flame} title="还没有精力记录" description="在上方记录今天的精力值，积累一周后这里会帮你发现精力规律。" size="sm" />
       ) : (
         <div className="mt-3 space-y-2">
           {recentLogs.map((log) => (

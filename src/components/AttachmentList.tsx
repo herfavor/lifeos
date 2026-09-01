@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Trash2, Eye, FileText } from 'lucide-react';
+import { BarChart3, Download, Eye, FileCode, FileText, Image, Package, Paperclip, Trash2, type LucideIcon } from 'lucide-react';
 import type { TaskAttachment } from '../types';
 
 interface AttachmentListProps {
@@ -9,25 +9,25 @@ interface AttachmentListProps {
 }
 
 // File type icons based on MIME type
-const getFileIcon = (fileType: string): string => {
-  if (fileType.startsWith('image/')) return '🖼️';
-  if (fileType === 'application/pdf') return '📄';
+const getFileIcon = (fileType: string): LucideIcon => {
+  if (fileType.startsWith('image/')) return Image;
+  if (fileType === 'application/pdf') return FileText;
   if (
     fileType.includes('word') ||
     fileType.includes('document') ||
     fileType === 'text/plain' ||
     fileType === 'text/markdown'
   )
-    return '📝';
+    return FileText;
   if (fileType.includes('spreadsheet') || fileType.includes('excel') || fileType === 'text/csv')
-    return '📊';
+    return BarChart3;
   if (
     fileType.includes('zip') ||
     fileType.includes('tar') ||
     fileType.includes('rar') ||
     fileType.includes('gz')
   )
-    return '📦';
+    return Package;
   if (
     fileType.includes('javascript') ||
     fileType.includes('typescript') ||
@@ -35,8 +35,8 @@ const getFileIcon = (fileType: string): string => {
     fileType.includes('java') ||
     fileType.includes('cpp')
   )
-    return '💻';
-  return '📎';
+    return FileCode;
+  return Paperclip;
 };
 
 // Format file size to human-readable
@@ -127,7 +127,7 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
       {attachments.map((attachment) => {
         const isImage = attachment.fileType.startsWith('image/');
         const isPdf = attachment.fileType === 'application/pdf';
-        const icon = getFileIcon(attachment.fileType);
+        const Icon = getFileIcon(attachment.fileType);
 
         return (
           <div
@@ -137,7 +137,7 @@ export default function AttachmentList({ attachments, onDelete, onPreview }: Att
             {/* Header: Icon + Filename + Actions */}
             <div className="flex items-start gap-3 mb-2">
               {/* Icon */}
-              <div className="text-2xl shrink-0">{icon}</div>
+              <Icon className="h-6 w-6 shrink-0" aria-hidden />
 
               {/* Filename + Metadata */}
               <div className="flex-1 min-w-0">

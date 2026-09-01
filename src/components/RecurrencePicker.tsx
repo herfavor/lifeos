@@ -3,7 +3,7 @@ import type { Task } from '../types';
 import { parseRecurrenceNaturalLanguage } from '../utils/naturalLanguageRecurrence';
 import { TemplatePicker } from './TemplatePicker';
 import { useTemplateStore } from '../stores/useTemplateStore';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface RecurrencePickerProps {
   value: Task['recurrence'];
@@ -237,7 +237,8 @@ export const RecurrencePicker: React.FC<RecurrencePickerProps> = ({
         )}
         {naturalInput && !parseError && (
           <p className="text-xs text-accent-green dark:text-accent-green mt-1">
-            ✓ 解析成功
+            <Check className="w-3 h-3 inline mr-1" />
+            解析成功
           </p>
         )}
       </div>

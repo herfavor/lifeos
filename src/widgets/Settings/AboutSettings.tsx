@@ -22,6 +22,7 @@ import {
 // Lazy load SupportModal to prevent bundle bloat
 const SupportModal = lazy(() => import('../../components/SupportModal').then(m => ({ default: m.SupportModal })));
 import { getDiagnosticReport, formatDiagnosticReport, downloadDiagnosticReport } from '../../utils/diagnostics';
+import { DemoDataCard } from '../../components/DemoDataCard';
 import { logger } from '../../services/logger';
 import { BUILD_HASH, formatBuildTimestamp } from '../../utils/buildInfo';
 import { APP_NAME, APP_TAGLINE, APP_VERSION } from '../../config/appInfo';
@@ -196,6 +197,14 @@ export function AboutSettings() {
             </dd>
           </div>
         </dl>
+      </section>
+
+      {/* ── Sample data ──────────────────────────────────────────── */}
+      <section aria-label="示例数据">
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-light-tertiary dark:text-text-dark-tertiary">
+          示例数据
+        </h3>
+        <DemoDataCard />
       </section>
 
       {/* ── Diagnostics ──────────────────────────────────────────── */}

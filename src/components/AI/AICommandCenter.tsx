@@ -203,18 +203,21 @@ function QuickPromptChips({
 }) {
   return (
     <div className="grid gap-1.5">
-      {prompts.map((qp) => (
-        <button
-          key={qp.label}
-          type="button"
-          onClick={() => onSend(qp.prompt)}
-          title={qp.prompt}
-          className="flex items-center gap-2 rounded-xl border border-border-light bg-surface-light px-3 py-2 text-left text-xs font-medium text-text-light-secondary transition-all hover:border-accent-primary/50 hover:text-accent-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary"
-        >
-          <Sparkles className="h-3 w-3 shrink-0 text-accent-primary" />
-          {qp.label}
-        </button>
-      ))}
+      {prompts.map((qp) => {
+        const Icon = qp.icon;
+        return (
+          <button
+            key={qp.label}
+            type="button"
+            onClick={() => onSend(qp.prompt)}
+            title={qp.prompt}
+            className="flex items-center gap-2 rounded-xl border border-border-light bg-surface-light px-3 py-2 text-left text-xs font-medium text-text-light-secondary transition-all hover:border-accent-primary/50 hover:text-accent-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-secondary"
+          >
+            <Icon className="h-3 w-3 shrink-0 text-accent-primary" aria-hidden />
+            {qp.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

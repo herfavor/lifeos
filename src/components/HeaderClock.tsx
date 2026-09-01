@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Clock } from 'lucide-react';
 import { useSettingsStore, formatTime } from '../stores/useSettingsStore';
 
 /**
@@ -48,7 +49,7 @@ export const HeaderClock: React.FC = () => {
       className="flex items-center gap-2 px-3 py-1.5 rounded-button bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark"
       title={dateString}
     >
-      <span className="text-lg">🕐</span>
+      <Clock className="h-4 w-4 shrink-0 text-text-light-secondary dark:text-text-dark-secondary" aria-hidden />
       <span className="font-mono text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
         {formatTime(currentTime, timeFormat)}
       </span>

@@ -47,7 +47,7 @@ describe('Header', () => {
 
     const toggleButton = screen.getByTitle('切换到浅色模式');
     expect(toggleButton).toBeInTheDocument();
-    expect(toggleButton).toHaveTextContent('☀️');
+    expect(toggleButton.querySelector('svg')).toBeInTheDocument();
   });
 
   it('should show moon icon in light mode', () => {
@@ -56,7 +56,7 @@ describe('Header', () => {
 
     const toggleButton = screen.getByTitle('切换到深色模式');
     expect(toggleButton).toBeInTheDocument();
-    expect(toggleButton).toHaveTextContent('🌙');
+    expect(toggleButton.querySelector('svg')).toBeInTheDocument();
   });
 
   it('should toggle theme when button is clicked', async () => {
@@ -114,10 +114,10 @@ describe('Header', () => {
   it('should render navigation links', () => {
     renderWithRouter(<Header />);
 
-    expect(screen.getByText('🏠 首页')).toBeInTheDocument();
-    expect(screen.getByText('📝 笔记')).toBeInTheDocument();
-    expect(screen.getByText('📅 日程')).toBeInTheDocument();
-    expect(screen.getByText('✓ 任务')).toBeInTheDocument();
-    expect(screen.getByText('⚙️ 设置')).toBeInTheDocument();
+    expect(screen.getByText('首页')).toBeInTheDocument();
+    expect(screen.getByText('笔记')).toBeInTheDocument();
+    expect(screen.getByText('日程')).toBeInTheDocument();
+    expect(screen.getByText('任务')).toBeInTheDocument();
+    expect(screen.getByText('设置')).toBeInTheDocument();
   });
 });

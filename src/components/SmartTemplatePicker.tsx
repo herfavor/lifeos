@@ -7,7 +7,7 @@
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, X, Play, Plus, Zap, ChevronRight } from 'lucide-react';
+import { Search, X, Play, Plus, Zap, ChevronRight, BarChart3, Folder, Users, Wrench, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { useSmartTemplateStore } from '../stores/useSmartTemplateStore';
 import type { SmartTemplate, TemplateVariable } from '../stores/useSmartTemplateStore';
@@ -26,11 +26,11 @@ const CATEGORY_LABELS: Record<string, string> = {
   custom: '自定义',
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
-  workflow: '⚡',
-  meeting: '👥',
-  planning: '📊',
-  custom: '🛠️',
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  workflow: Zap,
+  meeting: Users,
+  planning: BarChart3,
+  custom: Wrench,
 };
 
 const ACTION_TYPE_LABELS: Record<string, string> = {
@@ -170,8 +170,12 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
         {executionResult ? (
           // Execution result view
           <div className="p-6 text-center">
-            <div className="text-4xl mb-3">
-              {executionResult.success ? '✅' : '❌'}
+            <div className="text-4xl mb-3 flex items-center justify-center">
+              {executionResult.success ? (
+                <CheckCircle2 className="w-10 h-10 text-accent-green" />
+              ) : (
+                <XCircle className="w-10 h-10 text-accent-red" />
+              )}
             </div>
             <h3 className="text-lg font-semibold text-text-dark-primary mb-2">
               {executionResult.success
@@ -295,12 +299,12 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
 
             {/* Template list */}
             <div className="max-h-[50vh] overflow-y-auto p-2">
-              {Object.entries(groupedTemplates).map(([category, categoryTemplates]) => (
+              {Object.entries(groupedTemplates).map(([category, categoryTemplates]) => {
+                const CategoryIcon = CATEGORY_ICONS[category] || Folder;
+                return (
                 <div key={category} className="mb-3">
                   <div className="flex items-center gap-2 px-2 py-1">
-                    <span className="text-sm">
-                      {CATEGORY_ICONS[category] || '📁'}
-                    </span>
+                    <CategoryIcon className="w-4 h-4 text-text-dark-secondary" />
                     <span className="text-xs font-semibold text-text-dark-secondary uppercase tracking-wider">
                       {CATEGORY_LABELS[category] || category}
                     </span>
@@ -336,7 +340,8 @@ export const SmartTemplatePicker: React.FC<SmartTemplatePickerProps> = ({
                     </button>
                   ))}
                 </div>
-              ))}
+                );
+              })}
 
               {filteredTemplates.length === 0 && (
                 <div className="text-center py-8 text-sm text-text-dark-secondary">

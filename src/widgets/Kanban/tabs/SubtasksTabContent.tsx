@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CalendarDays, FileText, X } from 'lucide-react';
 import type { Subtask, TaskPriority } from '../../../types';
 
 interface SubtasksTabContentProps {
@@ -126,7 +127,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
                   )}
                   {subtask.dueDate && (
                     <span className="text-xs px-2 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary">
-                      📅 {new Date(subtask.dueDate).toLocaleDateString()}
+                      <CalendarDays className="h-3 w-3" aria-hidden /> {new Date(subtask.dueDate).toLocaleDateString()}
                     </span>
                   )}
                 </div>
@@ -138,7 +139,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
                 className="text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-colors"
                 title="删除子任务"
               >
-                ✕
+                <X className="h-3.5 w-3.5" aria-hidden />
               </button>
             </div>
           ))}
@@ -146,7 +147,7 @@ export const SubtasksTabContent: React.FC<SubtasksTabContentProps> = ({
       ) : (
         <div className="text-center py-2">
           <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            📝 暂无子任务
+            <FileText className="h-3.5 w-3.5" aria-hidden /> 暂无子任务
           </p>
         </div>
       )}

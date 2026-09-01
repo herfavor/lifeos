@@ -8,6 +8,7 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Modal } from './Modal';
+import { Briefcase, GripVertical, Puzzle, Star, X, type LucideIcon } from 'lucide-react';
 import { useWidgetStore } from '../stores/useWidgetStore';
 import { getAllWidgets, getWidget, type WidgetCategory } from '../widgets/Dashboard/WidgetRegistry';
 import { isWidgetExposed } from '../config/features';
@@ -17,10 +18,10 @@ interface WidgetManagerProps {
   onClose: () => void;
 }
 
-const categoryNames: Record<WidgetCategory, string> = {
-  core: '⭐ 核心',
-  productivity: '💼 效率',
-  custom: '🧩 自定义',
+const categoryNames: Record<WidgetCategory, { label: string; Icon: LucideIcon }> = {
+  core: { label: '核心', Icon: Star },
+  productivity: { label: '效率', Icon: Briefcase },
+  custom: { label: '自定义', Icon: Puzzle },
 };
 
 const SortableItem: React.FC<{ id: string }> = ({ id }) => {
@@ -41,7 +42,7 @@ const SortableItem: React.FC<{ id: string }> = ({ id }) => {
         <h4 className="font-medium text-text-light-primary dark:text-text-dark-primary">{widget.name}</h4>
         <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">{widget.description}</p>
       </div>
-      <span className="text-text-light-secondary dark:text-text-dark-secondary">⋮⋮</span>
+      <span className="text-text-light-secondary dark:text-text-dark-secondary"><GripVertical className="w-4 h-4" /></span>
     </div>
   );
 };
@@ -147,7 +148,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                             className="p-2 text-accent-red hover:bg-accent-red/10 dark:hover:bg-accent-red/20 rounded-button"
                             title="停用组件"
                           >
-                            ✕
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       );
@@ -180,7 +181,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                 >
                   全部 ({availableWidgets.length})
                 </button>
-                {Object.entries(categoryNames).map(([category, label]) => {
+                {Object.entries(categoryNames).map(([category, { label, Icon }]) => {
                   const count = availableWidgets.filter((widget) => widget.category === category).length;
                   if (count === 0) return null;
                   return (
@@ -189,6 +190,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ isOpen, onClose })
                       onClick={() => setSelectedCategory(category as WidgetCategory)}
                       className={`px-3 py-1.5 rounded-button text-sm font-medium ${selectedCategory === category ? 'bg-accent-primary text-white' : 'bg-surface-light-elevated dark:bg-surface-dark'}`}
                     >
+                      <Icon className="w-3.5 h-3.5 inline mr-1" />
                       {label} ({count})
                     </button>
                   );

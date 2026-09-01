@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { BaseWidget } from './BaseWidget';
+import { Keyboard } from 'lucide-react';
 
 const shortcuts = [
   { category: '导航', items: [
@@ -33,7 +34,7 @@ export const ShortcutsWidget: React.FC = () => {
   })).filter(cat => cat.items.length > 0);
 
   return (
-    <BaseWidget title="键盘快捷键" icon="⌨️">
+    <BaseWidget title="键盘快捷键" icon={<Keyboard className="h-6 w-6" aria-hidden />}>
       <div className="space-y-3">
         <input
           type="text"

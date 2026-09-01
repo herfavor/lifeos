@@ -1,15 +1,15 @@
 import { useState, useMemo } from 'react';
-import { X, ChevronUp, ChevronDown, Trash2, ArrowRight } from 'lucide-react';
+import { Clock, Moon, Sun, Sunrise, X, ChevronUp, ChevronDown, Trash2, ArrowRight, type LucideIcon } from 'lucide-react';
 import { useHabitStore } from '../../stores/useHabitStore';
 import { useRoutineStore, type Routine, type TimeOfDay } from '../../stores/useRoutineStore';
 
 const ROUTINE_ICONS = ['🌅', '🌙', '💼', '🏋️', '📖', '🧘', '🎯', '⚡', '🧠', '🔥'];
 
-const TIME_OF_DAY_OPTIONS: { value: TimeOfDay; label: string; icon: string }[] = [
-  { value: 'morning', label: '早上', icon: '🌅' },
-  { value: 'afternoon', label: '下午', icon: '☀️' },
-  { value: 'evening', label: '晚上', icon: '🌙' },
-  { value: 'anytime', label: '任意时间', icon: '🕐' },
+const TIME_OF_DAY_OPTIONS: { value: TimeOfDay; label: string; icon: LucideIcon }[] = [
+  { value: 'morning', label: '早上', icon: Sunrise },
+  { value: 'afternoon', label: '下午', icon: Sun },
+  { value: 'evening', label: '晚上', icon: Moon },
+  { value: 'anytime', label: '任意时间', icon: Clock },
 ];
 
 interface RoutineBuilderProps {
@@ -176,7 +176,7 @@ export function RoutineBuilder({ routine, onClose }: RoutineBuilderProps) {
                       : 'border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-alt dark:hover:bg-surface-dark'
                   }`}
                 >
-                  <span className="block text-lg mb-0.5">{opt.icon}</span>
+                  <opt.icon className="w-5 h-5 mx-auto mb-0.5 block" />
                   {opt.label}
                 </button>
               ))}

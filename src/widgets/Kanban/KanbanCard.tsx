@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Paperclip } from 'lucide-react';
+import { Paperclip, AlertTriangle, CalendarDays, Check, Circle, Clock, EllipsisVertical, Lock, MapPin, Package, Repeat, Timer } from 'lucide-react';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useTimeTrackingStore } from '../../stores/useTimeTrackingStore';
 import { useSettingsStore } from '../../stores/useSettingsStore';
@@ -270,14 +270,14 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
           <h4 className="line-clamp-2 text-sm font-medium leading-5 text-text-light-primary dark:text-text-dark-primary">
             {/* Milestone indicator */}
             {task.isMilestone && (
-              <span className="shrink-0 text-sm" title="里程碑">📍</span>
+              <span className="shrink-0 text-sm" title="里程碑"><MapPin className="h-3.5 w-3.5" aria-hidden /></span>
             )}
             {task.title}
           </h4>
           {/* Critical path indicator */}
           {isCritical && (
             <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark border border-status-error-border dark:border-status-error-border-dark">
-              🔴 关键路径
+              <Circle className="h-2.5 w-2.5 fill-current" aria-hidden /> 关键路径
             </span>
           )}
           {/* Overdue blocker warning */}
@@ -286,20 +286,21 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
               className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark border border-status-warning-border dark:border-status-warning-border-dark"
               title={`被 ${overdueBlockers.length} 个逾期任务阻塞：${overdueBlockers.map(b => b.title).join(', ')}`}
             >
-              ⚠️ {overdueBlockers.length} 逾期
+              <AlertTriangle className="h-3 w-3" aria-hidden /> {overdueBlockers.length} 逾期
             </span>
           )}
         </div>
         <div className="relative flex items-center gap-1">
           <span className="hidden"><TaskTimerButton taskId={task.id} taskTitle={task.title} size="sm" /></span>
           <button
+            aria-label={`打开「${task.title}」的更多操作`}
             onClick={(e) => {
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
             className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary p-1"
           >
-            ⋮
+            <EllipsisVertical className="h-4 w-4" aria-hidden />
           </button>
           {showMenu && (
             <div className="absolute right-0 mt-1 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded shadow-lg z-10 min-w-[120px]">
@@ -332,7 +333,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                 }}
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-surface-light-elevated dark:hover:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary"
               >
-                📦 归档
+                <Package className="h-3.5 w-3.5" aria-hidden /> 归档
               </button>
               <button
                 onClick={(e) => {
@@ -376,7 +377,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                 ? 'bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark'
                 : 'bg-surface-light-elevated dark:bg-surface-dark text-accent-blue'
             }`}>
-              📅 {dueDate.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+              <CalendarDays className="h-3 w-3" aria-hidden /> {dueDate.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
             </span>
           );
         })()}
@@ -391,7 +392,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                 : '重复任务的实例'
             }
           >
-            🔁 {task.isRecurringParent ? '重复' : '实例'}
+            <Repeat className="h-3 w-3" aria-hidden /> {task.isRecurringParent ? '重复' : '实例'}
           </span>
         )}
 
@@ -401,7 +402,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
         {/* Estimated Hours */}
         {task.estimatedHours && (
           <span className="text-xs px-2 py-0.5 rounded bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary">
-            ⏱️ {task.estimatedHours}h
+            <Timer className="h-3 w-3" aria-hidden /> {task.estimatedHours}h
           </span>
         )}
 
@@ -421,17 +422,17 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
             }`}
             title={isTimerActive ? '计时中 - 点击查看' : '已记录总时长 - 点击查看'}
           >
-            {isTimerActive && '⏱️ '}🕐 {formatTime(totalSeconds)}
+            {isTimerActive && <Timer className="mr-1 h-3 w-3" aria-hidden />}<Clock className="h-3 w-3" aria-hidden /> {formatTime(totalSeconds)}
           </span>
         )}
 
         {/* Pomodoro Sessions Count */}
         {pomodoroCount > 0 && (
           <span
-            className="text-xs px-2 py-0.5 rounded bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 font-medium"
+            className="text-xs px-2 py-0.5 rounded bg-status-error/10 dark:bg-status-error/20 text-status-error-text dark:text-status-error-text-dark font-medium"
             title={`${pomodoroCount} 个番茄钟已完成`}
           >
-            🍅 {pomodoroCount}
+              <Timer className="h-3 w-3" aria-hidden /> {pomodoroCount}
           </span>
         )}
 
@@ -475,7 +476,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                 className="text-xs px-2 py-0.5 rounded font-medium cursor-pointer transition-all hover:scale-105 bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark hover:opacity-80"
                 title={`被 ${incompleteBlockers.length} 个任务阻塞`}
               >
-                🔒 被阻塞 {incompleteBlockers.length}
+                <Lock className="h-3 w-3" aria-hidden /> 被阻塞 {incompleteBlockers.length}
               </span>
             );
           }
@@ -493,7 +494,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                 className="text-xs px-2 py-0.5 rounded font-medium cursor-pointer transition-all hover:scale-105 bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark-elevated"
                 title={`阻塞 ${blocked.length} 个任务`}
               >
-                ⚠️ 阻塞 {blocked.length}
+                <AlertTriangle className="h-3 w-3" aria-hidden /> 阻塞 {blocked.length}
               </span>
             );
           }
@@ -523,7 +524,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
                   : 'bg-surface-light-elevated dark:bg-surface-dark text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light dark:hover:bg-surface-dark-elevated'
               }`}
             >
-              ✓ {completedCount}/{totalCount} 子任务
+              <Check className="h-3 w-3" aria-hidden /> {completedCount}/{totalCount} 子任务
             </span>
           );
         })()}

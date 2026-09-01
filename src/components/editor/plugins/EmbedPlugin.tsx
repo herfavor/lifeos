@@ -264,10 +264,10 @@ function TaskPickerList({
           <span
             className={`w-2 h-2 rounded-full flex-shrink-0 ${
               task.priority === 'high'
-                ? 'bg-red-500'
+                ? 'bg-status-error'
                 : task.priority === 'medium'
-                  ? 'bg-yellow-500'
-                  : 'bg-blue-500'
+                  ? 'bg-status-warning'
+                  : 'bg-status-info'
             }`}
           />
           <span className="text-sm text-text-light-primary dark:text-text-dark-primary truncate">
@@ -378,7 +378,7 @@ function SheetPickerList({
           className="w-full flex items-center gap-2 px-3 py-2 text-left rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
         >
           <svg
-            className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0"
+            className="w-4 h-4 text-status-success-text dark:text-status-success-text-dark flex-shrink-0"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

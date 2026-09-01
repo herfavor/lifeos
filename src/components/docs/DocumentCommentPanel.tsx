@@ -225,7 +225,7 @@ function CommentThread({
                 e.stopPropagation();
                 onUnresolve();
               }}
-              className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-amber-500 rounded transition-colors"
+              className="p-1 text-text-light-tertiary dark:text-text-dark-tertiary hover:text-status-warning rounded transition-colors"
               title="Unresolve"
             >
               <RotateCcw className="w-3.5 h-3.5" />

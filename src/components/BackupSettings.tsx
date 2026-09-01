@@ -9,6 +9,7 @@
  */
 
 import { useState } from 'react';
+import { BookOpen } from 'lucide-react';
 import { useThemeStore } from '../stores/useThemeStore';
 import { autoSaveManager } from '../services/autoSave';
 import { requestAutoSaveDirectory } from '../services/brainBackup';
@@ -312,9 +313,10 @@ export function BackupSettings() {
           href="/docs/backup-sync-guide"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-accent-blue hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm text-accent-blue hover:underline"
         >
-          📖 查看备份与同步文档 →
+          <BookOpen className="h-4 w-4" aria-hidden />
+          查看备份与同步文档 →
         </a>
       </div>
     </div>

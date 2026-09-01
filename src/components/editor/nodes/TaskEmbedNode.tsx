@@ -68,17 +68,17 @@ export class TaskEmbedNode extends DecoratorNode<React.ReactElement> {
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
-  high: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-  medium: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-  low: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  high: 'bg-status-error-bg text-status-error-text dark:bg-status-error-bg-dark dark:text-status-error-text-dark',
+  medium: 'bg-status-warning-bg text-status-warning-text dark:bg-status-warning-bg-dark dark:text-status-warning-text-dark',
+  low: 'bg-status-info-bg text-status-info-text dark:bg-status-info-bg-dark dark:text-status-info-text-dark',
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  backlog: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-  todo: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
-  inprogress: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
-  review: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
-  done: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+  backlog: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300',
+  todo: 'bg-status-info-bg text-status-info-text dark:bg-status-info-bg-dark dark:text-status-info-text-dark',
+  inprogress: 'bg-status-warning-bg text-status-warning-text dark:bg-status-warning-bg-dark dark:text-status-warning-text-dark',
+  review: 'bg-accent-purple/15 text-accent-purple dark:bg-accent-purple/25',
+  done: 'bg-status-success-bg text-status-success-text dark:bg-status-success-bg-dark dark:text-status-success-text-dark',
 };
 
 const TaskEmbedComponent = React.memo(function TaskEmbedComponent({
@@ -112,7 +112,7 @@ const TaskEmbedComponent = React.memo(function TaskEmbedComponent({
 
   if (!task) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-xs text-red-600 dark:text-red-400">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-status-error-border dark:border-status-error-border-dark bg-status-error-bg dark:bg-status-error-bg-dark text-xs text-status-error-text dark:text-status-error-text-dark">
         Task not found
       </span>
     );

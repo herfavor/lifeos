@@ -5,6 +5,7 @@ import { useProjectContextStore } from '../../stores/useProjectContextStore';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { NaturalLanguageDateInput } from '../../components/NaturalLanguageDateInput';
 import type { TaskPriority, TaskStatus } from '../../types';
+import { X, Zap } from 'lucide-react';
 
 interface QuickAddModalProps {
   isOpen: boolean;
@@ -151,7 +152,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultDueDate, 
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border-light dark:border-border-dark flex-shrink-0">
             <div className="flex items-center gap-2">
-              <span className="text-base">⚡</span>
+              <Zap className="h-4 w-4" aria-hidden />
               <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
                 快速添加任务
               </h2>
@@ -161,7 +162,7 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultDueDate, 
               className="p-1.5 rounded-lg hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
               aria-label="关闭"
             >
-              <span className="text-lg text-text-light-secondary dark:text-text-dark-secondary">×</span>
+              <X className="h-4 w-4 text-text-light-secondary dark:text-text-dark-secondary" aria-hidden />
             </button>
           </div>
 

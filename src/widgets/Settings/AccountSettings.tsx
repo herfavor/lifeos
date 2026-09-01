@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { User } from 'lucide-react';
+import { User, Lock } from 'lucide-react';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 
 export const AccountSettings: React.FC = () => {
@@ -44,7 +44,7 @@ export const AccountSettings: React.FC = () => {
         {/* Privacy Notice */}
         <div className="mt-4 p-3 bg-status-info-bg dark:bg-status-info-bg-dark border border-status-info-border dark:border-status-info-border-dark rounded-lg">
           <p className="text-xs text-status-info-text dark:text-status-info-text-dark">
-            <strong>🔒 本地资料：</strong>显示名称只保存在当前设备，不用于登录、账户恢复或云端同步。
+            <strong><Lock className="h-3.5 w-3.5" aria-hidden /> 本地资料：</strong>显示名称只保存在当前设备，不用于登录、账户恢复或云端同步。
           </p>
         </div>
       </div>

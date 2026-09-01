@@ -358,7 +358,7 @@ export function DocumentEditor({
 
       {/* Editor content - Page view or continuous scroll */}
       <div className="flex-1 flex overflow-hidden">
-      <div className="flex-1 overflow-auto bg-neutral-200 dark:bg-neutral-800">
+      <div className="flex-1 overflow-auto bg-surface-light-elevated dark:bg-surface-dark-elevated">
         {isPageView ? (
           /* Page view: Simulated paper pages */
           <div className="flex flex-col items-center py-8 px-4 min-h-full">

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
 
 interface ToastProps {
   message: string;
@@ -64,9 +65,9 @@ export const Toast: React.FC<ToastProps> = ({
         <button
           onClick={onClose}
           className="ml-2 text-text-dark-secondary hover:text-text-dark-primary dark:text-text-light-secondary dark:hover:text-text-light-primary transition-all duration-standard ease-smooth"
-          aria-label="关闭通知"
-        >
-          ✕
+            aria-label="关闭通知"
+          >
+          <X className="w-4 h-4" />
         </button>
       </div>
     </div>

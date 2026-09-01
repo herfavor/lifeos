@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { CalendarDays, Download, Hourglass, Upload } from 'lucide-react';
 
 interface CalendarImportExportSectionProps {
   isExporting: boolean;
@@ -26,7 +27,7 @@ export const CalendarImportExportSection: React.FC<CalendarImportExportSectionPr
   return (
     <div className="bento-card p-6">
       <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
-        📅 日历导入/导出
+        <CalendarDays className="h-5 w-5" aria-hidden /> 日历导入/导出
       </h2>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-6">
         从 Google Calendar 导入事件，或将你的事件导出为 .ics 格式。
@@ -38,7 +39,7 @@ export const CalendarImportExportSection: React.FC<CalendarImportExportSectionPr
           disabled={isExporting}
           className="w-full px-4 py-3 bg-accent-primary hover:bg-accent-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
         >
-          {isExporting ? '⏳ 正在导出...' : '📤 导出日历（.ics）'}
+          {isExporting ? <><Hourglass className="h-4 w-4" aria-hidden /> 正在导出...</> : <><Upload className="h-4 w-4" aria-hidden /> 导出日历（.ics）</>}
         </button>
 
         <button
@@ -46,7 +47,7 @@ export const CalendarImportExportSection: React.FC<CalendarImportExportSectionPr
           disabled={isImporting}
           className="w-full px-4 py-3 bg-accent-secondary hover:bg-accent-secondary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
         >
-          {isImporting ? '⏳ 正在导入...' : '📥 导入日历（.ics）'}
+          {isImporting ? <><Hourglass className="h-4 w-4" aria-hidden /> 正在导入...</> : <><Download className="h-4 w-4" aria-hidden /> 导入日历（.ics）</>}
         </button>
 
         <input

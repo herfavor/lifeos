@@ -14,7 +14,8 @@ import { buildGraphData, type GraphFilters, getUniqueTags, getColorGroups } from
 import { searchGraphNodes, type SearchResult } from '../utils/graphSearch';
 import { getOrphansWithSuggestions, detectOrphans } from '../utils/graphOrphanDetection';
 import type { GraphSearchFilters } from '../types/graph';
-import { Target, X, Palette, AlertCircle } from 'lucide-react';
+import { Share2, Target, X, Palette, AlertCircle } from 'lucide-react';
+import { EmptyState } from '../components/EmptyState';
 import { PageContent } from '../components/PageContent';
 import { appendMarkdownToLexical, ensureLexicalContent } from '../utils/markdownToLexical';
 
@@ -337,14 +338,13 @@ export default function GraphView() {
         {/* Graph or Empty State */}
         {!hasNotes ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-text-light-secondary dark:text-text-dark-secondary mb-2">
-                还没有笔记
-              </p>
-              <p className="text-sm text-text-light-tertiary dark:text-text-dark-tertiary">
-                创建一些带反向链接的笔记，即可查看您的知识图谱
-              </p>
-            </div>
+            <EmptyState
+              icon={Share2}
+              title="知识图谱还是空的"
+              description="写一篇带 [[链接]] 的笔记试试，笔记之间产生连接后图谱会自动生长。"
+              action={{ label: '去写笔记', onClick: () => navigate('/notes') }}
+              size="sm"
+            />
           </div>
         ) : graphData.nodes.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">

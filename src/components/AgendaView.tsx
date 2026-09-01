@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import type { CalendarEvent } from '../types';
 import { format, parse, isAfter, addDays, startOfDay, isSameDay } from 'date-fns';
+import { Bell, CalendarDays, MapPin, RefreshCw } from 'lucide-react';
 import { getEventDisplayColor } from '../utils/calendarColors';
 
 interface AgendaViewProps {
@@ -74,7 +75,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
   if (upcomingEvents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="text-6xl mb-4">📅</div>
+        <CalendarDays className="mb-4 h-10 w-10 text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden />
         <h3 className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
           暂无即将到来的事件
         </h3>
@@ -142,8 +143,9 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                           {formatEventTime(event)}
                         </div>
                         {event.recurrence && (
-                          <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                            🔄 重复
+                          <div className="flex items-center gap-1 text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
+                            <RefreshCw className="h-3 w-3" aria-hidden />
+                            重复
                           </div>
                         )}
                       </div>
@@ -170,14 +172,14 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
 
                         {event.location && (
                           <div className="flex items-center gap-1 mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                            <span>📍</span>
+                            <MapPin className="h-3 w-3 shrink-0" aria-hidden />
                             <span>{event.location}</span>
                           </div>
                         )}
 
                         {event.reminders && event.reminders.length > 0 && (
                           <div className="flex items-center gap-1 mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                            <span>🔔</span>
+                            <Bell className="h-3 w-3 shrink-0" aria-hidden />
                             <span>{event.reminders.length} 个提醒</span>
                           </div>
                         )}

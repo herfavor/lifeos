@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -41,7 +42,7 @@ export class WidgetErrorBoundary extends Component<Props, State> {
       return (
         <div className="h-full min-h-[180px] flex flex-col items-center justify-center p-6 bg-status-error-bg/60 dark:bg-status-error-bg-dark/30 border border-status-error-border dark:border-status-error-border-dark rounded-xl">
           <div className="text-center">
-            <span className="text-3xl mb-3 block">⚠️</span>
+            <span className="mb-3 block"><AlertTriangle className="w-8 h-8 text-status-error-text dark:text-status-error-text-dark" /></span>
             <h3 className="text-base font-semibold text-status-error-text dark:text-status-error-text-dark mb-2">
               这个扩展组件暂时无法显示
             </h3>

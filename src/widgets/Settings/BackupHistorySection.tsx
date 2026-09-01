@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { formatFileSize } from '../../services/brainBackup';
+import { AlertTriangle, Cloud, Package, RefreshCw } from 'lucide-react';
 import type { BackupHistoryEntry } from '../../services/backupPreferences';
 
 interface BackupHistorySectionProps {
@@ -43,11 +44,13 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
                   ? '1 次尝试'
                   : undefined;
             const icon =
-              entry.destination === 'google-drive'
-                ? '☁️'
-                : entry.type === 'auto'
-                  ? '🔄'
-                  : '📦';
+              entry.destination === 'google-drive' ? (
+                <Cloud className="h-6 w-6" aria-hidden />
+              ) : entry.type === 'auto' ? (
+                <RefreshCw className="h-6 w-6" aria-hidden />
+              ) : (
+                <Package className="h-6 w-6" aria-hidden />
+              );
 
             return (
               <div
@@ -66,7 +69,7 @@ export const BackupHistorySection: React.FC<BackupHistorySectionProps> = ({
                   </p>
                   {entry.errorMessage && (
                     <p className="text-sm text-status-error-text dark:text-status-error-text-dark">
-                      ⚠️ {entry.errorMessage}
+                      <AlertTriangle className="h-3.5 w-3.5" aria-hidden /> {entry.errorMessage}
                     </p>
                   )}
                 </div>

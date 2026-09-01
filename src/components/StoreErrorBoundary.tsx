@@ -11,6 +11,7 @@
  */
 
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import { AlertTriangle, CalendarDays, ClipboardList, FileText, FolderOpen, Zap } from 'lucide-react';
 import { logger } from '../services/logger';
 
 const log = logger.module('StoreErrorBoundary');
@@ -109,13 +110,13 @@ export class StoreErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
-        <div className="text-6xl mb-4">
-          {storeName === 'calendar' && '📅'}
-          {storeName === 'kanban' && '📋'}
-          {storeName === 'notes' && '📝'}
-          {storeName === 'automation' && '⚡'}
-          {storeName === 'portfolio' && '📂'}
-          {!['calendar', 'kanban', 'notes', 'automation', 'portfolio'].includes(storeName) && '⚠️'}
+        <div className="text-text-light-secondary dark:text-text-dark-secondary mb-4">
+          {storeName === 'calendar' && <CalendarDays className="w-14 h-14" />}
+          {storeName === 'kanban' && <ClipboardList className="w-14 h-14" />}
+          {storeName === 'notes' && <FileText className="w-14 h-14" />}
+          {storeName === 'automation' && <Zap className="w-14 h-14" />}
+          {storeName === 'portfolio' && <FolderOpen className="w-14 h-14" />}
+          {!['calendar', 'kanban', 'notes', 'automation', 'portfolio'].includes(storeName) && <AlertTriangle className="w-14 h-14" />}
         </div>
 
         <h2 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">

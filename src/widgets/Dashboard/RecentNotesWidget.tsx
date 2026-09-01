@@ -8,6 +8,7 @@ import React from 'react';
 import { BaseWidget } from './BaseWidget';
 import { useNotesStore } from '../../stores/useNotesStore';
 import { useNavigate } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 import { WidgetEmptyState } from '../../components/WidgetEmptyState';
 
 export const RecentNotesWidget: React.FC = () => {
@@ -24,7 +25,7 @@ export const RecentNotesWidget: React.FC = () => {
     .slice(0, 5);
 
   return (
-    <BaseWidget title="最近笔记" icon="📝" subtitle="最近更新的 5 篇">
+    <BaseWidget title="最近笔记" icon={<FileText className="h-6 w-6" aria-hidden />} subtitle="最近更新的 5 篇">
       <div className="flex flex-col h-full min-h-[160px]">
         {recentNotes.length > 0 ? (
           <div className="space-y-2 mb-4">

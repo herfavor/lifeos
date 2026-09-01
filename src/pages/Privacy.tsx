@@ -6,7 +6,7 @@ import { APP_ISSUES_URL, APP_NAME } from '../config/appInfo';
 const promises = [
   { icon: Database, title: '本地存储', text: '任务、笔记、日程、收藏和设置默认存在本机 IndexedDB / 本地存储中。' },
   { icon: EyeOff, title: '零遥测', text: '不内置广告、访客追踪、使用埋点或会话录制。' },
-  { icon: Download, title: '数据可携带', text: '可在设置中导出 .brain 备份，并由你选择保存位置。' },
+  { icon: Download, title: '数据可携带', text: '可在设置中导出 LifeOS 备份文件，并由你选择保存位置。' },
   { icon: Bot, title: 'AI 由你启用', text: 'API 请求仅在你配置并使用 AI 时，由浏览器直接发往你选择的服务商。' },
 ];
 

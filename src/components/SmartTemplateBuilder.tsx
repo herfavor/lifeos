@@ -342,7 +342,7 @@ export const SmartTemplateBuilder: React.FC<SmartTemplateBuilderProps> = ({
                   </select>
                   <button
                     onClick={() => handleRemoveVariable(index)}
-                    className="p-1 text-text-dark-secondary hover:text-red-400 transition-colors"
+                    className="p-1 text-text-dark-secondary hover:text-status-error transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -427,7 +427,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({
         <div className="flex-1" />
         <button
           onClick={onRemove}
-          className="p-1 text-text-dark-secondary hover:text-red-400 transition-colors"
+          className="p-1 text-text-dark-secondary hover:text-status-error transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>

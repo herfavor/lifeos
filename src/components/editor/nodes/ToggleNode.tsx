@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
+import { ChevronRight, X } from 'lucide-react';
 import { DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type {
@@ -107,7 +108,7 @@ function ToggleComponent({
         className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-xs z-10"
         title="Remove toggle"
       >
-        ✕
+        <X className="w-4 h-4" />
       </button>
 
       {/* Toggle header */}
@@ -119,7 +120,7 @@ function ToggleComponent({
           className="flex-shrink-0 text-text-light-secondary dark:text-text-dark-secondary transition-transform"
           style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
-          ▶
+          <ChevronRight className="w-4 h-4" />
         </button>
         <input
           type="text"

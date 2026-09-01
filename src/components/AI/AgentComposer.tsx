@@ -66,17 +66,21 @@ export const AgentComposer: React.FC<AgentComposerProps> = ({
 
       {quickPrompts && quickPrompts.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-1.5">
-          {quickPrompts.map((qp) => (
-            <button
-              key={qp.label}
-              onClick={() => onSend(qp.prompt)}
-              disabled={isStreaming}
-              title={qp.prompt}
-              className="rounded-full border border-border-light px-3 py-1 text-xs text-text-light-secondary transition-colors hover:border-accent-primary hover:text-accent-primary disabled:opacity-50 dark:border-border-dark dark:text-text-dark-secondary"
-            >
-              {qp.label}
-            </button>
-          ))}
+          {quickPrompts.map((qp) => {
+            const Icon = qp.icon;
+            return (
+              <button
+                key={qp.label}
+                onClick={() => onSend(qp.prompt)}
+                disabled={isStreaming}
+                title={qp.prompt}
+                className="flex items-center gap-1.5 rounded-full border border-border-light px-3 py-1 text-xs text-text-light-secondary transition-colors hover:border-accent-primary hover:text-accent-primary disabled:opacity-50 dark:border-border-dark dark:text-text-dark-secondary"
+              >
+                <Icon className="h-3.5 w-3.5" aria-hidden />
+                {qp.label}
+              </button>
+            );
+          })}
         </div>
       )}
 

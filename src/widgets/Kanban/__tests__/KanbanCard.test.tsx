@@ -82,7 +82,7 @@ describe('KanbanCard', () => {
       </DndContext>
     );
 
-    expect(screen.getByText('⋮')).toBeInTheDocument();
+    expect(screen.getByLabelText(/更多操作/)).toBeInTheDocument();
   });
 
   it('should apply opacity when dragging', () => {

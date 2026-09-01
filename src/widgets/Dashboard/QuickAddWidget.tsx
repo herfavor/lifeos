@@ -7,6 +7,7 @@
 import React, { useState } from 'react';
 import { BaseWidget } from './BaseWidget';
 import { useKanbanStore } from '../../stores/useKanbanStore';
+import { Plus } from 'lucide-react';
 
 export const QuickAddWidget: React.FC = () => {
   const { addTask } = useKanbanStore();
@@ -30,7 +31,7 @@ export const QuickAddWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="快速添加" icon="➕">
+    <BaseWidget title="快速添加" icon={<Plus className="h-6 w-6" aria-hidden />}>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"

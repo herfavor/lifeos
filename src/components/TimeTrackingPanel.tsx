@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Square, Settings, ChevronUp, ChevronDown, Plus } from 'lucide-react';
+import { Play, Pause, Square, Settings, ChevronUp, ChevronDown, Plus, Timer } from 'lucide-react';
 import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
 import { useTimeTrackingPanelStore } from '../stores/useTimeTrackingPanelStore';
 import { useSettingsStore } from '../stores/useSettingsStore';
@@ -245,7 +245,7 @@ export function TimeTrackingPanel() {
       {/* Panel Header */}
       <div className="flex items-center justify-between px-3 py-0.5 border-b border-border-light dark:border-border-dark">
         <div className="flex items-center gap-2">
-          <span className="text-lg">⏱️</span>
+          <Timer className="w-5 h-5 text-text-light-secondary dark:text-text-dark-secondary" />
           <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
             时间记录
           </h3>
@@ -305,7 +305,7 @@ export function TimeTrackingPanel() {
               <ProjectSelector
                 value={selectedProjectId}
                 onChange={setSelectedProjectId}
-                placeholder="📁 选择项目"
+                placeholder="选择项目"
                 showNoProject={true}
               />
             </div>

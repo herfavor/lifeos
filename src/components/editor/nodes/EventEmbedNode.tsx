@@ -119,7 +119,7 @@ const EventEmbedComponent = React.memo(function EventEmbedComponent({
 
   if (!event) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-xs text-red-600 dark:text-red-400">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-status-error-border dark:border-status-error-border-dark bg-status-error-bg dark:bg-status-error-bg-dark text-xs text-status-error-text dark:text-status-error-text-dark">
         Event not found
       </span>
     );

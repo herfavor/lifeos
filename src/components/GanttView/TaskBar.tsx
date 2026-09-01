@@ -5,6 +5,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { ChevronDown, ChevronRight, MapPin, TrendingDown, TrendingUp } from 'lucide-react';
 import type { Task, TaskPriority, BaselineTask } from '../../types';
 import { TASK_BAR_HEIGHT, type ZoomLevel, dateToX, xToDate, calculateBarWidth, isValidDateRange, snapToGrid } from './utils';
 import { calculateVarianceDays, getVarianceStatus } from '../../utils/baseline';
@@ -257,7 +258,7 @@ export function TaskBar({
           className="absolute left-8 top-0 text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity pointer-events-none bg-surface-light dark:bg-surface-dark px-2 py-1 rounded shadow-md"
           style={{ transform: 'translateY(-25%)' }}
         >
-          📍 {task.title}
+          <MapPin className="mr-1 inline w-3 h-3" />{task.title}
         </div>
       </div>
     );
@@ -324,11 +325,11 @@ export function TaskBar({
               className="shrink-0 hover:bg-surface-light/20 dark:hover:bg-surface-dark/20 rounded transition-colors p-0.5"
               aria-label={isExpanded ? '折叠子任务' : '展开子任务'}
             >
-              <span className="text-[10px]">{isExpanded ? '▼' : '▶'}</span>
+              {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </button>
           )}
           {isCritical && (
-            <span className="shrink-0 text-[10px] font-bold">🔴</span>
+            <span className="shrink-0 w-2 h-2 rounded-full bg-status-error" />
           )}
           <span className="truncate">{task.title}</span>
           {progress > 0 && width >= 80 && (
@@ -346,7 +347,10 @@ export function TaskBar({
           }`}
           style={{ pointerEvents: 'none' }}
         >
-          {varianceStatus === 'ahead' ? '▲' : '▼'} {Math.abs(varianceDays)}天
+          <span className="inline-flex items-center gap-0.5">
+            {varianceStatus === 'ahead' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            {Math.abs(varianceDays)}天
+          </span>
         </div>
       )}
 

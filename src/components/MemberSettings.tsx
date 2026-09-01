@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { X } from 'lucide-react';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import type { Member } from '../types';
 import { toast } from '../stores/useToastStore';
@@ -110,8 +111,9 @@ function CreateMemberModal({ isOpen, onClose, onSave }: CreateMemberModalProps) 
             <button
               onClick={handleClose}
               className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
+              aria-label="关闭"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
 

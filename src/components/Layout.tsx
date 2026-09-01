@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useState, useCallback, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { PageHeader } from './PageHeader';
 import { ErrorToastContainer } from './ErrorToast';
@@ -359,7 +360,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         className="hidden md:block lg:hidden fixed top-4 left-4 z-50 p-2 min-w-[44px] min-h-[44px] rounded-button bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark shadow-lg transition-all duration-standard ease-smooth"
         aria-label="切换导航菜单"
       >
-        <span className="text-xl" aria-hidden="true">{'\u2630'}</span>
+        <Menu className="h-5 w-5" aria-hidden />
       </button>
 
       <Sidebar />

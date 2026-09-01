@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PartyPopper } from 'lucide-react';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useProjectContextStore } from '../../stores/useProjectContextStore';
 import { useNotesStore } from '../../stores/useNotesStore';
 import { useLinkLibraryStore } from '../../stores/useLinkLibraryStore';
+import { toast } from '../../stores/useToastStore';
 import type { Task, TaskPriority } from '../../types';
 import { markdownToLexical } from '../../utils/markdownToLexical';
 
@@ -53,6 +55,7 @@ export const TriageInbox: React.FC<TriageInboxProps> = ({ onTaskClick }) => {
   const handleAccept = useCallback(() => {
     if (!currentTask) return;
     moveTask(currentTask.id, 'todo');
+    toast.success('已移入待办列表', `「${currentTask.title}」可在任务页继续处理。`);
     // Index auto-adjusts through useMemo recalculation
   }, [currentTask, moveTask]);
 
@@ -165,7 +168,7 @@ export const TriageInbox: React.FC<TriageInboxProps> = ({ onTaskClick }) => {
   if (remaining === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="text-4xl mb-4">🎉</div>
+        <PartyPopper className="w-9 h-9 mb-4" />
         <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
           收件箱清零
         </h3>

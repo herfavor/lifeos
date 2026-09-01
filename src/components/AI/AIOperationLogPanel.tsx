@@ -15,6 +15,7 @@ import {
   RotateCcw,
   ShieldCheck,
   Trash2,
+  X,
   Zap,
   XCircle,
 } from 'lucide-react';
@@ -194,7 +195,7 @@ export const AIOperationLogPanel: React.FC<AIOperationLogPanelProps> = ({
             aria-label="关闭操作记录"
             className="rounded-lg p-1.5 text-text-light-secondary transition-colors hover:bg-surface-light-elevated hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"
           >
-            <span aria-hidden>✕</span>
+            <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
       </header>

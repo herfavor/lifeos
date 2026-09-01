@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Modal } from './Modal';
 
 interface RecurringEventDialogProps {
@@ -33,14 +34,14 @@ export const RecurringEventDialog: React.FC<RecurringEventDialogProps> = ({
   };
 
   const title = action === 'edit' ? '编辑重复事件' : '删除重复事件';
-  const icon = action === 'edit' ? '✏️' : '🗑️';
+  const Icon = action === 'edit' ? Pencil : Trash2;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="md">
       <div className="space-y-4">
         {/* Icon + Message */}
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 text-3xl">{icon}</div>
+          <div className="flex-shrink-0"><Icon className="w-7 h-7 text-text-light-primary dark:text-text-dark-primary" /></div>
           <div className="flex-1">
             <p className="text-text-light-primary dark:text-text-dark-primary font-medium mb-2">
               "{eventTitle}"

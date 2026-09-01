@@ -1,4 +1,4 @@
-import { X, Plus, Calendar, CheckSquare, Clock, Copy } from 'lucide-react';
+import { X, Plus, Calendar, CheckSquare, Clock, Copy, Repeat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDuration, formatTime } from '../utils/timeFormatters';
 import { getColorCategory } from '../utils/eventColors';
@@ -130,7 +130,7 @@ export function DayDetailModal({
                       }}
                     >
                       <div className="font-medium text-xs text-text-light-primary dark:text-text-dark-primary">
-                        {event.recurrence && '🔁 '}{event.title}
+                        {event.recurrence && <Repeat className="mr-1 inline h-3 w-3" aria-hidden />}{event.title}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px] text-text-light-secondary dark:text-text-dark-secondary">
                         {event.isAllDay ? (

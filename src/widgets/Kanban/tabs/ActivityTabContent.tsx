@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClipboardList } from 'lucide-react';
 import type { ActivityLogEntry } from '../../../types';
 
 interface ActivityTabContentProps {
@@ -16,7 +17,7 @@ export const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
   if (!activityLog || activityLog.length === 0) {
     return (
       <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-        📋 暂无动态
+        <ClipboardList className="h-3.5 w-3.5" aria-hidden /> 暂无动态
       </div>
     );
   }

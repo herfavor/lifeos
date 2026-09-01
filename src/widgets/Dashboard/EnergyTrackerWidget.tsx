@@ -1,14 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useEnergyStore } from '../../stores/useEnergyStore';
 import type { EnergyLog } from '../../stores/useEnergyStore';
 import { Link } from 'react-router-dom';
+import { Moon, Sun, Sunrise } from 'lucide-react';
 
 type TimeOfDay = 'morning' | 'afternoon' | 'evening';
 
-const TIME_SLOTS: Array<{ id: TimeOfDay; label: string; icon: string }> = [
-  { id: 'morning', label: '上午', icon: '🌅' },
-  { id: 'afternoon', label: '下午', icon: '☀️' },
-  { id: 'evening', label: '晚上', icon: '🌙' },
+const TIME_SLOTS: Array<{ id: TimeOfDay; label: string; icon: ReactNode }> = [
+  { id: 'morning', label: '上午', icon: <Sunrise className="h-3 w-3" aria-hidden /> },
+  { id: 'afternoon', label: '下午', icon: <Sun className="h-3 w-3" aria-hidden /> },
+  { id: 'evening', label: '晚上', icon: <Moon className="h-3 w-3" aria-hidden /> },
 ];
 
 const ENERGY_FACES = ['😴', '😩', '😐', '😐', '🙂', '🙂', '😊', '😄', '💪', '⚡'];
@@ -91,7 +92,7 @@ export function EnergyTrackerWidget() {
           value={sliderValue}
           onChange={(e) => setSliderValue(Number(e.target.value))}
           className="w-full h-1.5 rounded-full appearance-none cursor-pointer
-            bg-gradient-to-r from-red-500 via-yellow-500 to-green-500
+            bg-gradient-to-r from-status-error via-status-warning to-status-success
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-4
             [&::-webkit-slider-thumb]:h-4
@@ -170,10 +171,10 @@ export function EnergyTrackerWidget() {
                   avg === 0
                     ? 'bg-border-light dark:bg-border-dark'
                     : avg >= 7
-                      ? 'bg-green-500'
+                      ? 'bg-status-success'
                       : avg >= 4
-                        ? 'bg-yellow-500'
-                        : 'bg-red-500'
+                        ? 'bg-status-warning'
+                        : 'bg-status-error'
                 }`}
                 title={avg > 0 ? `${avg}/10` : '暂无数据'}
               />

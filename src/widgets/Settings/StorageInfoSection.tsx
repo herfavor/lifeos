@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight } from 'lucide-react';
 import { isFileSystemAccessSupported } from '../../services/brainBackup';
 
 interface StorageInfo {
@@ -31,7 +32,7 @@ export const StorageInfoSection: React.FC<StorageInfoSectionProps> = ({ storageI
           存储与浏览器信息
         </h2>
         <span className="text-2xl text-text-light-secondary dark:text-text-dark-secondary">
-          {showDetails ? '▼' : '▶'}
+          {showDetails ? <ChevronDown className="h-5 w-5" aria-hidden /> : <ChevronRight className="h-5 w-5" aria-hidden />}
         </span>
       </button>
 
@@ -75,12 +76,12 @@ export const StorageInfoSection: React.FC<StorageInfoSectionProps> = ({ storageI
           <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-text-light-secondary dark:text-text-dark-secondary">IndexedDB：</span>
-              <span className="font-semibold text-accent-green">✅ 支持</span>
+              <span className="font-semibold text-accent-green"><CheckCircle2 className="h-3.5 w-3.5" aria-hidden /> 支持</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-text-light-secondary dark:text-text-dark-secondary">文件系统访问：</span>
               <span className={`font-semibold ${isFileSystemAccessSupported() ? 'text-accent-green' : 'text-accent-yellow'}`}>
-                {isFileSystemAccessSupported() ? '✅ 支持' : '⚠️ 不支持'}
+                {isFileSystemAccessSupported() ? <><CheckCircle2 className="h-3.5 w-3.5" aria-hidden /> 支持</> : <><AlertTriangle className="h-3.5 w-3.5" aria-hidden /> 不支持</>}
               </span>
             </div>
           </div>

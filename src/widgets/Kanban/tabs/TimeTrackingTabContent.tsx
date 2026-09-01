@@ -1,4 +1,5 @@
 import React from 'react';
+import { Play, Timer } from 'lucide-react';
 import type { TimeEntry } from '../../../types';
 
 interface TimeTrackingTabContentProps {
@@ -52,7 +53,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
               onClick={onStopTimer}
               className="px-4 py-2 bg-status-error text-white text-sm font-medium rounded-lg hover:bg-status-error/90 transition-colors flex items-center gap-2"
             >
-              <span className="animate-pulse">⏱️</span>
+              <Timer className="h-4 w-4 animate-pulse" aria-hidden />
               停止计时
             </button>
           ) : (
@@ -60,7 +61,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
               onClick={onStartTimer}
               className="px-4 py-2 bg-accent-blue text-white text-sm font-medium rounded-lg hover:bg-accent-blue-hover transition-colors flex items-center gap-2"
             >
-              ▶️ 开始计时
+              <Play className="h-4 w-4" aria-hidden /> 开始计时
             </button>
           )}
         </div>
@@ -140,7 +141,7 @@ export const TimeTrackingTabContent: React.FC<TimeTrackingTabContentProps> = ({
           </div>
         ) : (
           <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-            ⏱️ 暂无时间记录
+            <Timer className="h-3.5 w-3.5" aria-hidden /> 暂无时间记录
           </div>
         )}
       </div>

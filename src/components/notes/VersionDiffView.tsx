@@ -107,8 +107,8 @@ export const VersionDiffView: React.FC<VersionDiffViewProps> = ({
       <div className="flex items-center justify-between px-3 py-2 bg-surface-light-elevated dark:bg-surface-dark-elevated border-b border-border-light dark:border-border-dark">
         <div className="flex items-center gap-3 text-xs text-text-light-secondary dark:text-text-dark-secondary">
           <span>比较版本</span>
-          <span className="text-green-500">+{stats.added}</span>
-          <span className="text-red-500">-{stats.removed}</span>
+          <span className="text-status-success">+{stats.added}</span>
+          <span className="text-status-error">-{stats.removed}</span>
         </div>
         <button
           onClick={onClose}
@@ -125,9 +125,9 @@ export const VersionDiffView: React.FC<VersionDiffViewProps> = ({
             key={index}
             className={`flex ${
               line.type === 'added'
-                ? 'bg-green-500/10 text-green-700 dark:text-green-400'
+                ? 'bg-status-success/10 text-status-success-text dark:text-status-success-text-dark'
                 : line.type === 'removed'
-                  ? 'bg-red-500/10 text-red-700 dark:text-red-400'
+                  ? 'bg-status-error/10 text-status-error-text dark:text-status-error-text-dark'
                   : 'text-text-light-primary dark:text-text-dark-primary'
             }`}
           >

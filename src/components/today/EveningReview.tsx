@@ -25,6 +25,11 @@ import {
   CalendarClock,
   Star,
   X,
+  Flame,
+  Frown,
+  Meh,
+  Smile,
+  type LucideIcon,
 } from 'lucide-react';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useDailyPlanningStore } from '../../stores/useDailyPlanningStore';
@@ -46,11 +51,11 @@ const STEPS = [
   { id: 'shutdown', label: '收尾', icon: Power },
 ] as const;
 
-const MOOD_OPTIONS: Array<{ value: DailyReviewType['mood']; label: string; emoji: string }> = [
-  { value: 'great', label: '很棒', emoji: '🔥' },
-  { value: 'good', label: '不错', emoji: '😊' },
-  { value: 'okay', label: '一般', emoji: '😐' },
-  { value: 'rough', label: '糟糕', emoji: '😓' },
+const MOOD_OPTIONS: Array<{ value: DailyReviewType['mood']; label: string; icon: LucideIcon }> = [
+  { value: 'great', label: '很棒', icon: Flame },
+  { value: 'good', label: '不错', icon: Smile },
+  { value: 'okay', label: '一般', icon: Meh },
+  { value: 'rough', label: '糟糕', icon: Frown },
 ];
 
 const slideVariants = {
@@ -421,7 +426,7 @@ const StepReflect: React.FC<{
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-secondary dark:text-text-dark-secondary border border-transparent hover:border-border-light dark:hover:border-border-dark'
             }`}
           >
-            <span>{opt.emoji}</span>
+            <opt.icon className="w-3.5 h-3.5" />
             {opt.label}
           </button>
         ))}

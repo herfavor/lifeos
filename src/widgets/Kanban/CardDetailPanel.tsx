@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Check, MapPin, Play, Square, Timer, X } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { RecurrencePicker } from '../../components/RecurrencePicker';
 import { CustomFieldEditor } from '../../components/CustomFieldEditor';
@@ -137,6 +138,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     applyDependentShifts,
     addAttachment,
     deleteAttachment,
+    updateTask,
   } = useKanbanStore();
 
   // Time tracking store (Time Tracking Integration)
@@ -256,6 +258,14 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
   }, [isOpen, handleSaveAndClose]);
 
   if (!task) return null;
+
+  const isDone = task.status === 'done';
+  const handleToggleComplete = () => {
+    const nextStatus: TaskStatus = isDone ? 'todo' : 'done';
+    updateTask(task.id, { status: nextStatus });
+    setStatus(nextStatus);
+    toast.success(isDone ? '已移回待办' : `已完成「${task.title}」`);
+  };
 
   const handleFieldBlur = (field: keyof Task, value: unknown) => {
     // Check if date change triggers dependent shifts
@@ -387,9 +397,24 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
         <div className="w-full md:w-3/5 space-y-2">
           {/* Title */}
           <div>
-            <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-1">
-              标题
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary">
+                标题
+              </label>
+              <button
+                type="button"
+                onClick={handleToggleComplete}
+                title={isDone ? '标记为未完成' : '完成任务'}
+                className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors ${
+                  isDone
+                    ? 'border-status-success bg-status-success text-white'
+                    : 'border-border-light text-text-light-secondary hover:border-status-success hover:text-status-success dark:border-border-dark dark:text-text-dark-secondary'
+                }`}
+              >
+                <Check className="h-3 w-3" aria-hidden />
+                {isDone ? '已完成' : '标记完成'}
+              </button>
+            </div>
             <input
               type="text"
               value={title}
@@ -493,7 +518,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               htmlFor="is-milestone"
               className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer select-none"
             >
-              📍 标记为里程碑（关键截止日期/交付物）
+              <MapPin className="h-3.5 w-3.5" aria-hidden /> 标记为里程碑（关键截止日期/交付物）
             </label>
           </div>
 
@@ -586,7 +611,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                 <div className="flex items-center justify-between text-xs text-text-light-secondary dark:text-text-dark-secondary">
                   <span>实际：{(getTotalTimeForCard(task.id) / 3600).toFixed(1)}h</span>
                   {activeEntry?.taskId === task.id && (
-                    <span className="animate-pulse text-accent-blue font-semibold">⏱️ 计时中</span>
+                    <span className="animate-pulse text-accent-blue font-semibold"><Timer className="h-3 w-3" aria-hidden /> 计时中</span>
                   )}
                 </div>
                 {activeEntry?.taskId === task.id ? (
@@ -594,14 +619,14 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     onClick={() => stopTimer()}
                     className="w-full px-3 py-1.5 bg-status-error text-white text-xs font-medium rounded hover:bg-status-error/90 transition-colors"
                   >
-                    ⏹️ 停止计时
+                    <Square className="h-3 w-3" aria-hidden /> 停止计时
                   </button>
                 ) : (
                   <button
                     onClick={() => startTimerForCard(task.id, task.title)}
                     className="w-full px-3 py-1.5 bg-accent-blue text-white text-xs font-medium rounded hover:bg-accent-blue-hover transition-colors"
                   >
-                    ▶️ 开始计时
+                    <Play className="h-3 w-3" aria-hidden /> 开始计时
                   </button>
                 )}
               </div>
@@ -684,7 +709,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
                     className="hover:text-accent-blue-hover"
                     aria-label={`移除标签 ${tag}`}
                   >
-                    ✕
+                    <X className="h-3 w-3" aria-hidden />
                   </button>
                 </span>
               ))}

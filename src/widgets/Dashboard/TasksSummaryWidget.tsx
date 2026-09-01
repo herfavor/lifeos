@@ -9,6 +9,7 @@ import React from 'react';
 import { BaseWidget } from './BaseWidget';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useNavigate } from 'react-router-dom';
+import { BarChart3 } from 'lucide-react';
 import { WidgetEmptyState } from '../../components/WidgetEmptyState';
 
 export const TasksSummaryWidget: React.FC = () => {
@@ -30,7 +31,7 @@ export const TasksSummaryWidget: React.FC = () => {
 
   if (tasks.length === 0) {
     return (
-      <BaseWidget title="任务概览" icon="📊">
+      <BaseWidget title="任务概览" icon={<BarChart3 className="h-6 w-6" aria-hidden />}>
         <WidgetEmptyState
           icon="📊"
           message="暂无任务"
@@ -42,7 +43,7 @@ export const TasksSummaryWidget: React.FC = () => {
   }
 
   return (
-    <BaseWidget title="任务概览" icon="📊">
+    <BaseWidget title="任务概览" icon={<BarChart3 className="h-6 w-6" aria-hidden />}>
       <div className="flex flex-col h-full min-h-[160px]">
         {/* Task Counts Grid */}
         <div className="grid grid-cols-4 gap-3 mb-4">

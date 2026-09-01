@@ -6,6 +6,31 @@
  * This ensures the command palette automatically includes all data.
  */
 
+import { createElement, type ReactElement } from 'react';
+import {
+  BarChart3,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  ClipboardList,
+  FileText,
+  Folder,
+  Globe,
+  HelpCircle,
+  Keyboard,
+  Lightbulb,
+  Link as LinkIcon,
+  Pin,
+  Plus,
+  Presentation,
+  Settings2,
+  Square,
+  Star,
+  Timer,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
 import type { SearchResult, NavigationPage, Command, CommandPaletteMode } from './types';
 import { NAVIGATION_PAGES, SEARCH_ENGINES } from './types';
 import { useNotesStore } from '../../stores/useNotesStore';
@@ -195,6 +220,11 @@ export function fuzzyMatch(query: string, text: string): number {
 
 function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Build a lucide icon element for search result rows */
+function iconEl(icon: LucideIcon, className = 'w-5 h-5'): ReactElement {
+  return createElement(icon, { className });
 }
 
 // =============================================================================
@@ -396,7 +426,7 @@ export function getNavigationResults(navigate: (path: string) => void): SearchRe
     type: 'page' as const,
     title: page.name,
     subtitle: page.description,
-    icon: page.icon,
+    icon: iconEl(page.icon),
     score: 0,
     keywords: page.keywords,
     action: () => navigate(page.path),
@@ -424,7 +454,7 @@ export function getExternalSearchResults(
     type: 'external' as const,
     title: `Search Web`,
     subtitle: `"${query}" on ${preferredEngine.name}`,
-    icon: '🌐',
+    icon: iconEl(Globe),
     score: 10, // Lower priority than internal results
     action: () => {
       const url = preferredEngine.urlTemplate.replace('{query}', encodedQuery);
@@ -445,7 +475,7 @@ export function getNotesResults(navigate: (path: string) => void): SearchResult[
     type: 'note' as const,
     title: note.title || '未命名笔记',
     subtitle: note.contentText?.slice(0, 100) || undefined,
-    icon: note.isPinned ? '📌' : note.isFavorite ? '⭐' : '📝',
+    icon: note.isPinned ? iconEl(Pin) : note.isFavorite ? iconEl(Star) : iconEl(FileText),
     score: 0,
     keywords: note.tags || [],
     action: () => {
@@ -479,7 +509,7 @@ export function getTasksResults(navigate: (path: string) => void): SearchResult[
       type: 'task' as const,
       title: task.title,
       subtitle: `${statusLabel}${dueDateLabel}${priorityLabel}`,
-      icon: task.status === 'done' ? '✅' : task.priority === 'high' ? '🔴' : task.priority === 'low' ? '🔵' : '📋',
+      icon: task.status === 'done' ? iconEl(CheckCircle2) : task.priority === 'high' ? iconEl(Circle, 'w-5 h-5 fill-current text-status-error') : task.priority === 'low' ? iconEl(Circle, 'w-5 h-5 fill-current text-accent-blue') : iconEl(ClipboardList),
       score: 0,
       keywords: task.tags || [],
       action: () => navigate('/tasks'),
@@ -515,7 +545,7 @@ export function getEventsResults(navigate: (path: string) => void): SearchResult
         type: 'event' as const,
         title: event.title,
         subtitle: `${dateLabel}${timeStr ? ' · ' + timeStr : ''}`,
-        icon: '📅',
+        icon: iconEl(CalendarDays),
         score: 0,
         keywords: [],
         action: () => navigate('/schedule'),
@@ -544,7 +574,7 @@ export function getBookmarksResults(): SearchResult[] {
     type: 'bookmark' as const,
     title: link.title,
     subtitle: link.url,
-    icon: '🔗',
+    icon: iconEl(LinkIcon),
     score: 0,
     keywords: link.tags || [],
     action: () => {
@@ -571,7 +601,7 @@ export function getDiagramsResults(navigate: (path: string) => void): SearchResu
     type: 'diagram' as const,
     title: diagram.title,
     subtitle: 'Diagram',
-    icon: '📊',
+    icon: iconEl(BarChart3),
     score: 0,
     keywords: [],
     action: () => navigate(`/diagrams/${diagram.id}`),
@@ -593,7 +623,7 @@ export function getFormsResults(navigate: (path: string) => void): SearchResult[
     type: 'form' as const,
     title: form.title,
     subtitle: form.description || 'Form',
-    icon: '📋',
+    icon: iconEl(ClipboardList),
     score: 0,
     keywords: [],
     action: () => navigate(`/forms/${form.id}/edit`),
@@ -622,7 +652,7 @@ export function getTimeEntriesResults(navigate: (path: string) => void): SearchR
       type: 'time-entry' as const,
       title: entry.description || 'Time Entry',
       subtitle: project ? `Project: ${project.name}` : undefined,
-      icon: '⏱️',
+      icon: iconEl(Timer),
       score: 0,
       keywords: entry.tags || [],
       action: () => navigate('/schedule'),
@@ -645,7 +675,7 @@ export function getFAQResults(openSupportModal: (tab: 'help') => void): SearchRe
     type: 'faq' as const,
     title: faq.question,
     subtitle: faq.answer.slice(0, 100) + (faq.answer.length > 100 ? '...' : ''),
-    icon: '❓',
+    icon: iconEl(HelpCircle),
     score: 0,
     keywords: ['faq', 'help', 'question', ...faq.keywords],
     action: () => openSupportModal('help'),
@@ -664,7 +694,7 @@ export function getHelpResults(openSupportModal: (tab: 'report' | 'help' | 'docs
     type: 'help' as const,
     title: topic.title,
     subtitle: topic.description,
-    icon: '💡',
+    icon: iconEl(Lightbulb),
     score: 0,
     keywords: ['help', ...topic.keywords],
     action: () => {
@@ -711,7 +741,7 @@ export function getAutomationResults(navigate: (path: string) => void): SearchRe
     type: 'automation' as const,
     title: rule.name,
     subtitle: `${rule.trigger.type} → ${rule.actions.length} action(s)`,
-    icon: '⚡',
+    icon: iconEl(Zap),
     score: 0,
     keywords: ['automation', 'rule', 'trigger', rule.trigger.type],
     action: () => navigate('/automations'),
@@ -734,7 +764,7 @@ export function getTemplateResults(navigate: (path: string) => void): SearchResu
     type: 'template' as const,
     title: template.name,
     subtitle: template.description || 'Task template',
-    icon: '📋',
+    icon: iconEl(ClipboardList),
     score: 0,
     keywords: ['template', 'task', 'recurring', ...(template.tags || [])],
     action: () => navigate('/tasks'),
@@ -756,7 +786,7 @@ export function getProjectsResults(navigate: (path: string) => void): SearchResu
     type: 'project' as const,
     title: project.name,
     subtitle: project.clientName || 'Project',
-    icon: '📁',
+    icon: iconEl(Folder),
     score: 0,
     keywords: ['project', 'time tracking', project.name.toLowerCase(), project.clientName?.toLowerCase() || ''].filter(Boolean),
     action: () => navigate('/schedule'),
@@ -940,7 +970,7 @@ export function getSettingsResults(
     type: (item.actionType === 'modal' ? 'action' : 'setting') as 'action' | 'setting',
     title: item.title,
     subtitle: item.description,
-    icon: item.actionType === 'modal' ? '🔲' : '⚙️',
+    icon: item.actionType === 'modal' ? iconEl(Square) : iconEl(Settings2),
     score: 0,
     keywords: item.keywords,
     action: () => {
@@ -1055,7 +1085,7 @@ export function getAboutUsResults(openModal?: (modalId: string) => void): Search
     type: 'action' as const,
     title: item.title,
     subtitle: item.description,
-    icon: '📖',
+    icon: iconEl(BookOpen),
     score: 0,
     keywords: item.keywords,
     action: () => {
@@ -1078,7 +1108,7 @@ export function getShortcutsResults(navigate: (path: string) => void): SearchRes
     type: 'shortcut' as const,
     title: shortcut.keys,
     subtitle: `${shortcut.description} (${shortcut.context})`,
-    icon: '⌨️',
+    icon: iconEl(Keyboard),
     score: 0,
     keywords: ['shortcut', 'keyboard', 'hotkey', shortcut.context.toLowerCase(), ...shortcut.description.toLowerCase().split(' ')],
     action: () => {
@@ -1131,7 +1161,7 @@ export function getDocumentsResults(navigate: (path: string) => void): SearchRes
     type: 'document' as const,
     title: doc.title || '未命名文档',
     subtitle: `${doc.type.charAt(0).toUpperCase() + doc.type.slice(1)}${doc.updatedAt ? ` · Updated ${new Date(doc.updatedAt).toLocaleDateString()}` : ''}`,
-    icon: doc.type === 'sheet' ? '📊' : doc.type === 'slides' ? '📽️' : '📄',
+    icon: doc.type === 'sheet' ? iconEl(BarChart3) : doc.type === 'slides' ? iconEl(Presentation) : iconEl(FileText),
     score: 0,
     keywords: ['document', 'doc', doc.type],
     action: () => navigate(`/create/${doc.id}`),
@@ -1758,7 +1788,7 @@ export function getQuickCreateResult(query: string): SearchResult | null {
     type: 'action' as const,
     title: `Create task: "${trimmed}"`,
     subtitle: 'Press Enter to create this task',
-    icon: '➕',
+    icon: iconEl(Plus),
     score: 1, // Lowest priority - only shows when nothing else matches
     action: () => {
       const { addTask } = useKanbanStore.getState();

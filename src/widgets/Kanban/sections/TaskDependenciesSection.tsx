@@ -12,6 +12,7 @@
 
 import React from 'react';
 import { DependencyPicker } from '../../../components/DependencyPicker';
+import { AlertTriangle, Flag, Handshake, Lock, RefreshCw, SkipForward, Unlock, X } from 'lucide-react';
 import type { Task, DependencyType, TaskDependency } from '../../../types';
 
 // Helper functions for dependency display
@@ -36,12 +37,12 @@ const getStatusLabel = (status: string): string => {
   return labels[status] || status;
 };
 
-const getDependencyIcon = (type: DependencyType): string => {
-  const icons = {
-    'finish-to-start': '⏭️',
-    'start-to-start': '🤝',
-    'finish-to-finish': '🏁',
-    'start-to-finish': '🔄',
+const getDependencyIcon = (type: DependencyType): React.ReactNode => {
+  const icons: Record<DependencyType, React.ReactNode> = {
+    'finish-to-start': <SkipForward className="h-4 w-4" aria-hidden />,
+    'start-to-start': <Handshake className="h-4 w-4" aria-hidden />,
+    'finish-to-finish': <Flag className="h-4 w-4" aria-hidden />,
+    'start-to-finish': <RefreshCw className="h-4 w-4" aria-hidden />,
   };
   return icons[type];
 };
@@ -106,7 +107,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
                     {/* Overdue blocker warning */}
                     {isOverdue && (
                       <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark border border-status-error-border dark:border-status-error-border-dark">
-                        ⚠️ 逾期 {daysOverdue} 天
+                        <AlertTriangle className="h-3 w-3" aria-hidden /> 逾期 {daysOverdue} 天
                       </span>
                     )}
                   </div>
@@ -127,7 +128,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
                   className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 text-text-light-secondary hover:text-status-error transition-opacity"
                   title="移除依赖"
                 >
-                  ✕
+                  <X className="h-3.5 w-3.5" aria-hidden />
                 </button>
               </div>
             );
@@ -135,7 +136,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
         </div>
       ) : (
         <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary py-1 mb-3">
-          🔓 暂无依赖
+          <Unlock className="h-3.5 w-3.5" aria-hidden /> 暂无依赖
         </div>
       )}
 
@@ -143,7 +144,7 @@ export const TaskDependenciesSection: React.FC<TaskDependenciesSectionProps> = (
       {blockedTasks.length > 0 && (
         <div className="mb-4">
           <div className="text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
-            🔒 阻塞以下任务
+            <Lock className="h-3.5 w-3.5" aria-hidden /> 阻塞以下任务
           </div>
           <div className="space-y-1">
             {blockedTasks.map((blocked) => (

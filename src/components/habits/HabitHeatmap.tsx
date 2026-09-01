@@ -228,7 +228,7 @@ export function HabitHeatmap({ habitId, weeks: initialWeeks = 20 }: HabitHeatmap
           <ul className="space-y-1">
             {selectedDay.habits.map((name) => (
               <li key={name} className="text-xs text-text-light-primary dark:text-text-dark-primary flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-status-success shrink-0" />
                 {name}
               </li>
             ))}

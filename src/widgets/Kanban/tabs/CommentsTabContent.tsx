@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MessageSquare } from 'lucide-react';
 import type { TaskComment } from '../../../types';
 
 interface CommentsTabContentProps {
@@ -43,7 +44,7 @@ export const CommentsTabContent: React.FC<CommentsTabContentProps> = ({
             ))
         ) : (
           <div className="text-center py-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
-            💬 暂无评论
+            <MessageSquare className="h-3.5 w-3.5" aria-hidden /> 暂无评论
           </div>
         )}
       </div>

@@ -32,7 +32,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Archive, GripVertical, Trash2 } from 'lucide-react';
+import { Archive, Check, FileText, GripVertical, MoreHorizontal, Pencil, Sparkles, Star, Trash2, Undo2, X, Link as LinkIcon } from 'lucide-react';
 import { CollectionSidebar } from '../components/CollectionSidebar';
 import { useLinkLibraryStore, type Link, type DuplicateGroup } from '../stores/useLinkLibraryStore';
 import { useLinkFoldersStore } from '../stores/useLinkFoldersStore';
@@ -867,14 +867,14 @@ export const LinkLibrary: React.FC = () => {
                     className="p-2 text-accent-green hover:bg-accent-green/10 rounded transition-colors"
                     title="接受"
                   >
-                    ✓
+                    <Check className="w-4 h-4" aria-hidden />
                   </button>
                   <button
                     onClick={() => handleRejectSuggestion(suggestion.linkId)}
                     className="p-2 text-accent-red hover:bg-accent-red/10 rounded transition-colors"
                     title="拒绝"
                   >
-                    ✕
+                    <X className="w-4 h-4" aria-hidden />
                   </button>
                 </div>
               );
@@ -919,7 +919,7 @@ export const LinkLibrary: React.FC = () => {
             </div>
           ) : (
             <>
-              <span className="text-6xl mb-4">🔗</span>
+              <LinkIcon className="h-12 w-12 mb-4 text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden />
               <h3 className="text-xl font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
                 {searchQuery ? '未找到链接' : '还没有收藏'}
               </h3>
@@ -1514,7 +1514,7 @@ const SortableLinkItem = memo(function SortableLinkItem({
           }`}
           title={link.isFavorite ? '从收藏中移除' : '添加至收藏'}
         >
-          {link.isFavorite ? '★' : '☆'}
+          <Star className="w-4 h-4" fill={link.isFavorite ? 'currentColor' : 'none'} aria-hidden />
         </button>
         <button
           onClick={(e) => {
@@ -1524,7 +1524,7 @@ const SortableLinkItem = memo(function SortableLinkItem({
           className="p-1 rounded text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-blue transition-colors"
           title="编辑"
         >
-          ✎
+          <Pencil className="w-4 h-4" aria-hidden />
         </button>
         <button
           onClick={(e) => {
@@ -1534,7 +1534,7 @@ const SortableLinkItem = memo(function SortableLinkItem({
           className="p-1 rounded text-text-light-secondary dark:text-text-dark-secondary hover:text-accent-red transition-colors"
           title="删除"
         >
-          ✕
+          <X className="w-4 h-4" aria-hidden />
         </button>
       </div>
     </div>
@@ -1681,7 +1681,7 @@ const LinkCard = memo<LinkCardProps>(({
               className="p-0.5 rounded text-sm text-accent-green hover:text-accent-green-hover transition-colors flex-shrink-0"
               title="恢复"
             >
-              ↩️
+              <Undo2 className="w-4 h-4" aria-hidden />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onPermanentDelete?.(); }}
@@ -1701,7 +1701,7 @@ const LinkCard = memo<LinkCardProps>(({
                 }`}
               title={link.isFavorite ? '从收藏中移除' : '添加至收藏'}
             >
-              {link.isFavorite ? '★' : '☆'}
+              <Star className="w-4 h-4" fill={link.isFavorite ? 'currentColor' : 'none'} aria-hidden />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onContextMenu(e); }}
@@ -1709,7 +1709,7 @@ const LinkCard = memo<LinkCardProps>(({
               title="更多操作"
               aria-label={`更多操作：${link.title}`}
             >
-              ⋯
+              <MoreHorizontal className="w-4 h-4" aria-hidden />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleArchive(); }}
@@ -1850,7 +1850,7 @@ const LinkListItem = memo<LinkCardProps>(({
             className="p-0.5 rounded text-sm text-accent-green hover:text-accent-green-hover transition-colors flex-shrink-0"
             title="恢复"
           >
-            ↩️
+            <Undo2 className="w-4 h-4" aria-hidden />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onPermanentDelete?.(); }}
@@ -1870,7 +1870,7 @@ const LinkListItem = memo<LinkCardProps>(({
               }`}
             title={link.isFavorite ? '从收藏中移除' : '添加至收藏'}
           >
-            {link.isFavorite ? '★' : '☆'}
+            <Star className="w-4 h-4" fill={link.isFavorite ? 'currentColor' : 'none'} aria-hidden />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onContextMenu(e); }}
@@ -1878,7 +1878,7 @@ const LinkListItem = memo<LinkCardProps>(({
             title="更多操作"
             aria-label={`更多操作：${link.title}`}
           >
-            ⋯
+            <MoreHorizontal className="w-4 h-4" aria-hidden />
           </button>
 
           <button
@@ -1936,14 +1936,14 @@ function LinkContextMenu({ x, y, link, onClose, onEdit, onFavorite, onArchive, o
           onClick={onEdit}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
-          <span className="text-sm">✏️</span>
+          <Pencil className="w-4 h-4" aria-hidden />
           <span className="text-sm">编辑</span>
         </button>
         <button
           onClick={onFavorite}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
-          <span className="text-sm">{link.isFavorite ? '☆' : '★'}</span>
+          <Star className="w-4 h-4" fill={link.isFavorite ? 'none' : 'currentColor'} aria-hidden />
           <span className="text-sm">{link.isFavorite ? '从收藏中移除' : '添加至收藏'}</span>
         </button>
         <button
@@ -1957,14 +1957,14 @@ function LinkContextMenu({ x, y, link, onClose, onEdit, onFavorite, onArchive, o
           onClick={onCreateTask}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
-          <span className="text-sm">✓</span>
+          <Check className="w-4 h-4" aria-hidden />
           <span className="text-sm">创建任务</span>
         </button>
         <button
           onClick={onCreateNote}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
-          <span className="text-sm">📝</span>
+          <FileText className="w-4 h-4" aria-hidden />
           <span className="text-sm">保存为笔记</span>
         </button>
         <div className="border-t border-border-light dark:border-border-dark my-1" />
@@ -1972,7 +1972,7 @@ function LinkContextMenu({ x, y, link, onClose, onEdit, onFavorite, onArchive, o
           onClick={onDelete}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-status-error/10 text-status-error"
         >
-          <span className="text-sm">🗑</span>
+          <Trash2 className="w-4 h-4" aria-hidden />
           <span className="text-sm">删除</span>
         </button>
       </div>
@@ -2146,7 +2146,7 @@ function DedupeModal({
       <div className="space-y-4">
         {duplicateGroups.length === 0 ? (
           <div className="text-center py-8">
-            <span className="text-4xl mb-4 block">✨</span>
+            <Sparkles className="h-10 w-10 mb-4 block text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden />
             <p className="text-text-light-primary dark:text-text-dark-primary font-medium">
               未发现重复链接！
             </p>

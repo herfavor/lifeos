@@ -6,11 +6,12 @@
  */
 
 import React from 'react';
+import { BarChart3, Bot, FileText, Laptop, MessageSquare, RefreshCw, Target, Wrench } from 'lucide-react';
 export const AITerminalSettings: React.FC = () => {
   return (
     <div className="bento-card p-6">
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-2xl">🤖</span>
+        <Bot className="h-6 w-6" aria-hidden />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
           AI Terminal
         </h2>
@@ -23,7 +24,7 @@ export const AITerminalSettings: React.FC = () => {
       {/* Quick Info */}
       <div className="mb-6 p-4 bg-status-info-bg dark:bg-status-info-bg-dark border border-status-info-border dark:border-status-info-border-dark rounded-lg">
         <p className="text-sm text-status-info-text dark:text-status-info-text-dark mb-2">
-          <strong>🎯 全新多提供商系统</strong>
+          <strong><Target className="h-3.5 w-3.5" aria-hidden /> 全新多提供商系统</strong>
         </p>
         <ul className="text-xs text-status-info-text dark:text-status-info-text-dark space-y-1">
           <li>• 从 8 家 AI 提供商中选择（OpenRouter、Groq、HuggingFace、Mistral、Gemini、OpenAI、Claude、Grok）</li>
@@ -82,12 +83,12 @@ export const AITerminalSettings: React.FC = () => {
           AI Terminal 能做什么？
         </p>
         <ul className="text-sm text-text-light-secondary dark:text-text-dark-secondary space-y-1">
-          <li>💬 回答任何主题的问题</li>
-          <li>💻 生成并解释代码（React、TypeScript、JavaScript）</li>
-          <li>🔧 帮助调试错误和问题</li>
-          <li>📝 协助提升效率与规划</li>
-          <li>🔄 提供商失败时自动切换</li>
-          <li>📊 跟踪所有提供商的使用情况</li>
+          <li><MessageSquare className="h-3.5 w-3.5" aria-hidden /> 回答任何主题的问题</li>
+          <li><Laptop className="h-3.5 w-3.5" aria-hidden /> 生成并解释代码（React、TypeScript、JavaScript）</li>
+          <li><Wrench className="h-3.5 w-3.5" aria-hidden /> 帮助调试错误和问题</li>
+          <li><FileText className="h-3.5 w-3.5" aria-hidden /> 协助提升效率与规划</li>
+          <li><RefreshCw className="h-3.5 w-3.5" aria-hidden /> 提供商失败时自动切换</li>
+          <li><BarChart3 className="h-3.5 w-3.5" aria-hidden /> 跟踪所有提供商的使用情况</li>
         </ul>
       </div>
     </div>

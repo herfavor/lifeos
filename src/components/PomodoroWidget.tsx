@@ -1,4 +1,4 @@
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Target, Coffee, Star } from 'lucide-react';
 import { usePomodoroStore } from '../stores/usePomodoroStore';
 
 /**
@@ -36,10 +36,10 @@ export function PomodoroWidget({ onClick }: PomodoroWidgetProps) {
     longBreak: 'text-accent-blue',
   };
 
-  const modeIcons = {
-    focus: '🎯',
-    shortBreak: '☕',
-    longBreak: '🌟',
+  const modeIcons: Record<string, React.ReactNode> = {
+    focus: <Target className="w-5 h-5" />,
+    shortBreak: <Coffee className="w-5 h-5" />,
+    longBreak: <Star className="w-5 h-5" />,
   };
 
   const handlePlayPause = (e: React.MouseEvent) => {
@@ -59,7 +59,7 @@ export function PomodoroWidget({ onClick }: PomodoroWidgetProps) {
       className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-light-secondary/50 dark:bg-surface-dark-secondary/50 border border-border-light dark:border-border-dark hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
     >
       {/* Mode Icon */}
-      <span className="text-lg">{modeIcons[mode]}</span>
+      <span className="flex items-center">{modeIcons[mode]}</span>
 
       {/* Timer Display */}
       <span className={`font-mono text-sm font-medium ${modeColors[mode]}`}>

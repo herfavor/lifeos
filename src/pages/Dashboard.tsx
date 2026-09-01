@@ -25,6 +25,7 @@ import {
 } from '@dnd-kit/sortable';
 import { BackgroundCustomizer, type BackgroundSettings } from '../components/BackgroundCustomizer';
 import { DashboardTemplatePicker } from '../components/DashboardTemplatePicker';
+import { DemoDataCard } from '../components/DemoDataCard';
 import { HomeOverview } from '../components/dashboard/HomeOverview';
 import { PageContent } from '../components/PageContent';
 import { PresetManager } from '../components/PresetManager';
@@ -234,6 +235,8 @@ export const Dashboard: React.FC = () => {
             </div>
           )}
         </section>
+
+        <DemoDataCard className="mt-4" />
       </div>
 
       <WidgetManager isOpen={showWidgetManager} onClose={() => setShowWidgetManager(false)} />

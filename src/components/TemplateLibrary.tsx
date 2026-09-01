@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { X, Plus, Edit2, Trash2, Search, Sparkles, Tag as TagIcon } from 'lucide-react';
+import { X, Plus, Edit2, Trash2, Search, Sparkles, Tag as TagIcon, BookOpen, Briefcase, CheckCircle2, User, type LucideIcon } from 'lucide-react';
 import { useNotesStore } from '../stores/useNotesStore';
 import type { NoteTemplate } from '../types/notes';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -17,11 +17,11 @@ interface TemplateLibraryProps {
 
 type TemplateCategory = 'Work' | 'Personal' | 'Productivity' | 'All';
 
-const categoryIcons: Record<TemplateCategory, string> = {
-  All: '📚',
-  Work: '💼',
-  Personal: '👤',
-  Productivity: '✅',
+const categoryIcons: Record<TemplateCategory, LucideIcon> = {
+  All: BookOpen,
+  Work: Briefcase,
+  Personal: User,
+  Productivity: CheckCircle2,
 };
 
 const CATEGORY_LABELS: Record<TemplateCategory, string> = {
@@ -497,7 +497,9 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                 {/* Category Filter + New Button */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex gap-2 overflow-x-auto">
-                    {(['All', 'Work', 'Personal', 'Productivity'] as TemplateCategory[]).map((cat) => (
+                    {(['All', 'Work', 'Personal', 'Productivity'] as TemplateCategory[]).map((cat) => {
+                      const CatIcon = categoryIcons[cat];
+                      return (
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
@@ -507,10 +509,11 @@ export function TemplateLibrary({ isOpen, onClose, onSelect }: TemplateLibraryPr
                             : 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary hover:bg-border-light dark:hover:bg-border-dark'
                         }`}
                       >
-                        <span>{categoryIcons[cat]}</span>
+                        <CatIcon className="w-4 h-4" />
                         {CATEGORY_LABELS[cat]}
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                   <button
                     onClick={handleCreateTemplate}

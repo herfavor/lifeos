@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, FolderOpen, Save } from 'lucide-react';
+import { AlertTriangle, Check, CheckCircle2, FolderOpen, Save } from 'lucide-react';
 import {
   isFileSystemAccessSupported,
   requestAutoSaveDirectory,
@@ -228,14 +228,17 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
         </h2>
 
         {!isFileSystemAccessSupported() ? (
-          <div className="p-4 bg-accent-yellow/10 border border-accent-yellow/30 rounded-lg">
-            <p className="text-sm text-accent-yellow">
-              <strong>⚠️ 不支持 {navigator.userAgent.includes('Firefox') ? 'Firefox' : navigator.userAgent.includes('Safari') ? 'Safari' : '此浏览器'}</strong>
-              <br />
-              自动保存到文件需要使用基于 Chromium 的浏览器（Chrome、Edge、Brave、Arc、Opera 等）。
-              <br />
-              你的数据仍会自动保存到 IndexedDB。你可以随时手动导出备份。
-            </p>
+          <div className="flex gap-3 p-4 bg-status-warning-bg dark:bg-status-warning-bg-dark border border-status-warning-border dark:border-status-warning-border-dark border-l-4 border-l-status-warning rounded-lg">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-status-warning" aria-hidden />
+            <div>
+              <p className="text-sm font-semibold text-status-warning-text dark:text-status-warning-text-dark">
+                不支持 {navigator.userAgent.includes('Firefox') ? 'Firefox' : navigator.userAgent.includes('Safari') ? 'Safari' : '此浏览器'}
+              </p>
+              <p className="text-sm text-status-warning-text dark:text-status-warning-text-dark mt-1">
+                自动保存到文件需要使用基于 Chromium 的浏览器（Chrome、Edge、Brave、Arc、Opera 等）。
+                你的数据仍会自动保存到 IndexedDB，你也可以随时手动导出备份。
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -252,7 +255,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
               <div className="flex items-center gap-2">
                 {recentlySaved === 'autoSave' && (
                   <span className="text-sm font-medium text-accent-green animate-fade-in">
-                    ✓ 已保存
+                    <Check className="h-3.5 w-3.5" aria-hidden /> 已保存
                   </span>
                 )}
                 <button
@@ -270,14 +273,14 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
             {/* Auto-Save Status */}
             {preferences.autoSaveEnabled && (
-              <div className="p-4 bg-accent-green/10 border border-accent-green/30 rounded-lg">
+              <div className="p-4 bg-status-success-bg dark:bg-status-success-bg-dark border border-status-success-border dark:border-status-success-border-dark rounded-lg">
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">✅</span>
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-status-success mt-0.5" aria-hidden />
                   <div className="flex-1">
-                    <p className="font-semibold text-accent-green mb-1">
+                    <p className="font-semibold text-status-success-text dark:text-status-success-text-dark mb-1">
                       已启用自动保存
                     </p>
-                    <p className="text-sm text-accent-green">
+                    <p className="text-sm text-status-success-text dark:text-status-success-text-dark">
                       每当发生更改时，你的数据都会自动备份到你选择的文件夹。
                       {preferences.lastAutoSave && (
                         <>
@@ -287,7 +290,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                       )}
                     </p>
                     {preferences.customFilename && (
-                      <p className="text-sm text-accent-green mt-2">
+                      <p className="text-sm text-status-success-text dark:text-status-success-text-dark mt-2">
                         <strong>文件名：</strong> {preferences.customFilename}
                         <br />
                         <strong>保留版本数：</strong> {preferences.versionCount || 7}

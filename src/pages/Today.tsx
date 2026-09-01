@@ -21,7 +21,7 @@ import {
   Clock,
   Plus,
   ChevronRight,
-  Target,
+  Timer,
   Zap,
   CloudSun,
   Focus,
@@ -32,7 +32,6 @@ import {
 import { DayView } from '../components/DayView';
 import { TodayFocus } from '../components/today/TodayFocus';
 import { TimeboxSelector } from '../components/today/TimeboxSelector';
-import { TimeboxSummary } from '../components/today/TimeboxSummary';
 import { TomorrowPlanning } from '../components/today/TomorrowPlanning';
 import { WeeklyPlanning } from '../components/today/WeeklyPlanning';
 import { CapacityBar } from '../components/today/CapacityBar';
@@ -56,7 +55,7 @@ import { getTodayTasks } from '../utils/todayTasks';
 import { createScheduleEventLink, createScheduleEventLinkForHour } from '../utils/scheduleDeepLink';
 
 /**
- * TodayMetrics - Shows today's summary statistics
+ * TodayMetrics - Single horizontal stat bar: completion progress + grouped numbers
  */
 const TodayMetrics: React.FC<{
   tasksCompleted: number;
@@ -65,66 +64,66 @@ const TodayMetrics: React.FC<{
   eventsCount: number;
   dateKey: string;
 }> = ({ tasksCompleted, tasksDue, hoursTracked, eventsCount, dateKey }) => {
+  const totalPlanned = useDailyPlanningStore((s) => s.getTotalPlannedMinutes(dateKey));
+  const plan = useDailyPlanningStore((s) => s.getPlan(dateKey));
+  const availableMinutes = plan.availableHours * 60;
+  const isOverbooked = totalPlanned > availableMinutes;
+  const percent = tasksDue > 0 ? Math.round((tasksCompleted / tasksDue) * 100) : 0;
+
+  const formatMinutes = (mins: number): string => {
+    if (mins < 60) return `${mins}分钟`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}小时${m}分` : `${h}小时`;
+  };
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
-      <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark">
-        <div className="flex items-center gap-2 text-accent-green mb-1">
-          <CheckCircle2 className="w-4 h-4" />
-          <span className="text-xs font-medium uppercase tracking-wide">已完成</span>
-        </div>
-        <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          {tasksCompleted}
-          <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary ml-1">
-            / {tasksDue} 个任务
+    <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border border-border-light bg-surface-light-elevated px-4 py-3 dark:border-border-dark dark:bg-surface-dark-elevated">
+      {/* Completion progress */}
+      <div className="flex min-w-[220px] flex-1 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 text-status-success">
+          <CheckCircle2 className="h-4 w-4" />
+          <span className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">
+            {tasksCompleted}/{tasksDue}
           </span>
         </div>
+        <div className="h-1.5 min-w-[80px] flex-1 overflow-hidden rounded-full bg-surface-light dark:bg-surface-dark">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${percent >= 100 ? 'bg-status-success' : 'bg-accent-primary'}`}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+        <span className="w-9 shrink-0 text-right text-xs text-text-light-secondary dark:text-text-dark-secondary">
+          {tasksDue > 0 ? `${percent}%` : '—'}
+        </span>
       </div>
 
-      <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark">
-        <div className="flex items-center gap-2 text-accent-primary mb-1">
-          <Clock className="w-4 h-4" />
-          <span className="text-xs font-medium uppercase tracking-wide">已记录</span>
-        </div>
-        <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          {hoursTracked.toFixed(1)}
-          <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary ml-1">
-            小时
+      {/* Events */}
+      <div className="flex items-center gap-1.5">
+        <Calendar className="h-4 w-4 text-accent-blue" aria-hidden />
+        <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          <span className="font-semibold text-text-light-primary dark:text-text-dark-primary">{eventsCount}</span> 个事件
+        </span>
+      </div>
+
+      {/* Tracked time */}
+      <div className="flex items-center gap-1.5">
+        <Clock className="h-4 w-4 text-accent-cyan" aria-hidden />
+        <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          已记录 <span className="font-semibold text-text-light-primary dark:text-text-dark-primary">{hoursTracked.toFixed(1)}</span> 小时
+        </span>
+      </div>
+
+      {/* Planned time vs available */}
+      {totalPlanned > 0 && (
+        <div className="flex items-center gap-1.5">
+          <Timer className={`h-4 w-4 ${isOverbooked ? 'text-status-error' : 'text-accent-purple'}`} aria-hidden />
+          <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+            已计划 <span className={`font-semibold ${isOverbooked ? 'text-status-error' : 'text-text-light-primary dark:text-text-dark-primary'}`}>{formatMinutes(totalPlanned)}</span>
+            <span className="text-text-light-tertiary dark:text-text-dark-tertiary"> / {plan.availableHours} 小时</span>
           </span>
         </div>
-      </div>
-
-      <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark">
-        <div className="flex items-center gap-2 text-accent-secondary mb-1">
-          <Calendar className="w-4 h-4" />
-          <span className="text-xs font-medium uppercase tracking-wide">事件</span>
-        </div>
-        <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          {eventsCount}
-          <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary ml-1">
-            已安排
-          </span>
-        </div>
-      </div>
-
-      <div className="bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg p-3 border border-border-light dark:border-border-dark">
-        <div className="flex items-center gap-2 text-accent-purple mb-1">
-          <Target className="w-4 h-4" />
-          <span className="text-xs font-medium uppercase tracking-wide">
-            {tasksDue > 0 ? '今日完成率' : '暂无计划'}
-          </span>
-        </div>
-        <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          {tasksDue > 0 ? Math.round((tasksCompleted / tasksDue) * 100) : '—'}
-          {tasksDue > 0 && (
-            <span className="text-sm font-normal text-text-light-secondary dark:text-text-dark-secondary ml-1">
-              %
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Timebox summary as 5th metric card */}
-      <TimeboxSummary dateKey={dateKey} />
+      )}
     </div>
   );
 };

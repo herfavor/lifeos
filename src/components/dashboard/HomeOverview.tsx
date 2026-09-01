@@ -160,7 +160,7 @@ export const HomeOverview: React.FC = () => {
           <div className="flex min-w-0 flex-col justify-between">
             <div>
               <p className="text-sm font-semibold text-white/65">{greeting}，这里是你的今日工作台</p>
-              <h2 className="mt-1.5 max-w-xl text-[26px] font-bold tracking-tight text-white leading-tight">
+              <h2 className="mt-1.5 max-w-xl text-[28px] font-bold tracking-tight text-white leading-tight">
                 {focusTask ? '现在，只推进这一件事。' : '先决定今天最重要的一步。'}
               </h2>
 

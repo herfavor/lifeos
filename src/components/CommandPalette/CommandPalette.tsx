@@ -16,7 +16,7 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, ExternalLink, ArrowRight, Settings, Clock } from 'lucide-react';
+import { Search, X, ExternalLink, ArrowRight, Settings, Clock, BarChart3, CalendarDays, CheckCircle2, ClipboardList, FileText, Folder, Globe, HelpCircle, Home, Keyboard, Link, Lightbulb, Puzzle, Settings2, Square, Target, Timer, Zap, type LucideIcon } from 'lucide-react';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import {
   searchAll,
@@ -46,28 +46,28 @@ interface CommandPaletteProps {
   onOpenModal?: (modalId: string) => void;
 }
 
-const TYPE_ICONS: Record<string, string> = {
-  page: '🏠',
-  note: '📝',
-  task: '✅',
-  event: '📅',
-  bookmark: '🔗',
-  diagram: '📊',
-  form: '📋',
-  'time-entry': '⏱️',
-  external: '🌐',
-  action: '🔲',
-  faq: '❓',
-  help: '💡',
-  widget: '🧩',
-  setting: '⚙️',
-  automation: '⚡',
-  template: '📋',
-  project: '📁',
-  shortcut: '⌨️',
-  recent: '🕐',
-  habit: '🎯',
-  document: '📄',
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  page: Home,
+  note: FileText,
+  task: CheckCircle2,
+  event: CalendarDays,
+  bookmark: Link,
+  diagram: BarChart3,
+  form: ClipboardList,
+  'time-entry': Timer,
+  external: Globe,
+  action: Square,
+  faq: HelpCircle,
+  help: Lightbulb,
+  widget: Puzzle,
+  setting: Settings2,
+  automation: Zap,
+  template: ClipboardList,
+  project: Folder,
+  shortcut: Keyboard,
+  recent: Clock,
+  habit: Target,
+  document: FileText,
 };
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, onOpenSupportModal, onOpenModal }) => {
@@ -220,7 +220,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
           id: result.id,
           title: result.title,
           type: result.type,
-          icon: typeof result.icon === 'string' ? result.icon : TYPE_ICONS[result.type] || '📄',
+          icon: typeof result.icon === 'string' ? result.icon : '📄',
           path: pathMap[result.type] || '/',
           subtitle: result.subtitle,
         });
@@ -292,7 +292,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
         aria-selected={isSelected}
       >
         <span className="text-xl flex-shrink-0 w-8 text-center">
-          {typeof result.icon === 'string' ? result.icon : TYPE_ICONS[result.type]}
+          {typeof result.icon === 'string'
+            ? result.icon
+            : result.icon ?? (TYPE_ICONS[result.type] ? React.createElement(TYPE_ICONS[result.type], { className: 'w-5 h-5 inline-block align-middle' }) : null)}
         </span>
 
         <div className="flex-1 min-w-0">
@@ -401,7 +403,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                   }
                 `}
               >
-                <span className="text-sm">{tab.icon}</span>
+                <tab.icon className="w-3.5 h-3.5" />
                 {tab.label}
               </button>
             ))}
@@ -414,8 +416,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                     : filter.type === 'status' ? `status:${filter.value}`
                     : `date:${filter.value}`;
                   const colorClass = filter.type === 'tag' ? 'bg-accent-primary/20 text-accent-primary'
-                    : filter.type === 'module' ? 'bg-green-500/20 text-green-600 dark:text-green-400'
-                    : filter.type === 'status' ? 'bg-orange-500/20 text-orange-600 dark:text-orange-400'
+                    : filter.type === 'module' ? 'bg-status-success/15 text-status-success-text dark:text-status-success-text-dark'
+                    : filter.type === 'status' ? 'bg-accent-orange/20 text-accent-orange'
                     : 'bg-accent-blue/20 text-accent-blue';
                   return (
                     <button

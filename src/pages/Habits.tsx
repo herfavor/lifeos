@@ -3,7 +3,7 @@ import {
   Plus, Target, Flame, Archive, RotateCcw, Trash2, Edit2,
   Check, MoreVertical, ChevronDown, ChevronRight, BarChart3, BookTemplate,
   Grid3X3, Lock, Bell, BellOff, Link2, Snowflake,
-  TrendingUp, Search, MessageSquare, Play, Clock, Repeat, X,
+  TrendingUp, Search, MessageSquare, Play, Clock, Repeat, X, Timer, Sunrise, Sun, Moon,
 } from 'lucide-react';
 import { useHabitStore } from '../stores/useHabitStore';
 import { convertHabitToTask } from '../services/habitTaskBridge';
@@ -417,7 +417,7 @@ function HabitModal({ habit, initialTemplate, allHabits, onClose, onSave }: Habi
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
-                  <span className="mr-1">🍅</span>
+                  <Timer className="w-3.5 h-3.5 inline mr-1" aria-hidden />
                   通过番茄钟记录
                 </label>
                 <button
@@ -425,7 +425,7 @@ function HabitModal({ habit, initialTemplate, allHabits, onClose, onSave }: Habi
                   onClick={() => setTrackViaPomodoro(!trackViaPomodoro)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                     trackViaPomodoro
-                      ? 'bg-red-500/10 text-red-500'
+                      ? 'bg-status-error/10 text-status-error'
                       : 'bg-surface-light-alt dark:bg-surface-dark text-text-light-tertiary dark:text-text-dark-tertiary'
                   }`}
                 >
@@ -575,7 +575,7 @@ function HabitCard({
               isCompletedToday
                 ? 'bg-status-success text-white'
                 : isLocked
-                ? 'bg-surface-light-alt dark:bg-surface-dark opacity-50 cursor-not-allowed border-2 border-amber-400/50'
+                ? 'bg-surface-light-alt dark:bg-surface-dark opacity-50 cursor-not-allowed border-2 border-status-warning/50'
                 : trackToday
                 ? 'bg-surface-light-alt dark:bg-surface-dark hover:bg-accent-primary/20 border-2 border-border-light dark:border-border-dark'
                 : 'bg-surface-light-alt dark:bg-surface-dark opacity-50 cursor-not-allowed'
@@ -592,7 +592,7 @@ function HabitCard({
             {isCompletedToday ? (
               <Check className="w-5 h-5" style={{ animation: 'habit-check-in 0.3s ease-out' }} />
             ) : isLocked ? (
-              <Lock className="w-4 h-4 text-amber-500" />
+              <Lock className="w-4 h-4 text-status-warning" />
             ) : (
               <span>{habit.icon}</span>
             )}
@@ -626,13 +626,11 @@ function HabitCard({
                 {habit.trackViaPomodoro && (
                   <>
                     <span className="text-border-light dark:text-border-dark">|</span>
-                    <span className="text-red-500" title={`通过番茄钟记录（${habit.pomodoroSessionsRequired ?? 1} 次会话）`}>
-                      🍅
-                    </span>
+                    <Timer className="w-3.5 h-3.5 text-status-error" aria-label={`通过番茄钟记录（${habit.pomodoroSessionsRequired ?? 1} 次会话）`} />
                   </>
                 )}
                 {isLocked && blockingNames.length > 0 && (
-                  <span className="text-amber-500 text-xs flex items-center gap-1">
+                  <span className="text-status-warning text-xs flex items-center gap-1">
                     <Lock className="w-3 h-3" />
                     需要：{blockingNames.join(', ')}
                   </span>
@@ -750,8 +748,8 @@ function HabitCard({
                 className="flex items-center gap-1 text-xs"
                 title={isFrozenToday ? '今日连续冻结已生效' : `本周剩余 ${freezesRemaining} 次冻结`}
               >
-                <Snowflake className={`w-3.5 h-3.5 ${isFrozenToday ? 'text-sky-400' : 'text-sky-600/50'}`} />
-                <span className={isFrozenToday ? 'text-sky-400' : 'text-text-light-tertiary dark:text-text-dark-tertiary'}>
+                <Snowflake className={`w-3.5 h-3.5 ${isFrozenToday ? 'text-accent-cyan' : 'text-accent-cyan/50'}`} />
+                <span className={isFrozenToday ? 'text-accent-cyan' : 'text-text-light-tertiary dark:text-text-dark-tertiary'}>
                   {isFrozenToday ? '已冻结' : `${freezesRemaining}`}
                 </span>
               </div>
@@ -962,9 +960,9 @@ export function HabitsContent() {
     const habit = habits.find((item) => item.id === habitId);
     if (habit) {
       if (wasCompleted) {
-        toast.info(`已取消「${habit.name}」的今日打卡`);
+        toast.info(`已取消「${habit.title}」的今日打卡`);
       } else {
-        toast.success(`已完成「${habit.name}」`);
+        toast.success(`已完成「${habit.title}」`);
       }
     }
 
@@ -1221,7 +1219,8 @@ export function HabitsContent() {
             <div className="space-y-3">
               {routines.map((routine) => {
                 const progress = getRoutineProgress(routine.id);
-                const timeLabel = { morning: '🌅 早上', afternoon: '☀️ 下午', evening: '🌙 晚上', anytime: '🕐 任意时间' }[routine.timeOfDay];
+                const timeLabel = { morning: '早上', afternoon: '下午', evening: '晚上', anytime: '任意时间' }[routine.timeOfDay];
+                const TimeIcon = { morning: Sunrise, afternoon: Sun, evening: Moon, anytime: Clock }[routine.timeOfDay];
                 return (
                   <div
                     key={routine.id}
@@ -1235,7 +1234,10 @@ export function HabitsContent() {
                             {routine.name}
                           </h3>
                           <div className="flex items-center gap-2 text-sm text-text-light-tertiary dark:text-text-dark-tertiary flex-wrap mt-0.5">
-                            <span>{timeLabel}</span>
+                            <span className="flex items-center gap-1">
+                              <TimeIcon className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                              {timeLabel}
+                            </span>
                             <span className="text-border-light dark:text-border-dark">|</span>
                             <span className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />

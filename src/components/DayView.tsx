@@ -126,7 +126,7 @@ const DraggableEvent: React.FC<DraggableEventProps> = ({
             {event.title}
             {hasConflict && (
               <span className="flex-shrink-0" aria-label="事件重叠">
-                <AlertCircle className="w-3 h-3 text-amber-300" />
+                <AlertCircle className="w-3 h-3 text-status-warning" />
               </span>
             )}
           </div>
@@ -366,6 +366,17 @@ export const DayView: React.FC<DayViewProps> = ({
     return () => window.removeEventListener('mouseup', handleGlobalUp);
   }, [resizeState, handleResizeEnd]);
 
+  // Scroll the timeline so the current hour sits near the top third
+  const timelineScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const now = new Date();
+    if (format(now, 'yyyy-MM-dd') !== dateKey) return;
+    const el = timelineScrollRef.current;
+    if (!el) return;
+    const ratio = (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
+    el.scrollTop = Math.max(0, ratio * el.scrollHeight - el.clientHeight / 3);
+  }, [dateKey, events.length]);
+
   // Render timeline content (shared between DndContext and non-DnD modes)
   const renderTimelineContent = () => (
     <>
@@ -525,7 +536,7 @@ export const DayView: React.FC<DayViewProps> = ({
               {format(date, 'EEEE')}
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {format(date, 'MMMM d, yyyy')}
+              {format(date, 'yyyy年M月d日')}
             </p>
           </div>
           {isToday && (
@@ -557,8 +568,13 @@ export const DayView: React.FC<DayViewProps> = ({
         </div>
       )}
 
-      {/* Timeline with optional drag-drop */}
-      <div className="flex-1 overflow-y-auto relative">
+      {/* Timeline with optional drag-drop; collapsed to a hint strip when the day is empty */}
+      {events.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center px-4 py-8 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          今天暂无日程
+        </div>
+      ) : (
+      <div ref={timelineScrollRef} className="flex-1 overflow-y-auto relative">
         {enableTimeBlocking ? (
           <DndContext
             sensors={sensors}
@@ -586,6 +602,7 @@ export const DayView: React.FC<DayViewProps> = ({
           renderTimelineContent()
         )}
       </div>
+      )}
     </div>
   );
 };

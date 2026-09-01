@@ -8,7 +8,7 @@
 import React, { useState, useCallback } from 'react';
 import { BaseWidget } from './BaseWidget';
 import { WidgetEmptyState } from '../../components/WidgetEmptyState';
-import { Pencil, Trash2, Plus, X } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Bookmark } from 'lucide-react';
 
 interface Bookmark {
   id: string;
@@ -173,7 +173,7 @@ export const BookmarksWidget: React.FC = () => {
   );
 
   return (
-    <BaseWidget title="书签" icon="🔖" subtitle={`${bookmarks.length} 个链接`}>
+    <BaseWidget title="书签" icon={<Bookmark className="h-6 w-6" aria-hidden />} subtitle={`${bookmarks.length} 个链接`}>
       <div className="flex flex-col h-full min-h-[160px]">
         {bookmarks.length === 0 && !showAddForm ? (
           <WidgetEmptyState

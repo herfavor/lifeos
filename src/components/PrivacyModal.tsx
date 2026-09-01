@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Ban, ClipboardList, KeyRound, Lock, Mail, Scale, ShieldOff, Target, Upload } from 'lucide-react';
 import { Modal } from './Modal';
 import { useThemeStore } from '../stores/useThemeStore';
 import { APP_NAME, APP_REPO_URL, APP_ISSUES_URL } from '../config/appInfo';
@@ -129,7 +130,7 @@ const PrivacyContent: React.FC = () => (
 
     {/* Local-First Philosophy */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">🔒 本地优先理念</h4>
+      <h4 className="text-sm font-semibold mb-1"><Lock className="w-3.5 h-3.5 inline mr-1" />本地优先理念</h4>
       <p className="mb-1 text-xs">
         <strong>你的数据属于你。</strong>你在 LifeOS 中创建的所有内容都保存在你的设备上：
       </p>
@@ -137,13 +138,13 @@ const PrivacyContent: React.FC = () => (
         <li>笔记、任务、日历事件、看板 - 全部存储在本地 IndexedDB 中</li>
         <li>无云存储、无服务器、无远程数据库</li>
         <li>备份保存到你的电脑（可选自动保存到你选择的文件夹）</li>
-        <li>随时导出你的数据（.brain 文件格式）- 100% 归你所有</li>
+        <li>随时导出你的数据（LifeOS 备份文件）- 100% 归你所有</li>
       </ul>
     </section>
 
     {/* Zero Telemetry */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📵 零遥测承诺</h4>
+      <h4 className="text-sm font-semibold mb-1"><ShieldOff className="w-3.5 h-3.5 inline mr-1" />零遥测承诺</h4>
       <p className="mb-1 text-xs">LifeOS 不包含任何形式的统计或追踪：</p>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         <li>无网站分析（无 Google Analytics，无 Cloudflare Analytics）</li>
@@ -160,7 +161,7 @@ const PrivacyContent: React.FC = () => (
 
     {/* AI Keys */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">🔑 AI 密钥的处理</h4>
+      <h4 className="text-sm font-semibold mb-1"><KeyRound className="w-3.5 h-3.5 inline mr-1" />AI 密钥的处理</h4>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         <li>API 密钥加密后仅存储在你的浏览器本地</li>
         <li>请求由浏览器直接发送给你选择的服务商（OpenAI、Anthropic、Ollama 等）</li>
@@ -170,7 +171,7 @@ const PrivacyContent: React.FC = () => (
 
     {/* Your Rights */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">⚖️ 你的权利</h4>
+      <h4 className="text-sm font-semibold mb-1"><Scale className="w-3.5 h-3.5 inline mr-1" />你的权利</h4>
       <ul className="list-disc ml-4 space-y-0.5 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         <li><strong>导出数据：</strong>随时下载你的所有个人数据（设置 → 导出备份）</li>
         <li><strong>删除数据：</strong>清除浏览器存储（设置 → 清除所有数据）</li>
@@ -180,7 +181,7 @@ const PrivacyContent: React.FC = () => (
 
     {/* Contact */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📧 有问题？</h4>
+      <h4 className="text-sm font-semibold mb-1"><Mail className="w-3.5 h-3.5 inline mr-1" />有问题？</h4>
       <p className="text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         对隐私有疑问？请前往{' '}
         <a href={APP_ISSUES_URL} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
@@ -210,7 +211,7 @@ const TermsContent: React.FC = () => (
 
     {/* Upcoming Content */}
     <section>
-      <h4 className="text-sm font-semibold mb-2">📋 你将看到的内容</h4>
+      <h4 className="text-sm font-semibold mb-2"><ClipboardList className="w-3.5 h-3.5 inline mr-1" />你将看到的内容</h4>
       <ul className="list-disc ml-4 space-y-1 text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         <li><strong>使用条款：</strong>使用 LifeOS 的指南</li>
         <li><strong>许可：</strong>软件许可条款和开源声明（MIT License）</li>
@@ -222,25 +223,25 @@ const TermsContent: React.FC = () => (
 
     {/* Core Principles Preview */}
     <section>
-      <h4 className="text-sm font-semibold mb-2">🎯 我们的指导原则</h4>
+      <h4 className="text-sm font-semibold mb-2"><Target className="w-3.5 h-3.5 inline mr-1" />我们的指导原则</h4>
       <p className="mb-2 text-text-light-secondary dark:text-text-dark-secondary text-xs">
         在完整条款敲定之前，以下是指导这些条款的核心原则：
       </p>
       <div className="space-y-2">
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">🔒 你的数据，你的掌控</p>
+          <p className="text-xs font-medium"><Lock className="w-3.5 h-3.5 inline mr-1" />你的数据，你的掌控</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
             所有数据都保存在你的设备上。LifeOS 没有服务器，无法访问、查看或出售你的信息。
           </p>
         </div>
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">📤 完全可移植性</p>
+          <p className="text-xs font-medium"><Upload className="w-3.5 h-3.5 inline mr-1" />完全可移植性</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
             随时以标准格式导出你的数据。绝无锁定。
           </p>
         </div>
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg p-2 border border-border-light dark:border-border-dark">
-          <p className="text-xs font-medium">🚫 无隐藏意图</p>
+          <p className="text-xs font-medium"><Ban className="w-3.5 h-3.5 inline mr-1" />无隐藏意图</p>
           <p className="text-[10px] text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
             无广告、无追踪、不把你的注意力卖给最高出价者。
           </p>
@@ -250,7 +251,7 @@ const TermsContent: React.FC = () => (
 
     {/* Contact for Questions */}
     <section>
-      <h4 className="text-sm font-semibold mb-1">📧 有问题？</h4>
+      <h4 className="text-sm font-semibold mb-1"><Mail className="w-3.5 h-3.5 inline mr-1" />有问题？</h4>
       <p className="text-text-light-secondary dark:text-text-dark-secondary text-[10px]">
         对我们的条款或许可存有疑问？请前往{' '}
         <a href={APP_ISSUES_URL} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>

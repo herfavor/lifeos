@@ -6,6 +6,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { $getNodeByKey, DecoratorNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { Pencil, Trash2 } from 'lucide-react';
 import { indexedDBService } from '../../services/indexedDB';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import type {
@@ -299,14 +300,14 @@ function ImageComponent({
             className="rounded-lg border border-border-light bg-surface-light px-3 py-1 text-sm text-text-light-primary shadow-elevated transition-colors hover:bg-accent-primary hover:text-white dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary"
             title="编辑替代文本"
           >
-            ✏️ 替代文本
+            <Pencil className="h-3.5 w-3.5" aria-hidden /> 替代文本
           </button>
           <button
             onClick={handleDeleteClick}
             className="px-3 py-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg text-sm text-text-light-primary dark:text-text-dark-primary hover:bg-accent-red hover:text-white transition-colors shadow-elevated"
             title="删除图片"
           >
-            🗑️ 删除
+            <Trash2 className="h-3.5 w-3.5" aria-hidden /> 删除
           </button>
         </div>
       )}

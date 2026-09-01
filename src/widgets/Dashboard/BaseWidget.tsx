@@ -7,10 +7,11 @@
 
 import React, { useState, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
+import { AlertTriangle, RefreshCw, Settings2 } from 'lucide-react';
 
 export interface BaseWidgetProps {
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   children: React.ReactNode;
   subtitle?: string;
   loading?: boolean;
@@ -95,9 +96,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
               title="刷新"
               aria-label="刷新组件"
             >
-              <span className={`text-lg ${isRefreshing ? 'animate-spin inline-block' : ''}`}>
-                🔄
-              </span>
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} aria-hidden />
             </button>
           )}
 
@@ -109,7 +108,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
               title="设置"
               aria-label="组件设置"
             >
-              <span className="text-lg">⚙️</span>
+              <Settings2 className="h-4 w-4" aria-hidden />
             </button>
           )}
         </div>
@@ -129,7 +128,7 @@ const BaseWidgetComponent: React.FC<BaseWidgetProps> = ({
         ) : error ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-2 text-center max-w-[200px]">
-              <span className="text-4xl">⚠️</span>
+              <AlertTriangle className="h-9 w-9" aria-hidden />
               <p className="text-sm text-status-error dark:text-status-error-text-dark">
                 {error}
               </p>

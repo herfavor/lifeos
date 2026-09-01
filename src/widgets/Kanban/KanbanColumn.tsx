@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDroppable } from '@dnd-kit/core';
+import { GripVertical, Pencil } from 'lucide-react';
 import { KanbanCard } from './KanbanCard';
 import { KanbanSectionDivider } from './KanbanSectionDivider';
 import { useKanbanStore } from '../../stores/useKanbanStore';
@@ -212,14 +213,14 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
                 title="编辑列"
                 aria-label="编辑列"
               >
-                ✏️
+                <Pencil className="h-3.5 w-3.5" aria-hidden />
               </button>
               <button
                 className="p-1 text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary cursor-grab transition-colors"
                 title="拖拽以重新排序"
                 aria-label="拖拽以重新排序列"
               >
-                ⋮⋮
+                <GripVertical className="h-3.5 w-3.5" aria-hidden />
               </button>
             </div>
           )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sun, Moon, CalendarDays, Pin, MessageCircle, type LucideIcon } from 'lucide-react';
 import type { WhenTag } from '../../types';
 
 interface WhenTagPickerProps {
@@ -7,12 +8,12 @@ interface WhenTagPickerProps {
   compact?: boolean;
 }
 
-const WHEN_TAGS: { value: WhenTag; label: string; icon: string; description: string }[] = [
-  { value: 'today', label: '今天', icon: '☀️', description: '今天完成' },
-  { value: 'evening', label: '今晚', icon: '🌙', description: '今晚完成' },
-  { value: 'upcoming', label: '近期', icon: '📅', description: '接下来几天' },
-  { value: 'anytime', label: '随时', icon: '📌', description: '没有时间压力' },
-  { value: 'someday', label: '某天', icon: '💭', description: '也许以后' },
+const WHEN_TAGS: { value: WhenTag; label: string; icon: LucideIcon; description: string }[] = [
+  { value: 'today', label: '今天', icon: Sun, description: '今天完成' },
+  { value: 'evening', label: '今晚', icon: Moon, description: '今晚完成' },
+  { value: 'upcoming', label: '近期', icon: CalendarDays, description: '接下来几天' },
+  { value: 'anytime', label: '随时', icon: Pin, description: '没有时间压力' },
+  { value: 'someday', label: '某天', icon: MessageCircle, description: '也许以后' },
 ];
 
 export const WhenTagPicker: React.FC<WhenTagPickerProps> = ({ value, onChange, compact = false }) => {
@@ -25,7 +26,7 @@ export const WhenTagPicker: React.FC<WhenTagPickerProps> = ({ value, onChange, c
       >
         <option value="">无时间标签</option>
         {WHEN_TAGS.map((t) => (
-          <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+          <option key={t.value} value={t.value}>{t.label}</option>
         ))}
       </select>
     );
@@ -45,7 +46,7 @@ export const WhenTagPicker: React.FC<WhenTagPickerProps> = ({ value, onChange, c
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated border border-transparent'
             }`}
           >
-            <span>{tag.icon}</span>
+            <tag.icon className="h-4 w-4 shrink-0" />
             <div className="flex-1">
               <span className="block">{tag.label}</span>
               {!compact && (
@@ -80,7 +81,8 @@ export const WhenTagBadge: React.FC<{ tag: WhenTag }> = ({ tag }) => {
       }`}
       title={config.description}
     >
-      {config.icon} {config.label}
+      <config.icon className="mr-1 inline h-3 w-3" />
+      {config.label}
     </span>
   );
 };

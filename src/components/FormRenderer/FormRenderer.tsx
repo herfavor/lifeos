@@ -4,6 +4,7 @@
  */
 
 import { useState, useMemo } from 'react';
+import { Check } from 'lucide-react';
 import type { FormTemplate, FormValidationResult, ConditionalRule, DependentValidation, FormField, FieldType, FormAnswerValue } from '../../types/forms';
 import { evaluateFormula } from '../../utils/formulaEngine';
 import { replaceAnswerTokens } from '../../utils/answerPiping';
@@ -286,7 +287,8 @@ export function FormRenderer({ form, onSubmit, initialValues = {} }: FormRendere
           )}
           {progress === 100 && (
             <p className="text-xs text-accent-green mt-1 text-center">
-              ✓ 所有字段已完成！可以提交
+              <Check className="w-3 h-3 inline mr-1" />
+              所有字段已完成！可以提交
             </p>
           )}
         </div>

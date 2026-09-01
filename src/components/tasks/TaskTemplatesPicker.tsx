@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Activity, Bug, Microscope, Rocket, Search, Sparkles, type LucideIcon } from 'lucide-react';
 import { useKanbanStore } from '../../stores/useKanbanStore';
 import type { TaskPriority } from '../../types';
 
 interface TaskTemplate {
   id: string;
   name: string;
-  icon: string;
+  icon: LucideIcon;
   description: string;
   defaultPriority: TaskPriority;
   defaultTags: string[];
@@ -16,7 +17,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'bug-report',
     name: '缺陷报告',
-    icon: '🐛',
+    icon: Bug,
     description: '以结构化子任务跟踪并修复缺陷',
     defaultPriority: 'high',
     defaultTags: ['bug'],
@@ -25,7 +26,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'feature-request',
     name: '功能需求',
-    icon: '✨',
+    icon: Sparkles,
     description: '端到端规划并实现一个新功能',
     defaultPriority: 'medium',
     defaultTags: ['feature'],
@@ -34,7 +35,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'sprint-planning',
     name: '冲刺规划',
-    icon: '🏃',
+    icon: Activity,
     description: '组织一次冲刺规划会议',
     defaultPriority: 'high',
     defaultTags: ['planning'],
@@ -43,7 +44,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'code-review',
     name: '代码审查',
-    icon: '🔍',
+    icon: Search,
     description: '结构化的代码审查流程',
     defaultPriority: 'medium',
     defaultTags: ['review'],
@@ -52,7 +53,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'deployment',
     name: '部署',
-    icon: '🚀',
+    icon: Rocket,
     description: '部署到生产环境的检查清单',
     defaultPriority: 'high',
     defaultTags: ['deploy'],
@@ -61,7 +62,7 @@ const TASK_TEMPLATES: TaskTemplate[] = [
   {
     id: 'research',
     name: '调研冲刺',
-    icon: '🔬',
+    icon: Microscope,
     description: '对技术问题进行限时调研',
     defaultPriority: 'medium',
     defaultTags: ['research'],
@@ -148,7 +149,7 @@ export const TaskTemplatesPicker: React.FC<TaskTemplatesPickerProps> = ({ isOpen
               className="w-full text-left p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent-blue hover:bg-accent-blue/5 transition-colors"
             >
               <div className="flex items-start gap-3">
-                <span className="text-2xl">{template.icon}</span>
+                <template.icon className="w-6 h-6 shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-medium text-text-light-primary dark:text-text-dark-primary">
                     {template.name}

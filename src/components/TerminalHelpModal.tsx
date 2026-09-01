@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { Bot, Bug, BookOpen, CheckCircle2, HelpCircle, Keyboard, MessageSquare, Rocket, Settings2, Wrench, X, XCircle, AlertTriangle } from 'lucide-react';
 
 interface TerminalHelpModalProps {
   isOpen: boolean;
@@ -17,11 +18,11 @@ export const TerminalHelpModal: React.FC<TerminalHelpModalProps> = ({ isOpen, on
 
   if (!isOpen) return null;
 
-  const tabs: { id: HelpTab; label: string; icon: string }[] = [
-    { id: 'quickstart', label: '快速开始', icon: '🚀' },
-    { id: 'providers', label: 'AI 提供商', icon: '🤖' },
-    { id: 'shell', label: 'Shell 命令', icon: '⌨️' },
-    { id: 'troubleshooting', label: '帮助', icon: '❓' },
+  const tabs: { id: HelpTab; label: string; icon: typeof Rocket }[] = [
+    { id: 'quickstart', label: '快速开始', icon: Rocket },
+    { id: 'providers', label: 'AI 提供商', icon: Bot },
+    { id: 'shell', label: 'Shell 命令', icon: Keyboard },
+    { id: 'troubleshooting', label: '帮助', icon: HelpCircle },
   ];
 
   return (
@@ -38,7 +39,7 @@ export const TerminalHelpModal: React.FC<TerminalHelpModalProps> = ({ isOpen, on
             className="p-1 hover:bg-surface-dark-elevated rounded transition-colors text-sm"
             aria-label="关闭帮助"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -54,7 +55,7 @@ export const TerminalHelpModal: React.FC<TerminalHelpModalProps> = ({ isOpen, on
                   : 'text-text-dark-secondary hover:text-text-dark-primary hover:bg-surface-dark-elevated'
               }`}
             >
-              <span className="mr-1">{tab.icon}</span>
+              <tab.icon className="w-3.5 h-3.5 inline mr-1" />
               {tab.label}
             </button>
           ))}
@@ -88,13 +89,13 @@ const QuickStartTab: React.FC = () => (
       <h3 className="text-sm font-semibold text-text-dark-primary mb-1.5">两种模式</h3>
       <div className="grid grid-cols-2 gap-2">
         <div className="p-2 bg-surface-dark-elevated rounded-lg">
-          <div className="text-base mb-0.5">💬 AI 聊天</div>
+          <div className="text-base mb-0.5"><MessageSquare className="w-4 h-4 inline mr-1" />AI 聊天</div>
           <p className="text-[10px] text-text-dark-tertiary">
             与 AI 模型对话。提问、获取代码帮助、进行头脑风暴。
           </p>
         </div>
         <div className="p-2 bg-surface-dark-elevated rounded-lg">
-          <div className="text-base mb-0.5">⌨️ Phantom Shell</div>
+          <div className="text-base mb-0.5"><Keyboard className="w-4 h-4 inline mr-1" />Phantom Shell</div>
           <p className="text-[10px] text-text-dark-tertiary">
             在浏览器中运行 npm/node 命令。无需安装任何东西即可构建项目。
           </p>
@@ -105,7 +106,7 @@ const QuickStartTab: React.FC = () => (
     <section>
       <h3 className="text-sm font-semibold text-text-dark-primary mb-1.5">快速上手</h3>
       <ol className="list-decimal list-inside space-y-1 text-[11px]">
-        <li>点击 ⚙️ 打开<strong>提供商设置</strong></li>
+        <li>点击 <Settings2 className="w-3 h-3 inline" /> 打开<strong>提供商设置</strong></li>
         <li>添加 API 密钥（我们推荐 <strong>OpenRouter</strong> - 免费！）</li>
         <li>开始聊天，或切换到 Shell 标签页</li>
       </ol>
@@ -152,38 +153,38 @@ const ProvidersTab: React.FC = () => (
           <tbody className="divide-y divide-border-dark">
             <tr className="bg-accent-green/10">
               <td className="p-1.5 font-medium">OpenRouter</td>
-              <td className="p-1.5">✅ 是</td>
-              <td className="p-1.5">✅ 直连</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />是</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />直连</td>
               <td className="p-1.5">综合最佳 - 200+ 模型</td>
             </tr>
             <tr>
               <td className="p-1.5">Groq</td>
-              <td className="p-1.5">✅ 是</td>
-              <td className="p-1.5">⚠️ 受限</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />是</td>
+              <td className="p-1.5"><AlertTriangle className="w-3 h-3 inline mr-0.5 text-accent-yellow" />受限</td>
               <td className="p-1.5">响应最快</td>
             </tr>
             <tr>
               <td className="p-1.5">HuggingFace</td>
-              <td className="p-1.5">✅ 是</td>
-              <td className="p-1.5">✅ 直连</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />是</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />直连</td>
               <td className="p-1.5">开源模型</td>
             </tr>
             <tr className="bg-accent-blue/10">
               <td className="p-1.5 font-medium">Anthropic</td>
-              <td className="p-1.5">❌ 否</td>
-              <td className="p-1.5">✅ 直连</td>
+              <td className="p-1.5"><XCircle className="w-3 h-3 inline mr-0.5 text-accent-red" />否</td>
+              <td className="p-1.5"><CheckCircle2 className="w-3 h-3 inline mr-0.5 text-accent-green" />直连</td>
               <td className="p-1.5">质量最佳（Claude）</td>
             </tr>
             <tr>
               <td className="p-1.5">OpenAI</td>
-              <td className="p-1.5">❌ 否</td>
-              <td className="p-1.5">⚠️ 代理</td>
+              <td className="p-1.5"><XCircle className="w-3 h-3 inline mr-0.5 text-accent-red" />否</td>
+              <td className="p-1.5"><AlertTriangle className="w-3 h-3 inline mr-0.5 text-accent-yellow" />代理</td>
               <td className="p-1.5">GPT-4, o1</td>
             </tr>
             <tr>
               <td className="p-1.5">DeepSeek</td>
-              <td className="p-1.5">❌ 否</td>
-              <td className="p-1.5">⚠️ 代理</td>
+              <td className="p-1.5"><XCircle className="w-3 h-3 inline mr-0.5 text-accent-red" />否</td>
+              <td className="p-1.5"><AlertTriangle className="w-3 h-3 inline mr-0.5 text-accent-yellow" />代理</td>
               <td className="p-1.5">性价比高，擅长编码</td>
             </tr>
           </tbody>
@@ -263,7 +264,7 @@ const ShellTab: React.FC = () => (
       <h3 className="text-sm font-semibold text-text-dark-primary mb-1.5">可用与不可用</h3>
       <div className="grid grid-cols-2 gap-2">
         <div className="p-2 bg-accent-green/10 border border-accent-green/20 rounded-lg">
-          <div className="font-medium text-accent-green mb-0.5 text-[11px]">✅ 可用</div>
+          <div className="font-medium text-accent-green mb-0.5 text-[11px]"><CheckCircle2 className="w-3 h-3 inline mr-0.5" />可用</div>
           <ul className="text-[10px] space-y-0.5">
             <li><code>npm install</code>, <code>npm run dev</code></li>
             <li><code>node script.js</code></li>
@@ -272,7 +273,7 @@ const ShellTab: React.FC = () => (
           </ul>
         </div>
         <div className="p-2 bg-accent-red/10 border border-accent-red/20 rounded-lg">
-          <div className="font-medium text-accent-red mb-0.5 text-[11px]">❌ 不可用</div>
+          <div className="font-medium text-accent-red mb-0.5 text-[11px]"><XCircle className="w-3 h-3 inline mr-0.5" />不可用</div>
           <ul className="text-[10px] space-y-0.5">
             <li><code>git</code> - 使用 GitHub 组件</li>
             <li><code>docker</code> - 不可用</li>
@@ -360,7 +361,7 @@ const TroubleshootingTab: React.FC = () => (
             href="/create/platform/terminal-complete"
             className="text-accent-primary hover:underline"
           >
-            📖 完整文档
+            <BookOpen className="w-3 h-3 inline mr-1" />完整文档
           </a>
         </li>
         <li>
@@ -368,7 +369,7 @@ const TroubleshootingTab: React.FC = () => (
             href="/create/platform/backend-proxy-setup"
             className="text-accent-primary hover:underline"
           >
-            🔧 后端代理设置（高级）
+            <Wrench className="w-3 h-3 inline mr-1" />后端代理设置（高级）
           </a>
         </li>
         <li>
@@ -378,7 +379,7 @@ const TroubleshootingTab: React.FC = () => (
             rel="noopener noreferrer"
             className="text-accent-primary hover:underline"
           >
-            🐛 报告问题
+            <Bug className="w-3 h-3 inline mr-1" />报告问题
           </a>
         </li>
       </ul>

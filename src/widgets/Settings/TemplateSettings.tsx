@@ -134,7 +134,7 @@ export function TemplateSettings() {
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-8 h-8 flex items-center justify-center bg-surface-light dark:bg-surface-dark rounded text-lg flex-shrink-0">
-                    {template.icon || '📄'}
+                    {template.icon || <FileText className="h-4 w-4" aria-hidden />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h5 className="font-medium text-text-light-primary dark:text-text-dark-primary truncate">

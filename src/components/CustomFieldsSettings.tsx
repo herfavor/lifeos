@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CalendarDays, CheckSquare, ClipboardList, FileText, Hash, Lightbulb, Link, Mail, Pin, Plus, Tag, X, type LucideIcon } from 'lucide-react';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import type { FieldDefinition, FieldType } from '../types/customFields';
 import { toast } from '../stores/useToastStore';
@@ -101,8 +102,9 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
             <button
               onClick={handleClose}
               className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
+              aria-label="关闭"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
 
@@ -161,9 +163,9 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
                     {options.length > 1 && (
                       <button
                         onClick={() => removeOption(index)}
-                        className="px-3 py-2 bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark rounded-lg hover:opacity-80 transition-opacity"
+                        className="inline-flex items-center px-3 py-2 bg-status-error-bg dark:bg-status-error-bg-dark text-status-error-text dark:text-status-error-text-dark rounded-lg hover:opacity-80 transition-opacity"
                       >
-                        ✕
+                        <X className="h-4 w-4" aria-hidden />
                       </button>
                     )}
                   </div>
@@ -241,26 +243,26 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
     setShowDeleteConfirm(false);
   };
 
-  const getFieldTypeIcon = (type: FieldType): string => {
+  const getFieldTypeIcon = (type: FieldType): LucideIcon => {
     switch (type) {
       case 'text':
-        return '📝';
+        return FileText;
       case 'number':
-        return '🔢';
+        return Hash;
       case 'date':
-        return '📅';
+        return CalendarDays;
       case 'select':
-        return '📋';
+        return ClipboardList;
       case 'checkbox':
-        return '☑️';
+        return CheckSquare;
       case 'multi-select':
-        return '🏷️';
+        return Tag;
       case 'url':
-        return '🔗';
+        return Link;
       case 'email':
-        return '📧';
+        return Mail;
       default:
-        return '📌';
+        return Pin;
     }
   };
 
@@ -287,13 +289,15 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
     }
   };
 
+  const TypeIcon = getFieldTypeIcon(field.type);
+
   return (
     <div className="p-4 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg border border-border-light dark:border-border-dark">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           {/* Field Name + Type Icon */}
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-lg">{getFieldTypeIcon(field.type)}</span>
+            <TypeIcon className="h-5 w-5 shrink-0" aria-hidden />
             <h4 className="font-medium text-text-light-primary dark:text-text-dark-primary truncate">
               {field.name}
             </h4>
@@ -460,7 +464,7 @@ export default function CustomFieldsSettings() {
         onClick={() => setShowCreateModal(true)}
         className="w-full px-4 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200 flex items-center justify-center gap-2"
       >
-        <span>➕</span>
+        <Plus className="h-4 w-4" aria-hidden />
         <span>创建自定义字段</span>
       </button>
 
@@ -490,7 +494,7 @@ export default function CustomFieldsSettings() {
       {/* Info Box */}
       <div className="mt-6 p-4 bg-status-info-bg dark:bg-status-info-bg-dark border border-status-info-border dark:border-status-info-border-dark rounded-lg">
         <p className="text-xs text-status-info-text dark:text-status-info-text-dark">
-          <strong>💡 提示：</strong>自定义字段非常适合跟踪领域特定的元数据，如 Bug ID、Sprint 编号、客户名称、精力水平等。字段值可以在单个{' '}
+          <strong><Lightbulb className="mr-1 inline h-3.5 w-3.5" aria-hidden />提示：</strong>自定义字段非常适合跟踪领域特定的元数据，如 Bug ID、Sprint 编号、客户名称、精力水平等。字段值可以在单个{' '}
           {activeTab === 'tasks' ? '任务' : '笔记'}上设置。
         </p>
       </div>

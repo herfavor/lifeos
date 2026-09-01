@@ -5,6 +5,7 @@
 import React from 'react';
 import { BaseWidget } from './BaseWidget';
 import { usePomodoroStore } from '../../stores/usePomodoroStore';
+import { Timer } from 'lucide-react';
 
 export const PomodoroWidget: React.FC = () => {
   const {
@@ -43,7 +44,7 @@ export const PomodoroWidget: React.FC = () => {
   };
 
   return (
-    <BaseWidget title="番茄钟" icon="⏱️">
+    <BaseWidget title="番茄钟" icon={<Timer className="h-6 w-6" aria-hidden />}>
       <div className="flex flex-col items-center justify-center h-full gap-4">
         <div className="relative w-32 h-32">
           <svg className="w-full h-full -rotate-90">

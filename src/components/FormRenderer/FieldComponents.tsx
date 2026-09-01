@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Upload, X, FileIcon } from 'lucide-react';
+import { Star, Upload, X, FileIcon } from 'lucide-react';
 import type { FormField, FileUploadAnswer, FormAnswerValue } from '../../types/forms';
 
 /**
@@ -422,13 +422,13 @@ export function RatingField({ field, value, onChange, error }: FieldComponentPro
             onClick={() => onChange(star)}
             aria-label={`评分 ${star} 星（满分 5 星）`}
             aria-pressed={star === rating}
-            className={`text-3xl transition-colors ${
+            className={`transition-colors ${
               star <= rating
                 ? 'text-accent-yellow'
                 : 'text-text-light-tertiary dark:text-text-dark-tertiary'
             }`}
           >
-            ★
+            <Star className="w-7 h-7" fill={star <= rating ? 'currentColor' : 'none'} />
           </button>
         ))}
         {rating > 0 && (

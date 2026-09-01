@@ -12,7 +12,7 @@ import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { List } from 'react-window';
 import { AutoSizer } from 'react-virtualized-auto-sizer';
-import { Activity as ActivityIcon, CheckCircle2, ListTodo } from 'lucide-react';
+import { Activity as ActivityIcon, CheckCircle2, Check, ListTodo } from 'lucide-react';
 import { useActivityStore } from '../stores/useActivityStore';
 import type { ModuleType, ActivityFilter, ActivityEvent } from '../stores/useActivityStore';
 import { PageContent } from '../components/PageContent';
@@ -55,16 +55,16 @@ const MODULE_LABELS: Record<ModuleType, string> = {
 };
 
 const MODULE_COLORS: Record<ModuleType, string> = {
-  notes: 'bg-amber-500/20 text-amber-400',
-  tasks: 'bg-green-500/20 text-green-400',
-  calendar: 'bg-blue-500/20 text-blue-400',
-  docs: 'bg-purple-500/20 text-purple-400',
-  'time-tracking': 'bg-cyan-500/20 text-cyan-400',
-  habits: 'bg-rose-500/20 text-rose-400',
-  links: 'bg-indigo-500/20 text-indigo-400',
-  ai: 'bg-emerald-500/20 text-emerald-400',
-  forms: 'bg-orange-500/20 text-orange-400',
-  diagrams: 'bg-teal-500/20 text-teal-400',
+  notes: 'bg-accent-yellow/20 text-accent-yellow',
+  tasks: 'bg-accent-green/20 text-accent-green',
+  calendar: 'bg-accent-blue/20 text-accent-blue',
+  docs: 'bg-accent-purple/20 text-accent-purple',
+  'time-tracking': 'bg-accent-cyan/20 text-accent-cyan',
+  habits: 'bg-accent-magenta/20 text-accent-magenta',
+  links: 'bg-accent-blue/20 text-accent-blue',
+  ai: 'bg-accent-neon-green/20 text-accent-neon-green',
+  forms: 'bg-accent-orange/20 text-accent-orange',
+  diagrams: 'bg-accent-green/20 text-accent-green',
 };
 
 const MODULE_ROUTES: Record<ModuleType, string> = {
@@ -450,7 +450,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
                 <div className="mt-3 space-y-1">
                   {completedResults.map((task) => (
                     <button key={task.id} onClick={() => navigate(`/tasks?tab=tasks&task=${encodeURIComponent(task.id)}`)} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-text-light-primary hover:bg-surface-light dark:text-text-dark-primary dark:hover:bg-surface-dark">
-                      <span className="text-accent-green">✓</span><span className="truncate">{task.title}</span>
+                      <Check className="h-4 w-4 shrink-0 text-accent-green" aria-hidden /><span className="truncate">{task.title}</span>
                     </button>
                   ))}
                 </div>

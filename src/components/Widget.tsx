@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 import type { WidgetProps } from '../types';
 import { WidgetControls } from './WidgetControls';
 import { WidgetSettingsModal } from './WidgetSettingsModal';
@@ -64,7 +65,7 @@ export const Widget: React.FC<WidgetProps> = ({
   const renderError = () => (
     <div className="flex-1 flex items-center justify-center">
       <div className="flex flex-col items-center gap-3 text-center max-w-[280px] px-4">
-        <span className="text-5xl">⚠️</span>
+        <span className="text-accent-red dark:text-accent-red"><AlertTriangle className="w-12 h-12" /></span>
         <p className="text-sm text-accent-red dark:text-accent-red">
           {error}
         </p>
@@ -126,9 +127,7 @@ export const Widget: React.FC<WidgetProps> = ({
             title="刷新"
             aria-label="刷新组件"
           >
-            <span className={`text-lg ${isRefreshing ? 'animate-spin inline-block' : ''}`}>
-              🔄
-            </span>
+            <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
         )}
 

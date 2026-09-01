@@ -7,6 +7,7 @@
  */
 
 import React, { useState } from 'react';
+import { Check } from 'lucide-react';
 import {
   savePreferences,
   type BackupPreferences,
@@ -63,7 +64,7 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
           <div className="flex items-center gap-2">
             {recentlySaved === 'compression' && (
               <span className="text-sm font-medium text-status-success-text dark:text-status-success-text-dark animate-fade-in">
-                ✓ 已保存
+                <Check className="h-3.5 w-3.5" aria-hidden /> 已保存
               </span>
             )}
             <input
@@ -86,7 +87,7 @@ export const BackupOptionsSection: React.FC<BackupOptionsSectionProps> = ({
           <div className="flex items-center gap-2">
             {recentlySaved === 'reminder' && (
               <span className="text-sm font-medium text-status-success-text dark:text-status-success-text-dark animate-fade-in">
-                ✓ 已保存
+                <Check className="h-3.5 w-3.5" aria-hidden /> 已保存
               </span>
             )}
             <input

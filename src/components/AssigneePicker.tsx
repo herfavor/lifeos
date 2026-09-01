@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { useSettingsStore } from '../stores/useSettingsStore';
 
 interface AssigneePickerProps {
@@ -106,7 +107,7 @@ export default function AssigneePicker({ selectedIds, onChange }: AssigneePicker
                   className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
                   aria-label={`移除 ${member.name}`}
                 >
-                  ✕
+                  <X className="h-3.5 w-3.5" aria-hidden />
                 </button>
               </div>
             ))}
