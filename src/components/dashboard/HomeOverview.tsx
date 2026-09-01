@@ -17,6 +17,7 @@ import { useKanbanStore } from '../../stores/useKanbanStore';
 import { useNotesStore } from '../../stores/useNotesStore';
 import { useProjectContextStore } from '../../stores/useProjectContextStore';
 import { getTodayTasks, toLocalDateKey } from '../../utils/todayTasks';
+import { DemoDataCard } from '../DemoDataCard';
 
 const FLOW_STEPS = [
   { label: '收集', hint: '先记下来', path: '/tasks?tab=inbox', icon: Inbox },
@@ -258,6 +259,8 @@ export const HomeOverview: React.FC = () => {
           </form>
         </div>
       </section>
+
+      <DemoDataCard className="mb-5" />
 
       <section className="rounded-2xl border border-border-light bg-surface-light px-3 py-3 shadow-[0_10px_30px_-28px_rgba(15,23,42,0.6)] dark:border-border-dark dark:bg-surface-dark-elevated">
         <div className="mb-2 flex items-center justify-between px-2">
