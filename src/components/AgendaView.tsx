@@ -9,6 +9,8 @@ interface AgendaViewProps {
   currentDate?: Date; // Optional - not used in current implementation
   daysToShow?: number; // Number of days to display (default: 14)
   onEventClick?: (event: CalendarEvent, dateKey: string) => void;
+  /** Compact layout for the schedule side panel: hides the large header. */
+  compact?: boolean;
 }
 
 /**
@@ -18,6 +20,7 @@ interface AgendaViewProps {
 export const AgendaView: React.FC<AgendaViewProps> = ({
   events,
   onEventClick,
+  compact = false,
 }) => {
   // Calculate all events (sorted by date)
   const upcomingEvents = useMemo(() => {
@@ -74,12 +77,12 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
 
   if (upcomingEvents.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <CalendarDays className="mb-4 h-10 w-10 text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden />
-        <h3 className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-2">
+      <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+        <CalendarDays className="mb-3 h-8 w-8 text-text-light-tertiary dark:text-text-dark-tertiary" aria-hidden />
+        <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
           暂无即将到来的事件
-        </h3>
-        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary max-w-md">
+        </p>
+        <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary max-w-md">
           你还没有安排任何事件，添加一个事件开始吧！
         </p>
       </div>
@@ -89,30 +92,32 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
   return (
     <div className="h-full flex flex-col">
       {/* Frozen header */}
-      <div className="flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark p-4">
-        <h2 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
-          即将到来的事件
-        </h2>
-        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-          共 {upcomingEvents.reduce((total, day) => total + day.events.length, 0)} 个事件
-        </p>
-      </div>
+      {!compact && (
+        <div className="flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark p-4">
+          <h2 className="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">
+            即将到来的事件
+          </h2>
+          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+            共 {upcomingEvents.reduce((total, day) => total + day.events.length, 0)} 个事件
+          </p>
+        </div>
+      )}
 
       {/* Scrollable events list */}
       <div className="flex-1 overflow-y-auto">
-        <div className="agenda-view space-y-6 p-4">
+        <div className={`agenda-view ${compact ? 'space-y-4' : 'space-y-6'} p-4`}>
           {upcomingEvents.map(({ date, dateKey, events: dayEvents }) => (
             <div key={dateKey} className="agenda-day">
               {/* Day Header */}
               <div className="sticky top-0 z-10 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark pb-2 mb-3">
-                <div className="flex items-baseline gap-3">
-                  <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+                <div className="flex items-baseline gap-2">
+                  <h3 className={`${compact ? 'text-sm' : 'text-lg'} font-semibold text-text-light-primary dark:text-text-dark-primary`}>
                     {getDayLabel(date)}
                   </h3>
-                  <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                    {format(date, 'MMMM d, yyyy')}
+                  <span className={`text-xs text-text-light-secondary dark:text-text-dark-secondary ${compact ? '' : 'text-sm'}`}>
+                    {format(date, 'M月d日')}
                   </span>
-                  <span className="ml-auto text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                  <span className="ml-auto text-xs text-text-light-tertiary dark:text-text-dark-tertiary">
                     {dayEvents.length} 个事件
                   </span>
                 </div>
@@ -125,7 +130,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     key={event.id}
                     onClick={() => onEventClick?.(event, dateKey)}
                     className={`
-                      p-4 rounded-button border border-border-light dark:border-border-dark
+                      ${compact ? 'p-2.5' : 'p-4'} rounded-button border border-border-light dark:border-border-dark
                       bg-surface-light-elevated dark:bg-surface-dark-elevated
                       ${onEventClick ? 'cursor-pointer hover:shadow-medium hover:border-accent-primary' : ''}
                       transition-all duration-standard ease-smooth
@@ -138,8 +143,8 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                         style={{ backgroundColor: getEventDisplayColor(event) }}
                       />
                       {/* Time */}
-                      <div className="flex-shrink-0 w-24 text-right">
-                        <div className="text-sm font-medium text-accent-primary">
+                      <div className={`flex-shrink-0 ${compact ? 'w-16' : 'w-24'} text-right`}>
+                        <div className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-accent-primary`}>
                           {formatEventTime(event)}
                         </div>
                         {event.recurrence && (
@@ -152,7 +157,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
 
                       {/* Event Details */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-text-light-primary dark:text-text-dark-primary">
+                        <h4 className={`${compact ? 'text-sm' : ''} font-medium text-text-light-primary dark:text-text-dark-primary`}>
                           {event.title}
                           {event._isMultiDayPart && (
                             <span className="ml-2 text-xs text-accent-primary">

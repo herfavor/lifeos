@@ -93,7 +93,7 @@ export function TabNavigation({
 
   return (
     <div
-      className={`mb-6 border-b border-border-light dark:border-border-dark ${className}`}
+      className={`mb-4 border-b border-border-light dark:border-border-dark ${className}`}
     >
       <div
         role="tablist"
@@ -117,7 +117,7 @@ export function TabNavigation({
               tabIndex={isActive ? 0 : -1}
               onClick={() => onTabChange(tab.id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 isActive
                   ? 'border-accent-primary text-accent-primary'
                   : 'border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'

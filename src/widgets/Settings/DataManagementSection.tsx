@@ -200,7 +200,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
   return (
     <div className="bento-card p-6">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
           数据管理
         </h2>
         <button
@@ -320,7 +320,7 @@ export const DataManagementSection: React.FC<DataManagementSectionProps> = ({
                 <div className="p-2 rounded-full bg-accent-red/10">
                   <AlertTriangle className="w-6 h-6 text-accent-red" />
                 </div>
-                <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+                <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
                   清除所有数据
                 </h3>
               </div>

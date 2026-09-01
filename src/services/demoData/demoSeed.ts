@@ -29,8 +29,8 @@ export const DEMO_IDS = {
     'demo-task-01', 'demo-task-02', 'demo-task-03', 'demo-task-04', 'demo-task-05',
     'demo-task-06', 'demo-task-07', 'demo-task-08', 'demo-task-09', 'demo-task-10',
   ],
-  notes: ['demo-note-01', 'demo-note-02', 'demo-note-03', 'demo-note-04', 'demo-note-05'],
-  events: ['demo-event-01', 'demo-event-02', 'demo-event-03', 'demo-event-04', 'demo-event-05', 'demo-event-06'],
+  notes: ['demo-note-01', 'demo-note-02', 'demo-note-03', 'demo-note-04', 'demo-note-05', 'demo-note-06'],
+  events: ['demo-event-01', 'demo-event-02', 'demo-event-03', 'demo-event-04', 'demo-event-05', 'demo-event-06', 'demo-event-07', 'demo-event-08', 'demo-event-09'],
   links: ['demo-link-01', 'demo-link-02', 'demo-link-03', 'demo-link-04'],
   collections: ['demo-collection-design', 'demo-collection-reading'],
   habits: ['demo-habit-01', 'demo-habit-02', 'demo-habit-03'],
@@ -121,6 +121,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '按周三评审意见调整卡片圆角与留白，输出切图标注。',
       status: 'inprogress',
       created: iso(dayAt(-5, 10)),
+      startDate: dateKey(addDays(today, -5)),
       dueDate: dateKey(today),
       priority: 'high',
       tags: ['设计'],
@@ -143,6 +144,7 @@ export function buildDemoDataset(): DemoDataset {
       description: 'iPhone SE 分辨率下侧边栏图标被裁切。',
       status: 'todo',
       created: iso(dayAt(-3, 11)),
+      startDate: dateKey(addDays(today, -4)),
       dueDate: dateKey(addDays(today, -1)),
       priority: 'high',
       tags: ['前端', 'bug'],
@@ -155,6 +157,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '把散落在聊天记录里的需求汇总成一页清单。',
       status: 'todo',
       created: iso(dayAt(-6, 9)),
+      startDate: dateKey(addDays(today, -8)),
       dueDate: dateKey(addDays(today, -2)),
       priority: 'medium',
       tags: ['规划'],
@@ -167,6 +170,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '',
       status: 'todo',
       created: iso(dayAt(-1, 8)),
+      startDate: dateKey(addDays(today, -1)),
       dueDate: dateKey(today),
       priority: 'medium',
       tags: ['健康'],
@@ -179,7 +183,8 @@ export function buildDemoDataset(): DemoDataset {
       description: '挑一个不加班的周五上午。',
       status: 'todo',
       created: iso(dayAt(-2, 19)),
-      dueDate: dateKey(addDays(today, 3)),
+      startDate: dateKey(addDays(today, 2)),
+      dueDate: dateKey(addDays(today, 4)),
       priority: 'low',
       tags: ['生活'],
       projectIds: [],
@@ -191,6 +196,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '整理系统一/系统二的常见错觉案例。',
       status: 'inprogress',
       created: iso(dayAt(-4, 21)),
+      startDate: dateKey(addDays(today, -7)),
       dueDate: dateKey(addDays(today, 2)),
       priority: 'medium',
       tags: ['读书'],
@@ -221,6 +227,7 @@ export function buildDemoDataset(): DemoDataset {
       description: 'Lighthouse CI 接入 GitHub Actions。',
       status: 'review',
       created: iso(dayAt(-7, 14)),
+      startDate: dateKey(addDays(today, -9)),
       dueDate: dateKey(addDays(today, 1)),
       priority: 'medium',
       tags: ['前端'],
@@ -233,6 +240,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '',
       status: 'done',
       created: iso(dayAt(-6, 9)),
+      startDate: dateKey(addDays(today, -6)),
       dueDate: dateKey(addDays(today, -2)),
       priority: 'low',
       tags: ['健康'],
@@ -246,6 +254,7 @@ export function buildDemoDataset(): DemoDataset {
       description: '',
       status: 'done',
       created: iso(dayAt(-8, 16)),
+      startDate: dateKey(addDays(today, -10)),
       dueDate: dateKey(addDays(today, -3)),
       priority: 'high',
       tags: ['效率'],
@@ -260,7 +269,8 @@ export function buildDemoDataset(): DemoDataset {
       description: '周日线下分享 20 分钟。',
       status: 'backlog',
       created: iso(dayAt(-2, 22)),
-      dueDate: null,
+      startDate: dateKey(addDays(today, 5)),
+      dueDate: dateKey(addDays(today, 7)),
       priority: 'low',
       tags: ['读书'],
       projectIds: [reading],
@@ -327,19 +337,28 @@ export function buildDemoDataset(): DemoDataset {
   });
 
   const eventsByDate: Record<string, CalendarEvent[]> = {
-    [dateKey(addDays(today, -1))]: [
+    [dateKey(addDays(today, -4))]: [
       event(DEMO_IDS.events[0], '改版评审会', '15:00', '16:00', 'work', '确认卡片圆角与留白规范。'),
     ],
+    [dateKey(addDays(today, -2))]: [
+      event(DEMO_IDS.events[1], '力量训练·上肢日', '19:00', '20:00', 'health'),
+    ],
+    [dateKey(addDays(today, -1))]: [
+      event(DEMO_IDS.events[2], '每日站会', '09:00', '09:30', 'work'),
+    ],
     [dateKey(today)]: [
-      event(DEMO_IDS.events[1], '网站改版周会', '10:00', '11:00', 'work'),
-      event(DEMO_IDS.events[2], '力量训练·下肢日', '19:30', '20:30', 'health'),
+      event(DEMO_IDS.events[3], '网站改版周会', '10:00', '11:00', 'work'),
+      event(DEMO_IDS.events[4], '力量训练·下肢日', '19:30', '20:30', 'health'),
     ],
     [dateKey(addDays(today, 1))]: [
-      event(DEMO_IDS.events[3], '每日站会', '09:00', '09:30', 'work'),
-      event(DEMO_IDS.events[4], '老友聚餐', '19:00', '21:00', 'social'),
+      event(DEMO_IDS.events[5], '外部设计评审', '14:00', '15:30', 'work'),
+      event(DEMO_IDS.events[6], '老友聚餐', '19:00', '21:00', 'social'),
     ],
     [dateKey(addDays(today, 3))]: [
-      event(DEMO_IDS.events[5], '读书会分享彩排', '14:00', '15:00', 'education', '20 分钟试讲。'),
+      event(DEMO_IDS.events[7], '读书会分享彩排', '14:00', '15:00', 'education', '20 分钟试讲。'),
+    ],
+    [dateKey(addDays(today, 5))]: [
+      event(DEMO_IDS.events[8], '周末徒步', '08:00', '12:00', 'travel', '山径约 8 公里。'),
     ],
   };
 
@@ -400,6 +419,14 @@ export function buildDemoDataset(): DemoDataset {
       ['想法'],
       [],
       dayAt(0, 8, 47),
+    ),
+    note(
+      DEMO_IDS.notes[5],
+      '月度目标：十月',
+      '# 月度目标：十月\n\n- 网站改版上线\n- 深蹲复测到 65kg\n- 读完《思考，快与慢》并写一篇长评 #规划',
+      ['规划'],
+      [site],
+      dayAt(-9, 21, 10),
     ),
   ];
 
@@ -567,6 +594,11 @@ export function buildDemoDataset(): DemoDataset {
     { id: 'demo-act-10', type: 'completed', module: 'habits', entityId: DEMO_IDS.habits[0], entityTitle: '喝够 8 杯水', timestamp: iso(at(today, 20, 5)) },
     { id: 'demo-act-11', type: 'created', module: 'tasks', entityId: DEMO_IDS.tasks[3], entityTitle: '写本周训练日志', timestamp: iso(dayAt(-1, 8)) },
     { id: 'demo-act-12', type: 'viewed', module: 'notes', entityId: DEMO_IDS.notes[2], entityTitle: '《思考，快与慢》第三章', timestamp: iso(at(today, 12, 40)) },
+    { id: 'demo-act-13', type: 'created', module: 'calendar', entityId: DEMO_IDS.events[8], entityTitle: '周末徒步', timestamp: iso(dayAt(0, 7, 45)) },
+    { id: 'demo-act-14', type: 'completed', module: 'tasks', entityId: DEMO_IDS.tasks[1], entityTitle: '修复移动端导航溢出', timestamp: iso(dayAt(-1, 17, 25)) },
+    { id: 'demo-act-15', type: 'created', module: 'notes', entityId: DEMO_IDS.notes[5], entityTitle: '月度目标：十月', timestamp: iso(dayAt(-9, 21, 10)) },
+    { id: 'demo-act-16', type: 'created', module: 'calendar', entityId: DEMO_IDS.events[4], entityTitle: '力量训练·下肢日', timestamp: iso(dayAt(0, 8)) },
+    { id: 'demo-act-17', type: 'viewed', module: 'links', entityId: DEMO_IDS.links[0], entityTitle: 'Refactoring UI', timestamp: iso(dayAt(-3, 11, 20)) },
   ];
 
   return {

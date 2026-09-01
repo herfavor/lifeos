@@ -28,7 +28,7 @@ export const StorageInfoSection: React.FC<StorageInfoSectionProps> = ({ storageI
         onClick={() => setShowDetails(!showDetails)}
         className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
       >
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
           存储与浏览器信息
         </h2>
         <span className="text-2xl text-text-light-secondary dark:text-text-dark-secondary">

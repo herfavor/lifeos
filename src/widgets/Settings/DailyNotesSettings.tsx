@@ -69,7 +69,7 @@ export const DailyNotesSettingsComponent: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
+        <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
           每日笔记
         </h3>

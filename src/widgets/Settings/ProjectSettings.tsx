@@ -257,7 +257,7 @@ export const ProjectSettings: React.FC = () => {
       <div className="bento-card p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+            <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
               <FolderTree className="w-5 h-5" />
               项目
             </h2>

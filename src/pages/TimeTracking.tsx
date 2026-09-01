@@ -226,16 +226,11 @@ export function TimeTracking() {
   return (
     <PageContent page="time-tracking">
       {/* 日程只把“安排时间”作为一级任务；计时/番茄钟降级为辅助工具链接。 */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border-light pb-3 dark:border-border-dark">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-border-light pb-2.5 dark:border-border-dark">
         <div>
           <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
             {mainTab === 'calendar' ? '日程安排' : mainTab === 'timer' ? '时间统计' : '专注计时'}
           </h2>
-          <p className="mt-0.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-            {mainTab === 'calendar'
-              ? '先看承诺过的时间，再决定还能安排什么。'
-              : '这是辅助工具，不占用日程的一级导航。'}
-          </p>
         </div>
         <div className="flex items-center gap-3 text-sm">
           {mainTab !== 'calendar' ? (

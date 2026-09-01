@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import type { GraphData, SimulationNode, SimulationEdge } from '../../utils/graphDataProcessor';
+import type { SimulationLink } from '../../utils/graphSimulation';
 import { createForceSimulation, stopSimulation } from '../../utils/graphSimulation';
 import {
   calculateAllLinkStrengths,
@@ -39,8 +40,27 @@ export function GraphCanvas({
   orphanIds = new Set(),
 }: GraphCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const fitGraphRef = useRef<() => void>(() => undefined);
   const [isSimulating, setIsSimulating] = useState(true);
+  // Track the SVG's actual rendered size so the layout and fit use real
+  // dimensions instead of the fixed 1200x800 default.
+  const [size, setSize] = useState({ width, height });
+
+  // Observe the container so the graph always fills the available space.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver((entries) => {
+      const rect = entries[0]?.contentRect;
+      if (!rect) return;
+      const w = Math.max(rect.width, 320);
+      const h = Math.max(rect.height, 360);
+      setSize((prev) => (prev.width === w && prev.height === h ? prev : { width: w, height: h }));
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!svgRef.current || data.nodes.length === 0) return;
@@ -67,19 +87,19 @@ export function GraphCanvas({
       try {
         const bounds = (g.node() as SVGGElement | null)?.getBBox();
         if (!bounds || bounds.width <= 0 || bounds.height <= 0) return;
-        const padding = 72;
+        const padding = 60;
         const scale = Math.min(
           2.1,
           Math.max(
             0.3,
             Math.min(
-              (width - padding * 2) / bounds.width,
-              (height - padding * 2) / bounds.height
+              (size.width - padding * 2) / bounds.width,
+              (size.height - padding * 2) / bounds.height
             )
           )
         );
-        const tx = width / 2 - scale * (bounds.x + bounds.width / 2);
-        const ty = height / 2 - scale * (bounds.y + bounds.height / 2);
+        const tx = size.width / 2 - scale * (bounds.x + bounds.width / 2);
+        const ty = size.height / 2 - scale * (bounds.y + bounds.height / 2);
         const transform = d3.zoomIdentity.translate(tx, ty).scale(scale);
         if (animated) {
           svg.transition().duration(240).call(zoom.transform as any, transform);
@@ -93,7 +113,21 @@ export function GraphCanvas({
     };
     fitGraphRef.current = () => fitGraph(true);
 
-    const simulation = createForceSimulation(data.nodes, data.edges, width, height);
+    const simulation = createForceSimulation(data.nodes, data.edges, size.width, size.height);
+
+    // Seed every node with a spread initial position and run the force layout
+    // synchronously so the graph renders across the canvas on first paint —
+    // the default D3 async ticking can stop before it visibly spreads a small
+    // graph, leaving nodes stacked at the origin.
+    const simNodes = simulation.nodes() as SimulationNode[];
+    simNodes.forEach((node, i) => {
+      node.x = size.width / 2 + Math.cos(i) * 90;
+      node.y = size.height / 2 + Math.sin(i) * 90;
+      node.vx = 0;
+      node.vy = 0;
+    });
+    simulation.alpha(1).restart();
+    for (let i = 0; i < 140; i += 1) simulation.tick();
 
     svg
       .append('defs')
@@ -110,11 +144,14 @@ export function GraphCanvas({
       .attr('fill', 'var(--border-light)')
       .attr('class', 'dark:fill-border-dark');
 
+    const linkForce = simulation.force('link') as d3.ForceLink<SimulationNode, SimulationLink> | null;
+    const simLinks = linkForce ? linkForce.links() : (data.edges as unknown as SimulationLink[]);
+
     const link = g
       .append('g')
       .attr('class', 'links')
       .selectAll('line')
-      .data(data.edges)
+      .data(simLinks)
       .join('line')
       .attr('stroke', (d) => {
         if (showLinkStrength) {
@@ -155,7 +192,7 @@ export function GraphCanvas({
       .append('g')
       .attr('class', 'nodes')
       .selectAll('g')
-      .data(data.nodes)
+      .data(simNodes)
       .join('g')
       .attr('cursor', 'pointer');
 
@@ -258,7 +295,7 @@ export function GraphCanvas({
 
       // Give the user a useful composition quickly instead of waiting for a
       // long simulation to fully cool before fitting the graph.
-      if (!firstFitDone && simulation.alpha() < 0.35) {
+      if (!firstFitDone && simulation.alpha() < 0.12) {
         firstFitDone = true;
         fitGraph(false);
       }
@@ -273,10 +310,10 @@ export function GraphCanvas({
       fitGraphRef.current = () => undefined;
       stopSimulation(simulation);
     };
-  }, [data, width, height, onNodeClick, onNodeDoubleClick, focusNodeId, searchResult, showLinkStrength, orphanIds]);
+  }, [data, size, onNodeClick, onNodeDoubleClick, focusNodeId, searchResult, showLinkStrength, orphanIds]);
 
   return (
-    <div className="relative h-full min-h-[420px] w-full">
+    <div ref={containerRef} className="relative h-full min-h-[420px] w-full">
       <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
         {isSimulating && (
           <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">正在布局…</span>
@@ -291,9 +328,9 @@ export function GraphCanvas({
       </div>
       <svg
         ref={svgRef}
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox={`0 0 ${size.width} ${size.height}`}
         preserveAspectRatio="xMidYMid meet"
-        className="h-full min-h-[420px] w-full rounded-xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark"
+        className="block h-full w-full rounded-xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark"
       />
     </div>
   );

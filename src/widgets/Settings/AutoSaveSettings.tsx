@@ -186,7 +186,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
       {/* Simple Auto-Save Card (for File System Access API browsers) */}
       {isFileSystemAccessSupported() && (
         <div className="bento-card p-6">
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
+          <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
             自动保存
           </h2>
           <p className="text-text-light-secondary dark:text-text-dark-secondary mb-4">
@@ -223,7 +223,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
       {/* Detailed Auto-Save Configuration */}
       <div className="bento-card p-6">
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
           自动保存到文件
         </h2>
 
@@ -303,7 +303,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
             {/* Customization Settings */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+              <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
                 自定义自动保存
               </h3>
 

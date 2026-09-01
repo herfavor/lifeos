@@ -75,7 +75,7 @@ export const ImportData: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
+        <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-2">
           导入任务
         </h3>
         <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">

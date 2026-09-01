@@ -311,7 +311,7 @@ const AICommandCenterWorkspace: React.FC = () => {
       className="flex min-h-[32rem] flex-1 flex-col overflow-hidden rounded-2xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark"
     >
       {/* ── Header ── */}
-      <header className="border-b border-border-light bg-surface-light px-4 py-3 dark:border-border-dark dark:bg-surface-dark sm:px-5">
+      <header className="border-b border-border-light bg-surface-light px-4 py-2.5 dark:border-border-dark dark:bg-surface-dark sm:px-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary">
@@ -319,7 +319,7 @@ const AICommandCenterWorkspace: React.FC = () => {
             </span>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary sm:text-lg">
+                <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
                   AI 工作区
                 </h2>
                 <span className="hidden items-center gap-1 rounded-full border border-border-light bg-surface-light/70 px-2 py-0.5 text-[11px] text-text-light-secondary dark:border-border-dark dark:bg-surface-dark/70 dark:text-text-dark-secondary sm:flex">
@@ -335,11 +335,6 @@ const AICommandCenterWorkspace: React.FC = () => {
                   </span>
                 )}
               </div>
-              <p className="mt-0.5 max-w-[34rem] truncate text-xs text-text-light-secondary dark:text-text-dark-secondary sm:text-sm">
-                {needsSetup
-                  ? '配置提供商后即可开始；API 密钥只在本机加密保存'
-                  : '本机 AI 管理副驾 · 替你操作，结果可查可撤销'}
-              </p>
             </div>
           </div>
 
@@ -550,23 +545,15 @@ const AICommandCenterWorkspace: React.FC = () => {
               onUndoAction={undoAction}
               emptyHint={
                 <div className="mx-auto flex h-full max-w-3xl flex-col justify-center py-6">
-                  <div className="rounded-2xl border border-border-light bg-surface-light p-7 dark:border-border-dark dark:bg-surface-dark">
-                    
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary">
-                        <Sparkles className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <p className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
-                          {isToolMode ? '让 AI 替你管理 LifeOS' : '直接说出你希望我生成或解决什么'}
-                        </p>
-                        <p className="mt-0.5 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                          {isToolMode
-                            ? '直接告诉我你想完成什么。可撤销的本地操作会尽量直接完成；只有真正高风险或无法消歧的操作才需要确认。'
-                            : '聊天回复不会被解析成应用操作，因此可以放心要求长文、代码、JSON、分析或任意格式。'}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="rounded-2xl border border-border-light bg-surface-light px-7 py-6 dark:border-border-dark dark:bg-surface-dark">
+                    <p className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
+                      {isToolMode ? '想完成什么？' : '想生成或解决什么？'}
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-text-light-secondary dark:text-text-dark-secondary">
+                      {isToolMode
+                        ? '直接告诉我。可撤销的本地操作会尽量完成；只有高风险或无法消歧的才需要确认。'
+                        : '聊天回复不会被解析成应用操作，可放心要长文、代码、JSON 或分析。'}
+                    </p>
                   </div>
                 </div>
               }

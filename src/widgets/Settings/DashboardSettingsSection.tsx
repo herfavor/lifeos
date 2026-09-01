@@ -14,7 +14,7 @@ export const DashboardSettingsSection: React.FC<DashboardSettingsSectionProps> =
 }) => {
   return (
     <div className="bento-card p-6">
-      <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
+      <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-4">
         首页设置
       </h2>
       <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
