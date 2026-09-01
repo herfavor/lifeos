@@ -158,6 +158,34 @@ npm run ci
 
 该命令包含 lint warning budget、仓库卫生、源码尺寸、TypeScript、单元测试、设计 token、浏览器测试清单和生产构建。完整 Playwright 浏览器矩阵由 GitHub Actions 的 **Hosted browser tests** 手动工作流运行。
 
+### 本地无头浏览器调试
+
+想在本地真实打开页面做视觉验证或交互调试时，可以直接复用仓库自带的 Playwright 驱动一个无头 Chromium（无可见窗口，使用独立的浏览器 profile，不会影响你自己浏览器的数据）：
+
+```bash
+# 1. 安装 Chromium（首次）
+npx playwright install chromium
+# 有 sudo 时一步装齐系统依赖；无 sudo 见下方说明
+sudo npx playwright install-deps chromium
+
+# 2. 起 dev server 后，用 node 脚本驱动
+npm run dev
+node -e "
+const { chromium } = require('./node_modules/playwright-core');
+(async () => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto('http://localhost:5173/', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2000); // 等待页面渲染
+  await page.screenshot({ path: '/tmp/app.png' });   // 截图
+  // page.getByRole('button', { name: '加载示例数据' }).first().click(); // 交互示例
+  await browser.close();
+})();
+"
+```
+
+WSL / 无 sudo 环境缺系统库（如 `libnspr4`）时，不用 root 也能装：`apt-get download libnspr4 libnss3 libasound2` 后用 `dpkg-deb -x` 解压到本地目录，运行前加 `LD_LIBRARY_PATH=解压目录/usr/lib/x86_64-linux-gnu` 即可。
+
 ---
 
 ## 技术栈
