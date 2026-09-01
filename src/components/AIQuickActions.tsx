@@ -5,29 +5,29 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Sparkles, X } from 'lucide-react';
+import { CalendarDays, Clock3, FileText, Lightbulb, ListChecks, PencilLine, Sparkles, TextQuote, X, type LucideIcon } from 'lucide-react';
 import { useTerminalStore } from '../stores/useTerminalStore';
 import type { AIContext } from '../stores/useTerminalStore';
 
 interface AIQuickAction {
   id: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   prompt: string;
 }
 
 const NOTE_ACTIONS: AIQuickAction[] = [
-  { id: 'summarize', label: '总结', icon: '📋', prompt: '请对以下笔记进行简洁总结：\n\n' },
-  { id: 'expand', label: '扩写', icon: '📝', prompt: '请对以下笔记进行更详细的扩充：\n\n' },
-  { id: 'fix-grammar', label: '修正语法', icon: '✏️', prompt: '请修正以下文本的语法并提升清晰度：\n\n' },
-  { id: 'translate', label: '翻译', icon: '🌐', prompt: '请将以下文本翻译成英文（若已是英文，则翻译成西班牙语）：\n\n' },
-  { id: 'outline', label: '生成大纲', icon: '📑', prompt: '请根据以下笔记生成结构化大纲：\n\n' },
+  { id: 'summarize', label: '总结', icon: ListChecks, prompt: '请对以下笔记进行简洁总结：\n\n' },
+  { id: 'expand', label: '扩写', icon: TextQuote, prompt: '请对以下笔记进行更详细的扩充：\n\n' },
+  { id: 'fix-grammar', label: '修正语法', icon: PencilLine, prompt: '请修正以下文本的语法并提升清晰度：\n\n' },
+  { id: 'translate', label: '翻译', icon: FileText, prompt: '请将以下文本翻译成英文（若已是英文，则翻译成西班牙语）：\n\n' },
+  { id: 'outline', label: '生成大纲', icon: Lightbulb, prompt: '请根据以下笔记生成结构化大纲：\n\n' },
 ];
 
 const TASK_ACTIONS: AIQuickAction[] = [
-  { id: 'subtasks', label: '拆分为子任务', icon: '📊', prompt: '请将此任务拆分为更小、可执行的子任务：\n\n' },
-  { id: 'estimate', label: '预估时间', icon: '⏱️', prompt: '请预估完成此任务所需的时间并说明理由：\n\n' },
-  { id: 'description', label: '撰写描述', icon: '📝', prompt: '请为此任务撰写详细描述：\n\n' },
+  { id: 'subtasks', label: '拆分为子任务', icon: ListChecks, prompt: '请将此任务拆分为更小、可执行的子任务：\n\n' },
+  { id: 'estimate', label: '预估时间', icon: Clock3, prompt: '请预估完成此任务所需的时间并说明理由：\n\n' },
+  { id: 'description', label: '撰写描述', icon: CalendarDays, prompt: '请为此任务撰写详细描述：\n\n' },
 ];
 
 interface AIQuickActionsProps {
@@ -123,7 +123,7 @@ export const AIQuickActions: React.FC<AIQuickActionsProps> = ({ context, onActio
                   hover:bg-surface-dark-elevated disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               >
-                <span className="text-base flex-shrink-0">{action.icon}</span>
+                <action.icon className="h-4 w-4 shrink-0 text-accent-primary" />
                 <span className="text-text-dark-primary">{action.label}</span>
                 {isLoading && (
                   <span className="ml-auto text-xs text-accent-primary animate-pulse">...</span>

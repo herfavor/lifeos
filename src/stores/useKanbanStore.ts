@@ -289,6 +289,15 @@ export const useKanbanStore = create<KanbanStore>()(
         const oldTask = get().tasks.find((t) => t.id === id);
         if (!oldTask) return;
 
+        // Tasks can be completed from the detail panel and integrations, not
+        // only by dragging a card. Keep the completion timestamp consistent
+        // for reviews and auto-archive regardless of the entry point.
+        const completionUpdates: Partial<Task> = updates.status === 'done' && oldTask.status !== 'done'
+          ? { lastCompletedAt: new Date().toISOString() }
+          : updates.status !== undefined && updates.status !== 'done' && oldTask.status === 'done'
+            ? { lastCompletedAt: undefined }
+            : {};
+
         // Check if date changes trigger dependent shifts
         // Note: This only updates the primary task. Components must call
         // calculateDependentShifts separately and show confirmation dialog
@@ -296,7 +305,7 @@ export const useKanbanStore = create<KanbanStore>()(
 
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...updates } : task
+            task.id === id ? { ...task, ...updates, ...completionUpdates } : task
           ),
         }));
 
@@ -324,9 +333,16 @@ export const useKanbanStore = create<KanbanStore>()(
        * Used by useKanbanCommentsStore to avoid double-logging when updating comments/activity
        */
       _updateTaskFieldsDirect: (id, updates) => {
+        const oldTask = get().tasks.find((t) => t.id === id);
+        if (!oldTask) return;
+        const completionUpdates: Partial<Task> = updates.status === 'done' && oldTask.status !== 'done'
+          ? { lastCompletedAt: new Date().toISOString() }
+          : updates.status !== undefined && updates.status !== 'done' && oldTask.status === 'done'
+            ? { lastCompletedAt: undefined }
+            : {};
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...updates } : task
+            task.id === id ? { ...task, ...updates, ...completionUpdates } : task
           ),
         }));
       },

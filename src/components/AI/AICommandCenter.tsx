@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  MoreHorizontal,
   X,
   Zap,
 } from 'lucide-react';
@@ -369,21 +370,26 @@ const AICommandCenterWorkspace: React.FC = () => {
                 <option value="chat">普通聊天</option>
               </select>
             </label>
+            <details className="group relative">
+              <summary aria-label="对话更多操作" className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-lg border border-border-light text-text-light-secondary transition-colors hover:border-accent-primary hover:text-accent-primary [&::-webkit-details-marker]:hidden dark:border-border-dark dark:text-text-dark-secondary">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">对话更多操作</span>
+              </summary>
+              <div className="absolute right-0 z-20 mt-1 w-36 rounded-xl border border-border-light bg-surface-light p-1 shadow-lg dark:border-border-dark dark:bg-surface-dark">
+                {messages.length > 0 && (
+                  <>
+                    <button type="button" data-testid="ai-archive-current" onClick={handleArchiveCurrent} disabled={isStreaming} className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-text-light-secondary hover:bg-surface-light-elevated disabled:opacity-50 dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"><Archive className="h-3.5 w-3.5" />归档对话</button>
+                    <button type="button" data-testid="ai-clear-current" onClick={() => clearConversation()} disabled={isStreaming} className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-text-light-secondary hover:bg-surface-light-elevated disabled:opacity-50 dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"><Trash2 className="h-3.5 w-3.5" />清空对话</button>
+                  </>
+                )}
+                <button type="button" data-testid="ai-toggle-archives" aria-expanded={showArchives} onClick={toggleArchives} className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"><Archive className="h-3.5 w-3.5" />查看归档</button>
+                <Link to="/settings?tab=ai" className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs text-text-light-secondary hover:bg-surface-light-elevated dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"><ArrowUpRight className="h-3.5 w-3.5" />管理提供商</Link>
+              </div>
+            </details>
           </div>
         </div>
 
-        <details className="mt-2 text-xs text-text-light-secondary dark:text-text-dark-secondary">
-          <summary className="cursor-pointer select-none text-text-light-tertiary hover:text-accent-primary dark:text-text-dark-tertiary">
-            权限与上下文
-          </summary>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="flex items-center gap-1.5 rounded-lg bg-surface-light-elevated px-2.5 py-1 dark:bg-surface-dark-elevated">
-              <Database className="h-3.5 w-3.5" />
-              自动上下文：{enableCrossModuleContext ? '已开启' : '已关闭'}
-            </span>
-            <ExecutionModeControl />
-          </div>
-        </details>
+        {isToolMode && <div className="mt-2 flex flex-wrap items-center gap-2"><ExecutionModeControl /><span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">自动上下文：{enableCrossModuleContext ? '已开启' : '已关闭'}</span></div>}
       </header>
 
       <div className="flex min-h-0 flex-1">
@@ -574,7 +580,7 @@ const AICommandCenterWorkspace: React.FC = () => {
               quickPrompts={isToolMode ? AGENT_QUICK_PROMPTS : CHAT_QUICK_PROMPTS}
               placeholder={
                 isToolMode
-                  ? '查询或操作任务、日程、笔记、项目、收藏、自动化、习惯、精力、时间、专注、目标、例行、资源、模板…'
+                  ? '让 AI 帮你查任务、排日程、记笔记…'
                   : '写作、分析、代码、翻译、构思……直接说你的要求'
               }
               helperText={
@@ -585,60 +591,7 @@ const AICommandCenterWorkspace: React.FC = () => {
               autoFocus
             />
 
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 text-xs">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                {messages.length > 0 ? (
-                  <>
-                    <button
-                      type="button"
-                      data-testid="ai-clear-current"
-                      onClick={() => clearConversation()}
-                      disabled={isStreaming}
-                      className="flex items-center gap-1.5 text-text-light-tertiary transition-colors hover:text-accent-red disabled:cursor-not-allowed disabled:opacity-60 dark:text-text-dark-tertiary"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      清空当前对话
-                    </button>
-                    <button
-                      type="button"
-                      data-testid="ai-archive-current"
-                      onClick={handleArchiveCurrent}
-                      disabled={isStreaming}
-                      title={`把当前对话移入${modeLabel}归档`}
-                      className="flex items-center gap-1.5 text-text-light-tertiary transition-colors hover:text-accent-primary disabled:cursor-not-allowed disabled:opacity-60 dark:text-text-dark-tertiary"
-                    >
-                      <Archive className="h-3.5 w-3.5" />
-                      归档当前对话
-                    </button>
-                  </>
-                ) : (
-                  <span className="text-text-light-tertiary dark:text-text-dark-tertiary">
-                    {modeLabel} · 对话仅保存在这台设备
-                  </span>
-                )}
-                <button
-                  type="button"
-                  data-testid="ai-toggle-archives"
-                  aria-expanded={showArchives}
-                  onClick={toggleArchives}
-                  aria-controls="ai-archive-panel"
-                  className={`flex items-center gap-1.5 transition-colors ${
-                    showArchives
-                      ? 'font-semibold text-accent-primary'
-                      : 'text-text-light-tertiary hover:text-accent-primary dark:text-text-dark-tertiary'
-                  }`}
-                >
-                  <Archive className="h-3.5 w-3.5" />
-                  {modeLabel}归档{archives.length > 0 ? `（${archives.length}）` : ''}
-                </button>
-              </div>
-              <Link
-                to="/settings?tab=ai"
-                className="font-medium text-accent-primary transition-opacity hover:opacity-80"
-              >
-                管理 AI 提供商
-              </Link>
-            </div>
+            <p className="mt-2 text-center text-xs text-text-light-tertiary dark:text-text-dark-tertiary">对话仅保存在这台设备</p>
           </div>
         </div>
       </div>

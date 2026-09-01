@@ -496,6 +496,16 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
         const rawDuration = Math.floor(
           (new Date(endTime).getTime() - new Date(activeEntry.startTime).getTime()) / 1000
         );
+
+        // A quick accidental start/stop is not meaningful tracked work.
+        // Clear the live session but do not leave a 00:03 ghost entry.
+        if (rawDuration < 60) {
+          set((state) => ({
+            activeEntry: state.activeEntry?.id === stoppedEntryId ? null : state.activeEntry,
+          }));
+          localStorage.removeItem('activeTimer');
+          return;
+        }
         const duration = roundDuration(rawDuration, roundingMinutes);
 
         const completedEntry: TimeEntry = {

@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { CheckCircle2, FolderOpen, Save } from 'lucide-react';
 import {
   isFileSystemAccessSupported,
   requestAutoSaveDirectory,
@@ -147,7 +148,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
     }
   };
 
-  const handleSaveCustomization = async () => {
+  const persistCustomization = async () => {
     if (!preferences) return;
 
     if (!customFilename.trim()) {
@@ -170,7 +171,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
 
       await loadData();
       onRefresh();
-      onMessage({ type: 'success', text: '自动保存偏好已更新！' });
+      onMessage({ type: 'success', text: '自动保存偏好已更新。' });
     } catch (error) {
       onMessage({ type: 'error', text: `保存偏好失败：${error}` });
     }
@@ -199,12 +200,12 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
               onClick={handleSetupAutoSave}
               className="w-full p-4 rounded-lg bg-surface-dark dark:bg-surface-dark-elevated text-white hover:bg-border-dark dark:hover:bg-border-dark transition-colors"
             >
-              📁 选择自动保存文件夹
+              <span className="flex items-center justify-center gap-2"><FolderOpen className="h-5 w-5" />选择自动保存文件夹</span>
             </motion.button>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-accent-green">
-                <span>✅</span>
+                <CheckCircle2 className="h-4 w-4" />
                 <span>已配置自动保存文件夹</span>
               </div>
               <motion.button
@@ -213,7 +214,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                 onClick={handleAutoSaveNow}
                 className="w-full p-4 rounded-lg bg-accent-green text-white hover:bg-accent-green-hover transition-colors"
               >
-                💾 立即保存
+                <span className="flex items-center justify-center gap-2"><Save className="h-4 w-4" />立即保存</span>
               </motion.button>
             </div>
           )}
@@ -254,12 +255,16 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                     ✓ 已保存
                   </span>
                 )}
-                <input
-                  type="checkbox"
-                  checked={preferences.autoSaveEnabled}
-                  onChange={toggleAutoSave}
-                  className="w-6 h-6 rounded"
-                />
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={preferences.autoSaveEnabled}
+                  aria-label="启用自动保存"
+                  onClick={toggleAutoSave}
+                  className={`relative h-6 w-11 rounded-full transition-colors ${preferences.autoSaveEnabled ? 'bg-accent-primary' : 'bg-surface-light dark:bg-surface-dark'}`}
+                >
+                  <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${preferences.autoSaveEnabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                </button>
               </div>
             </label>
 
@@ -309,13 +314,13 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                     type="text"
                     value={customFilename}
                     onChange={(e) => setCustomFilename(e.target.value)}
+                    onBlur={() => { void persistCustomization(); }}
                     placeholder="我的备份"
                     className="flex-1 px-4 py-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all"
                   />
-                  <span className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">.brain</span>
                 </div>
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  输入文件名（例如："LifeOS"、"我的备份"）。.brain 扩展名会自动添加。
+                  输入名称（例如："LifeOS"、"我的备份"）。更改会在离开输入框后立即保存。
                 </p>
               </div>
 
@@ -330,20 +335,13 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                   max="100"
                   value={versionCount}
                   onChange={(e) => setVersionCount(parseInt(e.target.value) || 7)}
+                  onBlur={() => { void persistCustomization(); }}
                   className="w-full px-4 py-2 bg-surface-light dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-lg text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all"
                 />
                 <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-1">
-                  在隐藏的 .neuman-backups 文件夹中保留的带时间戳备份数量（1-100）
+                  保留在 LifeOS 备份文件夹中的带时间戳备份数量（1-100）。更改会立即保存。
                 </p>
               </div>
-
-              {/* Save Button */}
-              <button
-                onClick={handleSaveCustomization}
-                className="w-full px-4 py-2 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
-              >
-                💾 保存偏好
-              </button>
             </div>
 
             {/* Manual Save Now Button */}
@@ -352,7 +350,7 @@ export const AutoSaveSettings: React.FC<AutoSaveSettingsProps> = ({
                 onClick={handleAutoSaveNow}
                 className="w-full px-4 py-3 bg-accent-secondary hover:bg-accent-secondary-hover text-white rounded-lg font-medium shadow-soft hover:shadow-medium transition-all duration-200"
               >
-                💾 立即保存（手动触发）
+                <span className="flex items-center justify-center gap-2"><Save className="h-4 w-4" />立即创建备份</span>
               </button>
             )}
           </div>

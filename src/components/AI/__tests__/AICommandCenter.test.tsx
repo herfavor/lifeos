@@ -244,7 +244,8 @@ describe('AICommandCenter — full management loop', () => {
         <AICommandCenter />
       </MemoryRouter>
     );
-    const link = await screen.findByText('管理 AI 提供商');
+    fireEvent.click(screen.getByLabelText('对话更多操作'));
+    const link = await screen.findByText('管理提供商');
     expect(link).toHaveAttribute('href', '/settings?tab=ai');
     expect(screen.queryByText('在侧边面板中继续')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '收起 AI 指挥中心' })).not.toBeInTheDocument();

@@ -148,7 +148,7 @@ const SETTINGS_SEARCH_ENTRIES: SettingsSearchEntry[] = [
   { label: '浏览器通知与日历提醒', keywords: '权限 提醒 通知', tab: 'notifications' as SettingsTabId },
   { label: 'AI 提供商与本地密钥', keywords: '模型 API key 上下文', tab: 'ai' as SettingsTabId },
   { label: '导入、导出与本地存储', keywords: 'Markdown Notion ICS 数据 迁移', tab: 'data' as SettingsTabId },
-  { label: '备份、恢复与自动保存', keywords: 'brain 历史 文件夹', tab: 'backup' as SettingsTabId },
+  { label: '备份、恢复与自动保存', keywords: '备份 历史 文件夹', tab: 'backup' as SettingsTabId },
   ...SYSTEM_SECTIONS.map((section) => ({ label: section.label, keywords: section.label, tab: 'system' as SettingsTabId, section: section.id })),
 ];
 
@@ -159,7 +159,7 @@ const SETTINGS_DESCRIPTIONS: Record<SettingsTabId, string> = {
   notifications: '控制仅在浏览器允许且 LifeOS 打开时触发的本机提醒。',
   ai: '配置可选 AI 服务商；测试连接会向所选服务商发起网络请求。',
   data: '处理模块级导入、导出与本地存储，不等同于完整备份。',
-  backup: '创建或恢复完整 .brain 备份，并管理本机自动保存。',
+  backup: '创建或恢复完整 LifeOS 备份，并管理本机自动保存。',
   system: '管理快捷键、高级字段与版本信息。',
 };
 
@@ -342,6 +342,13 @@ export const Settings: React.FC = () => {
   const setSystemSection = (section: SystemSectionId) => {
     setSearchParams({ tab: 'system', section });
   };
+
+  // A settings category is a new reading context. Reset only this page's
+  // scroll position so the selected panel is immediately visible.
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [currentTab, workspaceSection, systemSection]);
 
   const matchingSettings = settingsSearch.trim()
     ? SETTINGS_SEARCH_ENTRIES.filter((entry) => {
@@ -727,13 +734,13 @@ export const Settings: React.FC = () => {
               </button>
             </div>
           </div>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={`${currentTab}-${resetRevision}`}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.12 }}
               className="space-y-5"
             >
               {/* General Settings */}

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Check } from 'lucide-react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { CustomFieldDisplay } from '../../components/CustomFieldDisplay';
 import { TaskTimerButton } from '../../components/tasks/TaskTimerButton';
@@ -28,7 +29,7 @@ type SortDirection = 'asc' | 'desc' | null;
  * - Row click opens detail panel
  */
 export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick }) => {
-  const { bulkUpdateStatus, bulkUpdatePriority, bulkDeleteTasks } = useKanbanStore();
+  const { bulkUpdateStatus, bulkUpdatePriority, bulkDeleteTasks, updateTask } = useKanbanStore();
   const taskFieldDefinitions = useSettingsStore((state) => state.customFieldDefinitions.tasks);
 
   // Filter to only fields visible in list view
@@ -324,12 +325,28 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
                     }}
                   >
                     <td className="p-3" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={selectedTaskIds.has(task.id)}
-                        onChange={(e) => handleSelectTask(task.id, e.target.checked)}
-                        className="cursor-pointer"
-                      />
+                      <div className="group/check flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => updateTask(task.id, { status: task.status === 'done' ? 'todo' : 'done' })}
+                          aria-label={task.status === 'done' ? `标记“${task.title}”为未完成` : `完成“${task.title}”`}
+                          title={task.status === 'done' ? '标记为未完成' : '完成任务'}
+                          className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${
+                            task.status === 'done'
+                              ? 'border-status-success bg-status-success text-white'
+                              : 'border-border-light text-transparent hover:border-accent-primary dark:border-border-dark'
+                          }`}
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                        </button>
+                        <input
+                          type="checkbox"
+                          checked={selectedTaskIds.has(task.id)}
+                          onChange={(e) => handleSelectTask(task.id, e.target.checked)}
+                          aria-label={`选择“${task.title}”以批量操作`}
+                          className="h-4 w-4 cursor-pointer opacity-0 transition-opacity group-hover/check:opacity-100 focus:opacity-100"
+                        />
+                      </div>
                     </td>
                     <td className="p-3 font-medium text-text-light-primary dark:text-text-dark-primary">
                       {task.title}
@@ -349,14 +366,14 @@ export const ListView: React.FC<ListViewProps> = ({ tasks, columns, onTaskClick 
                     </td>
                     <td className="p-3">
                       <div className="flex gap-1 flex-wrap">
-                        {task.tags.slice(0, 3).map(tag => (
+                        {task.tags.slice(0, 2).map(tag => (
                           <span key={tag} className="px-2 py-0.5 text-xs rounded bg-accent-blue/10 dark:bg-accent-blue/20 text-accent-blue">
                             #{tag}
                           </span>
                         ))}
-                        {task.tags.length > 3 && (
+                        {task.tags.length > 2 && (
                           <span className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                            +{task.tags.length - 3}
+                            +{task.tags.length - 2}
                           </span>
                         )}
                       </div>

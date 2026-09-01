@@ -298,10 +298,9 @@ export function BackupSettings() {
                 placeholder="MyBackup"
                 className="flex-1 px-3 py-2 text-sm rounded-button bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-2 focus:ring-accent-blue"
               />
-              <span className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">.brain</span>
             </div>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-              备份文件将命名为：{getDisplayFileName()}-YYYY-MM-DD-HHmmss.brain
+              LifeOS 备份文件将命名为：{getDisplayFileName()}-YYYY-MM-DD-HHmmss
             </p>
           </div>
         </div>

@@ -44,6 +44,7 @@ describe('task tools', () => {
       priority: 'high',
       dueDate: '2026-06-01',
       tags: ['生活'],
+      projectIds: ['project-home'],
     });
     expect(result.success).toBe(true);
     const tasks = useKanbanStore.getState().tasks;
@@ -52,6 +53,7 @@ describe('task tools', () => {
     expect(created?.priority).toBe('high');
     expect(created?.dueDate).toBe('2026-06-01');
     expect(created?.tags).toEqual(['生活']);
+    expect(created?.projectIds).toEqual(['project-home']);
   });
 
   it('complete_task moves the matched task to done', async () => {
@@ -65,13 +67,14 @@ describe('task tools', () => {
     const task = seedTask({ title: '整理房间', priority: 'low' });
     const result = await await executeAgentAction('update_task', {
       taskId: task.id,
-      updates: { dueDate: '2026-05-10', addTags: ['家务'], removeTags: [], status: 'inprogress' },
+      updates: { dueDate: '2026-05-10', addTags: ['家务'], removeTags: [], status: 'inprogress', projectIds: ['project-home'] },
     });
     expect(result.success).toBe(true);
     const updated = useKanbanStore.getState().tasks.find((t) => t.id === task.id);
     expect(updated?.dueDate).toBe('2026-05-10');
     expect(updated?.tags).toContain('家务');
     expect(updated?.status).toBe('inprogress');
+    expect(updated?.projectIds).toEqual(['project-home']);
   });
 
   it('persists tag replacements even when the tag count is unchanged', async () => {

@@ -183,6 +183,7 @@ describe('useTimeTrackingStore', () => {
       it('persists a running session instead of silently discarding it', async () => {
         const store = useTimeTrackingStore.getState();
         store.startTimer({ description: 'Session A' });
+        useTimeTrackingStore.setState((state) => ({ activeEntry: state.activeEntry ? { ...state.activeEntry, startTime: new Date(Date.now() - 61_000).toISOString() } : null }));
         store.startTimer({ description: 'Session B' });
 
         // flush the fire-and-forget stopTimer that persists session A
@@ -202,6 +203,7 @@ describe('useTimeTrackingStore', () => {
       it('should stop running timer and save entry', async () => {
         const store = useTimeTrackingStore.getState();
         store.startTimer({ description: 'Work session' });
+        useTimeTrackingStore.setState((state) => ({ activeEntry: state.activeEntry ? { ...state.activeEntry, startTime: new Date(Date.now() - 61_000).toISOString() } : null }));
 
         await store.stopTimer();
 
@@ -214,9 +216,7 @@ describe('useTimeTrackingStore', () => {
       it('should calculate duration correctly', async () => {
         const store = useTimeTrackingStore.getState();
         store.startTimer({ description: 'Work session' });
-
-        // Wait a bit to accumulate some time
-        await new Promise(resolve => setTimeout(resolve, 100));
+        useTimeTrackingStore.setState((state) => ({ activeEntry: state.activeEntry ? { ...state.activeEntry, startTime: new Date(Date.now() - 61_000).toISOString() } : null }));
 
         await store.stopTimer();
 
@@ -241,6 +241,17 @@ describe('useTimeTrackingStore', () => {
         await store.stopTimer();
 
         expect(localStorageMock.removeItem).toHaveBeenCalledWith('activeTimer');
+      });
+
+      it('does not persist a timer shorter than one minute', async () => {
+        const store = useTimeTrackingStore.getState();
+        store.startTimer({ description: 'Accidental start' });
+
+        await store.stopTimer();
+
+        expect(useTimeTrackingStore.getState().activeEntry).toBeNull();
+        expect(useTimeTrackingStore.getState().entries).toHaveLength(0);
+        expect(mockTimeTrackingDb.addEntry).not.toHaveBeenCalled();
       });
     });
 

@@ -10,6 +10,8 @@ interface QuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultColumn?: string;
+  /** Optional due-date preset used by contextual task creation surfaces. */
+  defaultDueDate?: string;
   /** Project selected by a deep link such as a project's “add next step” action. */
   defaultProjectId?: string;
 }
@@ -24,7 +26,7 @@ interface QuickAddModalProps {
  * - Minimal UI (title + optional details)
  * - Instant creation (no detail panel needed)
  */
-export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultProjectId }: QuickAddModalProps) {
+export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultDueDate, defaultProjectId }: QuickAddModalProps) {
   const { addTask, columns, getCardTemplates } = useKanbanStore();
   const defaultProject = useProjectContextStore((state) =>
     defaultProjectId ? state.projects.find((project) => project.id === defaultProjectId) : undefined
@@ -73,12 +75,12 @@ export function QuickAddModal({ isOpen, onClose, defaultColumn, defaultProjectId
     if (isOpen) {
       setTitle('');
       setDescription('');
-      setDueDate('');
+      setDueDate(defaultDueDate ?? '');
       setTags([]);
       setSelectedTemplate(null);
       // Keep column and priority (smart defaults)
     }
-  }, [isOpen]);
+  }, [isOpen, defaultDueDate]);
 
   // Save preferences when changed
   useEffect(() => {

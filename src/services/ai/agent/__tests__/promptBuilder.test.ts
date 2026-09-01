@@ -4,6 +4,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { buildAgentSystemPrompt, buildChatSystemPrompt, buildQueryResultsSection } from '../promptBuilder';
+import { useProjectContextStore } from '../../../../stores/useProjectContextStore';
 
 describe('buildAgentSystemPrompt', () => {
   it('grounds the model with today date and weekday', () => {
@@ -55,6 +56,16 @@ describe('buildAgentSystemPrompt', () => {
     expect(buildAgentSystemPrompt({ includeCrossModuleContext: true })).toContain(
       '以下是用户的当前状态'
     );
+  });
+
+  it('includes real project identifiers only with explicit context opt-in', () => {
+    useProjectContextStore.setState({
+      projects: [{ id: 'project-aurora', name: 'Aurora', color: '#334455', createdAt: new Date().toISOString() }],
+    });
+    expect(buildAgentSystemPrompt()).not.toContain('project-aurora');
+    const prompt = buildAgentSystemPrompt({ includeCrossModuleContext: true });
+    expect(prompt).toContain('可关联项目');
+    expect(prompt).toContain('Aurora（projectId: project-aurora）');
   });
 
   it('builds a separate unrestricted chat prompt without tool protocol', () => {

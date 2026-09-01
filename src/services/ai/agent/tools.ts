@@ -51,6 +51,7 @@ export const agentParamSchemas = {
     dueDate: DATE_STRING.optional(),
     startDate: DATE_STRING.optional(),
     tags: z.array(z.string()).max(8).optional(),
+    projectIds: z.array(z.string()).max(12).optional(),
   }),
   update_task: z
     .object({
@@ -66,6 +67,7 @@ export const agentParamSchemas = {
           startDate: DATE_STRING.nullable().optional(),
           addTags: z.array(z.string()).max(8).optional(),
           removeTags: z.array(z.string()).max(8).optional(),
+          projectIds: z.array(z.string()).max(12).optional(),
         })
         .refine((u) => Object.keys(u).length > 0, { message: 'updates 不能为空' }),
     })
@@ -515,13 +517,13 @@ export const AGENT_TOOLS: Record<AgentToolId, AgentToolDefinition> = {
     id: 'create_task',
     label: '创建任务',
     risk: 'write',
-    doc: '新建看板任务。参数：title(必填), description?, priority(low|medium|high)?, dueDate(YYYY-MM-DD)?, startDate?, tags[]?, status?',
+    doc: '新建看板任务。参数：title(必填), description?, priority(low|medium|high)?, dueDate(YYYY-MM-DD)?, startDate?, tags[]?, projectIds[]?, status?',
   },
   update_task: {
     id: 'update_task',
     label: '修改任务',
     risk: 'write',
-    doc: '按 taskId 或 titleQuery 定位任务并修改。参数：taskId?|titleQuery?, updates{ title?, description?, priority?, status?, dueDate?(可 null 清除), startDate?, addTags[]?, removeTags[]? }',
+    doc: '按 taskId 或 titleQuery 定位任务并修改。参数：taskId?|titleQuery?, updates{ title?, description?, priority?, status?, dueDate?(可 null 清除), startDate?, addTags[]?, removeTags[]?, projectIds[]? }',
   },
   complete_task: {
     id: 'complete_task',

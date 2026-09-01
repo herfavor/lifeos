@@ -12,9 +12,11 @@ import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { List } from 'react-window';
 import { AutoSizer } from 'react-virtualized-auto-sizer';
+import { Activity as ActivityIcon, CheckCircle2, ListTodo } from 'lucide-react';
 import { useActivityStore } from '../stores/useActivityStore';
 import type { ModuleType, ActivityFilter, ActivityEvent } from '../stores/useActivityStore';
 import { PageContent } from '../components/PageContent';
+import { EmptyState } from '../components/EmptyState';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { toLocalDateKey } from '../utils/todayTasks';
 import { useNotesStore } from '../stores/useNotesStore';
@@ -277,8 +279,8 @@ export const ActivityFeed: React.FC = () => {
   const completedResults = useMemo(() => {
     const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
     return tasks
-      .filter((task) => task.status === 'done' && task.lastCompletedAt && new Date(task.lastCompletedAt).getTime() >= cutoff)
-      .sort((a, b) => new Date(b.lastCompletedAt!).getTime() - new Date(a.lastCompletedAt!).getTime())
+      .filter((task) => task.status === 'done' && new Date(task.lastCompletedAt ?? task.created).getTime() >= cutoff)
+      .sort((a, b) => new Date(b.lastCompletedAt ?? b.created).getTime() - new Date(a.lastCompletedAt ?? a.created).getTime())
       .slice(0, 8);
   }, [tasks]);
 
@@ -443,7 +445,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{completedResults.length} 项</span>
               </div>
               {completedResults.length === 0 ? (
-                <p className="py-8 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">暂无完成记录。先从一个小的下一步开始。</p>
+                <EmptyState size="sm" icon={CheckCircle2} title="还没有完成记录" description="从一个小的下一步开始，完成后会在这里留下成果。" action={{ label: '处理今天', onClick: () => navigate('/today'), variant: 'secondary' }} />
               ) : (
                 <div className="mt-3 space-y-1">
                   {completedResults.map((task) => (
@@ -461,7 +463,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{openLoops.length} 项</span>
               </div>
               {openLoops.length === 0 ? (
-                <p className="py-8 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">当前没有逾期或进行中的遗留项。</p>
+                <EmptyState size="sm" icon={ListTodo} title="没有待决定的遗留项" description="保持这个节奏；新的任务会在这里等待你决定下一步。" action={{ label: '查看任务', onClick: () => navigate('/tasks'), variant: 'secondary' }} />
               ) : (
                 <div className="mt-3 space-y-1">
                   {openLoops.map((task) => (
@@ -548,15 +550,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
           {/* Virtualized Event List */}
           <div className="flex-1 min-h-0 px-4 py-4 md:px-6">
             {filteredEvents.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <span className="text-4xl mb-4">{'\u{1F4CA}'}</span>
-                <h3 className="text-lg font-medium text-text-light-primary dark:text-text-dark-primary mb-1">
-                  暂无动态
-                </h3>
-                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary max-w-sm">
-                  使用 LifeOS 时，动态事件会显示在这里。试试创建笔记、完成任务或记录时间吧。
-                </p>
-              </div>
+              <EmptyState size="md" icon={ActivityIcon} title="还没有动态" description="创建笔记、完成任务或记录时间后，这里会形成你的工作时间线。" action={{ label: '处理今天', onClick: () => navigate('/today') }} />
             ) : (
               <AutoSizer
                 renderProp={({ height, width }) => {

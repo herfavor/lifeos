@@ -90,6 +90,28 @@ describe('useKanbanStore', () => {
     expect(state.tasks[0].status).toBe('todo'); // Unchanged field
   });
 
+  it('records completion time when a task is manually marked done', () => {
+    useKanbanStore.getState().addTask({
+      title: 'Manual completion',
+      description: '',
+      status: 'todo',
+      startDate: null,
+      dueDate: null,
+      priority: 'medium',
+      tags: [],
+      projectIds: [],
+    });
+
+    const taskId = useKanbanStore.getState().tasks[0].id;
+    useKanbanStore.getState().updateTask(taskId, { status: 'done' });
+
+    expect(useKanbanStore.getState().tasks[0]).toMatchObject({ status: 'done' });
+    expect(useKanbanStore.getState().tasks[0].lastCompletedAt).toBeTruthy();
+
+    useKanbanStore.getState().updateTask(taskId, { status: 'todo' });
+    expect(useKanbanStore.getState().tasks[0].lastCompletedAt).toBeUndefined();
+  });
+
   it('should move a deleted task into the recoverable archive', () => {
     useKanbanStore.getState().addTask({
       title: 'Task to Delete',

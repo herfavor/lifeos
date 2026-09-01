@@ -271,7 +271,7 @@ export const HomeOverview: React.FC = () => {
               to={path}
               className="group relative flex items-center gap-2.5 rounded-xl px-3 py-3 transition-colors hover:bg-surface-light-elevated dark:hover:bg-surface-dark"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary transition group-hover:bg-accent-primary group-hover:text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-light-elevated text-text-light-secondary transition group-hover:bg-accent-primary group-hover:text-white dark:bg-surface-dark-elevated dark:text-text-dark-secondary">
                 <Icon className="h-4.5 w-4.5" />
               </span>
               <span className="min-w-0">

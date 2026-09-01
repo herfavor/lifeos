@@ -325,7 +325,7 @@ function executeCreateTask(params: Record<string, unknown>): ActionResult {
     tags: Array.isArray(params.tags) ? (params.tags as string[]) : [],
     startDate: typeof params.startDate === 'string' ? params.startDate : null,
     dueDate: typeof params.dueDate === 'string' ? params.dueDate : null,
-    projectIds: [],
+    projectIds: Array.isArray(params.projectIds) ? params.projectIds as string[] : [],
     order: 0,
   });
   // Re-read fresh state: getState() snapshots are stale after a mutation.
@@ -387,6 +387,10 @@ function executeUpdateTask(params: Record<string, unknown>): ActionResult {
   if (!arraysEqual(tags, task.tags ?? [])) {
     patch.tags = tags;
   }
+  if (Array.isArray(updates.projectIds)) {
+    patch.projectIds = updates.projectIds as string[];
+    applied.push('已更新所属项目');
+  }
   if (Object.keys(patch).length > 0) {
     kanban.updateTask(task.id, patch);
   }
@@ -410,6 +414,7 @@ function executeUpdateTask(params: Record<string, unknown>): ActionResult {
         dueDate: task.dueDate,
         startDate: task.startDate,
         tags: task.tags ?? [],
+        projectIds: task.projectIds ?? [],
       },
       `撤销修改任务「${task.title}」`
     ),

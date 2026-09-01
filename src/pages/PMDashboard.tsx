@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useState, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getProjectQuickAddPath } from '../utils/projectTaskDeepLink';
 import {
   BarChart3,
@@ -27,6 +27,7 @@ import {
   Plus,
   Archive,
   ArrowRight,
+  ListTodo,
 } from 'lucide-react';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { useProjectContextStore } from '../stores/useProjectContextStore';
@@ -36,6 +37,7 @@ import { ResourceUtilizationChart } from '../components/charts/ResourceUtilizati
 import { PageContent } from '../components/PageContent';
 import { RiskMatrixPanel } from '../components/pm/RiskMatrixPanel';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { EmptyState } from '../components/EmptyState';
 import type { ProjectContext } from '../types';
 
 // Sprint date range (default to current month)
@@ -47,6 +49,7 @@ function getDefaultSprintDates(): { start: Date; end: Date } {
 }
 
 export function PMDashboard() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tasks = useKanbanStore((s) => s.tasks);
   const projects = useProjectContextStore((s) => s.projects);
@@ -619,9 +622,8 @@ export function PMDashboard() {
 
       </>
       ) : (
-        <div className="rounded-xl border border-dashed border-border-light p-8 text-center dark:border-border-dark">
-          <p className="font-medium text-text-light-primary dark:text-text-dark-primary">暂无可分析的任务数据</p>
-          <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">先为项目添加下一步；有计划值和完成样本后，健康度与趋势才会出现。</p>
+        <div className="rounded-xl border border-dashed border-border-light dark:border-border-dark">
+          <EmptyState icon={BarChart3} title="暂无可分析的任务数据" description="先为项目添加下一步；有计划值和完成样本后，健康度与趋势才会出现。" action={{ label: '添加任务', onClick: () => navigate(selectedProjectId === 'all' ? '/tasks' : getProjectQuickAddPath(selectedProjectId)) }} />
         </div>
       ))}
 
@@ -633,7 +635,7 @@ export function PMDashboard() {
               <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">需要处理的阻塞</h3>
             </div>
             {blockedTasks.length === 0 ? (
-              <p className="py-8 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">当前没有受阻任务。</p>
+              <EmptyState size="sm" icon={ListTodo} title="当前没有受阻任务" description="任务进展顺畅；需要时可从任务页补充依赖关系。" action={{ label: '查看任务', onClick: () => navigate('/tasks'), variant: 'secondary' }} />
             ) : (
               <div className="space-y-2">
                 {blockedTasks.map((task) => (

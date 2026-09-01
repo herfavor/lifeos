@@ -93,12 +93,15 @@ export function ProviderSettings({
 
   const handleSave = async (providerId: string) => {
     const apiKey = apiKeyInputs[providerId]?.trim();
-    if (!apiKey || saving[providerId]) return;
+    const hasSavedKey = Boolean(storedProviders[providerId]?.isConfigured);
+    if ((!apiKey && !hasSavedKey) || saving[providerId]) return;
 
     setSaving((prev) => ({ ...prev, [providerId]: true }));
     try {
-      await setProviderApiKey(providerId, apiKey); // encrypt + persist
-      router.setProviderApiKey(providerId, apiKey); // hot-load into session
+      if (apiKey) {
+        await setProviderApiKey(providerId, apiKey); // encrypt + persist
+        router.setProviderApiKey(providerId, apiKey); // hot-load into session
+      }
 
       // Model: user-entered wins; otherwise the provider's default.
       let modelId = modelInputs[providerId]?.trim();
@@ -284,10 +287,10 @@ export function ProviderSettings({
                     <div className="flex items-center gap-1.5 pt-0.5">
                       <button
                         onClick={() => handleSave(providerId)}
-                        disabled={!apiKeyInputs[providerId]?.trim() || saving[providerId]}
+                        disabled={(!apiKeyInputs[providerId]?.trim() && !isConfigured) || saving[providerId]}
                         className="rounded-button bg-accent-primary px-3 py-1.5 text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-light-elevated disabled:text-text-light-tertiary dark:disabled:bg-surface-dark-elevated dark:disabled:text-text-dark-tertiary"
                       >
-                        {saving[providerId] ? '保存中…' : isConfigured ? '更新并启用' : '保存并启用'}
+                        {saving[providerId] ? '保存中…' : isConfigured ? '更新模型并启用' : '保存并启用'}
                       </button>
                       {isConfigured && (
                         <button

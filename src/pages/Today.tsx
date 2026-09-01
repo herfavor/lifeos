@@ -39,6 +39,7 @@ import { CapacityBar } from '../components/today/CapacityBar';
 import { MorningRitual } from '../components/today/MorningRitual';
 import { EveningReview as EveningReviewFlow } from '../components/today/EveningReview';
 import { RolloverModal } from '../components/today/RolloverModal';
+import { QuickAddModal } from '../widgets/Kanban/QuickAddModal';
 import { useCalendarStore } from '../stores/useCalendarStore';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { useTimeTrackingStore } from '../stores/useTimeTrackingStore';
@@ -189,7 +190,8 @@ const TodayTasks: React.FC<{
   dateKey: string;
   onPlan: () => void;
   onAddTask: () => void;
-}> = ({ tasks, onTaskClick, onFocusTask, focusedTaskId, dateKey, onPlan, onAddTask }) => {
+  onToggleTask: (taskId: string, completed: boolean) => void;
+}> = ({ tasks, onTaskClick, onFocusTask, focusedTaskId, dateKey, onPlan, onAddTask, onToggleTask }) => {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 text-text-light-secondary dark:text-text-dark-secondary">
@@ -224,6 +226,15 @@ const TodayTasks: React.FC<{
           {isFocused(task.id) && (
             <div className="w-1 h-6 bg-accent-primary rounded-full flex-shrink-0" />
           )}
+
+          <button
+            type="button"
+            onClick={() => onToggleTask(task.id, task.status === 'done')}
+            aria-label={task.status === 'done' ? `标记“${task.title}”为未完成` : `完成“${task.title}”`}
+            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${task.status === 'done' ? 'border-status-success bg-status-success text-white' : 'border-border-light text-transparent hover:border-accent-primary dark:border-border-dark'}`}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+          </button>
 
           <button
             onClick={() => onTaskClick(task.id)}
@@ -327,17 +338,6 @@ const DailyNoteWidget: React.FC<{ onNavigate: () => void }> = ({ onNavigate }) =
             onClick={handleOpenDailyNote}
             className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-border-light dark:border-border-dark hover:border-accent-primary hover:bg-accent-primary/5 transition-colors group"
           >
-            <div className="w-10 h-10 flex items-center justify-center bg-accent-primary/10 rounded-lg">
-              <Plus className="w-5 h-5 text-accent-primary" />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
-                创建今日笔记
-              </p>
-              <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
-                开始记录今日想法
-              </p>
-            </div>
           </button>
         )}
       </div>
@@ -357,6 +357,7 @@ export const Today: React.FC = () => {
   const [showEveningReview, setShowEveningReview] = useState(false);
   const [showRollover, setShowRollover] = useState(false);
   const [rolloverDismissed, setRolloverDismissed] = useState(false);
+  const [showQuickAddTask, setShowQuickAddTask] = useState(false);
 
   // Get today's date
   const today = useMemo(() => startOfDay(new Date()), []);
@@ -366,6 +367,7 @@ export const Today: React.FC = () => {
   const eventsMap = useCalendarStore((state) => state.events);
   const updateEventTime = useCalendarStore((state) => state.updateEventTime);
   const tasks = useKanbanStore((state) => state.tasks);
+  const updateTask = useKanbanStore((state) => state.updateTask);
   const timeEntries = useTimeTrackingStore((state) => state.entries);
 
   // Daily planning store
@@ -558,7 +560,7 @@ export const Today: React.FC = () => {
                 今日任务
               </h3>
               <button
-                onClick={() => navigate('/tasks')}
+                onClick={() => setShowQuickAddTask(true)}
                 className="p-1.5 rounded hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated transition-colors"
                 title="添加任务"
                 aria-label="添加任务"
@@ -579,7 +581,8 @@ export const Today: React.FC = () => {
                 focusedTaskId={focusIsActive ? focusedTaskId : null}
                 dateKey={todayKey}
                 onPlan={() => navigate('/tasks?tab=inbox')}
-                onAddTask={() => navigate('/tasks?tab=tasks')}
+                onAddTask={() => setShowQuickAddTask(true)}
+                onToggleTask={(taskId, completed) => updateTask(taskId, { status: completed ? 'todo' : 'done' })}
               />
             </div>
           </div>
@@ -646,6 +649,13 @@ export const Today: React.FC = () => {
           }}
         />
       )}
+
+      <QuickAddModal
+        isOpen={showQuickAddTask}
+        onClose={() => setShowQuickAddTask(false)}
+        defaultColumn="todo"
+        defaultDueDate={format(today, 'yyyy-MM-dd')}
+      />
     </PageContent>
   );
 };

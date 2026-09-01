@@ -36,7 +36,7 @@ interface AgentMessageListProps {
 
 function MarkdownContent({ text }: { text: string }) {
   return (
-    <div className="prose prose-sm max-w-none break-words dark:prose-invert [&_a]:break-all [&_code]:break-all [&_pre]:overflow-x-auto">
+    <div className="prose prose-sm max-w-none break-words text-sm leading-6 dark:prose-invert [&_a]:break-all [&_code]:break-all [&_pre]:overflow-x-auto">
       <ReactMarkdown rehypePlugins={[[rehypeSanitize, agentSanitizeSchema]]}>{text}</ReactMarkdown>
     </div>
   );
@@ -112,42 +112,12 @@ function ActionGroup({
   }
 
   const pending = actions.filter((a) => a.status === 'pending').length;
-  const failed = actions.filter((a) => a.status === 'failed' || a.status === 'blocked').length;
-  const executed = actions.filter((a) => a.status === 'executed').length;
-  const rejected = actions.filter((a) => a.status === 'rejected').length;
-  const shouldOpen = pending > 0 || failed > 0;
-  const summary = pending > 0
-    ? `${pending} 项待确认`
-    : failed > 0
-      ? `${failed} 项需要处理`
-      : executed > 0
-        ? `已完成 ${executed} 项操作`
-        : `已处理 ${actions.length - rejected} 项操作`;
+  const visibleActions = actions.slice(0, 3);
+  const remainingActions = actions.slice(3);
 
   return (
-    <details
-      open={shouldOpen}
-      className="group rounded-xl border border-border-light bg-surface-light dark:border-border-dark dark:bg-surface-dark"
-    >
-      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs [&::-webkit-details-marker]:hidden">
-        <span className={`flex h-5 w-5 items-center justify-center rounded-full ${
-          failed > 0
-            ? 'bg-status-error/10 text-status-error'
-            : pending > 0
-              ? 'bg-status-warning/10 text-status-warning'
-              : 'bg-status-success/10 text-status-success'
-        }`}>
-          {failed > 0 ? '!' : pending > 0 ? '…' : '✓'}
-        </span>
-        <span className="font-medium text-text-light-primary dark:text-text-dark-primary">{summary}</span>
-        <span className="truncate text-text-light-tertiary dark:text-text-dark-tertiary">
-          {actions.slice(0, 3).map((a) => a.summary).join(' · ')}
-          {actions.length > 3 ? ` · +${actions.length - 3}` : ''}
-        </span>
-        <ChevronDown className="ml-auto h-3.5 w-3.5 shrink-0 text-text-light-tertiary transition-transform group-open:rotate-180 dark:text-text-dark-tertiary" />
-      </summary>
-      <div className="space-y-1.5 border-t border-border-light px-2 py-2 dark:border-border-dark">
-        {actions.map((action) => (
+    <div className="space-y-1.5">
+      {visibleActions.map((action) => (
           <AgentActionCard
             key={action.id}
             action={action}
@@ -155,17 +125,35 @@ function ActionGroup({
             onReject={onRejectAction ? () => onRejectAction(messageId, action.id) : undefined}
             onUndo={onUndoAction ? () => onUndoAction(messageId, action.id) : undefined}
           />
-        ))}
-        {pending > 1 && onConfirmAction && (
+      ))}
+      {remainingActions.length > 0 && (
+        <details className="group rounded-lg border border-border-light bg-surface-light px-2.5 py-2 dark:border-border-dark dark:bg-surface-dark">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-xs font-medium text-text-light-secondary [&::-webkit-details-marker]:hidden dark:text-text-dark-secondary">
+            +{remainingActions.length} 项操作
+            <ChevronDown className="ml-auto h-3.5 w-3.5 text-text-light-tertiary transition-transform group-open:rotate-180 dark:text-text-dark-tertiary" />
+          </summary>
+          <div className="mt-2 space-y-1.5 border-t border-border-light pt-2 dark:border-border-dark">
+            {remainingActions.map((action) => (
+              <AgentActionCard
+                key={action.id}
+                action={action}
+                onConfirm={onConfirmAction ? () => onConfirmAction(messageId, action.id) : undefined}
+                onReject={onRejectAction ? () => onRejectAction(messageId, action.id) : undefined}
+                onUndo={onUndoAction ? () => onUndoAction(messageId, action.id) : undefined}
+              />
+            ))}
+          </div>
+        </details>
+      )}
+      {pending > 1 && onConfirmAction && (
           <button
             onClick={() => actions.filter((a) => a.status === 'pending').forEach((a) => onConfirmAction(messageId, a.id))}
             className="w-full rounded-lg bg-accent-primary px-3 py-1.5 text-[11px] font-medium text-white transition-opacity hover:opacity-90"
           >
             一次确认这 {pending} 项
           </button>
-        )}
-      </div>
-    </details>
+      )}
+    </div>
   );
 }
 
@@ -239,15 +227,15 @@ export const AgentMessageList: React.FC<AgentMessageListProps> = ({
             {m.role === 'assistant' && (
               <span
                 aria-hidden
-                className="mr-2 mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary"
+                className="mr-2 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-surface-light-elevated text-text-light-tertiary dark:bg-surface-dark-elevated dark:text-text-dark-tertiary"
               >
-                <Sparkles className="h-3.5 w-3.5" />
+                <Sparkles className="h-4 w-4" />
               </span>
             )}
             <div
               className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm ${
                 m.role === 'user'
-                  ? 'rounded-br-md bg-accent-primary text-white'
+                  ? 'max-w-[70%] rounded-br-md border border-border-light bg-surface-light-elevated text-text-light-primary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-primary'
                   : m.isError
                     ? 'rounded-bl-md border border-accent-red/30 bg-accent-red/5'
                     : 'rounded-bl-md border border-border-light/70 bg-surface-light dark:border-border-dark/70 dark:bg-surface-dark'
@@ -282,9 +270,9 @@ export const AgentMessageList: React.FC<AgentMessageListProps> = ({
         <div className="flex justify-start">
           <span
             aria-hidden
-            className="mr-2 mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary"
+            className="mr-2 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-surface-light-elevated text-text-light-tertiary dark:bg-surface-dark-elevated dark:text-text-dark-tertiary"
           >
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className="h-4 w-4" />
           </span>
           <div className="max-w-[88%] rounded-2xl rounded-bl-md border border-border-light/70 bg-surface-light px-3.5 py-2.5 text-sm text-text-light-primary dark:border-border-dark/70 dark:bg-surface-dark dark:text-text-dark-primary">
             {showStreamingText ? (

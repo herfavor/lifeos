@@ -19,6 +19,7 @@ import { useCalendarStore } from '../../../stores/useCalendarStore';
 import { useHabitStore } from '../../../stores/useHabitStore';
 import { useEnergyStore } from '../../../stores/useEnergyStore';
 import { useTimeTrackingStore } from '../../../stores/useTimeTrackingStore';
+import { useProjectContextStore } from '../../../stores/useProjectContextStore';
 import { logger } from '../../logger';
 
 const log = logger.module('AIAgentPrompt');
@@ -136,6 +137,15 @@ function appendOptionalContext(sections: string[], include: boolean): void {
   try {
     const context = buildCrossModuleContext();
     sections.push(contextToSystemPrompt(context));
+    const projects = useProjectContextStore.getState().projects
+      .filter((project) => !project.archivedAt)
+      .slice(0, 30);
+    if (projects.length > 0) {
+      sections.push(
+        `## 可关联项目\n创建或修改任务时，如用户指定项目，请使用下列真实 projectIds，不要虚构 ID：\n` +
+        projects.map((project) => `- ${project.name}（projectId: ${project.id}）`).join('\n')
+      );
+    }
   } catch (error) {
     log.warn('Failed to build cross-module context', { error });
   }
