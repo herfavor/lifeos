@@ -27,7 +27,7 @@ Mac 上的 `Mod` 对应 Cmd；Windows / Linux 对应 Ctrl。
 | Ctrl/Cmd + 3 | 笔记 |
 | Ctrl/Cmd + 4 | 任务 |
 | Ctrl/Cmd + 5 | 日程 |
-| Ctrl/Cmd + 6 | 文档 |
+| Ctrl/Cmd + 6 | 创建 |
 | Ctrl/Cmd + 7 | 收藏 |
 | Ctrl/Cmd + 8 | 设置 |
 
@@ -65,7 +65,7 @@ Mac 上的 `Mod` 对应 Cmd；Windows / Linux 对应 Ctrl。
 
 ## 输入框保护
 
-单键快捷键在 input、textarea、select、contenteditable、Lexical / ProseMirror / Tiptap 编辑器内会被全局快捷键系统拦截，避免打字时误触。
+单键快捷键在 input、textarea、select、contenteditable 以及 Lexical / Tiptap 编辑器内会被全局快捷键系统拦截，避免打字时误触。
 
 ## 相关指南
 

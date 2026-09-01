@@ -53,6 +53,8 @@
 
 旧版电子表格、演示文稿、绘图和表单不再提供运行时编辑器或直达路由。历史持久化数据结构仅作为兼容数据保留，不会被清理迁移主动删除。
 
+第一次使用可以从首页底部一键加载示例数据「小张的一周」，跑通完整工作流后再一键删除；加载只合并不覆盖。
+
 ---
 
 ## 核心工作流
@@ -160,7 +162,7 @@ npm run ci
 
 ## 技术栈
 
-React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Zustand 5 · Dexie / IndexedDB · Vitest · Playwright · vite-plugin-pwa · Lexical / Tiptap · D3 / Recharts / Konva
+React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Zustand 5 · Dexie / IndexedDB · Vitest · Playwright · vite-plugin-pwa · Lexical / Tiptap · D3 / Recharts
 
 关键目录：
 
