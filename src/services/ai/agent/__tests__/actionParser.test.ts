@@ -140,6 +140,19 @@ describe('parseAgentReply', () => {
     expect(actions).toHaveLength(0);
   });
 
+  it('flags an unbacked deletion claim so the UI can avoid presenting it as fact', () => {
+    const parsed = parseAgentReply('我已经删除了「旧任务」。');
+    expect(parsed.actions).toHaveLength(0);
+    expect(parsed.unverifiedExecutionClaim).toBe(true);
+  });
+
+  it('does not flag deletion advice or replies with a structured action', () => {
+    expect(parseAgentReply('你可以删除「旧任务」。').unverifiedExecutionClaim).toBe(false);
+    expect(
+      parseAgentReply('我已删除了「旧任务」。\n```json\n{"actions":[{"tool":"delete_task","params":{"taskId":"task-1"}}]}\n```').unverifiedExecutionClaim
+    ).toBe(false);
+  });
+
   it('strict mode sweeps residual action JSON the model leaked into prose', () => {
     const reply = [
       '我重新查询一下未完成的任务，然后我再给出时间表。',

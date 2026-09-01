@@ -11,6 +11,7 @@ import { Sparkles, TrendingUp, CheckCircle, ArrowRight } from 'lucide-react';
 import { generateRetrospectiveData } from '../../services/weeklyRetrospective';
 import { generateInsights, hasRetrospectiveEvidence } from '../../services/ai/insightsGenerator';
 import type { WeeklyInsights } from '../../services/ai/insightsGenerator';
+import { EmptyState } from '../../components/EmptyState';
 
 export const WeeklyInsightsWidget: React.FC = () => {
   const navigate = useNavigate();
@@ -51,9 +52,13 @@ export const WeeklyInsightsWidget: React.FC = () => {
 
   if (!insights) {
     return (
-      <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-        暂无数据。完成一些任务和习惯后即可查看你的每周洞察。
-      </p>
+      <EmptyState
+        size="sm"
+        icon={Sparkles}
+        title="还没有本周洞察"
+        description="完成任务或记录习惯后，这里会生成一份简短总结。"
+        action={{ label: '查看回顾', onClick: () => navigate('/retrospective'), variant: 'secondary' }}
+      />
     );
   }
 

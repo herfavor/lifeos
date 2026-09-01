@@ -26,6 +26,7 @@ import {
 } from '../components/habits';
 import type { HabitTemplate } from '../components/habits';
 import { useRoutineStore, type Routine } from '../stores/useRoutineStore';
+import { toast } from '../stores/useToastStore';
 import { ROUTINE_TEMPLATES, type RoutineTemplate } from '../data/routineTemplates';
 import type { Habit, HabitFrequency, HabitCategory, HabitDifficulty } from '../types';
 
@@ -958,10 +959,17 @@ export function HabitsContent() {
   const handleToggleCompletion = useCallback((habitId: string, note?: string) => {
     const wasCompleted = isCompletedOnDate(habitId, todayKey);
     toggleCompletion(habitId, todayKey, note);
+    const habit = habits.find((item) => item.id === habitId);
+    if (habit) {
+      if (wasCompleted) {
+        toast.info(`已取消「${habit.name}」的今日打卡`);
+      } else {
+        toast.success(`已完成「${habit.name}」`);
+      }
+    }
 
     if (!wasCompleted) {
       // Find updated streak after toggle
-      const habit = habits.find((h) => h.id === habitId);
       if (habit) {
         // Trigger animation with current streak + 1 (optimistic)
         const newStreak = habit.currentStreak + 1;

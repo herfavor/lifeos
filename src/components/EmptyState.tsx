@@ -119,7 +119,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <div className={`text-center ${config.container} ${className} animate-fade-in`}>
       {/* Icon */}
       <div className="flex justify-center mb-6">
-        <div className={`${config.iconWrapper} bg-gradient-to-br from-accent-primary/10 to-accent-secondary/10 dark:from-accent-primary/10 dark:to-accent-primary/10 rounded-2xl`}>
+        <div className={`${config.iconWrapper} rounded-2xl bg-accent-primary/10`}>
           <Icon className={`${config.icon} text-accent-primary`} />
         </div>
       </div>

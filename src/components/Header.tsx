@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { CalendarDays, CheckSquare, FileText, Home, Moon, Settings, Sun } from 'lucide-react';
 import { useThemeStore } from '../stores/useThemeStore';
 import { HeaderClock } from './HeaderClock';
 
@@ -39,9 +40,7 @@ export const Header: React.FC = () => {
               title={`切换到${mode === 'dark' ? '浅色' : '深色'}模式`}
               aria-label={mode === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
             >
-              <span className="text-xl" aria-hidden="true">
-                {mode === 'dark' ? '☀️' : '🌙'}
-              </span>
+              {mode === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
           </div>
         </div>
@@ -49,17 +48,17 @@ export const Header: React.FC = () => {
         {/* Navigation */}
         <nav className="flex items-center gap-2 overflow-x-auto">
           {[
-            { to: '/', label: '🏠 首页' },
-            { to: '/notes', label: '📝 笔记' },
-            { to: '/schedule', label: '📅 日程' },
-            { to: '/tasks', label: '✓ 任务' },
-            { to: '/settings', label: '⚙️ 设置' },
-          ].map(({ to, label }) => (
+            { to: '/', label: '首页', icon: Home },
+            { to: '/notes', label: '笔记', icon: FileText },
+            { to: '/schedule', label: '日程', icon: CalendarDays },
+            { to: '/tasks', label: '任务', icon: CheckSquare },
+            { to: '/settings', label: '设置', icon: Settings },
+          ].map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
               to={to}
               className={`
-                px-3 py-2 rounded-button text-sm font-medium transition-all duration-standard ease-smooth
+                inline-flex items-center gap-1.5 px-3 py-2 rounded-button text-sm font-medium transition-all duration-standard ease-smooth
                 ${
                   isActive(to)
                     ? 'bg-surface-light-elevated dark:bg-surface-dark-elevated text-text-light-primary dark:text-text-dark-primary'
@@ -67,6 +66,7 @@ export const Header: React.FC = () => {
                 }
               `}
             >
+              <Icon className="h-4 w-4" />
               {label}
             </Link>
           ))}

@@ -3,6 +3,7 @@ import { X, AlertTriangle, Sparkles, Copy } from 'lucide-react';
 import { en as chrono } from 'chrono-node';
 import { format } from 'date-fns';
 import { useCalendarStore } from '../stores/useCalendarStore';
+import { toast } from '../stores/useToastStore';
 import { REMINDER_OPTIONS } from '../services/eventReminders';
 import { detectConflicts, formatConflictMessage, getConflictDetails } from '../utils/conflictDetection';
 import { EVENT_COLOR_CATEGORIES } from '../utils/eventColors';
@@ -244,9 +245,11 @@ export function EventCreateModal({
       if (event && !isDuplicate) {
         // Update existing event
         updateEvent(effectiveDateKey, event.id, eventData.title!, eventData.description, eventData);
+        toast.success(`已更新日程「${eventData.title}」`);
       } else {
         // Create new event (or duplicate)
         addEvent(effectiveDateKey, eventData.title!, eventData.description, eventData);
+        toast.success(`已创建日程「${eventData.title}」`);
       }
 
       onClose();

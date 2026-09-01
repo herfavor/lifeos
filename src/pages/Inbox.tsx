@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Inbox as InboxIcon, ListChecks, SlidersHorizontal } from 'lucide-react';
+import { Archive, ArrowRight, Inbox as InboxIcon, ListChecks, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PageContent } from '../components/PageContent';
 import { TriageInbox } from '../components/tasks/TriageInbox';
 import { useKanbanStore } from '../stores/useKanbanStore';
 import { useProjectContextStore } from '../stores/useProjectContextStore';
+import { toast } from '../stores/useToastStore';
 import type { Task, TaskPriority } from '../types';
 
 const PRIORITY_LABELS: Record<TaskPriority, string> = {
@@ -30,9 +31,20 @@ function InboxTaskCard({
 }) {
   const updateTask = useKanbanStore((s) => s.updateTask);
   const moveTask = useKanbanStore((s) => s.moveTask);
+  const archiveTask = useKanbanStore((s) => s.archiveTask);
+  const scheduleTask = () => {
+    moveTask(task.id, 'todo');
+    const [, month, day] = (task.dueDate ?? '').split('-').map(Number);
+    const dateLabel = month && day ? `${month} 月 ${day} 日` : '待办列表';
+    toast.success(`已安排到${dateLabel}`, '任务已移入待办，可在任务页继续处理。');
+  };
+  const archiveInboxTask = () => {
+    archiveTask(task.id);
+    toast.success(`已归档「${task.title}」`);
+  };
 
   return (
-    <article className="rounded-xl border border-border-light bg-surface-light p-4 transition-colors hover:border-accent-primary/35 dark:border-border-dark dark:bg-surface-dark">
+    <article className="group rounded-xl border border-border-light bg-surface-light p-4 transition-colors hover:border-accent-primary/35 dark:border-border-dark dark:bg-surface-dark">
       <div className="flex items-start gap-3">
         <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${priorityDot[task.priority]}`} aria-label={`${PRIORITY_LABELS[task.priority]}优先级`} />
         <button
@@ -55,6 +67,15 @@ function InboxTaskCard({
               {task.description}
             </p>
           )}
+        </button>
+        <button
+          type="button"
+          onClick={archiveInboxTask}
+          aria-label={`归档「${task.title}」`}
+          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary opacity-0 transition hover:bg-surface-light-elevated hover:text-text-light-secondary focus:opacity-100 group-hover:opacity-100 dark:text-text-dark-tertiary dark:hover:bg-surface-dark-elevated dark:hover:text-text-dark-secondary"
+          title="归档"
+        >
+          <Archive className="h-4 w-4" />
         </button>
       </div>
 
@@ -83,7 +104,7 @@ function InboxTaskCard({
 
         <button
           type="button"
-          onClick={() => moveTask(task.id, 'todo')}
+          onClick={scheduleTask}
           className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent-primary px-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           安排

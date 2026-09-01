@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { BackgroundCustomizer, type BackgroundSettings } from '../../components/BackgroundCustomizer';
 import { useSettingsStore } from '../../stores/useSettingsStore';
+import { Palette } from 'lucide-react';
 
 export const SiteWideSettings: React.FC = () => {
   // Display Preferences (from settings store)
@@ -56,10 +57,10 @@ export const SiteWideSettings: React.FC = () => {
             </label>
             <button
               onClick={() => setShowBackgroundCustomizer(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-lg font-medium transition-colors"
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border-light px-3 py-2 text-sm font-medium text-text-light-secondary transition-colors hover:border-accent-primary hover:text-accent-primary dark:border-border-dark dark:text-text-dark-secondary"
             >
-              <span>🎨</span>
-              <span>自定义背景</span>
+              <Palette className="h-4 w-4" />
+              自定义背景
             </button>
             <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary mt-2">
               自定义整个应用的背景

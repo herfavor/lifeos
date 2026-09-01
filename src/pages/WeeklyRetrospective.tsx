@@ -30,6 +30,7 @@ import {
 } from '../services/ai/insightsGenerator';
 import type { WeeklyInsights } from '../services/ai/insightsGenerator';
 import { PageContent } from '../components/PageContent';
+import { EmptyState } from '../components/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { useNotesStore } from '../stores/useNotesStore';
 import { markdownToLexical } from '../utils/markdownToLexical';
@@ -200,9 +201,14 @@ ${hasRetrospectiveEvidence(retroData) ? `## 生产力评分：${insights.product
 
   if (!retroData || !insights) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] text-text-light-secondary dark:text-text-dark-secondary">
-        本周暂无数据。
-      </div>
+      <PageContent page="retrospective">
+        <EmptyState
+          icon={CalendarDays}
+          title="本周还没有可回顾的记录"
+          description="完成任务、安排日程或记录专注时间后，这里会整理出本周的进展与下一步。"
+          action={{ label: '去安排本周任务', onClick: () => navigate('/tasks') }}
+        />
+      </PageContent>
     );
   }
 

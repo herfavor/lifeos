@@ -32,7 +32,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Trash2 } from 'lucide-react';
+import { Archive, GripVertical, Trash2 } from 'lucide-react';
 import { CollectionSidebar } from '../components/CollectionSidebar';
 import { useLinkLibraryStore, type Link, type DuplicateGroup } from '../stores/useLinkLibraryStore';
 import { useLinkFoldersStore } from '../stores/useLinkFoldersStore';
@@ -887,7 +887,7 @@ export const LinkLibrary: React.FC = () => {
       {isViewingTrash && displayedLinks.length > 0 && (
         <div className="mb-4 p-4 rounded-button bg-status-warning/10 border border-status-warning/30">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🗑️</span>
+            <Trash2 className="h-6 w-6 shrink-0 text-status-warning" />
             <div className="flex-1">
               <p className="text-text-light-primary dark:text-text-dark-primary font-medium">
                 最近删除
@@ -1717,7 +1717,7 @@ const LinkCard = memo<LinkCardProps>(({
                          hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors flex-shrink-0"
               title={link.isArchived ? '取消归档' : '归档'}
             >
-              📥
+              <Archive className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
@@ -1887,7 +1887,7 @@ const LinkListItem = memo<LinkCardProps>(({
                        hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors flex-shrink-0"
             title={link.isArchived ? '取消归档' : '归档'}
           >
-            📥
+            <Archive className="h-4 w-4" />
           </button>
 
           <button
@@ -1950,7 +1950,7 @@ function LinkContextMenu({ x, y, link, onClose, onEdit, onFavorite, onArchive, o
           onClick={onArchive}
           className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-light-alt dark:hover:bg-surface-dark text-text-light-primary dark:text-text-dark-primary"
         >
-          <span className="text-sm">📥</span>
+          <Archive className="h-4 w-4" />
           <span className="text-sm">{link.isArchived ? '取消归档' : '归档'}</span>
         </button>
         <button

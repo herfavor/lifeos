@@ -411,7 +411,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
             onClick={() => setActiveTab('review')}
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'review' ? 'bg-accent-primary text-white' : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'}`}
           >
-            回顾
+            本轮回顾
           </button>
           <button
             onClick={() => setActiveTab('feed')}
@@ -421,7 +421,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            动态
+            时间线
           </button>
           <button
             onClick={() => setActiveTab('analytics')}
@@ -431,7 +431,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
                 : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
             }`}
           >
-            分析
+            统计
           </button>
         </div>
       </div>

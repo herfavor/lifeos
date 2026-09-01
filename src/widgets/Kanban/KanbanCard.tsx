@@ -27,13 +27,13 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
   onRegisterRef,
   onCardClick,
 }) => {
-  const { updateTask, deleteTask, archiveTask, getBlockers, getBlocked, getCriticalPath, getOverdueBlockers } = useKanbanStore();
+  const { tasks, updateTask, deleteTask, archiveTask, getBlockers, getBlocked, getCriticalPath, getOverdueBlockers } = useKanbanStore();
   const { getTotalTimeForCard, activeEntry } = useTimeTrackingStore();
   const members = useSettingsStore((state) => state.members);
   const taskFieldDefinitions = useSettingsStore((state) => state.customFieldDefinitions.tasks);
 
   // Check if this task is on critical path
-  const isCritical = getCriticalPath().includes(task.id);
+  const isCritical = tasks.length >= 5 && (task.dependencies?.length ?? 0) > 0 && getCriticalPath().includes(task.id);
 
   // Get overdue blockers for dependency warnings
   const overdueBlockers = getOverdueBlockers(task.id);
@@ -436,7 +436,7 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
         )}
 
         {/* Tags */}
-        {task.tags && task.tags.length > 0 && task.tags.map((tag) => (
+        {task.tags && task.tags.slice(0, 2).map((tag) => (
           <span
             key={tag}
             className="text-xs px-2 py-0.5 rounded bg-accent-blue/10 dark:bg-accent-blue/20 text-accent-blue dark:text-accent-blue-hover"
@@ -444,6 +444,9 @@ const KanbanCardComponent: React.FC<KanbanCardProps> = ({
             #{tag}
           </span>
         ))}
+        {task.tags && task.tags.length > 2 && (
+          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">+{task.tags.length - 2}</span>
+        )}
 
         {/* Custom Fields () */}
         {activeCustomFields.map(({ field, value }) => (

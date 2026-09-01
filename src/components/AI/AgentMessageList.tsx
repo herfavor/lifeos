@@ -17,7 +17,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
-import { ChevronDown, Loader2, SearchCheck, Sparkles } from 'lucide-react';
+import { CircleAlert, ChevronDown, Loader2, SearchCheck, Sparkles } from 'lucide-react';
 import type { AgentChatMessage, AITraceEntry, ProposedAction } from '../../services/ai/agent/types';
 import { AgentActionCard } from './AgentActionCard';
 import { agentSanitizeSchema } from './sanitizeSchema';
@@ -246,6 +246,12 @@ export const AgentMessageList: React.FC<AgentMessageListProps> = ({
               ) : (
                 <>
                   {hasProse && <MarkdownContent text={m.content} />}
+                  {m.unverifiedExecutionClaim && (
+                    <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-border-light bg-surface-light-elevated px-2.5 py-2 text-xs leading-5 text-text-light-secondary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-secondary">
+                      <CircleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                      <span>这条回复没有对应的实际操作记录；请先确认数据是否已变更。</span>
+                    </div>
+                  )}
                   {m.trace && m.trace.length > 0 && <TraceStrip trace={m.trace} />}
                   {m.actions && m.actions.length > 0 && (
                     <div className={`space-y-1.5 ${hasProse || (m.trace?.length ?? 0) > 0 ? 'mt-2 border-t border-border-light pt-2 dark:border-border-dark' : ''}`}>

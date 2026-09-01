@@ -37,6 +37,18 @@ const log = logger.module('AIAgent');
 
 const FENCED_BLOCK_RE = /```([a-zA-Z]*)[ \t]*\n([\s\S]*?)```/g;
 
+/**
+ * A model must never present a destructive operation as completed unless it
+ * supplied a structured action for the runtime to confirm or execute. This
+ * deliberately targets completion wording (not suggestions such as
+ * 「可以删除」) to keep ordinary advice free of warnings.
+ */
+const UNBACKED_DELETION_CLAIM_RE = /(?:我(?:已经|已|刚刚|现已|成功)?|已经|已|刚刚|现已|成功)[^。！!\n]{0,18}(?:删除|移除|清空)(?:了|完成|成功|完毕)?/;
+
+function hasUnverifiedExecutionClaim(cleanedText: string, actions: ProposedAction[]): boolean {
+  return actions.length === 0 && UNBACKED_DELETION_CLAIM_RE.test(cleanedText);
+}
+
 interface ExtractedPayload {
   /** Absolute span of the consumed region in the source text. */
   start: number;
@@ -284,9 +296,11 @@ export function parseAgentReply(
 ): ParsedAgentReply {
   const payloads = extractActionPayloads(text);
   if (payloads.length === 0) {
+    const cleanedText = options.strictToolSweep ? sweepResidualActionJson(text) : text.trim();
     return {
-      cleanedText: options.strictToolSweep ? sweepResidualActionJson(text) : text.trim(),
+      cleanedText,
       actions: [],
+      unverifiedExecutionClaim: hasUnverifiedExecutionClaim(cleanedText, []),
     };
   }
 
@@ -340,7 +354,12 @@ export function parseAgentReply(
     }
   }
 
-  return { cleanedText: cleanedText.replace(/\n{3,}/g, '\n\n').trim(), actions };
+  const normalizedText = cleanedText.replace(/\n{3,}/g, '\n\n').trim();
+  return {
+    cleanedText: normalizedText,
+    actions,
+    unverifiedExecutionClaim: hasUnverifiedExecutionClaim(normalizedText, actions),
+  };
 }
 
 /**

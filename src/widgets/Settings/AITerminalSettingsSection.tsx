@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Bot } from 'lucide-react';
 import { useTerminalStore } from '../../stores/useTerminalStore';
 import {
   AI_EXECUTION_MODE_DESCRIPTIONS,
@@ -67,7 +68,7 @@ export const AITerminalSettingsSection: React.FC = () => {
     <div className="bento-card p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🤖</span>
+          <Bot className="h-5 w-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <div>
             <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
               AI 提供商

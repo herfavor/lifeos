@@ -22,6 +22,9 @@ import {
   Code,
   Search,
   RotateCcw,
+  AlertTriangle,
+  Lock,
+  Tag,
 } from 'lucide-react';
 import {
   exportBrainFile,
@@ -49,7 +52,6 @@ import { PresetManager } from '../components/PresetManager';
 import { logger } from '../services/logger';
 import { DailyNotesSettings } from '../widgets/Settings/DailyNotesSettings';
 import { TemplateSettings } from '../widgets/Settings/TemplateSettings';
-import { ExportSettings } from '../widgets/Settings/ExportSettings';
 import { AboutSettings } from '../widgets/Settings/AboutSettings';
 import { AccountSettings } from '../widgets/Settings/AccountSettings';
 import { SiteWideSettings } from '../widgets/Settings/SiteWideSettings';
@@ -606,7 +608,7 @@ export const Settings: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 p-4 rounded-lg bg-status-warning-bg dark:bg-status-warning-bg-dark text-status-warning-text dark:text-status-warning-text-dark border border-status-warning-border dark:border-status-warning-border-dark flex items-start gap-3"
         >
-          <span className="text-2xl">⚠️</span>
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
           <div className="flex-1">
             <p className="font-semibold">{backupReminder.message}</p>
             <button
@@ -723,15 +725,6 @@ export const Settings: React.FC = () => {
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{SETTINGS_DESCRIPTIONS[currentTab]}</p>
             <div className="flex flex-wrap items-center gap-3">
               <span className="shrink-0 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">更改即时保存到本机</span>
-              <button
-                type="button"
-                disabled={!resetAvailable}
-                title={resetAvailable ? `恢复${resetTarget}默认设置` : resetUnavailableReason}
-                onClick={() => setShowResetConfirm(true)}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-light-secondary hover:border-accent-primary hover:text-accent-primary disabled:cursor-not-allowed disabled:opacity-45 dark:border-border-dark dark:text-text-dark-secondary"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />恢复默认
-              </button>
             </div>
           </div>
           <AnimatePresence mode="popLayout" initial={false}>
@@ -779,7 +772,6 @@ export const Settings: React.FC = () => {
                     <>
                       <div className="bento-card p-6"><DailyNotesSettings /></div>
                       <div className="bento-card p-6"><TemplateSettings /></div>
-                      <div className="bento-card p-6"><ExportSettings /></div>
                     </>
                   )}
                   {workspaceSection === 'tasks' && <TaskManagementSettings />}
@@ -838,7 +830,7 @@ export const Settings: React.FC = () => {
                   {/* Privacy Notice */}
                   <div className="p-4 rounded-lg bg-status-success-bg dark:bg-status-success-bg-dark border border-status-success-border dark:border-status-success-border-dark">
                     <p className="text-sm text-status-success-text dark:text-status-success-text-dark">
-                      <strong>🔒 本地优先：</strong>核心数据存储在您的浏览器中，使用 IndexedDB（50GB+ 容量），无需云端账户且不进行行为追踪。
+                      <strong className="inline-flex items-center gap-1"><Lock className="h-4 w-4" />本地优先：</strong>核心数据存储在您的浏览器中，使用 IndexedDB（50GB+ 容量），无需云端账户且不进行行为追踪。
                       只有您主动启用 AI、天气等外部能力时，相关请求才会发往所选服务商。
                     </p>
                   </div>
@@ -851,7 +843,7 @@ export const Settings: React.FC = () => {
                       className="p-6 rounded-lg bg-status-warning-bg dark:bg-status-warning-bg-dark border-2 border-status-warning-border dark:border-status-warning-border-dark"
                     >
                       <div className="flex items-start gap-4">
-                        <span className="text-3xl flex-shrink-0">⚠️</span>
+                        <AlertTriangle className="h-7 w-7 shrink-0 text-status-warning-text dark:text-status-warning-text-dark" />
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-status-warning-text dark:text-status-warning-text-dark mb-2">
                             首次使用此浏览器？
@@ -929,7 +921,7 @@ export const Settings: React.FC = () => {
                   {systemSection === 'advanced' && (
                     <div className="bento-card p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="text-2xl">🏷️</span>
+                        <Tag className="h-5 w-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
                         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">自定义字段</h2>
                       </div>
                       <CustomFieldsSettings />
@@ -940,6 +932,17 @@ export const Settings: React.FC = () => {
               )}
             </motion.div>
           </AnimatePresence>
+          <div className="mt-5 flex justify-end">
+            <button
+              type="button"
+              disabled={!resetAvailable}
+              title={resetAvailable ? `恢复${resetTarget}默认设置` : resetUnavailableReason}
+              onClick={() => setShowResetConfirm(true)}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-light-secondary hover:border-accent-primary hover:text-accent-primary disabled:cursor-not-allowed disabled:opacity-45 dark:border-border-dark dark:text-text-dark-secondary"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />恢复{resetTarget}默认
+            </button>
+          </div>
         </div>
       </div>
 

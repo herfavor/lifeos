@@ -70,7 +70,7 @@ const activeRowClass = `${NAV_ROW_CLASS}
 const inactiveRowClass = `${NAV_ROW_CLASS}
   text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated`;
 
-const NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+export const NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   home: Home,
   'ai-assistant': Sparkles,
   today: CalendarDays,

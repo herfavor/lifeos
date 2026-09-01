@@ -17,7 +17,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { useTerminalStore } from '../stores/useTerminalStore';
 import { AIProviderRouter, PROVIDER_METADATA } from '../services/ai/providerRouter';
 import { toast } from '../stores/useToastStore';
-import { ChevronDown } from 'lucide-react';
+import { AlertTriangle, Bot, CheckCircle2, ChevronDown, KeyRound, MoreHorizontal } from 'lucide-react';
 
 interface ProviderSettingsProps {
   /** Existing modal API. Omitted for the inline settings surface. */
@@ -191,12 +191,7 @@ export function ProviderSettings({
                       className="flex min-w-0 flex-1 items-center gap-2 text-left"
                       aria-expanded={!inline || expandedProvider === providerId}
                     >
-                      <span
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent-primary/10 text-xs font-semibold uppercase text-accent-primary"
-                        aria-hidden="true"
-                      >
-                        {metadata.displayName.slice(0, 2)}
-                      </span>
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface-light text-text-light-secondary dark:bg-surface-dark dark:text-text-dark-secondary" aria-hidden="true"><Bot className="h-4 w-4" /></span>
                       <span className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
                         {metadata.displayName}
                       </span>
@@ -207,15 +202,15 @@ export function ProviderSettings({
                       )}
                       {!metadata.supportsCORS && metadata.requiresProxy && (
                         <span
-                          className="cursor-help rounded bg-accent-yellow/10 px-1.5 py-0.5 text-xs text-accent-yellow"
+                          className="inline-flex cursor-help items-center gap-1 rounded bg-accent-yellow/10 px-1.5 py-0.5 text-xs text-accent-yellow"
                           title="该提供商阻止浏览器直连（CORS）。推荐用 OpenRouter——一个密钥可访问其模型。"
                         >
-                          ⚠️ 需代理
+                          <AlertTriangle className="h-3 w-3" />需代理
                         </span>
                       )}
                       {isConfigured ? (
-                        <span className="rounded bg-accent-green/10 px-1.5 py-0.5 text-xs text-accent-green">
-                          ✓ 已配置{isActive ? ' · 使用中' : ''}
+                        <span className="inline-flex items-center gap-1 rounded bg-status-success/10 px-1.5 py-0.5 text-xs text-status-success">
+                          <CheckCircle2 className="h-3 w-3" />已配置{isActive ? ' · 使用中' : ''}
                         </span>
                       ) : null}
                       {inline && (
@@ -223,14 +218,24 @@ export function ProviderSettings({
                       )}
                     </button>
                     {metadata.apiKeyUrl && (
-                      <a
-                        href={metadata.apiKeyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="shrink-0 text-xs text-accent-primary hover:opacity-80"
-                      >
-                        获取密钥 →
-                      </a>
+                      <details className="group relative shrink-0">
+                        <summary
+                          aria-label={`${metadata.displayName} 更多操作`}
+                          className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-lg text-text-light-tertiary transition-colors hover:bg-surface-light hover:text-text-light-secondary [&::-webkit-details-marker]:hidden dark:text-text-dark-tertiary dark:hover:bg-surface-dark dark:hover:text-text-dark-secondary"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </summary>
+                        <div className="absolute right-0 z-10 mt-1 w-28 rounded-lg border border-border-light bg-surface-light p-1 shadow-lg dark:border-border-dark dark:bg-surface-dark">
+                          <a
+                            href={metadata.apiKeyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-text-light-secondary hover:bg-surface-light-elevated hover:text-accent-primary dark:text-text-dark-secondary dark:hover:bg-surface-dark-elevated"
+                          >
+                            <KeyRound className="h-3.5 w-3.5" />获取密钥
+                          </a>
+                        </div>
+                      </details>
                     )}
                   </div>
 

@@ -215,6 +215,8 @@ export interface AgentChatMessage {
   transient?: boolean;
   /** Compact 操作过程 strip attached to the final answer of a multi-round turn. */
   trace?: AITraceEntry[];
+  /** The reply claimed it completed a deletion, but supplied no tool action to verify it. */
+  unverifiedExecutionClaim?: boolean;
 }
 
 /** Compact execution record fed back into subsequent prompts. */
@@ -231,4 +233,6 @@ export interface ParsedAgentReply {
   cleanedText: string;
   /** Validated proposals; invalid ones carry a `failed` status + reason. */
   actions: ProposedAction[];
+  /** A deletion claim in prose without any associated tool action. */
+  unverifiedExecutionClaim?: boolean;
 }

@@ -156,16 +156,16 @@ export const HomeOverview: React.FC = () => {
         <div className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full bg-accent-primary/35 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-36 left-1/3 h-72 w-72 rounded-full bg-accent-cyan/10 blur-3xl" />
 
-        <div className="relative grid gap-6 px-5 py-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(28rem,1.1fr)] lg:px-8 lg:py-7">
+        <div className="relative grid gap-5 px-5 py-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(28rem,1.1fr)] lg:px-8 lg:py-6">
           <div className="flex min-w-0 flex-col justify-between">
             <div>
               <p className="text-sm font-semibold text-white/65">{greeting}，这里是你的今日工作台</p>
-              <h2 className="mt-2 max-w-xl text-2xl font-semibold tracking-tight text-white sm:text-[2rem] sm:leading-tight">
+              <h2 className="mt-1.5 max-w-xl text-[26px] font-bold tracking-tight text-white leading-tight">
                 {focusTask ? '现在，只推进这一件事。' : '先决定今天最重要的一步。'}
               </h2>
 
               {focusTask ? (
-                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 p-3.5 backdrop-blur-sm">
+                <div className="mt-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm">
                   <button
                     type="button"
                     onClick={() => updateTask(focusTask.id, { status: 'done' })}
@@ -192,7 +192,7 @@ export const HomeOverview: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2" aria-label="今日概览">
+            <div className="mt-4 flex flex-wrap gap-2" aria-label="今日概览">
               <Link to="/today" className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/15">
                 今日 {allTodayTasks.length} 项
               </Link>
@@ -241,12 +241,12 @@ export const HomeOverview: React.FC = () => {
                   setCaptureStatus('');
                 }}
                 placeholder={captureType === 'task' ? '有什么需要记住？' : '这个想法叫什么？'}
-                className="min-h-12 min-w-0 flex-1 rounded-xl border border-white/25 bg-white/95 px-4 text-base text-text-light-primary outline-none transition placeholder:text-text-light-tertiary focus:border-white focus:ring-2 focus:ring-white/25"
+                className="min-h-12 min-w-0 flex-1 rounded-xl border border-white/25 bg-white/10 px-4 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white focus:ring-2 focus:ring-white/25"
               />
               <button
                 type="submit"
                 disabled={!captureText.trim()}
-                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-accent-primary px-5 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-text-light-primary shadow-sm transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Plus className="h-4 w-4" />
                 收进来

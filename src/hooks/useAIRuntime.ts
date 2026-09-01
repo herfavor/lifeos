@@ -331,6 +331,7 @@ export function useAIRuntime() {
         provider: response.provider,
         model: response.model,
         transient,
+        unverifiedExecutionClaim: parsed.unverifiedExecutionClaim,
       });
 
       const currentWs = useAIWorkspaceStore.getState();

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { User } from 'lucide-react';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 
 export const AccountSettings: React.FC = () => {
@@ -15,7 +16,7 @@ export const AccountSettings: React.FC = () => {
   return (
     <div id="account" className="bento-card p-6">
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-2xl">👤</span>
+        <User className="h-5 w-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
         <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
           个人资料（仅存本机）
         </h2>

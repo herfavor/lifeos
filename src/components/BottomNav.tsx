@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Circle, MoreHorizontal, Settings, X } from 'lucide-react';
 import { CORE_FEATURES, getFeature } from '../config/features';
+import { NAV_ICONS } from './Sidebar';
 
 interface BottomNavItem {
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   path: string;
 }
@@ -16,7 +18,7 @@ const toNavItem = (id: string): BottomNavItem | null => {
   const feature = getFeature(id);
   if (!feature?.path) return null;
   return {
-    icon: feature.icon,
+    icon: NAV_ICONS[id] ?? Circle,
     label: feature.label,
     path: feature.path,
   };
@@ -25,7 +27,7 @@ const toNavItem = (id: string): BottomNavItem | null => {
 const mainItems: BottomNavItem[] = CORE_FEATURES
   .filter((feature) => MAIN_FEATURE_IDS.has(feature.id) && feature.path)
   .map((feature) => ({
-    icon: feature.icon,
+    icon: NAV_ICONS[feature.id] ?? Circle,
     label: feature.label,
     path: feature.path!,
   }));
@@ -33,10 +35,10 @@ const mainItems: BottomNavItem[] = CORE_FEATURES
 const moreItems: BottomNavItem[] = [
   ...CORE_FEATURES
     .filter((feature) => !MAIN_FEATURE_IDS.has(feature.id) && feature.path)
-    .map((feature) => ({ icon: feature.icon, label: feature.label, path: feature.path! })),
+    .map((feature) => ({ icon: NAV_ICONS[feature.id] ?? Circle, label: feature.label, path: feature.path! })),
   toNavItem('docs-center'),
   toNavItem('focus'),
-  { icon: '\u2699\uFE0F', label: '设置', path: '/settings' },
+  { icon: Settings, label: '设置', path: '/settings' },
 ].filter((item): item is BottomNavItem => item !== null);
 
 const allItems = [...mainItems, ...moreItems];
@@ -115,24 +117,24 @@ export const BottomNav: React.FC = () => {
           <div className="w-8 h-1 bg-border-light dark:bg-border-dark rounded-full mx-auto mb-4" />
 
           <div className="grid grid-cols-3 gap-2">
-            {moreItems.map((item) => (
+            {moreItems.map(({ icon: Icon, label, path }) => (
               <Link
-                key={item.path}
-                to={item.path}
+                key={path}
+                to={path}
                 className={`
                   flex flex-col items-center justify-center gap-1.5
                   min-h-[64px] rounded-xl
                   transition-colors duration-150
                   ${
-                    isActive(item.path)
+                    isActive(path)
                       ? 'bg-accent-primary/10 text-accent-primary'
                       : 'text-text-light-secondary dark:text-text-dark-secondary hover:bg-surface-light-elevated dark:hover:bg-surface-dark-elevated'
                   }
                 `}
                 onClick={() => setShowMore(false)}
               >
-                <span className="text-xl" aria-hidden="true">{item.icon}</span>
-                <span className="text-xs font-medium">{item.label}</span>
+                <Icon className="h-5 w-5" aria-hidden="true" />
+                <span className="text-xs font-medium">{label}</span>
               </Link>
             ))}
           </div>
@@ -144,12 +146,12 @@ export const BottomNav: React.FC = () => {
         aria-label="移动端导航"
       >
         <div className="flex items-stretch justify-around h-[60px]">
-          {mainItems.map((item) => {
-            const active = isActive(item.path);
+          {mainItems.map(({ icon: Icon, label, path }) => {
+            const active = isActive(path);
             return (
               <Link
-                key={item.path}
-                to={item.path}
+                key={path}
+                to={path}
                 className={`
                   flex flex-col items-center justify-center gap-0.5
                   min-w-[52px] min-h-[44px] flex-1
@@ -158,8 +160,8 @@ export const BottomNav: React.FC = () => {
                 `}
                 aria-current={active ? 'page' : undefined}
               >
-                <span className="text-base" aria-hidden="true">{item.icon}</span>
-                <span className="text-[11px] font-medium leading-tight">{item.label}</span>
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                <span className="text-[11px] font-medium leading-tight">{label}</span>
               </Link>
             );
           })}
@@ -175,7 +177,7 @@ export const BottomNav: React.FC = () => {
             aria-expanded={showMore}
             aria-label="更多导航选项"
           >
-            <span className="text-base" aria-hidden="true">{showMore ? '\u2715' : '\u2022\u2022\u2022'}</span>
+            {showMore ? <X className="h-4 w-4" aria-hidden="true" /> : <MoreHorizontal className="h-4 w-4" aria-hidden="true" />}
             <span className="text-[11px] font-medium leading-tight">更多</span>
           </button>
         </div>
