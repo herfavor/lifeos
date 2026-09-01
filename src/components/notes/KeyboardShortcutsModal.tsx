@@ -2,7 +2,7 @@
  * KeyboardShortcutsModal Component
  *
  * Modal displaying keyboard shortcuts for the Notes page.
- * Part of the Notes Page Revolution - Phase 4.
+ * Part of the Notes Page Revolution - .
  *
  * Triggered by pressing ? key on the Notes page.
  */

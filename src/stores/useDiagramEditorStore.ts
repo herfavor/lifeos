@@ -12,15 +12,15 @@ interface DiagramEditorState {
   currentTool: ToolType;
   setCurrentTool: (tool: ToolType) => void;
 
-  // P0: Shape palette state
+  // Shape palette state
   shapePaletteOpen: boolean;
   toggleShapePalette: () => void;
 
-  // P1: Layer panel state
+  // Layer panel state
   layerPanelOpen: boolean;
   toggleLayerPanel: () => void;
 
-  // P2: Hand-drawn style settings
+  // Hand-drawn style settings
   globalDrawingStyle: DrawingStyle;
   globalRoughness: number;
   globalBowing: number;
@@ -46,12 +46,12 @@ interface DiagramEditorState {
   setIsDragging: (dragging: boolean) => void;
   setIsDrawing: (drawing: boolean) => void;
 
-  // P0: Grouping (receives elements + callback to update diagram)
+  // Grouping (receives elements + callback to update diagram)
   groupElements: (elements: DiagramElement[], onUpdate: (updates: DiagramElement[]) => void) => string;
   ungroupElements: (elements: DiagramElement[], groupId: string, onUpdate: (updates: DiagramElement[]) => void) => void;
   getGroupId: (elementId: string, elements: DiagramElement[]) => string | undefined;
 
-  // P0: Alignment (receives elements + callback to update diagram)
+  // Alignment (receives elements + callback to update diagram)
   alignElements: (
     elementIds: string[],
     elements: DiagramElement[],
@@ -77,15 +77,15 @@ export const useDiagramEditorStore = create<DiagramEditorState>()(
   currentTool: 'select',
   setCurrentTool: (tool) => set({ currentTool: tool }),
 
-  // P0: Shape palette
+  // Shape palette
   shapePaletteOpen: true,
   toggleShapePalette: () => set((state) => ({ shapePaletteOpen: !state.shapePaletteOpen })),
 
-  // P1: Layer panel
+  // Layer panel
   layerPanelOpen: true,
   toggleLayerPanel: () => set((state) => ({ layerPanelOpen: !state.layerPanelOpen })),
 
-  // P2: Hand-drawn style settings
+  // Hand-drawn style settings
   globalDrawingStyle: 'normal',
   globalRoughness: 1.5,
   globalBowing: 1,
@@ -146,7 +146,7 @@ export const useDiagramEditorStore = create<DiagramEditorState>()(
   setIsDragging: (dragging) => set({ isDragging: dragging }),
   setIsDrawing: (drawing) => set({ isDrawing: drawing }),
 
-  // P0: Grouping
+  // Grouping
   groupElements: (elements, onUpdate) => {
     const { selectedElementIds } = get();
     const groupId = crypto.randomUUID();
@@ -174,7 +174,7 @@ export const useDiagramEditorStore = create<DiagramEditorState>()(
     return element?.groupId;
   },
 
-  // P0: Alignment
+  // Alignment
   alignElements: (elementIds, elements, type, onUpdate) => {
     const selectedElements = elements.filter((el) => elementIds.includes(el.id));
     if (selectedElements.length < 2) return;

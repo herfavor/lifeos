@@ -107,7 +107,7 @@ export function Canvas({ diagramId, width, height }: CanvasProps) {
   };
 
   const handleElementClick = (id: string, e: Konva.KonvaEventObject<MouseEvent>) => {
-    // P1: Prevent interaction with locked elements
+    // Prevent interaction with locked elements
     const element = elements.find((el) => el.id === id);
     if (element?.locked) return;
 
@@ -202,7 +202,7 @@ export function Canvas({ diagramId, width, height }: CanvasProps) {
       {/* Elements Layer */}
       <Layer>
         {elements
-          .filter((element) => !element.hidden) // P1: Filter out hidden elements
+          .filter((element) => !element.hidden) // Filter out hidden elements
           .map((element) => (
             <DiagramElementComponent
               key={element.id}
@@ -210,7 +210,7 @@ export function Canvas({ diagramId, width, height }: CanvasProps) {
               onClick={(e) => handleElementClick(element.id, e)}
               onDragEnd={(e) => handleElementDragEnd(element.id, e)}
               onTransformEnd={(e) => handleTransformEnd(element.id, e)}
-              draggable={currentTool === 'select' && !element.locked} // P1: Disable dragging locked elements
+              draggable={currentTool === 'select' && !element.locked} // Disable dragging locked elements
             />
           ))}
 
@@ -309,7 +309,7 @@ function DiagramElementComponent({
     strokeWidth: element.strokeWidth || 2,
   };
 
-  // P0: Handle shape library shapes
+  // Handle shape library shapes
   if (element.type === 'shape' && element.shapeId) {
     const shapeDef = getShapeDefinition(element.shapeId);
 

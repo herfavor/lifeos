@@ -75,7 +75,7 @@ LifeOS 的自动化用于处理反复出现的任务流程。规则、执行和�
 
 ## 相关指南
 
-- [AI 指挥中心](./ai-management.md)
-- [任务管理](./tasks-kanban.md)
+- [AI](./ai.md)
+- [核心工作流](./workflow.md)
 - [备份与同步](./backup-sync.md)
 - [故障排除](./troubleshooting.md)

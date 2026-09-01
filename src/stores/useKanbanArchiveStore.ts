@@ -7,7 +7,7 @@ import { logger } from '../services/logger';
 const log = logger.module('KanbanArchiveStore');
 
 /**
- * Phase 8.1: Extracted Archive Store
+ * Extracted Archive Store
  *
  * Single-responsibility store for archived task management.
  * Separated from useKanbanStore for maintainability and testability.

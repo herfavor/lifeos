@@ -1,5 +1,5 @@
 /**
- * Extended Shape Library (P2)
+ * Extended Shape Library ()
  * Additional shape categories: Cloud Computing, People, Network, Data Flow, Charts
  */
 
@@ -210,7 +210,7 @@ export const peopleShapes: ShapeDefinition[] = [
 ];
 
 // ============================================================================
-// NETWORK SHAPES (P2 - Populated)
+// NETWORK SHAPES (- Populated)
 // ============================================================================
 
 export const networkShapesExtended: ShapeDefinition[] = [

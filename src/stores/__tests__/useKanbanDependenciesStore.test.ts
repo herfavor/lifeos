@@ -17,7 +17,7 @@ vi.mock('../../lib/syncedStorage', () => ({
 }));
 
 /**
- * Phase 8.2: Unit tests for useKanbanDependenciesStore
+ * Unit tests for useKanbanDependenciesStore
  *
  * Tests dependency store functionality:
  * - Baseline management (set, clear, get)

@@ -250,7 +250,7 @@ export function TagPicker({
         )}
       </div>
 
-      {/* Smart Tag Suggestions (P2) */}
+      {/* Smart Tag Suggestions () */}
       {showSuggestions && !isOpen && suggestions.length > 0 && (
         <div className="mt-2">
           <TagSuggestions

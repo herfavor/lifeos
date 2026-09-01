@@ -138,7 +138,7 @@ export interface TaskDependency {
   lag: number;              // Lag time in days (can be negative for lead)
 }
 
-// Phase 1.4: Baseline snapshot for task (stored in project baseline)
+// Baseline snapshot for task (stored in project baseline)
 export interface BaselineTask {
   id: string;
   startDate: string | null;
@@ -146,16 +146,16 @@ export interface BaselineTask {
   progress: number;
 }
 
-// Phase 1.4: Project baseline snapshot
+// Project baseline snapshot
 export interface ProjectBaseline {
   setAt: string;            // ISO date when baseline was set
   tasks: BaselineTask[];    // Snapshot of all tasks at baseline time
 }
 
-// Phase 1.4: Variance status for baseline comparison
+// Variance status for baseline comparison
 export type VarianceStatus = 'ahead' | 'behind' | 'on-track';
 
-// Phase 3.1: Team member for task assignment
+// Team member for task assignment
 export interface Member {
   id: string;
   name: string;
@@ -165,7 +165,7 @@ export interface Member {
   createdAt: string;       // ISO date
 }
 
-// Phase 3.2: File attachment for tasks
+// File attachment for tasks
 export interface TaskAttachment {
   id: string;
   taskId: string;
@@ -177,7 +177,7 @@ export interface TaskAttachment {
   uploadedBy?: string;     // Future: member ID
 }
 
-// Phase 8F: Section dividers within Kanban columns
+// Section dividers within Kanban columns
 export interface KanbanSection {
   id: string;
   title: string;
@@ -186,7 +186,7 @@ export interface KanbanSection {
   collapsed?: boolean;       // Whether tasks in this section are hidden
 }
 
-// Phase 4: Column definition for custom Kanban columns
+// Column definition for custom Kanban columns
 export interface KanbanColumn {
   id: string;              // e.g., "backlog", "todo", or UUID for custom
   title: string;           // e.g., "Backlog", "In Progress"
@@ -195,7 +195,7 @@ export interface KanbanColumn {
   wipLimit?: number;       // Optional WIP constraint (e.g., 5 tasks max)
 }
 
-// Phase 4: Checklist item for subtasks
+// Checklist item for subtasks
 export interface ChecklistItem {
   id: string;
   text: string;
@@ -204,7 +204,7 @@ export interface ChecklistItem {
   createdAt: string;       // ISO date
 }
 
-// Task Template for Recurring Tasks (P2)
+// Task Template for Recurring Tasks ()
 export interface TaskTemplate {
   id: string;
   name: string;                    // Template name (user-defined)
@@ -216,7 +216,7 @@ export interface TaskTemplate {
   updatedAt?: string;              // ISO date string
 }
 
-// Phase 5: Subtask - Rich nested tasks within a card
+// Subtask - Rich nested tasks within a card
 export interface Subtask {
   id: string;
   parentTaskId: string;
@@ -230,7 +230,7 @@ export interface Subtask {
   completedAt?: string;   // ISO date (when marked complete)
 }
 
-// Phase 5: Simple task dependency (blocks/blocked-by)
+// Simple task dependency (blocks/blocked-by)
 export interface SimpleTaskDependency {
   id: string;
   sourceTaskId: string; // Task that blocks
@@ -238,7 +238,7 @@ export interface SimpleTaskDependency {
   createdAt: string;    // ISO date
 }
 
-// Phase 4: Comment for task discussions
+// Comment for task discussions
 export interface TaskComment {
   id: string;
   taskId: string;
@@ -248,7 +248,7 @@ export interface TaskComment {
   updatedAt?: string;      // ISO date (if edited)
 }
 
-// Phase 4: Activity log entry for tracking changes
+// Activity log entry for tracking changes
 export interface ActivityLogEntry {
   id: string;
   timestamp: string;       // ISO date
@@ -274,7 +274,7 @@ export interface UndoHistoryEntry {
 export type EffortEstimate = 1 | 2 | 3 | 5 | 8 | 13; // Story points (Fibonacci)
 export type CustomStatus = 'in-review' | 'testing' | 'deployed' | 'blocked'; // Beyond base status
 
-// Phase 4: Card templates for quick task creation
+// Card templates for quick task creation
 export interface CardTemplate {
   id: string;
   name: string;
@@ -326,25 +326,25 @@ export interface Task {
   };
   isOnCriticalPath?: boolean;      // Calculated field
 
-  // PHASE 4 FIELDS:
+  // FIELDS:
   checklist?: ChecklistItem[];     // Subtasks/checklist
   comments?: TaskComment[];        // Discussion/comments
   activityLog?: ActivityLogEntry[]; // Change history
 
-  // PHASE 5 FIELDS:
+  // FIELDS:
   subtasks?: Subtask[];            // Rich nested tasks
 
-  // PHASE A (QUICK WINS) FIELDS:
+  // (QUICK WINS) FIELDS:
   archivedAt?: string;             // ISO date (when task was archived)
   lastCompletedAt?: string;        // ISO date (when moved to "done" for auto-archive)
   cardNumber?: number;             // Auto-incrementing card number (KAN-1, KAN-2, etc.)
 
-  // PHASE B (KANBAN PM) FIELDS:
+  // (KANBAN PM) FIELDS:
   effort?: EffortEstimate;         // Story points (1, 2, 3, 5, 8, 13)
   customStatus?: CustomStatus;     // Additional status labels (in-review, testing, deployed, blocked)
   timeTracking?: TimeTracking;     // Time tracking with history
 
-  // RECURRING TASKS FIELDS (P1):
+  // RECURRING TASKS FIELDS ():
   recurrence?: {
     frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
     interval: number; // e.g., every 2 weeks
@@ -359,52 +359,52 @@ export interface Task {
     endCount?: number; // if endType='after'
     endDate?: string; // if endType='until' (YYYY-MM-DD)
     recurFromCompletion?: boolean; // If true, recur from completion date instead of due date (default: false)
-    templateId?: string; // P2: Task template to apply to recurring instances
+    templateId?: string; // Task template to apply to recurring instances
   };
   recurrenceId?: string; // For recurring task instances (parent task ID)
   recurrenceException?: boolean; // True if this instance was edited
   isRecurringParent?: boolean; // True if this is the parent/template task
   nextOccurrence?: string; // YYYY-MM-DD (calculated field)
 
-  // CUSTOM FIELDS (P2 #3):
+  // CUSTOM FIELDS ():
   customFields?: CustomFieldsMap; // Custom metadata fields (fieldId -> value)
 
-  // PHASE 3.1 FIELDS (TEAM COLLABORATION):
+  // FIELDS (TEAM COLLABORATION):
   assignees?: string[];           // Array of member IDs assigned to this task
 
-  // PHASE 3.2 FIELDS (FILE ATTACHMENTS):
+  // FIELDS (FILE ATTACHMENTS):
   attachments?: TaskAttachment[]; // File attachments for this task
 
-  // PHASE 3.4 FIELDS (CARD COVERS):
+  // FIELDS (CARD COVERS):
   coverMode?: 'fit' | 'fill'; // Cover image display mode (default: 'fit')
 
-  // WAVE 4E: TEMPORAL TAGS (Things 3-style "When")
+  // TEMPORAL TAGS (Things 3-style "When")
   whenTag?: WhenTag; // Temporal tag for task scheduling
 
-  // WAVE 4E: SNOOZE (for triage inbox)
+  // SNOOZE (for triage inbox)
   snoozedUntil?: string; // ISO date — hidden from triage until this time
 
-  // WAVE 6E: ENERGY-BASED SCHEDULING
+  // ENERGY-BASED SCHEDULING
   energyCost?: 1 | 2 | 3 | 4 | 5; // Energy cost (1=Trivial, 5=Draining)
 
-  // WAVE 7F: HABIT-TASK BRIDGE
+  // HABIT-TASK BRIDGE
   linkedHabitId?: string; // Linked habit ID (bidirectional)
 
-  // WAVE 8F: KANBAN SECTIONS
+  // KANBAN SECTIONS
   sectionId?: string; // Optional section within a column
 }
 
 export interface KanbanState {
   tasks: Task[];
-  columns: KanbanColumn[];         // Phase 4: Dynamic columns
-  sections: KanbanSection[];       // Phase 8F: Section dividers within columns
+  columns: KanbanColumn[];         // Dynamic columns
+  sections: KanbanSection[];       // Section dividers within columns
   // NOTE: dependencies moved to Task.dependencies (task-level instead of global)
-  // NOTE: archivedTasks moved to useKanbanArchiveStore (Phase 8.1)
+  // NOTE: archivedTasks moved to useKanbanArchiveStore ()
   /** @deprecated Use useKanbanArchiveStore instead. Kept for migration compatibility. */
-  archivedTasks?: Task[];          // Phase A: Archived tasks (separate from active)
-  nextCardNumber?: number;         // Phase A: Auto-incrementing counter for card numbers
+  archivedTasks?: Task[];          // Archived tasks (separate from active)
+  nextCardNumber?: number;         // Auto-incrementing counter for card numbers
   visibleColumns?: number;         // Number of columns to show at once before scrolling (default: 5)
-  baseline?: ProjectBaseline | null; // Phase 1.4: Project baseline snapshot
+  baseline?: ProjectBaseline | null; // Project baseline snapshot
 }
 
 export interface Coordinates {

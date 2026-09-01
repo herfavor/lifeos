@@ -1,7 +1,7 @@
 /**
  * TaskBar Component
  * Draggable/resizable task bar for Gantt timeline
- * Phase 7: Enhanced with dependent task shift propagation
+ * Enhanced with dependent task shift propagation
  */
 
 import { useState, useRef, useEffect } from 'react';
@@ -24,15 +24,15 @@ interface TaskBarProps {
   rowY: number;
   onUpdate: (taskId: string, updates: Partial<Task>) => void;
   onClick: (task: Task) => void;
-  isCritical?: boolean; // Phase 1.3: Critical path indicator
-  baselineTask?: BaselineTask; // Phase 1.4: Baseline comparison
-  isSubtask?: boolean; // P2: Is this a subtask
-  isParent?: boolean; // P2: Is this a parent task with subtasks
-  isExpanded?: boolean; // P2: Is the parent task expanded
-  onToggleExpand?: () => void; // P2: Toggle expand/collapse
-  indentLevel?: number; // P2: Indentation level (0 = root, 1 = child, etc.)
-  allTasks?: Task[]; // Phase 7: All tasks for dependency shift calculation
-  onDependentShift?: (shifts: TaskShift[]) => void; // Phase 7: Callback for dependent shifts
+  isCritical?: boolean; // Critical path indicator
+  baselineTask?: BaselineTask; // Baseline comparison
+  isSubtask?: boolean; // Is this a subtask
+  isParent?: boolean; // Is this a parent task with subtasks
+  isExpanded?: boolean; // Is the parent task expanded
+  onToggleExpand?: () => void; // Toggle expand/collapse
+  indentLevel?: number; // Indentation level (0 = root, 1 = child, etc.)
+  allTasks?: Task[]; // All tasks for dependency shift calculation
+  onDependentShift?: (shifts: TaskShift[]) => void; // Callback for dependent shifts
 }
 
 export function TaskBar({
@@ -156,7 +156,7 @@ export function TaskBar({
     };
 
     const handleMouseUp = () => {
-      // Phase 7: Calculate dependent shifts when drag/resize ends
+      // Calculate dependent shifts when drag/resize ends
       if ((isDragging || isResizing) && allTasks.length > 0 && onDependentShift) {
         const currentTask = allTasks.find(t => t.id === task.id);
         if (currentTask) {
@@ -194,7 +194,7 @@ export function TaskBar({
     };
   }, [isDragging, isResizing, dragStart, task.id, startDate, zoom, onUpdate, allTasks, onDependentShift]);
 
-  // Phase 1.5: Progress percentage (0-100)
+  // Progress percentage (0-100)
   const progress = task.progress || 0;
 
   // Get progress fill color (darker shade of bar color)
@@ -214,7 +214,7 @@ export function TaskBar({
     }
   };
 
-  // Phase 1.4: Calculate baseline variance
+  // Calculate baseline variance
   const varianceDays = baselineTask ? calculateVarianceDays(task, baselineTask) : null;
   const varianceStatus = getVarianceStatus(varianceDays);
 
@@ -228,7 +228,7 @@ export function TaskBar({
     baselineWidth = calculateBarWidth(baselineStartDate, baselineDueDate, zoom);
   }
 
-  // Phase 1.6: Milestone rendering (diamond marker instead of bar)
+  // Milestone rendering (diamond marker instead of bar)
   if (task.isMilestone) {
     const milestoneDate = task.dueDate ? new Date(task.dueDate) : new Date();
     const milestoneX = dateToX(milestoneDate, startDate, zoom);
@@ -301,7 +301,7 @@ export function TaskBar({
           }
         }}
       >
-        {/* Phase 1.5: Progress fill indicator */}
+        {/* Progress fill indicator */}
         {progress > 0 && (
           <div
             className="absolute inset-0 rounded-button"
@@ -336,7 +336,7 @@ export function TaskBar({
           )}
         </div>
 
-      {/* Phase 1.4: Variance indicator */}
+      {/* Variance indicator */}
       {baselineTask && varianceDays !== null && varianceStatus !== 'on-track' && (
         <div
           className={`absolute -top-5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap ${

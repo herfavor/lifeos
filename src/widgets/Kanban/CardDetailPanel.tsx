@@ -139,7 +139,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     deleteAttachment,
   } = useKanbanStore();
 
-  // Time tracking store (Phase A: Time Tracking Integration)
+  // Time tracking store (Time Tracking Integration)
   const {
     getEntriesForCard,
     getTotalTimeForCard,
@@ -148,7 +148,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     activeEntry,
   } = useTimeTrackingStore();
 
-  // Template store (P2: Task Templates)
+  // Template store (Task Templates)
   const { createTemplate } = useTemplateStore();
 
   // Tab state with persistence
@@ -178,21 +178,21 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
   const [customStatus, setCustomStatus] = useState<CustomStatus | undefined>(undefined);
   const [timeEstimate, setTimeEstimate] = useState<number | undefined>(undefined);
   const [assignees, setAssignees] = useState<string[]>([]);
-  const [progress, setProgress] = useState<number>(0); // Phase 1.5: Progress %
+  const [progress, setProgress] = useState<number>(0); // Progress %
 
-  // P1: Recurring tasks state
+  // Recurring tasks state
   const [showRecurrencePicker, setShowRecurrencePicker] = useState(false);
 
-  // Phase 1.2: Auto-shift dependent tasks
+  // Auto-shift dependent tasks
   const { autoShiftDependentTasks, setAutoShiftDependentTasks } = useSettingsStore();
   const [pendingShifts, setPendingShifts] = useState<Array<{taskId: string; newStartDate: string | null; newDueDate: string | null; reason: string}> | null>(null);
 
   // Note: Checklist, Comment, and Subtask state moved to extracted tab components
 
-  // Phase 3.2: Attachment state
+  // Attachment state
   const [previewAttachment, setPreviewAttachment] = useState<TaskAttachment | null>(null);
 
-  // Phase 2 Quick Wins: Inline date editing
+  // Quick Wins: Inline date editing
   const [isEditingStartDate, setIsEditingStartDate] = useState(false);
   const [isEditingDueDate, setIsEditingDueDate] = useState(false);
 
@@ -212,7 +212,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
       setCustomStatus(task.customStatus);
       setTimeEstimate(task.timeTracking?.estimated);
       setAssignees(task.assignees || []);
-      setProgress(task.progress || 0); // Phase 1.5
+      setProgress(task.progress || 0); // 
     }
   }, [task]);
 
@@ -258,7 +258,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
   if (!task) return null;
 
   const handleFieldBlur = (field: keyof Task, value: unknown) => {
-    // Phase 1.2: Check if date change triggers dependent shifts
+    // Check if date change triggers dependent shifts
     if ((field === 'startDate' || field === 'dueDate') && task) {
       const oldStartDate = task.startDate;
       const oldDueDate = task.dueDate;
@@ -319,7 +319,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     removeDependency(task.id, dependencyId);
   };
 
-  // Phase 1.2: Shift confirmation handlers
+  // Shift confirmation handlers
   const handleConfirmShifts = () => {
     if (!pendingShifts || !task) return;
 
@@ -354,7 +354,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
     handleCancelShifts();
   };
 
-  // P2: Save task as template
+  // Save task as template
   const handleSaveAsTemplate = () => {
     if (!task) return;
 
@@ -449,7 +449,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* When Tag - Wave 4E */}
+          {/* When Tag - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               何时
@@ -471,7 +471,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Milestone Checkbox - Phase 1.6 */}
+          {/* Milestone Checkbox - */}
           <div className="flex items-center gap-2 p-3 bg-surface-light-elevated dark:bg-surface-dark-elevated rounded-lg">
             <input
               type="checkbox"
@@ -497,7 +497,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </label>
           </div>
 
-          {/* Assignees - Phase 3.1 */}
+          {/* Assignees - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               负责人
@@ -511,7 +511,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             />
           </div>
 
-          {/* Effort (Story Points) - Phase B */}
+          {/* Effort (Story Points) - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               工作量（故事点）
@@ -537,7 +537,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Custom Status - Phase B */}
+          {/* Custom Status - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               自定义状态
@@ -561,7 +561,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Time Estimate - Phase B */}
+          {/* Time Estimate - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               预计时长（小时）
@@ -608,7 +608,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             )}
           </div>
 
-          {/* Progress - Phase 1.5 */}
+          {/* Progress - */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               进度（%）
@@ -712,7 +712,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </div>
           </div>
 
-          {/* P1: Recurring Tasks */}
+          {/* Recurring Tasks */}
           <div>
             <label className="block text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary mb-2">
               重复
@@ -812,7 +812,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             )}
           </div>
 
-          {/* P2: Save as Template */}
+          {/* Save as Template */}
           <div>
             <button
               onClick={handleSaveAsTemplate}
@@ -863,7 +863,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
             </select>
           </div>
 
-          {/* Custom Fields (P2 #3) */}
+          {/* Custom Fields () */}
           <TaskCustomFields task={task} onSave={onSave} />
         </div>
 
@@ -968,7 +968,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               <ActivityTabContent activityLog={task.activityLog} />
             )}
 
-            {/* Time Tracking Tab (Phase A: Time Tracking Integration) */}
+            {/* Time Tracking Tab (Time Tracking Integration) */}
             {activeTab === 'timetracking' && task && (
               <TimeTrackingTabContent
                 entries={getEntriesForCard(task.id)}
@@ -980,7 +980,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
               />
             )}
 
-            {/* Attachments Tab (Phase 3.2) */}
+            {/* Attachments Tab () */}
             {activeTab === 'attachments' && task && (
               <AttachmentsTabContent
                 attachments={task.attachments || []}
@@ -1010,7 +1010,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
       </div>
     </Modal>
 
-    {/* Phase 1.2: Dependent shift confirmation dialog */}
+    {/* Dependent shift confirmation dialog */}
     {pendingShifts && pendingShifts.length > 0 && (
       <DependentShiftConfirmation
         shifts={pendingShifts}
@@ -1021,7 +1021,7 @@ export const CardDetailPanel: React.FC<CardDetailPanelProps> = ({
       />
     )}
 
-    {/* Phase 3.2: Image preview modal */}
+    {/* Image preview modal */}
     {previewAttachment && (
       <ImagePreviewModal
         attachment={previewAttachment}

@@ -68,7 +68,6 @@ import { DashboardSettingsSection } from '../widgets/Settings/DashboardSettingsS
 import { CalendarNotificationsSection } from '../widgets/Settings/CalendarNotificationsSection';
 import { CalendarImportExportSection } from '../widgets/Settings/CalendarImportExportSection';
 import { CalendarManagementSection } from '../widgets/Settings/CalendarManagementSection';
-import { WidgetSettingsSection } from '../widgets/Settings/WidgetSettingsSection';
 import { ProjectSettings } from '../widgets/Settings/ProjectSettings';
 import { DataManagementSection } from '../widgets/Settings/DataManagementSection';
 import { KeyboardShortcutsSection } from '../widgets/Settings/KeyboardShortcutsSection';
@@ -746,9 +745,6 @@ export const Settings: React.FC = () => {
                   <DefaultViewsSection />
                   <DashboardSettingsSection onOpenPresetManager={() => setShowPresetManager(true)} />
                   <SavedLayoutsSection />
-                  <div className="bento-card p-6">
-                    <WidgetSettingsSection />
-                  </div>
                 </>
               )}
 

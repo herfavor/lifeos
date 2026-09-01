@@ -302,7 +302,7 @@ interface TimeTrackingStore extends TimeTrackingState {
    */
   bulkUpdateEntries: (ids: string[], updates: Partial<TimeEntry>) => Promise<void>;
 
-  // ==================== PHASE A: KANBAN INTEGRATION ====================
+  // ==================== KANBAN INTEGRATION ====================
 
   /**
    * Get all time entries for a specific Kanban card
@@ -1160,7 +1160,7 @@ export const useTimeTrackingStore = create<TimeTrackingStore>()(
         set({ entries: updatedEntries });
       },
 
-      // ==================== PHASE A: KANBAN INTEGRATION ====================
+      // ==================== KANBAN INTEGRATION ====================
 
       getEntriesForCard: (cardId) => {
         const { entries, activeEntry } = get();

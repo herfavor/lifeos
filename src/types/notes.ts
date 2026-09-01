@@ -65,16 +65,16 @@ export interface Note {
   /** Quick Note - AI Terminal quick capture note (December 2025) */
   isQuickNote?: boolean;
 
-  /** Wave 6A: Alternative names for wiki-link resolution */
+  /** Alternative names for wiki-link resolution */
   aliases?: string[];
 
-  /** Phase 4: Backlinks - Notes that this note links TO (via [[Note Title]] syntax) */
+  /** Backlinks - Notes that this note links TO (via [[Note Title]] syntax) */
   linkedNotes?: string[];
 
-  /** Wave 5D: Linked calendar events (bidirectional linking) */
+  /** Linked calendar events (bidirectional linking) */
   linkedEventIds?: string[];
 
-  /** P2 #3: Custom fields - User-defined metadata */
+  /** Custom fields - User-defined metadata */
   customFields?: CustomFieldsMap;
 
   /**
@@ -280,7 +280,7 @@ export interface Attachment {
 }
 
 /**
- * Phase 4: Note template for quick note creation
+ * Note template for quick note creation
  */
 export interface NoteTemplate {
   id: string;
@@ -313,7 +313,7 @@ export type NoteUpdate = Partial<Omit<Note, 'id' | 'createdAt'>>;
 export type FolderUpdate = Partial<Omit<Folder, 'id' | 'createdAt'>>;
 
 /**
- * P2: Tag suggestion interface
+ * Tag suggestion interface
  */
 export interface TagSuggestion {
   tag: string;
@@ -322,7 +322,7 @@ export interface TagSuggestion {
 }
 
 /**
- * P2: Block reference (for block-level links)
+ * Block reference (for block-level links)
  */
 export interface BlockReference {
   noteTitle: string;
@@ -352,7 +352,7 @@ export interface NoteVersion {
 }
 
 /**
- * P2: Note preview (for hover preview popover)
+ * Note preview (for hover preview popover)
  */
 export interface NotePreview {
   noteId: string;
@@ -399,7 +399,7 @@ export const NOTE_CONSTANTS = {
   VERSION_SAVE_INTERVAL_MS: 30000, // Save version every 30 seconds of active editing
   MIN_CONTENT_CHANGE_FOR_VERSION: 20, // Minimum character change to trigger version
 
-  /** P2: Block-level links & hover preview constants */
+  /** Block-level links & hover preview constants */
   PREVIEW_MAX_LINES: 5,
   PREVIEW_MAX_CHARS: 300,
   BLOCK_HIGHLIGHT_DURATION_MS: 3000,

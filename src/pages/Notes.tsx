@@ -3,7 +3,7 @@
  *
  * Notes Page Revolution - Complete Rebuild
  *
- * Phase 5: Updated with TabNavigation for 3 tabs:
+ * Updated with TabNavigation for 3 tabs:
  * - Notes (main view with 3-column layout)
  * - Daily Notes (daily notes calendar)
  * - Graph (knowledge graph view)
@@ -37,7 +37,7 @@ import type { NoteTemplate } from '../types/notes';
 // Lazy load GraphView for code splitting
 const GraphView = lazy(() => import('./GraphView'));
 
-// Phase 5: Tab configuration for Notes page
+// Tab configuration for Notes page
 type NotesTabType = 'notes' | 'daily' | 'graph' | 'trash';
 
 const VALID_TABS: NotesTabType[] = ['notes', 'daily', 'graph', 'trash'];
@@ -66,7 +66,7 @@ const log = logger.module('Notes');
 
 /**
  * Notes Page Component
- * Phase 5: Updated with TabNavigation for tabs (Notes, Daily Notes, Graph)
+ * Updated with TabNavigation for tabs (Notes, Daily Notes, Graph)
  */
 export const Notes: React.FC = () => {
   const activeNoteId = useNotesStore((state) => state.activeNoteId);
@@ -91,7 +91,7 @@ export const Notes: React.FC = () => {
     .filter((note) => note.deletedAt)
     .sort((a, b) => (b.deletedAt?.getTime() || 0) - (a.deletedAt?.getTime() || 0));
 
-  // Phase 5: Tab state management
+  // Tab state management
   const getTabFromUrl = useCallback((): NotesTabType => {
     const tab = searchParams.get('tab');
     if (tab && VALID_TABS.includes(tab as NotesTabType)) {

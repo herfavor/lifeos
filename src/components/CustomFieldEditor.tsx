@@ -17,10 +17,10 @@ import { TimelineFieldEditor } from './FormBuilder/TimelineFieldEditor';
  * - date: Date picker
  * - select: Dropdown with predefined options
  * - checkbox: Boolean toggle
- * - person: Person selector with autocomplete (P2)
- * - status: Status dropdown with colored badges (P2)
- * - timeline: Date range picker (P2)
- * - formula: Computed field (read-only) (P2)
+ * - person: Person selector with autocomplete ()
+ * - status: Status dropdown with colored badges ()
+ * - timeline: Date range picker ()
+ * - formula: Computed field (read-only) ()
  */
 
 interface CustomFieldEditorProps {
@@ -363,7 +363,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     );
   }
 
-  // Person field (P2)
+  // Person field ()
   if (field.type === 'person') {
     return (
       <div className={className}>
@@ -382,7 +382,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     );
   }
 
-  // Status field (P2)
+  // Status field ()
   if (field.type === 'status') {
     return (
       <div className={className}>
@@ -401,7 +401,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     );
   }
 
-  // Timeline field (P2)
+  // Timeline field ()
   if (field.type === 'timeline') {
     return (
       <div className={className}>
@@ -418,7 +418,7 @@ export function CustomFieldEditor({ field, value, onChange, className = '' }: Cu
     );
   }
 
-  // Formula field (P2) - Read-only, computed value
+  // Formula field () - Read-only, computed value
   if (field.type === 'formula') {
     return (
       <div className={className}>

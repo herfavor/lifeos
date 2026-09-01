@@ -66,7 +66,7 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
   const layerPanelOpen = useDiagramEditorStore((s) => s.layerPanelOpen);
   const toggleLayerPanel = useDiagramEditorStore((s) => s.toggleLayerPanel);
 
-  // P2: Hand-drawn style settings
+  // Hand-drawn style settings
   const globalDrawingStyle = useDiagramEditorStore((s) => s.globalDrawingStyle);
   const globalRoughness = useDiagramEditorStore((s) => s.globalRoughness);
   const globalBowing = useDiagramEditorStore((s) => s.globalBowing);
@@ -232,7 +232,7 @@ export function Toolbar({ onExport, elements, onUpdateElements, onApplyLayout }:
       {/* Separator */}
       <div className="h-px bg-border-light dark:bg-border-dark my-2" />
 
-      {/* P2: Style Menu & Layer Panel Toggle */}
+      {/* Style Menu & Layer Panel Toggle */}
       <div className="flex flex-col gap-1">
         {/* Style Menu */}
         <div className="relative">

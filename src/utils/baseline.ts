@@ -1,6 +1,6 @@
 /**
  * Baseline Snapshot and Variance Utilities
- * Phase 1.4: Baseline Comparison
+ * Baseline Comparison
  */
 
 import type { Task, ProjectBaseline, BaselineTask, VarianceStatus } from '../types';

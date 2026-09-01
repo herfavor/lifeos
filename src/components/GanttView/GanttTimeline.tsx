@@ -1,7 +1,7 @@
 /**
  * GanttTimeline Component
  * Main SVG timeline canvas with task bars and grid
- * Phase 7: Enhanced with dependent task shift confirmation
+ * Enhanced with dependent task shift confirmation
  */
 
 import { useRef, useEffect, useState } from 'react';
@@ -30,8 +30,8 @@ interface GanttTimelineProps {
   zoom: ZoomLevel;
   onTaskUpdate: (taskId: string, updates: Partial<Task>) => void;
   onTaskClick: (task: Task) => void;
-  criticalTaskIds?: string[]; // Phase 1.3: Critical path
-  baseline?: ProjectBaseline | null; // Phase 1.4: Baseline comparison
+  criticalTaskIds?: string[]; // Critical path
+  baseline?: ProjectBaseline | null; // Baseline comparison
 }
 
 export function GanttTimeline({
@@ -50,7 +50,7 @@ export function GanttTimeline({
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [expandedTaskIds, setExpandedTaskIds] = useState<Set<string>>(new Set());
 
-  // Phase 7: Dependent shift confirmation state
+  // Dependent shift confirmation state
   const [pendingShifts, setPendingShifts] = useState<TaskShift[]>([]);
   const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false);
   const applyDependentShifts = useKanbanStore((state) => state.applyDependentShifts);
@@ -184,7 +184,7 @@ export function GanttTimeline({
     });
   };
 
-  // Phase 7: Handle dependent shift confirmation
+  // Handle dependent shift confirmation
   const handleDependentShift = (shifts: TaskShift[]) => {
     setPendingShifts(shifts);
     setIsShiftDialogOpen(true);
@@ -241,7 +241,7 @@ export function GanttTimeline({
         projectName="Project Timeline"
       />
 
-      {/* Phase 7: Dependent Shift Confirmation Dialog */}
+      {/* Dependent Shift Confirmation Dialog */}
       <DependentShiftDialog
         isOpen={isShiftDialogOpen}
         shifts={pendingShifts}

@@ -94,7 +94,7 @@ AI 的交互原则是：**优先自行查询消歧；对可合理推断且可撤
 
 当前内置提供商：OpenRouter、Groq、Hugging Face、Mistral AI、Google Gemini、OpenAI、Anthropic、xAI、DeepSeek。部分提供商受浏览器 CORS 限制，界面会标记是否需要代理。当前代码**没有 Ollama provider**，文档不会把 Ollama 描述成已实现能力。
 
-详见 [AI 管理指南](docs/ai-management.md)。
+详见 [AI 管理指南](docs/ai.md)。
 
 ---
 
@@ -148,23 +148,13 @@ npm run preview
 
 ## 质量检查
 
-普通 CI 在 Pull Request 和 `main` push 时运行：
+普通 CI 在 Pull Request 和 `main` push 时统一运行：
 
 ```bash
-npm run type-check
-npm test -- --run
-npm run build
+npm run ci
 ```
 
-开发者还可以执行：
-
-```bash
-npm run lint
-npm run lint:design-tokens
-npm run test:browser:inventory
-```
-
-完整 Playwright 浏览器矩阵由 GitHub Actions 的 **Hosted browser tests** 手动工作流运行。
+该命令包含 lint warning budget、仓库卫生、源码尺寸、TypeScript、单元测试、设计 token、浏览器测试清单和生产构建。完整 Playwright 浏览器矩阵由 GitHub Actions 的 **Hosted browser tests** 手动工作流运行。
 
 ---
 
@@ -189,12 +179,10 @@ React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Zustand 5 · Dexie / I
 
 - [快速入门](docs/getting-started.md)
 - [PWA 安装与本地使用](docs/install-pwa.md)
-- [AI 管理指南](docs/ai-management.md)
-- [收件箱](docs/inbox.md)
-- [任务与看板](docs/tasks-kanban.md)
-- [日程与事件](docs/calendar-events.md)
-- [笔记](docs/notes-editor.md)
-- [收藏](docs/bookmarks.md)
+- [AI 管理指南](docs/ai.md)
+- [核心工作流](docs/workflow.md)
+- [日程、专注与时间](docs/schedule-and-focus.md)
+- [笔记与收藏](docs/knowledge.md)
 - [备份与恢复](docs/backup-sync.md)
 - [键盘快捷键](docs/keyboard-shortcuts.md)
 - [故障排除](docs/troubleshooting.md)
@@ -204,7 +192,7 @@ React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Zustand 5 · Dexie / I
 
 ## Repository workflow
 
-日常开发建议使用短生命周期分支 → PR → CI → merge → 删除分支。当前已完成的 UX / docs 临时分支不再承载未合并工作，合并完成后应删除；详见 [仓库维护说明](docs/technical/REPOSITORY_GOVERNANCE.md)。
+日常开发使用短生命周期分支 → PR → CI → squash merge → 删除分支。长期规则见 [CONTRIBUTING.md](CONTRIBUTING.md)，仓库当前状态以 GitHub Settings 为准。
 
 ---
 

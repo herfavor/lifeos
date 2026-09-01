@@ -6,7 +6,7 @@
 import type { ShapeDefinition, ShapeLibrary } from '../../types/shapes';
 
 // ============================================================================
-// FLOWCHART SHAPES (P0 - Priority 1)
+// FLOWCHART SHAPES (- Priority 1)
 // ============================================================================
 
 export const flowchartShapes: ShapeDefinition[] = [
@@ -185,7 +185,7 @@ export const flowchartShapes: ShapeDefinition[] = [
 ];
 
 // ============================================================================
-// BASIC SHAPES (P0 - Priority 1)
+// BASIC SHAPES (- Priority 1)
 // ============================================================================
 
 export const basicShapes: ShapeDefinition[] = [
@@ -343,13 +343,13 @@ export const basicShapes: ShapeDefinition[] = [
 ];
 
 // ============================================================================
-// UML SHAPES (P2 - Deferred)
+// UML SHAPES (- Deferred)
 // ============================================================================
 
 export const umlShapes: ShapeDefinition[] = [];
 
 // ============================================================================
-// EXTENDED SHAPES (P2)
+// EXTENDED SHAPES ()
 // ============================================================================
 
 import {

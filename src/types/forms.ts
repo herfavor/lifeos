@@ -15,11 +15,11 @@ export type FieldType =
   | 'textarea'
   | 'rating'
   | 'scale'
-  | 'file' // P0: File upload field type
-  | 'calculation' // P2: Calculated field type
-  | 'hidden'; // P1: Hidden field type (for UTM tracking, etc.)
+  | 'file' // File upload field type
+  | 'calculation' // Calculated field type
+  | 'hidden'; // Hidden field type (for UTM tracking, etc.)
 
-// P0: Conditional logic types
+// Conditional logic types
 export type ConditionalOperator =
   | 'equals'
   | 'not_equals'
@@ -37,7 +37,7 @@ export interface ConditionalRule {
   action: 'show' | 'hide';
 }
 
-// P2: Calculation field settings
+// Calculation field settings
 export interface CalculationSettings {
   formula: string; // Expression using field references
   referencedFields: string[]; // Field IDs used in formula
@@ -46,7 +46,7 @@ export interface CalculationSettings {
   suffix?: string; // e.g., "%" for percentages
 }
 
-// P2: Dependent validation
+// Dependent validation
 export type DependentValidationType =
   | 'require_if'
   | 'min_if'
@@ -63,7 +63,7 @@ export interface DependentValidation {
   };
 }
 
-// P1: Quiz mode settings
+// Quiz mode settings
 export interface QuizSettings {
   correctAnswer: unknown; // Can be string, number, array, etc.
   points: number; // Points for this question
@@ -84,23 +84,23 @@ export interface FormField {
   };
   order: number;
 
-  // P0: Conditional logic - rules that determine if this field is shown
+  // Conditional logic - rules that determine if this field is shown
   conditionalRules?: ConditionalRule[];
 
-  // P0: File upload configuration
+  // File upload configuration
   fileConfig?: {
     maxSizeMB: number; // Default: 10MB
     allowedTypes: string[]; // MIME types: ['image/*', 'application/pdf']
     multiple: boolean; // Allow multiple file uploads
   };
 
-  // P2: Calculation settings (for 'calculation' field type)
+  // Calculation settings (for 'calculation' field type)
   calculationSettings?: CalculationSettings;
 
-  // P2: Dependent validation - conditional validation rules
+  // Dependent validation - conditional validation rules
   dependentValidation?: DependentValidation[];
 
-  // P1: Quiz settings (for quiz mode)
+  // Quiz settings (for quiz mode)
   quizSettings?: QuizSettings;
 }
 
@@ -108,9 +108,9 @@ export interface FormSettings {
   allowMultipleSubmissions: boolean;
   showSubmissionCount: boolean;
   resetPeriod?: 'daily' | 'weekly' | 'monthly' | 'never';
-  showProgressBar?: boolean; // P0: Show progress indicator
-  enableSpamProtection?: boolean; // P0: Enable honeypot + timing validation
-  quizMode?: boolean; // P1: Enable quiz mode with scoring
+  showProgressBar?: boolean; // Show progress indicator
+  enableSpamProtection?: boolean; // Enable honeypot + timing validation
+  quizMode?: boolean; // Enable quiz mode with scoring
 }
 
 export interface FormTemplate {
@@ -125,7 +125,7 @@ export interface FormTemplate {
   deletedAt?: Date;
 }
 
-// P0: File upload answer structure
+// File upload answer structure
 export interface FileUploadAnswer {
   fileName: string;
   fileType: string;
@@ -153,10 +153,10 @@ export interface FormResponse {
   formId: string;
   answers: Record<string, FormAnswerValue>; // field.id -> value
   submittedAt: Date;
-  isSpam?: boolean; // P0: Flag for suspicious responses
-  submissionTimeSeconds?: number; // P0: Time from form load to submit
-  score?: number; // P1: Quiz score (total points earned)
-  maxScore?: number; // P1: Maximum possible score
+  isSpam?: boolean; // Flag for suspicious responses
+  submissionTimeSeconds?: number; // Time from form load to submit
+  score?: number; // Quiz score (total points earned)
+  maxScore?: number; // Maximum possible score
 }
 
 export interface FormWithStats extends FormTemplate {
@@ -176,7 +176,7 @@ export interface FormValidationResult {
   errors: Record<string, string>; // field.id -> error message
 }
 
-// P0: Analytics types
+// Analytics types
 export interface FieldAnalytics {
   fieldId: string;
   fieldType: FieldType;

@@ -32,7 +32,7 @@ interface NavExpansionStore {
 export const useNavExpansionStore = create<NavExpansionStore>()(
   persist(
     (set, get) => ({
-      expandedPaths: [], // All collapsed by default (P2 #3 Phase 6A)
+      expandedPaths: [], // All collapsed by default ()
 
       toggleExpanded: (path) =>
         set((state) => ({

@@ -1,39 +1,32 @@
 /**
- * Pomodoro Timer Widget
- *
- * 25-minute focus timer for productivity (local, no API)
+ * Dashboard view of the shared Pomodoro timer.
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BaseWidget } from './BaseWidget';
-import { useWidgetStore } from '../../stores/useWidgetStore';
+import { usePomodoroStore } from '../../stores/usePomodoroStore';
 
 export const PomodoroWidget: React.FC = () => {
-  const settings = useWidgetStore((state) => state.getWidgetSettings('pomodoro'));
-  const [timeLeft, setTimeLeft] = useState((settings.duration ?? 25) * 60); // seconds
-  const [isRunning, setIsRunning] = useState(false);
+  const {
+    mode,
+    timeRemaining,
+    isRunning,
+    isPaused,
+    settings,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    stopTimer,
+  } = usePomodoroStore();
 
-  useEffect(() => {
-    if (!isRunning) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          // Notification
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('番茄钟完成！', {
-              body: '该休息一下了！',
-            });
-          }
-          return (settings.duration ?? 25) * 60;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isRunning, settings?.duration]);
+  const durationMinutes =
+    mode === 'focus'
+      ? settings.focusDuration
+      : mode === 'shortBreak'
+        ? settings.shortBreakDuration
+        : settings.longBreakDuration;
+  const durationSeconds = Math.max(1, durationMinutes * 60);
+  const progress = Math.max(0, Math.min(100, (timeRemaining / durationSeconds) * 100));
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -41,19 +34,17 @@ export const PomodoroWidget: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleStart = () => setIsRunning(true);
-  const handlePause = () => setIsRunning(false);
-  const handleReset = () => {
-    setIsRunning(false);
-    setTimeLeft((settings.duration ?? 25) * 60);
+  const handleStart = () => {
+    if (isPaused) {
+      resumeTimer();
+      return;
+    }
+    startTimer();
   };
-
-  const progress = ((timeLeft / ((settings.duration || 25) * 60)) * 100);
 
   return (
     <BaseWidget title="番茄钟" icon="⏱️">
       <div className="flex flex-col items-center justify-center h-full gap-4">
-        {/* Timer Display */}
         <div className="relative w-32 h-32">
           <svg className="w-full h-full -rotate-90">
             <circle
@@ -79,30 +70,29 @@ export const PomodoroWidget: React.FC = () => {
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
-              {formatTime(timeLeft)}
+              {formatTime(timeRemaining)}
             </span>
           </div>
         </div>
 
-        {/* Controls */}
         <div className="flex gap-2">
-          {!isRunning ? (
+          {isRunning ? (
             <button
-              onClick={handleStart}
-              className="px-4 py-2 bg-accent-blue text-white rounded-button hover:bg-accent-blue-hover transition-all duration-standard ease-smooth"
-            >
-              开始
-            </button>
-          ) : (
-            <button
-              onClick={handlePause}
+              onClick={pauseTimer}
               className="px-4 py-2 bg-accent-yellow text-white rounded-button hover:bg-accent-yellow-hover transition-all duration-standard ease-smooth"
             >
               暂停
             </button>
+          ) : (
+            <button
+              onClick={handleStart}
+              className="px-4 py-2 bg-accent-blue text-white rounded-button hover:bg-accent-blue-hover transition-all duration-standard ease-smooth"
+            >
+              {isPaused ? '继续' : '开始'}
+            </button>
           )}
           <button
-            onClick={handleReset}
+            onClick={stopTimer}
             className="px-4 py-2 bg-surface-dark text-white rounded-button hover:bg-surface-dark-elevated transition-all duration-standard ease-smooth"
           >
             重置

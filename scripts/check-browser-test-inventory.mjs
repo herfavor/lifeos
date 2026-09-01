@@ -17,7 +17,7 @@ const requiredCriticalFiles = [
   'performance.spec.ts',
   'persistence-flows.spec.ts',
   'responsive.spec.ts',
-  'visual-regression.spec.ts',
+  'visual-style-smoke.spec.ts',
 ];
 
 const specFiles = fs.readdirSync(testRoot)

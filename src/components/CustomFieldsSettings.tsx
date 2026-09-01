@@ -333,7 +333,7 @@ function FieldListItem({ field, onDelete, onUpdate }: FieldListItemProps) {
             </div>
           )}
 
-          {/* Visibility Toggles (P1 Feature) */}
+          {/* Visibility Toggles () */}
           <div className="mt-3 flex items-center gap-4 text-xs">
             <div className="flex items-center gap-2">
               <input

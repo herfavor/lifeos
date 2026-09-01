@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helpers';
 
 /**
- * Visual Regression & Styling E2E Tests
+ * Visual Style Smoke E2E Tests
  *
  * Verifies that pages render correctly in both light and dark modes,
  * CSS loads properly, and no visual breakage from the Tailwind 4 migration.
  */
 
-test.describe('Visual Regression - Page Rendering', () => {
+test.describe('Visual style smoke - page rendering', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
   });
@@ -46,7 +46,7 @@ test.describe('Visual Regression - Page Rendering', () => {
     if (!isDark) {
       // Toggle to dark
       await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
-      await page.waitForTimeout(300);
+      await expect(page.locator('html')).toHaveClass(/dark/);
     }
 
     // Verify dark class is on html element
@@ -87,7 +87,7 @@ test.describe('Visual Regression - Page Rendering', () => {
 
     if (isDark) {
       await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
-      await page.waitForTimeout(300);
+      await expect(page.locator('html')).not.toHaveClass(/dark/);
     }
 
     const hasDarkClass = await page.evaluate(() =>
@@ -145,7 +145,7 @@ test.describe('Visual Regression - Page Rendering', () => {
   });
 });
 
-test.describe('Visual Regression - Tailwind 4 Specific', () => {
+test.describe('Visual style smoke - Tailwind 4', () => {
   test('border colors render (TW4 changed default from gray to currentcolor)', async ({ page }) => {
     await navigateTo(page, '/tasks');
 
@@ -198,9 +198,15 @@ test.describe('Visual Regression - Tailwind 4 Specific', () => {
       getComputedStyle(document.documentElement).getPropertyValue('--surface-light').trim()
     );
 
-    // Toggle theme
+    // Toggle theme and wait for the observable theme state to change.
+    const html = page.locator('html');
+    const wasDark = await html.evaluate((el) => el.classList.contains('dark'));
     await page.getByRole('button', { name: /浅色模式|深色模式/ }).click();
-    await page.waitForTimeout(300);
+    if (wasDark) {
+      await expect(html).not.toHaveClass(/dark/);
+    } else {
+      await expect(html).toHaveClass(/dark/);
+    }
 
     // Surface colors should be defined in both modes
     const darkSurface = await page.evaluate(() =>

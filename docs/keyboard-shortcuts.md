@@ -70,6 +70,6 @@ Mac 上的 `Mod` 对应 Cmd；Windows / Linux 对应 Ctrl。
 ## 相关指南
 
 - [快速入门](./getting-started.md)
-- [任务与看板](./tasks-kanban.md)
-- [笔记](./notes-editor.md)
-- [AI 管理](./ai-management.md)
+- [核心工作流](./workflow.md)
+- [笔记与收藏](./knowledge.md)
+- [AI](./ai.md)

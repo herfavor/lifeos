@@ -25,7 +25,7 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
   const [zoom, setZoom] = useState<ZoomLevel>('week');
   const [showCriticalPath, setShowCriticalPath] = useState(false);
 
-  // Phase 1.3: Calculate critical path
+  // Calculate critical path
   // Note: tasks is intentionally in deps because getCriticalPath reads from the tasks array
   const criticalTaskIds = useMemo(
     () => (showCriticalPath ? getCriticalPath() : []),
@@ -122,7 +122,7 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
             <ZoomOut className="w-4 h-4 text-text-light-primary dark:text-text-dark-primary" />
           </button>
 
-          {/* Phase 1.3: Critical Path Toggle */}
+          {/* Critical Path Toggle */}
           <div className="h-6 w-px bg-border-light dark:bg-border-dark mx-2" />
           <button
             onClick={() => setShowCriticalPath(!showCriticalPath)}
@@ -141,7 +141,7 @@ export function GanttView({ onTaskClick }: GanttViewProps) {
             </span>
           )}
 
-          {/* Phase 1.4: Baseline Controls */}
+          {/* Baseline Controls */}
           <div className="h-6 w-px bg-border-light dark:bg-border-dark mx-2" />
           {baseline ? (
             <>
