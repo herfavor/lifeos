@@ -96,7 +96,7 @@ function CreateFieldModal({ isOpen, onClose, onSave, target }: CreateFieldModalP
         <div className="p-6 space-y-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+            <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
               创建自定义字段（{target === 'tasks' ? '任务' : '笔记'}）
             </h3>
             <button

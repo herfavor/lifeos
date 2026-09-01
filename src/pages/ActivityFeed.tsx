@@ -274,7 +274,6 @@ export const ActivityFeed: React.FC = () => {
 
   const rawFilteredEvents = useMemo(() => getActivities(filter), [events, filter, getActivities]);
   const filteredEvents = useMemo(() => collapseNoisyActivities(rawFilteredEvents), [rawFilteredEvents]);
-  const mergedEventCount = rawFilteredEvents.length - filteredEvents.length;
 
   const completedResults = useMemo(() => {
     const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -397,12 +396,9 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
   return (
     <PageContent page="activity" variant="full-height">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4 md:px-6 border-b border-border-light dark:border-border-dark">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6 border-b border-border-light dark:border-border-dark">
         <div>
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">工作记录</h2>
-          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            {activeTab === 'review' ? '关闭开放循环，决定下一轮' : `${filteredEvents.length} 个事件${mergedEventCount > 0 ? ` · 已合并 ${mergedEventCount} 条重复更新` : ''}`}
-          </p>
+          <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">工作记录</h2>
         </div>
 
         {/* Tab Toggle */}

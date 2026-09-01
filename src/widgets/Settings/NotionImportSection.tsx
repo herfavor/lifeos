@@ -261,7 +261,7 @@ export const NotionImportSection: React.FC<NotionImportSectionProps> = ({
     <div className="bento-card p-6">
       <div className="flex items-center gap-3 mb-1">
         <FileSpreadsheet className="w-5 h-5 text-accent-primary" />
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
           Notion 导入
         </h2>
       </div>

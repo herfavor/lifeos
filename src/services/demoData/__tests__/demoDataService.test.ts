@@ -46,11 +46,11 @@ describe('demoDataService', () => {
 
     // Calendar has events on multiple days across the demo week.
     const calendarEvents = Object.values(useCalendarStore.getState().events).flat();
-    expect(calendarEvents.length).toBe(6);
+    expect(calendarEvents.length).toBe(9);
 
     // Notes carry tags and wiki links for the graph view.
     const notes = Object.values(useNotesStore.getState().notes);
-    expect(notes.length).toBe(5);
+    expect(notes.length).toBe(6);
     expect(notes.some((n) => (n.linkedNotes?.length ?? 0) > 0)).toBe(true);
     expect(notes.every((n) => n.tags.length > 0)).toBe(true);
 

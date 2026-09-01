@@ -141,7 +141,7 @@ export const Inbox: React.FC = () => {
 
   return (
     <PageContent page="inbox">
-      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <InboxIcon className="h-5 w-5 text-accent-primary" />
@@ -150,9 +150,6 @@ export const Inbox: React.FC = () => {
               {inboxTasks.length}
             </span>
           </div>
-          <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            先看清积压了什么，再决定项目、日期或直接安排。
-          </p>
         </div>
 
         {inboxTasks.length > 0 && (
@@ -188,10 +185,7 @@ export const Inbox: React.FC = () => {
           {grouped.needsArrangement.length > 0 && (
             <section>
               <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">需要安排</h3>
-                  <p className="mt-0.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">缺少项目或日期，先补一个关键决定。</p>
-                </div>
+                <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">需要安排</h3>
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{grouped.needsArrangement.length} 项</span>
               </div>
               <div className="grid gap-3 xl:grid-cols-2">
@@ -205,10 +199,7 @@ export const Inbox: React.FC = () => {
           {grouped.ready.length > 0 && (
             <section>
               <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">可以直接进入待办</h3>
-                  <p className="mt-0.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">已有项目和日期，确认后就不再留在收件箱。</p>
-                </div>
+                <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">可以直接进入待办</h3>
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{grouped.ready.length} 项</span>
               </div>
               <div className="grid gap-3 xl:grid-cols-2">

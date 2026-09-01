@@ -413,7 +413,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, foc
         <div className="relative" ref={miniCalendarRef}>
           <button
             onClick={() => setShowMiniCalendar(!showMiniCalendar)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-standard ease-smooth ${
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all duration-standard ease-smooth ${
               showMiniCalendar
                 ? 'bg-accent-primary text-white border-accent-primary'
                 : 'bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
@@ -491,7 +491,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, foc
         </div>
 
         {/* Category Filter Buttons */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1 flex-wrap" aria-label="事件分类筛选">
           {EVENT_COLOR_CATEGORIES.map((cat) => {
             const isActive = activeCategories.has(cat.id);
             return (
@@ -508,16 +508,13 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, foc
                     return next;
                   });
                 }}
-                className={`px-2 py-0.5 text-[10px] font-medium rounded-full transition-all duration-standard ease-smooth ${
-                  isActive
-                    ? 'text-white ring-1 ring-offset-1 ring-white/50'
-                    : 'opacity-40 hover:opacity-70'
+                className={`h-4 w-4 rounded-full transition-transform duration-standard ease-smooth ${
+                  isActive ? 'ring-2 ring-offset-1 ring-text-light-secondary dark:ring-text-dark-secondary' : 'opacity-40 hover:opacity-80 hover:scale-110'
                 }`}
-                style={{ backgroundColor: cat.hex, color: '#fff' }}
+                style={{ backgroundColor: cat.hex }}
                 title={`${isActive ? '隐藏' : '显示'} ${cat.label} 事件`}
-              >
-                {cat.label}
-              </button>
+                aria-label={`${cat.label} 分类`}
+              />
             );
           })}
           {activeCategories.size > 0 && (
@@ -612,7 +609,6 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, foc
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-semibold text-text-light-primary dark:text-text-dark-primary">近期安排</h3>
-                <p className="mt-0.5 text-xs text-text-light-tertiary dark:text-text-dark-tertiary">未来 14 天的已承诺日程</p>
               </div>
               <button
                 type="button"
@@ -628,6 +624,7 @@ export function TimeEntryCalendar({ onEditEntry, onCreateEvent, onEditEvent, foc
                 currentDate={new Date()}
                 daysToShow={14}
                 onEventClick={handleEventClick}
+                compact
               />
             </div>
           </aside>

@@ -70,7 +70,7 @@ export const AITerminalSettingsSection: React.FC = () => {
         <div className="flex items-center gap-3">
           <Bot className="h-5 w-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
           <div>
-            <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+            <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
               AI 提供商
             </h2>
             <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">

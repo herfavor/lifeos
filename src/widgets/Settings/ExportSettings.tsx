@@ -147,7 +147,7 @@ export const ExportSettings: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
+        <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary mb-2 flex items-center gap-2">
           <FileDown className="w-5 h-5" />
           数据导出
         </h3>

@@ -384,8 +384,7 @@ export const Kanban: React.FC = () => {
   return (
     <Widget
       id="kanban"
-      title="看板"
-      category="Planning"
+      title="任务看板"
       draggable={false}
       headerAccessory={
         <button
@@ -397,15 +396,15 @@ export const Kanban: React.FC = () => {
       }
     >
       {/* Filter Bar */}
-      <div className="mb-4 space-y-3">
+      <div className="mb-3 space-y-3">
         {/* Search and Filter Toggle */}
         <div className="flex flex-wrap gap-2">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="搜索任务（按标题、描述或 KAN-#）…"
-            className="flex-1 px-4 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue"
+            placeholder="搜索任务（标题、描述或 KAN-#）…"
+            className="flex-1 min-w-[180px] px-3 py-2 text-sm border border-border-light dark:border-border-dark rounded-lg bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-accent-blue"
           />
           {showMoreActions && <button
             onClick={() => setShowColumnManager(true)}
@@ -591,18 +590,6 @@ export const Kanban: React.FC = () => {
           <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary">
             显示 {filteredTasks.length} / {tasks.length} 个任务          </div>
         )}
-      </div>
-
-      {/* Keyboard shortcuts hint */}
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-xs text-text-light-secondary dark:text-text-dark-secondary flex items-center gap-4">
-          <span>
-            按 <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">?</kbd> 查看键盘快捷键
-          </span>
-          <span className="hidden md:inline">
-            <kbd className="px-2 py-0.5 text-xs font-mono bg-surface-light-elevated dark:bg-surface-dark-elevated rounded border border-border-light dark:border-border-dark">⌘K</kbd> 快速添加任务
-          </span>
-        </div>
       </div>
 
       <div className={`flex gap-4 ${showViewSidebar ? '' : ''}`}>

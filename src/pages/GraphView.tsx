@@ -215,7 +215,7 @@ export default function GraphView() {
     <PageContent page="graph" variant="full-height">
       <div className="flex-1 flex flex-row overflow-hidden">
         {/* Main graph area */}
-        <div className="flex-1 flex flex-col p-6 gap-4 overflow-hidden">
+        <div className="flex-1 flex flex-col gap-4 overflow-hidden p-4 md:p-6">
         {/* Focus Mode Banner */}
         {focusNodeId && notes[focusNodeId] && (
           <div className="flex items-center gap-4 rounded-xl border border-accent-primary/20 bg-accent-primary/5 p-3">
@@ -358,7 +358,7 @@ export default function GraphView() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-hidden">
             <GraphCanvas
               data={graphData}
               onNodeClick={handleNodeClick}

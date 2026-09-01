@@ -68,7 +68,7 @@ export const Tasks: React.FC = () => {
 
   return (
     <PageContent page="tasks">
-      <div className="mb-4 flex min-h-9 flex-wrap items-center justify-between gap-3">
+      <div className="mb-3 flex min-h-9 flex-wrap items-center justify-between gap-3">
         {isAdvancedView ? (
           <div className="flex items-center gap-3">
             <button
@@ -83,9 +83,7 @@ export const Tasks: React.FC = () => {
             </span>
           </div>
         ) : (
-          <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            只保留已经明确、可执行的下一步；还没决定的内容放在收件箱。
-          </p>
+          <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">只看明确、可执行的下一步；未决定的留在收件箱。</span>
         )}
 
         {(activeTab === 'tasks' || activeTab === 'timeline') && (

@@ -5,7 +5,7 @@ describe('page metadata', () => {
   it('describes Inbox as a distinct decision surface', () => {
     expect(getPageMetadata('/inbox')).toEqual({
       title: '收件箱',
-      subtitle: '先看清未决定的内容，再安排下一步',
+      subtitle: '先接住，再安排',
     });
   });
 

@@ -191,7 +191,7 @@ export const KeyboardShortcutsSection: React.FC = () => {
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3">
           <Keyboard className="w-5 h-5 text-accent-primary" />
-          <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+          <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
             键盘快捷键
           </h2>
         </div>

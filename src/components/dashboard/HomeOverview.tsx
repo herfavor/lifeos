@@ -153,66 +153,63 @@ export const HomeOverview: React.FC = () => {
 
   return (
     <div className="space-y-4 pb-2" data-testid="home-overview">
-      <section className="relative overflow-hidden rounded-3xl bg-text-light-primary text-white shadow-[0_24px_70px_-34px_rgba(15,23,42,0.75)] dark:bg-surface-dark-elevated">
-        <div className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full bg-accent-primary/35 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-36 left-1/3 h-72 w-72 rounded-full bg-accent-cyan/10 blur-3xl" />
-
-        <div className="relative grid gap-5 px-5 py-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(28rem,1.1fr)] lg:px-8 lg:py-6">
+      <section className="relative overflow-hidden rounded-2xl bg-surface-dark-elevated text-white shadow-none dark:bg-surface-dark">
+        <div className="relative grid gap-5 px-4 py-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(24rem,1.05fr)] lg:px-6 lg:py-5">
           <div className="flex min-w-0 flex-col justify-between">
             <div>
-              <p className="text-sm font-semibold text-white/65">{greeting}，这里是你的今日工作台</p>
-              <h2 className="mt-1.5 max-w-xl text-[28px] font-bold tracking-tight text-white leading-tight">
+              <p className="text-xs font-medium text-white/55">{greeting} · 今日工作台</p>
+              <h2 className="mt-1 max-w-xl text-xl font-semibold tracking-tight text-white">
                 {focusTask ? '现在，只推进这一件事。' : '先决定今天最重要的一步。'}
               </h2>
 
               {focusTask ? (
-                <div className="mt-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm">
+                <div className="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
                   <button
                     type="button"
                     onClick={() => updateTask(focusTask.id, { status: 'done' })}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/25 text-white transition hover:bg-white/10"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/20 text-white transition hover:bg-white/10"
                     aria-label={`完成任务：${focusTask.title}`}
                   >
-                    <Circle className="h-5 w-5" />
+                    <Circle className="h-4 w-4" />
                   </button>
                   <button type="button" onClick={() => navigate('/today')} className="min-w-0 flex-1 text-left">
-                    <span className="block text-xs font-medium text-white/55">当前焦点</span>
-                    <span className="mt-0.5 block truncate text-base font-semibold text-white">{focusTask.title}</span>
+                    <span className="block text-[11px] font-medium text-white/50">当前焦点</span>
+                    <span className="mt-0.5 block truncate text-sm font-semibold text-white">{focusTask.title}</span>
                   </button>
                   <Link
                     to={`/focus?task=${encodeURIComponent(focusTask.id)}`}
-                    className="hidden shrink-0 items-center gap-1.5 rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-text-light-primary transition hover:bg-white/90 sm:inline-flex"
+                    className="hidden shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-text-light-primary transition hover:bg-white/90 sm:inline-flex"
                   >
-                    开始专注 <ArrowRight className="h-4 w-4" />
+                    开始专注 <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               ) : (
-                <p className="mt-3 max-w-lg text-sm leading-6 text-white/65">
+                <p className="mt-2 max-w-lg text-xs leading-5 text-white/55">
                   不需要把一天塞满。先从收件箱选出真正值得完成的一件事。
                 </p>
               )}
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2" aria-label="今日概览">
-              <Link to="/today" className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/15">
+            <div className="mt-3 flex flex-wrap gap-1.5" aria-label="今日概览">
+              <Link to="/today" className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-medium text-white/65 transition hover:bg-white/10">
                 今日 {allTodayTasks.length} 项
               </Link>
-              <Link to="/tasks?tab=inbox" className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/15">
+              <Link to="/tasks?tab=inbox" className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-medium text-white/65 transition hover:bg-white/10">
                 待分拣 {inboxCount} 项
               </Link>
-              <Link to="/tasks" className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${overdueCount > 0 ? 'bg-status-error/25 text-white' : 'bg-white/10 text-white/80 hover:bg-white/15'}`}>
+              <Link to="/tasks" className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition ${overdueCount > 0 ? 'bg-status-error/25 text-white' : 'bg-white/5 text-white/65 hover:bg-white/10'}`}>
                 {overdueCount > 0 ? `逾期 ${overdueCount} 项` : '没有逾期'}
               </Link>
             </div>
           </div>
 
-          <form onSubmit={handleCapture} className="self-center rounded-2xl border border-white/15 bg-white/10 p-3.5 backdrop-blur-md">
-            <div className="mb-3 flex items-center justify-between gap-3">
+          <form onSubmit={handleCapture} className="self-center rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="mb-2.5 flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">快速收集</p>
-                <p className="mt-0.5 text-xs text-white/55">先接住，稍后再整理</p>
+                <p className="mt-0.5 text-[11px] text-white/50">先接住，稍后再整理</p>
               </div>
-              <div className="flex rounded-lg bg-black/15 p-1" aria-label="快速记录类型">
+              <div className="flex rounded-lg bg-black/20 p-0.5" aria-label="快速记录类型">
                 {(['task', 'note'] as const).map((type) => (
                   <button
                     key={type}
@@ -221,8 +218,8 @@ export const HomeOverview: React.FC = () => {
                       setCaptureType(type);
                       setCaptureStatus('');
                     }}
-                    className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      captureType === type ? 'bg-white text-text-light-primary' : 'text-white/65 hover:text-white'
+                    className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                      captureType === type ? 'bg-white text-text-light-primary' : 'text-white/60 hover:text-white'
                     }`}
                   >
                     {type === 'task' ? '任务' : '笔记'}
@@ -242,18 +239,18 @@ export const HomeOverview: React.FC = () => {
                   setCaptureStatus('');
                 }}
                 placeholder={captureType === 'task' ? '有什么需要记住？' : '这个想法叫什么？'}
-                className="min-h-12 min-w-0 flex-1 rounded-xl border border-white/25 bg-white/10 px-4 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white focus:ring-2 focus:ring-white/25"
+                className="min-h-10 min-w-0 flex-1 rounded-lg border border-white/20 bg-white/5 px-3.5 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-white focus:ring-2 focus:ring-white/20"
               />
               <button
                 type="submit"
                 disabled={!captureText.trim()}
-                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-text-light-primary shadow-sm transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-white px-4 text-sm font-semibold text-text-light-primary shadow-sm transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Plus className="h-4 w-4" />
                 收进来
               </button>
             </div>
-            <div className="mt-2 min-h-4 text-right text-xs text-white/65" aria-live="polite">
+            <div className="mt-1.5 min-h-4 text-right text-[11px] text-white/55" aria-live="polite">
               {captureStatus || '回车即可保存到本机'}
             </div>
           </form>
@@ -265,7 +262,6 @@ export const HomeOverview: React.FC = () => {
       <section className="rounded-2xl border border-border-light bg-surface-light px-3 py-3 shadow-[0_10px_30px_-28px_rgba(15,23,42,0.6)] dark:border-border-dark dark:bg-surface-dark-elevated">
         <div className="mb-2 flex items-center justify-between px-2">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-light-tertiary dark:text-text-dark-tertiary">你的工作循环</p>
-          <p className="hidden text-xs text-text-light-tertiary sm:block dark:text-text-dark-tertiary">每次只走到下一步</p>
         </div>
         <nav className="grid grid-cols-2 gap-1 sm:grid-cols-5" aria-label="LifeOS 工作流">
           {FLOW_STEPS.map(({ label, hint, path, icon: Icon }, index) => (
@@ -293,9 +289,8 @@ export const HomeOverview: React.FC = () => {
         <div className="rounded-2xl border border-border-light bg-surface-light p-5 shadow-[0_14px_40px_-34px_rgba(15,23,42,0.65)] dark:border-border-dark dark:bg-surface-dark-elevated lg:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-primary">今天的节奏</p>
-              <h3 className="mt-1 text-xl font-semibold text-text-light-primary dark:text-text-dark-primary">安排少一点，完成重要的</h3>
-              <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+              <h3 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">今天的节奏</h3>
+              <p className="mt-0.5 text-sm text-text-light-secondary dark:text-text-dark-secondary">
                 {today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })}
               </p>
             </div>

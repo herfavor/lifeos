@@ -181,7 +181,7 @@ export const AccentColorSection: React.FC = () => {
   return (
     <div className="bento-card p-6">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
           强调色
         </h2>
         {(activePresetId || isCustom) && (

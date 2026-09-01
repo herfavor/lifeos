@@ -17,7 +17,7 @@ export const AccountSettings: React.FC = () => {
     <div id="account" className="bento-card p-6">
       <div className="flex items-center gap-3 mb-4">
         <User className="h-5 w-5 text-text-light-tertiary dark:text-text-dark-tertiary" />
-        <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">
+        <h2 className="text-base font-semibold text-text-light-primary dark:text-text-dark-primary">
           个人资料（仅存本机）
         </h2>
       </div>
