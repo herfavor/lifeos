@@ -5,8 +5,6 @@ import {
   BarChart3,
   FolderOpen,
   Timer,
-  FileText,
-  TrendingUp,
   Activity,
   Grid3X3,
   Settings as SettingsIcon,
@@ -18,15 +16,12 @@ import { EventCreateModal } from '../components/EventCreateModal';
 import { ProjectManager } from '../components/ProjectManager';
 import { TimeEntryCalendar } from '../components/TimeEntryCalendar';
 import { TimeTrackingTimer } from '../components/TimeTrackingTimer';
-import { InvoiceBuilder } from '../components/InvoiceBuilder';
-import { AdvancedReports } from '../components/AdvancedReports';
 import { PomodoroTimer } from '../components/PomodoroTimer';
 import { ActivityTimeline } from '../components/ActivityTimeline';
 import { WeeklyTimesheetView } from '../components/WeeklyTimesheetView';
 import { AutoTrackingSettings } from '../components/AutoTrackingSettings';
 import { TimeRoundingSettings } from '../components/TimeRoundingSettings';
 import { IdleDetectionSettings } from '../components/IdleDetectionSettings';
-import { BillableRateSettings } from '../components/BillableRateSettings';
 import { ExportTimeEntriesModal } from '../components/ExportTimeEntriesModal';
 import type { TimeEntry, CalendarEvent } from '../types';
 import { PageContent } from '../components/PageContent';
@@ -42,10 +37,10 @@ import type { InitialEventTimeRange } from '../utils/scheduleDeepLink';
 type MainTabType = 'calendar' | 'timer' | 'pomodoro';
 
 // Timer sub-sections (shown as sidebar when timer tab is active)
-type TimerSectionType = 'timer' | 'entries' | 'timesheet' | 'summary' | 'projects' | 'invoices' | 'reports' | 'timeline' | 'settings';
+type TimerSectionType = 'timer' | 'entries' | 'timesheet' | 'summary' | 'projects' | 'timeline' | 'settings';
 
 const VALID_MAIN_TABS: MainTabType[] = ['calendar', 'timer', 'pomodoro'];
-const VALID_TIMER_SECTIONS: TimerSectionType[] = ['timer', 'entries', 'timesheet', 'summary', 'projects', 'invoices', 'reports', 'timeline', 'settings'];
+const VALID_TIMER_SECTIONS: TimerSectionType[] = ['timer', 'entries', 'timesheet', 'summary', 'projects', 'timeline', 'settings'];
 
 // Timer section configuration (sidebar items)
 const TIMER_SECTIONS = [
@@ -54,14 +49,12 @@ const TIMER_SECTIONS = [
   { id: 'timesheet', label: '工时表', icon: Grid3X3 },
   { id: 'summary', label: '汇总', icon: BarChart3 },
   { id: 'projects', label: '项目', icon: FolderOpen },
-  { id: 'invoices', label: '发票', icon: FileText },
-  { id: 'reports', label: '报表', icon: TrendingUp },
   { id: 'timeline', label: '时间线', icon: Activity },
   { id: 'settings', label: '设置', icon: SettingsIcon },
 ] as const;
 
-// Billing, client projects and duplicate settings remain available to legacy
-// direct URLs, but are not part of the default personal-workspace UI.
+// Project management and detailed settings remain available to legacy direct URLs,
+// but are not part of the default personal-workspace UI.
 const EXPOSED_TIMER_SECTIONS = TIMER_SECTIONS.filter((section) =>
   ['timer', 'entries', 'timesheet', 'summary', 'timeline'].includes(section.id)
 );
@@ -79,8 +72,6 @@ const EXPOSED_TIMER_SECTIONS = TIMER_SECTIONS.filter((section) =>
  * - Entries: List view of all time entries
  * - Summary: Time entry analytics and charts
  * - Projects: Project management for time tracking
- * - Invoices: Generate invoices from tracked time
- * - Reports: Advanced reporting and analytics
  * - Timeline: Activity timeline view
  * - Settings: Auto-tracking configuration
  */
@@ -363,15 +354,10 @@ export function TimeTracking() {
                 </div>
               )}
               {timerSection === 'projects' && <ProjectManager />}
-              {timerSection === 'invoices' && <InvoiceBuilder />}
-              {timerSection === 'reports' && <AdvancedReports />}
               {timerSection === 'timeline' && <ActivityTimeline />}
               {timerSection === 'settings' && (
                 <div className="space-y-8">
-                  <BillableRateSettings />
-                  <div className="border-t border-border-light dark:border-border-dark pt-8">
-                    <TimeRoundingSettings />
-                  </div>
+                  <TimeRoundingSettings />
                   <div className="border-t border-border-light dark:border-border-dark pt-8">
                     <IdleDetectionSettings />
                   </div>

@@ -403,10 +403,14 @@ export async function getStoreData<T = unknown>(
 
         getRequest.onsuccess = () => {
           const value = getRequest.result;
+          db.close();
           resolve(value ? JSON.parse(value) : null);
         };
 
-        getRequest.onerror = () => reject(getRequest.error);
+        getRequest.onerror = () => {
+          db.close();
+          reject(getRequest.error);
+        };
       };
     });
   }, actualStoreName);
@@ -437,10 +441,20 @@ export async function setStoreData<T = unknown>(
           const db = request.result;
           const transaction = db.transaction('brain-data', 'readwrite');
           const store = transaction.objectStore('brain-data');
-          const putRequest = store.put(JSON.stringify(value), name);
+          store.put(JSON.stringify(value), name);
 
-          putRequest.onsuccess = () => resolve();
-          putRequest.onerror = () => reject(putRequest.error);
+          transaction.oncomplete = () => {
+            db.close();
+            resolve();
+          };
+          transaction.onerror = () => {
+            db.close();
+            reject(transaction.error);
+          };
+          transaction.onabort = () => {
+            db.close();
+            reject(transaction.error);
+          };
         };
       });
     },

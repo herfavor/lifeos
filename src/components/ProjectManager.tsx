@@ -22,8 +22,6 @@ const PROJECT_COLORS = [
 interface ProjectFormData {
   name: string;
   color: string;
-  clientName?: string;
-  hourlyRate?: number;
   active: boolean;
 }
 
@@ -48,8 +46,6 @@ export function ProjectManager() {
   const [formData, setFormData] = useState<ProjectFormData>({
     name: '',
     color: PROJECT_COLORS[0],
-    clientName: '',
-    hourlyRate: undefined,
     active: true,
   });
   const [formError, setFormError] = useState('');
@@ -75,8 +71,6 @@ export function ProjectManager() {
       setFormData({
         name: project.name,
         color: project.color,
-        clientName: project.clientName || '',
-        hourlyRate: project.hourlyRate,
         active: project.active,
       });
     } else {
@@ -84,8 +78,6 @@ export function ProjectManager() {
       setFormData({
         name: '',
         color: PROJECT_COLORS[Math.floor(Math.random() * PROJECT_COLORS.length)],
-        clientName: '',
-        hourlyRate: undefined,
         active: true,
       });
     }
@@ -121,7 +113,6 @@ export function ProjectManager() {
           parentId: null,
           color: formData.color,
           icon: '📁',
-          description: formData.clientName ? `客户：${formData.clientName}` : undefined,
         });
       }
 
@@ -263,52 +254,6 @@ export function ProjectManager() {
               </div>
             </div>
 
-            {/* Client Name */}
-            <div>
-              <label
-                htmlFor="projectClientName"
-                className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2"
-              >
-                客户名称 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
-              </label>
-              <input
-                id="projectClientName"
-                type="text"
-                value={formData.clientName}
-                onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                className="w-full px-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                placeholder="例如：Acme Corp、John Doe"
-              />
-            </div>
-
-            {/* Hourly Rate */}
-            <div>
-              <label
-                htmlFor="projectHourlyRate"
-                className="block text-sm font-medium text-text-light-primary dark:text-text-dark-primary mb-2"
-              >
-                默认小时费率 <span className="text-text-light-tertiary dark:text-text-dark-tertiary font-normal">（可选）</span>
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary text-sm">
-                  $
-                </span>
-                <input
-                  id="projectHourlyRate"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.hourlyRate || ''}
-                  onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value ? parseFloat(e.target.value) : undefined })}
-                  className="w-full pl-7 pr-3 py-2 text-sm bg-surface-light-elevated dark:bg-surface-dark-elevated border border-border-light dark:border-border-dark rounded-button focus:outline-none focus:ring-2 focus:ring-accent-primary text-text-light-primary dark:text-text-dark-primary placeholder-text-light-secondary dark:placeholder-text-dark-secondary"
-                  placeholder="0.00"
-                />
-              </div>
-              <p className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary mt-1">
-                用于计算时间记录的可计费金额
-              </p>
-            </div>
-
             {/* Active Status */}
             <div className="flex items-center gap-3">
               <input
@@ -380,18 +325,6 @@ export function ProjectManager() {
                         {project.name}
                       </h4>
                     </div>
-                    <div className="space-y-1">
-                      {project.clientName && (
-                        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                          客户：{project.clientName}
-                        </p>
-                      )}
-                      {project.hourlyRate && (
-                        <p className="text-sm font-mono font-medium text-status-success-text">
-                          ${project.hourlyRate.toFixed(2)}/小时
-                        </p>
-                      )}
-                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 ml-4">
@@ -455,11 +388,6 @@ export function ProjectManager() {
                         {project.name}
                       </h4>
                     </div>
-                    {project.clientName && (
-                      <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                        客户：{project.clientName}
-                      </p>
-                    )}
                   </div>
 
                   <div className="flex items-center gap-2 ml-4">

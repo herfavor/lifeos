@@ -593,7 +593,7 @@ export interface Habit {
   icon?: string;                    // Emoji or Lucide icon name
   color: string;                    // Hex color for visual identity
   category: HabitCategory;          // Grouping category
-  difficulty: HabitDifficulty;      // XP multiplier: trivial=1, easy=2, medium=3, hard=4
+  difficulty: HabitDifficulty;      // Relative effort used for habit planning
 
   // Frequency configuration
   frequency: HabitFrequency;
@@ -614,7 +614,7 @@ export interface Habit {
   currentStreak: number;
   longestStreak: number;
   totalCompletions: number;
-  totalXp: number;                  // Accumulated experience points
+  totalXp: number;                  // Legacy persisted field; no longer used by the runtime
 
   // Streak freeze
   freezesPerWeek: number;           // Max freezes allowed per week (default 1)

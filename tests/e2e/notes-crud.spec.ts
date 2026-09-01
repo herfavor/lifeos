@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helpers';
-
-/**
- * E2E Tests for Notes CRUD Operations
- *
- * Covers: Create note, edit note, delete note, folder organization, search notes
- */
+import {
+  assertNoConsoleErrors,
+  createBlankNote,
+  navigateTo,
+  openNotesSidebarIfNeeded,
+  selectNoteByTitle,
+  setupConsoleMonitor,
+} from './helpers';
 
 test.describe('Notes CRUD Operations', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,162 +14,53 @@ test.describe('Notes CRUD Operations', () => {
     await navigateTo(page, '/notes');
   });
 
-  test('can create a new note', async ({ page }) => {
-    // Find and click the create note button
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await expect(createButton).toBeVisible();
-    await createButton.click();
-
-    // Wait for note to be created and editor to be visible
-    // The editor should appear (Lexical editor or contenteditable area)
-    const editor = page.locator('[contenteditable="true"]').first();
-    await expect(editor).toBeVisible();
-
-    // Type some content
+  test('creates and edits a note', async ({ page }) => {
+    const editor = await createBlankNote(page, 'CRUD Note');
     await editor.click();
-    await editor.fill('E2E Test Note Content');
+    await page.keyboard.type('Initial Content');
+    await expect(editor).toContainText('Initial Content');
 
-    // Verify the content appears in the editor
-    await expect(editor).toContainText('E2E Test Note Content');
-
-    // Note should auto-save - verify it appears in the notes list
-    const noteItem = page.getByText('E2E Test Note Content').first();
-    await expect(noteItem).toBeVisible();
-  });
-
-  test('can edit an existing note', async ({ page }) => {
-    // Create a note first
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
-
-    const editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await editor.fill('Initial Content');
-
-    // Wait for auto-save
-    await page.waitForTimeout(1000);
-
-    // Clear and update the content
-    await editor.click();
-    await page.keyboard.press('Control+A');
+    await page.keyboard.press('Control+a');
     await page.keyboard.type('Updated Content');
-
-    // Wait for auto-save
-    await page.waitForTimeout(1000);
-
-    // Verify updated content persists
     await expect(editor).toContainText('Updated Content');
+
+    await openNotesSidebarIfNeeded(page);
+    await expect(page.getByText('CRUD Note', { exact: true }).first()).toBeVisible();
+    assertNoConsoleErrors(page);
   });
 
-  test('can delete a note', async ({ page }) => {
-    // Create a note first
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
+  test('organizes a new note inside a folder', async ({ page }) => {
+    await openNotesSidebarIfNeeded(page);
+    await page.locator('button[title="新建文件夹"]').click();
 
-    const editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await editor.fill('Note to Delete');
+    const folderInput = page.getByPlaceholder(/文件夹.*名称|名称/i);
+    await folderInput.fill('E2E Test Folder');
+    await folderInput.press('Enter');
 
-    // Wait for auto-save
-    await page.waitForTimeout(1000);
+    const folder = page.getByText('E2E Test Folder', { exact: true }).first();
+    await expect(folder).toBeVisible();
+    await folder.click();
 
-    // Find the delete button (might be in a context menu or toolbar)
-    const deleteButton = page.getByRole('button', { name: /delete/i }).first();
-    if (await deleteButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await deleteButton.click();
+    const closeSidebar = page.getByRole('button', { name: '关闭侧边栏菜单' });
+    if (await closeSidebar.isVisible().catch(() => false)) await closeSidebar.click();
 
-      // Confirm deletion if there's a confirm dialog
-      const confirmButton = page.getByRole('button', { name: /confirm|delete|yes/i });
-      if (await confirmButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await confirmButton.click();
-      }
-
-      // Verify note is no longer visible
-      await expect(page.getByText('Note to Delete')).not.toBeVisible();
-    }
+    await createBlankNote(page, 'Folder Note');
+    await selectNoteByTitle(page, 'Folder Note');
+    assertNoConsoleErrors(page);
   });
 
-  test('can organize notes in folders', async ({ page }) => {
-    // Look for folder management UI
-    const newFolderButton = page.getByRole('button', { name: /新建文件夹|创建.*文件夹|添加.*文件夹/i });
+  test('search filters by stable note titles', async ({ page }) => {
+    await createBlankNote(page, 'Searchable Alpha');
+    await createBlankNote(page, 'Searchable Beta');
+    await createBlankNote(page, 'Different Note');
 
-    if (await newFolderButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await newFolderButton.click();
+    await openNotesSidebarIfNeeded(page);
+    const search = page.getByPlaceholder(/搜索笔记/);
+    await search.fill('Searchable');
 
-      // Fill in folder name
-      const folderInput = page.getByPlaceholder(/文件夹.*名称|名称/i);
-      if (await folderInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await folderInput.fill('E2E Test Folder');
-
-        // Submit folder creation
-        await page.keyboard.press('Enter');
-
-        // Verify folder appears
-        await expect(page.getByText('E2E Test Folder')).toBeVisible();
-
-        // Select the folder
-        await page.getByText('E2E Test Folder').click();
-
-        // Create a note in this folder
-        const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-        await createButton.click();
-
-        const editor = page.locator('[contenteditable="true"]').first();
-        await editor.click();
-        await editor.fill('Note in Folder');
-
-        // Wait for auto-save
-        await page.waitForTimeout(1000);
-
-        // Verify note appears
-        await expect(page.getByText('Note in Folder')).toBeVisible();
-      }
-    }
-  });
-
-  test('can search for notes', async ({ page }) => {
-    // Create a few notes first
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-
-    // Create first note
-    await createButton.click();
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await editor.fill('Searchable Note Alpha');
-    await page.waitForTimeout(1000);
-
-    // Create second note
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await editor.fill('Searchable Note Beta');
-    await page.waitForTimeout(1000);
-
-    // Create third note with different content
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await editor.fill('Different Content');
-    await page.waitForTimeout(1000);
-
-    // Look for search input
-    const searchInput = page.getByPlaceholder(/搜索/i);
-
-    if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      // Search for "Searchable"
-      await searchInput.fill('Searchable');
-
-      // Wait for search results
-      await page.waitForTimeout(500);
-
-      // Should see the two searchable notes
-      await expect(page.getByText('Searchable Note Alpha')).toBeVisible();
-      await expect(page.getByText('Searchable Note Beta')).toBeVisible();
-
-      // Should not see the different content note
-      // Note: This might still be visible if search is not filtering, so we check count
-      const searchableNotes = page.getByText(/Searchable Note/);
-      await expect(searchableNotes).toHaveCount(2);
-    }
+    await expect(page.getByText('Searchable Alpha', { exact: true })).toBeVisible();
+    await expect(page.getByText('Searchable Beta', { exact: true })).toBeVisible();
+    await expect(page.getByText('Different Note', { exact: true })).toHaveCount(0);
+    assertNoConsoleErrors(page);
   });
 });

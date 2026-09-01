@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
-import type { Habit, HabitCompletion, HabitAchievement, HabitDifficulty, StreakFreezeRecord } from '../types';
+import type { Habit, HabitCompletion, StreakFreezeRecord } from '../types';
 import { createSyncedStorage } from '../lib/syncedStorage';
 import { useProjectContextStore, matchesProjectFilter } from './useProjectContextStore';
 import { toast } from './useToastStore';
@@ -9,39 +9,6 @@ import { useActivityStore } from './useActivityStore';
 
 // Achievement milestone definitions
 const STREAK_MILESTONES = [3, 7, 14, 30, 60, 90, 180, 365];
-const TOTAL_MILESTONES = [10, 50, 100, 500, 1000];
-
-// XP system constants
-const DIFFICULTY_XP: Record<HabitDifficulty, number> = {
-  trivial: 5,
-  easy: 10,
-  medium: 20,
-  hard: 40,
-};
-
-// Streak multiplier: every 7-day streak gives +0.1x bonus (max 3x)
-function getStreakMultiplier(streak: number): number {
-  return Math.min(1 + Math.floor(streak / 7) * 0.1, 3);
-}
-
-// Calculate XP for a completion
-function calculateXp(difficulty: HabitDifficulty, currentStreak: number): number {
-  const base = DIFFICULTY_XP[difficulty];
-  const multiplier = getStreakMultiplier(currentStreak);
-  return Math.round(base * multiplier);
-}
-
-// Level from total XP (each level requires progressively more XP)
-export function getLevelFromXp(totalXp: number): { level: number; currentXp: number; nextLevelXp: number } {
-  let level = 1;
-  let remaining = totalXp;
-  while (remaining >= level * 100) {
-    remaining -= level * 100;
-    level++;
-  }
-  return { level, currentXp: remaining, nextLevelXp: level * 100 };
-}
-
 // Helper to get date key in YYYY-M-D format (non-padded per project convention)
 function getDateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -182,8 +149,6 @@ interface HabitStore {
   // State
   habits: Habit[];
   completions: HabitCompletion[];
-  achievements: HabitAchievement[];
-
   // Habit CRUD
   addHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'currentStreak' | 'longestStreak' | 'totalCompletions' | 'totalXp' | 'order' | 'freezesUsed'>) => string;
   updateHabit: (id: string, updates: Partial<Habit>) => void;
@@ -202,9 +167,6 @@ interface HabitStore {
   recalculateStreak: (habitId: string) => void;
   recalculateAllStreaks: () => void;
 
-  // Achievements
-  checkAndUnlockAchievements: (habitId: string) => HabitAchievement[];
-
   // Project context filtering
   getFilteredHabits: () => Habit[];
   getActiveHabits: () => Habit[];
@@ -214,9 +176,6 @@ interface HabitStore {
   getWeekProgress: (habitId: string) => boolean[];
   getCompletionRate: (habitId: string, days: number) => number;
   getCompletionHistory: (habitId: string, days: number) => Array<{ date: string; completed: boolean }>;
-
-  // XP & Rewards
-  getTotalXp: () => number;
 
   // Dependencies
   isHabitUnlocked: (habitId: string, dateKey: string) => boolean;
@@ -234,8 +193,6 @@ interface HabitStore {
   // Update completion note
   updateCompletionNote: (completionId: string, note: string) => void;
 
-  // Global achievement checks
-  checkGlobalAchievements: () => HabitAchievement[];
 }
 
 export const useHabitStore = create<HabitStore>()(
@@ -244,7 +201,6 @@ export const useHabitStore = create<HabitStore>()(
       // Initial state
       habits: [],
       completions: [],
-      achievements: [],
 
       // Add a new habit
       addHabit: (habitData) => {
@@ -288,7 +244,6 @@ export const useHabitStore = create<HabitStore>()(
         set((state) => ({
           habits: state.habits.filter((h) => h.id !== id),
           completions: state.completions.filter((c) => c.habitId !== id),
-          achievements: state.achievements.filter((a) => a.habitId !== id),
         }));
       },
 
@@ -341,9 +296,6 @@ export const useHabitStore = create<HabitStore>()(
               habit,
               state.completions.filter((c) => c.id !== existing.id)
             );
-            // Remove XP that was earned for this completion
-            const xpLost = calculateXp(habit.difficulty, habit.currentStreak);
-
             set((s) => ({
               habits: s.habits.map((h) =>
                 h.id === habitId
@@ -351,7 +303,6 @@ export const useHabitStore = create<HabitStore>()(
                       ...h,
                       currentStreak: newStreak,
                       totalCompletions: newTotal,
-                      totalXp: Math.max(0, (h.totalXp ?? 0) - xpLost),
                     }
                   : h
               ),
@@ -378,8 +329,6 @@ export const useHabitStore = create<HabitStore>()(
             const newStreak = calculateStreakForHabit(habit, newCompletions);
             const newTotal = habit.totalCompletions + 1;
             const newLongest = Math.max(habit.longestStreak, newStreak);
-            const xpEarned = calculateXp(habit.difficulty, newStreak);
-
             set((s) => ({
               habits: s.habits.map((h) =>
                 h.id === habitId
@@ -388,7 +337,6 @@ export const useHabitStore = create<HabitStore>()(
                       currentStreak: newStreak,
                       longestStreak: newLongest,
                       totalCompletions: newTotal,
-                      totalXp: (h.totalXp ?? 0) + xpEarned,
                     }
                   : h
               ),
@@ -401,25 +349,6 @@ export const useHabitStore = create<HabitStore>()(
               entityTitle: habit.title,
             });
 
-            // Toast XP earned
-            if (xpEarned > 0) {
-              const multiplier = getStreakMultiplier(newStreak);
-              const bonusText = multiplier > 1 ? ` (${multiplier.toFixed(1)}x 连续加成)` : '';
-              toast.success(`+${xpEarned} XP${bonusText}`, habit.title);
-            }
-
-            // Check for new achievements
-            const newAchievements = get().checkAndUnlockAchievements(habitId);
-            if (newAchievements.length > 0) {
-              newAchievements.forEach((achievement) => {
-                const label =
-                  achievement.type === 'streak'
-                    ? `${achievement.value} 天连续达成！`
-                    : `${achievement.value} 次完成！`;
-                toast.success(`成就已解锁：${label}`, habit.title);
-              });
-            }
-
             // Toast for streak milestones
             if (newStreak > 0 && STREAK_MILESTONES.includes(newStreak)) {
               toast.success(
@@ -428,8 +357,6 @@ export const useHabitStore = create<HabitStore>()(
               );
             }
 
-            // Check global achievements after each completion
-            get().checkGlobalAchievements();
           }
         }
       },
@@ -485,62 +412,6 @@ export const useHabitStore = create<HabitStore>()(
         });
 
         set({ habits: updatedHabits });
-      },
-
-      // Check and unlock achievements for a habit
-      checkAndUnlockAchievements: (habitId) => {
-        const state = get();
-        const habit = state.habits.find((h) => h.id === habitId);
-        if (!habit) return [];
-
-        const existingAchievements = state.achievements.filter(
-          (a) => a.habitId === habitId
-        );
-        const newAchievements: HabitAchievement[] = [];
-
-        // Check streak milestones
-        for (const milestone of STREAK_MILESTONES) {
-          if (
-            habit.currentStreak >= milestone &&
-            !existingAchievements.some(
-              (a) => a.type === 'streak' && a.value === milestone
-            )
-          ) {
-            newAchievements.push({
-              id: nanoid(),
-              type: 'streak',
-              habitId,
-              value: milestone,
-              unlockedAt: new Date().toISOString(),
-            });
-          }
-        }
-
-        // Check total completion milestones
-        for (const milestone of TOTAL_MILESTONES) {
-          if (
-            habit.totalCompletions >= milestone &&
-            !existingAchievements.some(
-              (a) => a.type === 'total' && a.value === milestone
-            )
-          ) {
-            newAchievements.push({
-              id: nanoid(),
-              type: 'total',
-              habitId,
-              value: milestone,
-              unlockedAt: new Date().toISOString(),
-            });
-          }
-        }
-
-        if (newAchievements.length > 0) {
-          set((s) => ({
-            achievements: [...s.achievements, ...newAchievements],
-          }));
-        }
-
-        return newAchievements;
       },
 
       // Get habits filtered by project context
@@ -649,11 +520,6 @@ export const useHabitStore = create<HabitStore>()(
         }
 
         return history;
-      },
-
-      // Get total XP across all habits
-      getTotalXp: () => {
-        return get().habits.reduce((sum, h) => sum + (h.totalXp ?? 0), 0);
       },
 
       // Check if a habit is unlocked (all required habits completed today)
@@ -786,123 +652,6 @@ export const useHabitStore = create<HabitStore>()(
           ),
         }));
       },
-
-      // ─── Global Achievements ─────────────────────────────
-
-      checkGlobalAchievements: () => {
-        const state = get();
-        const newAchievements: HabitAchievement[] = [];
-        const existingTypes = new Set(
-          state.achievements.map((a) => `${a.type}:${a.value}`)
-        );
-
-        const activeHabits = state.habits.filter((h) => !h.archivedAt);
-        const today = new Date();
-
-        // Category mastery: complete all habits in a category for 7 consecutive days
-        const categories = new Set(activeHabits.map((h) => h.category));
-        for (const cat of categories) {
-          const catHabits = activeHabits.filter((h) => h.category === cat);
-          if (catHabits.length === 0) continue;
-
-          // Check if all habits in category have 7+ day streaks
-          const allHave7DayStreak = catHabits.every((h) => h.currentStreak >= 7);
-          if (allHave7DayStreak && !existingTypes.has('category-mastery:7')) {
-            newAchievements.push({
-              id: nanoid(),
-              type: 'category-mastery',
-              habitId: '',
-              value: 7,
-              unlockedAt: new Date().toISOString(),
-              label: `${cat} 大师`,
-              icon: 'crown',
-            });
-          }
-        }
-
-        // Explorer: use 5+ different categories
-        if (categories.size >= 5 && !existingTypes.has('explorer:5')) {
-          newAchievements.push({
-            id: nanoid(),
-            type: 'explorer',
-            habitId: '',
-            value: 5,
-            unlockedAt: new Date().toISOString(),
-            label: '探索者',
-            icon: 'compass',
-          });
-        }
-
-        // Consistency: all habits completed for N days
-        const consistencyMilestones = [3, 7, 14, 30];
-        for (const milestone of consistencyMilestones) {
-          if (activeHabits.length === 0) break;
-          const allConsistent = activeHabits.every((h) => h.currentStreak >= milestone);
-          if (allConsistent && !existingTypes.has(`consistency:${milestone}`)) {
-            newAchievements.push({
-              id: nanoid(),
-              type: 'consistency',
-              habitId: '',
-              value: milestone,
-              unlockedAt: new Date().toISOString(),
-              label: `${milestone} 天全勤`,
-              icon: 'check-circle',
-            });
-          }
-        }
-
-        // Early bird / Night owl — check recent completions
-        const recentCompletions = state.completions.filter((c) => {
-          const completedDate = new Date(c.completedAt);
-          const diffDays = (today.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24);
-          return diffDays <= 30;
-        });
-
-        const earlyBirdCount = recentCompletions.filter((c) => {
-          const hour = new Date(c.completedAt).getHours();
-          return hour < 9;
-        }).length;
-
-        if (earlyBirdCount >= 10 && !existingTypes.has('early-bird:10')) {
-          newAchievements.push({
-            id: nanoid(),
-            type: 'early-bird',
-            habitId: '',
-            value: 10,
-            unlockedAt: new Date().toISOString(),
-            label: '早鸟',
-            icon: 'sunrise',
-          });
-        }
-
-        const nightOwlCount = recentCompletions.filter((c) => {
-          const hour = new Date(c.completedAt).getHours();
-          return hour >= 21;
-        }).length;
-
-        if (nightOwlCount >= 10 && !existingTypes.has('night-owl:10')) {
-          newAchievements.push({
-            id: nanoid(),
-            type: 'night-owl',
-            habitId: '',
-            value: 10,
-            unlockedAt: new Date().toISOString(),
-            label: '夜猫子',
-            icon: 'moon',
-          });
-        }
-
-        if (newAchievements.length > 0) {
-          set((s) => ({
-            achievements: [...s.achievements, ...newAchievements],
-          }));
-          newAchievements.forEach((a) => {
-            toast.success(`成就已解锁：${a.label ?? a.type}`, '');
-          });
-        }
-
-        return newAchievements;
-      },
     }),
     {
       name: 'habit-store',
@@ -910,9 +659,8 @@ export const useHabitStore = create<HabitStore>()(
       partialize: (state) => ({
         habits: state.habits,
         completions: state.completions,
-        achievements: state.achievements,
       }),
-      version: 4,
+      version: 5,
       migrate: (persisted, version) => {
         const state = persisted as Record<string, unknown>;
         let habits = (state.habits ?? []) as Array<Record<string, unknown>>;
@@ -937,6 +685,9 @@ export const useHabitStore = create<HabitStore>()(
             freezesUsed: h.freezesUsed ?? [],
           }));
         }
+        if (version < 5) {
+          delete state.achievements;
+        }
 
         return { ...state, habits };
       },
@@ -951,6 +702,5 @@ if (typeof window !== 'undefined') {
     const store = useHabitStore.getState();
     store.autoApplyFreezes();
     store.recalculateAllStreaks();
-    store.checkGlobalAchievements();
   }, 1000);
 }

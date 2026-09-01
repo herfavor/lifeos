@@ -102,8 +102,89 @@ export async function dismissOnboarding(page: Page): Promise<void> {
 export async function navigateTo(page: Page, path: string): Promise<void> {
   await page.goto(path);
   await dismissOnboarding(page);
-  // Wait for page content to stabilize
-  await page.waitForLoadState('networkidle').catch(() => {});
+  await page.waitForLoadState('domcontentloaded');
+  await expect(page.getByRole('main')).toBeVisible();
+}
+
+export function isMobileViewport(page: Page): boolean {
+  return (page.viewportSize()?.width ?? 1280) < 768;
+}
+
+export async function clickPrimaryNavigationLink(page: Page, label: string): Promise<void> {
+  if (isMobileViewport(page)) {
+    const mobileNav = page.getByRole('navigation', { name: '移动端导航' });
+    const directLink = mobileNav.getByRole('link', { name: label, exact: true });
+    if (await directLink.isVisible().catch(() => false)) {
+      await directLink.click();
+      return;
+    }
+
+    await mobileNav.getByRole('button', { name: '更多导航选项' }).click();
+    const moreDialog = page.getByRole('dialog', { name: '更多导航选项' });
+    await expect(moreDialog).toBeVisible();
+    await moreDialog.getByRole('link', { name: label, exact: true }).click();
+    return;
+  }
+
+  const primaryNav = page.getByRole('navigation', { name: '主导航' });
+  await primaryNav.getByRole('link', { name: label, exact: true }).click();
+}
+
+export async function openNotesSidebarIfNeeded(page: Page): Promise<void> {
+  if (!isMobileViewport(page)) return;
+
+  const closeButton = page.getByRole('button', { name: '关闭侧边栏菜单' });
+  if (await closeButton.isVisible().catch(() => false)) return;
+
+  const openButton = page.getByRole('button', { name: '打开侧边栏菜单' });
+  await expect(openButton).toBeVisible();
+  await openButton.click();
+  await expect(closeButton).toBeVisible();
+}
+
+export async function createBlankNote(page: Page, title?: string) {
+  const emptyCreate = page.getByRole('button', { name: '新建空白笔记', exact: true });
+
+  if (await emptyCreate.isVisible().catch(() => false)) {
+    await emptyCreate.click();
+  } else {
+    await openNotesSidebarIfNeeded(page);
+    const listCreate = page.getByRole('button', { name: '+ 新建', exact: true });
+    await expect(listCreate).toBeVisible();
+    await listCreate.click();
+
+    const closeSidebar = page.getByRole('button', { name: '关闭侧边栏菜单' });
+    if (await closeSidebar.isVisible().catch(() => false)) {
+      await closeSidebar.click();
+    }
+  }
+
+  const editor = page.locator('[contenteditable="true"]').first();
+  await expect(editor).toBeVisible();
+
+  if (title !== undefined) {
+    const titleInput = page.getByPlaceholder('无标题笔记');
+    await expect(titleInput).toBeVisible();
+    await titleInput.fill(title);
+    await expect(titleInput).toHaveValue(title);
+  }
+
+  return editor;
+}
+
+export async function selectNoteByTitle(page: Page, title: string): Promise<void> {
+  await openNotesSidebarIfNeeded(page);
+
+  const noteItem = page.getByText(title, { exact: true }).first();
+  await expect(noteItem).toBeVisible();
+  await noteItem.click();
+
+  const closeSidebar = page.getByRole('button', { name: '关闭侧边栏菜单' });
+  if (await closeSidebar.isVisible().catch(() => false)) {
+    await closeSidebar.click();
+  }
+
+  await expect(page.getByPlaceholder('无标题笔记')).toHaveValue(title);
 }
 
 /**
@@ -165,17 +246,10 @@ export async function createTask(page: Page, title: string): Promise<void> {
  * Create a note on the Notes page.
  */
 export async function createNote(page: Page, content: string): Promise<void> {
-  const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记/i });
-  await createButton.click();
-
-  // Wait for editor to appear
-  const editor = page.locator('[contenteditable="true"]').first();
-  await expect(editor).toBeVisible();
-
+  const editor = await createBlankNote(page);
   await editor.click();
   await page.keyboard.type(content);
-  // Allow auto-save
-  await page.waitForTimeout(500);
+  await expect(editor).toContainText(content);
 }
 
 /**

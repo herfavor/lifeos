@@ -187,56 +187,27 @@ test.describe('User Journey: Search & Navigation', () => {
 });
 
 test.describe('User Journey: Content Creation', () => {
-  test('create document, spreadsheet, and presentation', async ({ page }) => {
+  test('create a document from the current document center', async ({ page }) => {
     setupConsoleMonitor(page);
     await navigateTo(page, '/create');
 
-    // Create a document
-    await page.getByRole('button', { name: /文档/ }).first().click();
-    await page.waitForTimeout(500);
+    const sidebar = page.locator('aside').filter({ has: page.getByText('平台文档', { exact: true }) });
+    await sidebar.getByRole('button', { name: '文档', exact: true }).click();
+    await page.getByRole('button', { name: /空白文档/ }).click();
 
-    // Go back to create page
-    const backBtn = page.locator('button[aria-label="返回创建"]');
-    if (await backBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backBtn.click();
-      await page.waitForTimeout(300);
-    } else {
-      await page.goto('/create');
-    }
-
-    // Create a spreadsheet
-    await page.getByRole('button', { name: /电子表格/ }).first().click();
-    await page.waitForTimeout(500);
-
-    // Go back
-    if (await backBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backBtn.click();
-    } else {
-      await page.goto('/create');
-    }
-
-    // Create a presentation
-    await page.getByRole('button', { name: /演示文稿/ }).first().click();
-    await page.waitForTimeout(500);
-
+    await expect(page).toHaveURL(/\/create\/[^/?#]+$/);
+    await expect(page.getByLabel(/文档编辑器：空白文档/)).toBeVisible();
     assertNoConsoleErrors(page);
   });
 
-  test('switch between Diagrams and Forms tabs', async ({ page }) => {
+  test('retired office routes converge on the document center', async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/create');
 
-    // Switch to Diagrams
-    await page.getByRole('tab', { name: '绘图' }).click();
-    await expect(page.getByRole('tab', { name: '绘图' })).toHaveAttribute('aria-selected', 'true');
+    await navigateTo(page, '/diagrams/legacy-id');
+    await expect(page).toHaveURL(/\/create$/);
 
-    // Switch to Forms
-    await page.getByRole('tab', { name: '表单' }).click();
-    await expect(page.getByRole('tab', { name: '表单' })).toHaveAttribute('aria-selected', 'true');
-
-    // Back to Create
-    await page.getByRole('tab', { name: '创建' }).click();
-    await expect(page.getByRole('tab', { name: '创建' })).toHaveAttribute('aria-selected', 'true');
+    await navigateTo(page, '/forms/legacy-id/edit');
+    await expect(page).toHaveURL(/\/create$/);
 
     assertNoConsoleErrors(page);
   });
@@ -248,14 +219,14 @@ test.describe('User Journey: Settings Configuration', () => {
     await navigateTo(page, '/settings');
 
     const tabs = [
-      { name: '通用', url: /\/settings/ },
-      { name: '项目', url: /tab=projects/ },
-      { name: '时间跟踪', url: /tab=time/ },
-      { name: '任务', url: /tab=tasks/ },
-      { name: '笔记与日历', url: /tab=notes/ },
-      { name: '备份与数据', url: /tab=backup/ },
+      { name: '个人与应用', url: /\/settings(?:\?|$)/ },
+      { name: '外观', url: /tab=appearance/ },
+      { name: '工作区', url: /tab=workspace/ },
+      { name: '通知', url: /tab=notifications/ },
       { name: 'AI 提供商', url: /tab=ai/ },
-      { name: '高级', url: /tab=advanced/ },
+      { name: '导入与导出', url: /tab=data/ },
+      { name: '备份', url: /tab=backup/ },
+      { name: '系统与关于', url: /tab=system/ },
     ];
 
     for (const tab of tabs) {
@@ -286,18 +257,18 @@ test.describe('User Journey: Full App Navigation', () => {
       '/schedule?tab=timer',
       '/schedule?tab=pomodoro',
       '/create',
-      '/create?tab=diagrams',
-      '/create?tab=forms',
+      '/diagrams/legacy-id',
+      '/forms/legacy-id/edit',
       '/links',
       '/pm',
       '/settings',
-      '/settings?tab=projects',
-      '/settings?tab=time',
-      '/settings?tab=tasks',
-      '/settings?tab=notes',
+      '/settings?tab=appearance',
+      '/settings?tab=workspace',
+      '/settings?tab=notifications',
+      '/settings?tab=data',
       '/settings?tab=backup',
       '/settings?tab=ai',
-      '/settings?tab=advanced',
+      '/settings?tab=system',
       '/focus',
     ];
 

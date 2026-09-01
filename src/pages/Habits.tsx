@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  Plus, Target, Flame, Trophy, Archive, RotateCcw, Trash2, Edit2,
+  Plus, Target, Flame, Archive, RotateCcw, Trash2, Edit2,
   Check, MoreVertical, ChevronDown, ChevronRight, BarChart3, BookTemplate,
-  Grid3X3, Star, Lock, Bell, BellOff, Link2, Snowflake, Award,
-  TrendingUp, Search, MessageSquare, Brain, Play, Clock, Repeat, X,
+  Grid3X3, Lock, Bell, BellOff, Link2, Snowflake,
+  TrendingUp, Search, MessageSquare, Play, Clock, Repeat, X,
 } from 'lucide-react';
 import { useHabitStore } from '../stores/useHabitStore';
 import { convertHabitToTask } from '../services/habitTaskBridge';
@@ -13,30 +13,21 @@ import {
   HabitHeatmap,
   HabitStats,
   HabitTemplatePicker,
-  HabitRewardsPanel,
   useCompletionAnimation,
   useHabitReminders,
   ConfettiEffect,
   StreakBump,
   HABIT_ANIMATION_STYLES,
   HabitAnalytics,
-  HabitAchievementsBadges,
   HabitJournal,
   HabitStreakCalendar,
-  FlashcardReview,
-  DailyQuestsPanel,
   RoutineBuilder,
   RoutineRunner,
 } from '../components/habits';
 import type { HabitTemplate } from '../components/habits';
-import { useSpacedRepetitionStore } from '../stores/useSpacedRepetitionStore';
 import { useRoutineStore, type Routine } from '../stores/useRoutineStore';
 import { ROUTINE_TEMPLATES, type RoutineTemplate } from '../data/routineTemplates';
 import type { Habit, HabitFrequency, HabitCategory, HabitDifficulty } from '../types';
-import { isFeatureExposed } from '../config/features';
-
-const SHOW_GAMIFICATION = isFeatureExposed('gamification') || isFeatureExposed('quests');
-const SHOW_FLASHCARDS = isFeatureExposed('flashcards');
 
 // Helper to get date key in YYYY-M-D format
 function getDateKey(date: Date): string {
@@ -104,11 +95,11 @@ const ALL_CATEGORIES: HabitCategory[] = [
 ];
 
 // Difficulty configuration
-const DIFFICULTY_CONFIG: Record<HabitDifficulty, { label: string; xp: number; color: string }> = {
-  trivial: { label: '轻松', xp: 5, color: '#9ca3af' },
-  easy: { label: '简单', xp: 10, color: '#22c55e' },
-  medium: { label: '中等', xp: 20, color: '#f97316' },
-  hard: { label: '困难', xp: 40, color: '#ef4444' },
+const DIFFICULTY_CONFIG: Record<HabitDifficulty, { label: string; color: string }> = {
+  trivial: { label: '轻松', color: '#9ca3af' },
+  easy: { label: '简单', color: '#22c55e' },
+  medium: { label: '中等', color: '#f97316' },
+  hard: { label: '困难', color: '#ef4444' },
 };
 
 const ALL_DIFFICULTIES: HabitDifficulty[] = ['trivial', 'easy', 'medium', 'hard'];
@@ -365,7 +356,6 @@ function HabitModal({ habit, initialTemplate, allHabits, onClose, onSave }: Habi
                       style={difficulty === d ? { borderColor: cfg.color, color: cfg.color } : undefined}
                     >
                       <div>{cfg.label}</div>
-                      {SHOW_GAMIFICATION && <div className="text-xs opacity-70">+{cfg.xp} XP</div>}
                     </button>
                   );
                 })}
@@ -861,7 +851,6 @@ function CategorySection({ category, habits, renderHabit }: CategorySectionProps
 
 export function HabitsContent() {
   const habits = useHabitStore((s) => s.habits);
-  const achievements = useHabitStore((s) => s.achievements);
   const addHabit = useHabitStore((s) => s.addHabit);
   const updateHabit = useHabitStore((s) => s.updateHabit);
   const archiveHabit = useHabitStore((s) => s.archiveHabit);
@@ -904,16 +893,12 @@ export function HabitsContent() {
   const [selectedTemplate, setSelectedTemplate] = useState<HabitTemplate | undefined>(undefined);
   const [statsHabit, setStatsHabit] = useState<Habit | null>(null);
   const [showHeatmap, setShowHeatmap] = useState(false);
-  const [showRewards, setShowRewards] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [showAchievements, setShowAchievements] = useState(false);
   const [noteSearchQuery, setNoteSearchQuery] = useState('');
   const [showNoteSearch, setShowNoteSearch] = useState(false);
   const [groupByCategory, setGroupByCategory] = useState(true);
   const [journalHabit, setJournalHabit] = useState<Habit | null>(null);
   const [streakCalendarHabit, setStreakCalendarHabit] = useState<Habit | null>(null);
-  const [showFlashcardReview, setShowFlashcardReview] = useState(false);
-  const flashcardDueCount = useSpacedRepetitionStore((s) => s.getDueCount());
 
   const { triggerAnimation, clearAnimation, getAnimation } = useCompletionAnimation();
 
@@ -1138,15 +1123,6 @@ export function HabitsContent() {
           </div>
         </div>
 
-        <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-xl p-4 border border-border-light dark:border-border-dark">
-          <div className="flex items-center gap-2 text-accent-yellow mb-1">
-            <Trophy className="w-5 h-5" />
-            <span className="text-sm font-medium">成就</span>
-          </div>
-          <div className="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
-            {achievements.length}
-          </div>
-        </div>
       </div>
 
       {/* Tab Navigation */}
@@ -1379,9 +1355,6 @@ export function HabitsContent() {
       {/* ─── Habits Tab ──────────────────────────────────── */}
       {activeTab === 'habits' && <>
 
-      {/* Daily Quests */}
-      {SHOW_GAMIFICATION && activeHabits.length > 0 && <DailyQuestsPanel />}
-
       {/* Heatmap & Rewards toggles */}
       {activeHabits.length > 0 && (
         <div className="mb-6 space-y-3">
@@ -1397,19 +1370,6 @@ export function HabitsContent() {
               <Grid3X3 className="w-4 h-4" />
               热力图
             </button>
-            {SHOW_GAMIFICATION && (
-              <button
-                onClick={() => setShowRewards(!showRewards)}
-                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                  showRewards
-                    ? 'text-accent-primary'
-                    : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
-                }`}
-              >
-                <Star className="w-4 h-4" />
-                XP 与奖励
-              </button>
-            )}
             <button
               onClick={() => setShowAnalytics(true)}
               className="flex items-center gap-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
@@ -1417,19 +1377,6 @@ export function HabitsContent() {
               <TrendingUp className="w-4 h-4" />
               分析
             </button>
-            {SHOW_GAMIFICATION && (
-              <button
-                onClick={() => setShowAchievements(!showAchievements)}
-                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                  showAchievements
-                    ? 'text-accent-primary'
-                    : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
-                }`}
-              >
-                <Award className="w-4 h-4" />
-                徽章
-              </button>
-            )}
             <button
               onClick={() => setShowNoteSearch(!showNoteSearch)}
               className={`flex items-center gap-2 text-sm font-medium transition-colors ${
@@ -1441,30 +1388,10 @@ export function HabitsContent() {
               <Search className="w-4 h-4" />
               笔记
             </button>
-            {SHOW_FLASHCARDS && (
-              <button
-                onClick={() => setShowFlashcardReview(true)}
-                className="flex items-center gap-2 text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors"
-              >
-                <Brain className="w-4 h-4" />
-                闪卡
-                {flashcardDueCount > 0 && (
-                  <span className="px-1.5 py-0.5 text-xs rounded-full bg-accent-primary/10 text-accent-primary">
-                    {flashcardDueCount}
-                  </span>
-                )}
-              </button>
-            )}
           </div>
           {showHeatmap && (
             <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-xl p-4 border border-border-light dark:border-border-dark">
               <HabitHeatmap weeks={20} />
-            </div>
-          )}
-          {SHOW_GAMIFICATION && showRewards && <HabitRewardsPanel />}
-          {SHOW_GAMIFICATION && showAchievements && (
-            <div className="bg-surface-light dark:bg-surface-dark-elevated rounded-xl p-5 border border-border-light dark:border-border-dark">
-              <HabitAchievementsBadges />
             </div>
           )}
           {showNoteSearch && (
@@ -1685,10 +1612,6 @@ export function HabitsContent() {
 
       {streakCalendarHabit && (
         <HabitStreakCalendar habit={streakCalendarHabit} onClose={() => setStreakCalendarHabit(null)} />
-      )}
-
-      {SHOW_FLASHCARDS && showFlashcardReview && (
-        <FlashcardReview onClose={() => setShowFlashcardReview(false)} />
       )}
 
 

@@ -1,266 +1,84 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helpers';
+import {
+  assertNoConsoleErrors,
+  createBlankNote,
+  navigateTo,
+  selectNoteByTitle,
+  setupConsoleMonitor,
+} from './helpers';
 
-/**
- * E2E Tests for Notes Backlinks Panel
- *
- * Covers: Verify backlinks panel shows linked references,
- *         verify unlinked mentions detection,
- *         test "Link" button conversion
- */
+async function openRelations(page: import('@playwright/test').Page) {
+  const summary = page.getByText('关联与提及', { exact: true });
+  await expect(summary).toBeVisible();
+  await summary.click();
+}
 
-test.describe('Notes Backlinks Panel', () => {
+test.describe('Notes Relationships', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
     await navigateTo(page, '/notes');
   });
 
-  test('backlinks panel shows all linked references', async ({ page }) => {
-    // Create a target note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
+  test('shows a backlink from a wiki-linked source note', async ({ page }) => {
+    await createBlankNote(page, 'Backlink Target');
 
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Backlink Target Note');
-    await page.waitForTimeout(1000);
+    const source = await createBlankNote(page, 'Backlink Source');
+    await source.click();
+    await page.keyboard.type('Reference [[Backlink Target]]');
+    await expect(page.locator('.wiki-link-valid').filter({ hasText: 'Backlink Target' })).toBeVisible();
 
-    // Create multiple notes that link to the target
-    for (let i = 1; i <= 3; i++) {
-      await createButton.click();
-      editor = page.locator('[contenteditable="true"]').first();
-      await editor.click();
-      await page.keyboard.type(`Source Note ${i} linking to [[Backlink Target Note]]`);
-      await page.waitForTimeout(1000);
-    }
+    await selectNoteByTitle(page, 'Backlink Target');
+    await openRelations(page);
 
-    // Navigate back to the target note
-    const targetNoteItem = page.getByText('Backlink Target Note').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
-
-    // Look for backlinks panel
-    const backlinksSection = page.getByText(/反向链接|链接引用/i);
-
-    if (await backlinksSection.isVisible({ timeout: 2000 }).catch(() => false)) {
-      // Verify all three source notes appear in backlinks
-      await expect(page.getByText(/Source Note 1/)).toBeVisible();
-      await expect(page.getByText(/Source Note 2/)).toBeVisible();
-      await expect(page.getByText(/Source Note 3/)).toBeVisible();
-    } else {
-      // Try to open backlinks panel if it's hidden
-      const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-      if (await backlinksToggle.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await backlinksToggle.click();
-        await page.waitForTimeout(300);
-
-        // Now verify the backlinks appear
-        await expect(page.getByText(/Source Note 1/)).toBeVisible();
-        await expect(page.getByText(/Source Note 2/)).toBeVisible();
-        await expect(page.getByText(/Source Note 3/)).toBeVisible();
-      }
-    }
+    await expect(page.getByText('链接到这里', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Backlink Source/ })).toBeVisible();
+    assertNoConsoleErrors(page);
   });
 
-  test('backlinks panel detects unlinked mentions', async ({ page }) => {
-    // Create a target note with a unique title
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
+  test('detects and converts an unlinked mention', async ({ page }) => {
+    await createBlankNote(page, 'Mention Target');
 
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Unique Mention Target');
-    await page.waitForTimeout(1000);
+    const source = await createBlankNote(page, 'Mention Source');
+    await source.click();
+    await page.keyboard.type('This text mentions Mention Target without brackets.');
+    await expect(source).toContainText('Mention Target');
 
-    // Create a note with an unlinked mention (not using [[brackets]])
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('This note mentions Unique Mention Target but does not link to it');
-    await page.waitForTimeout(1000);
+    await selectNoteByTitle(page, 'Mention Target');
+    await openRelations(page);
 
-    // Navigate back to the target note
-    const targetNoteItem = page.getByText('Unique Mention Target').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
+    await expect(page.getByText('可建立链接的提及', { exact: true })).toBeVisible();
+    await expect(page.getByText('Mention Source', { exact: true })).toBeVisible();
 
-    // Look for backlinks panel and unlinked mentions section
-    const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-    if (await backlinksToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinksToggle.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Look for unlinked mentions section
-    const unlinkedSection = page.getByText(/未链接提及/);
-
-    if (await unlinkedSection.isVisible({ timeout: 2000 }).catch(() => false)) {
-      // Verify the mention appears
-      await expect(page.getByText(/This note mentions Unique Mention Target/)).toBeVisible();
-    }
+    await page.getByRole('button', { name: '建立链接', exact: true }).click();
+    await expect(page.getByText('链接到这里', { exact: true })).toBeVisible();
+    assertNoConsoleErrors(page);
   });
 
-  test('can convert unlinked mention to wiki link using Link button', async ({ page }) => {
-    // Create a target note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
-
-    let editor = page.locator('[contenteditable="true"]').first();
+  test('surfaces broken links without creating data silently', async ({ page }) => {
+    const editor = await createBlankNote(page, 'Broken Link Source');
     await editor.click();
-    await page.keyboard.type('Link Conversion Target');
-    await page.waitForTimeout(1000);
+    await page.keyboard.type('Reference [[Future Missing Note]]');
+    await expect(page.locator('.wiki-link-broken').filter({ hasText: 'Future Missing Note' })).toBeVisible();
 
-    // Create a note with an unlinked mention
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Unlinked mention of Link Conversion Target here');
-    await page.waitForTimeout(1000);
-
-    // Navigate to the target note
-    const targetNoteItem = page.getByText('Link Conversion Target').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
-
-    // Open backlinks panel if needed
-    const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-    if (await backlinksToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinksToggle.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Look for the "Link" button in unlinked mentions
-    const linkButton = page.getByRole('button', { name: /^链接$|转换.*链接/i });
-
-    if (await linkButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await linkButton.click();
-      await page.waitForTimeout(500);
-
-      // After conversion, the mention should move from unlinked to linked references
-      // Verify it now appears in the linked references section
-      const linkedSection = page.getByText(/反向链接|链接引用/i);
-      await expect(linkedSection).toBeVisible();
-      await expect(page.getByText(/Unlinked mention of Link Conversion Target/)).toBeVisible();
-    }
+    await openRelations(page);
+    await expect(page.getByText(/失效链接 1/)).toBeVisible();
+    await expect(page.getByRole('button', { name: '创建', exact: true })).toBeVisible();
+    assertNoConsoleErrors(page);
   });
 
-  test('backlinks update in real-time when links are added', async ({ page }) => {
-    // Create a target note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
+  test('clicking a backlink opens the source note', async ({ page }) => {
+    await createBlankNote(page, 'Navigation Target');
 
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Real Time Backlinks');
-    await page.waitForTimeout(1000);
+    const source = await createBlankNote(page, 'Navigation Source');
+    await source.click();
+    await page.keyboard.type('Reference [[Navigation Target]]');
+    await expect(page.locator('.wiki-link-valid').filter({ hasText: 'Navigation Target' })).toBeVisible();
 
-    // Select the target note and open backlinks
-    const targetNoteItem = page.getByText('Real Time Backlinks').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
+    await selectNoteByTitle(page, 'Navigation Target');
+    await openRelations(page);
 
-    // Open backlinks panel
-    const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-    if (await backlinksToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinksToggle.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Initially, there should be no backlinks
-    const noBacklinksMsg = page.getByText(/暂无.*链接|无.*引用/i);
-    if (await noBacklinksMsg.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await expect(noBacklinksMsg).toBeVisible();
-    }
-
-    // Create a new note with a link to the target
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('New source linking to [[Real Time Backlinks]]');
-    await page.waitForTimeout(1000);
-
-    // Navigate back to the target note
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
-
-    // Backlinks should now show the new link
-    await expect(page.getByText(/New source linking to/)).toBeVisible();
-  });
-
-  test('backlinks panel shows note preview context', async ({ page }) => {
-    // Create a target note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
-
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Context Preview Target');
-    await page.waitForTimeout(1000);
-
-    // Create a source note with surrounding context
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Before context [[Context Preview Target]] after context');
-    await page.waitForTimeout(1000);
-
-    // Navigate to the target note
-    const targetNoteItem = page.getByText('Context Preview Target').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
-
-    // Open backlinks panel
-    const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-    if (await backlinksToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinksToggle.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Backlinks should show context around the link
-    // This might include "before context" and "after context"
-    const backlinkPreview = page.getByText(/Before context.*Context Preview Target.*after context/i);
-    if (await backlinkPreview.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await expect(backlinkPreview).toBeVisible();
-    }
-  });
-
-  test('clicking backlink navigates to source note', async ({ page }) => {
-    // Create a target note
-    const createButton = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i });
-    await createButton.click();
-
-    let editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Backlink Navigation Target');
-    await page.waitForTimeout(1000);
-
-    // Create a source note
-    await createButton.click();
-    editor = page.locator('[contenteditable="true"]').first();
-    await editor.click();
-    await page.keyboard.type('Source for navigation test [[Backlink Navigation Target]]');
-    await page.waitForTimeout(1000);
-
-    // Navigate to the target note
-    const targetNoteItem = page.getByText('Backlink Navigation Target').first();
-    await targetNoteItem.click();
-    await page.waitForTimeout(500);
-
-    // Open backlinks panel
-    const backlinksToggle = page.getByRole('button', { name: /backlinks|references|info/i });
-    if (await backlinksToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinksToggle.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Click on the backlink to navigate to source note
-    const backlinkItem = page.getByText(/Source for navigation test/).first();
-    if (await backlinkItem.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await backlinkItem.click();
-      await page.waitForTimeout(500);
-
-      // Verify we're now viewing the source note
-      await expect(editor).toContainText('Source for navigation test');
-    }
+    await page.getByRole('button', { name: /Navigation Source/ }).click();
+    await expect(page.getByPlaceholder('无标题笔记')).toHaveValue('Navigation Source');
+    assertNoConsoleErrors(page);
   });
 });

@@ -75,13 +75,18 @@ test.describe('Product trust regressions', () => {
     assertNoConsoleErrors(page);
   });
 
-  test('focus and editor routes use standalone shells', async ({ page }) => {
-    for (const path of ['/focus', '/diagrams/missing', '/forms/missing/fill', '/forms/missing/responses']) {
+  test('focus stays standalone while retired editor routes return to Create', async ({ page }) => {
+    await page.goto('/focus');
+    await dismissOnboarding(page);
+    await expect(page.locator('aside[aria-label="主导航侧边栏"]')).toHaveCount(0);
+
+    for (const path of ['/diagrams/missing', '/forms/missing/fill', '/forms/missing/responses']) {
       await page.goto(path);
       await dismissOnboarding(page);
-      await expect(page.locator('aside[aria-label="主导航侧边栏"]')).toHaveCount(0);
-      await expect(page.locator('header').filter({ has: page.locator('h1') })).toHaveCount(0);
+      await expect(page).toHaveURL(/\/create$/);
+      await expect(page.getByRole('main')).toBeVisible();
     }
+
     assertNoConsoleErrors(page);
   });
 });

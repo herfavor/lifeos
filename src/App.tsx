@@ -17,19 +17,14 @@ const Tasks = lazy(() => import('./pages/Tasks').then((m) => ({ default: m.Tasks
 const InboxPage = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
 const Notes = lazy(() => import('./pages/Notes').then((m) => ({ default: m.Notes })));
-// GraphView is now rendered as a tab within Notes page, redirect handles /graph route
-// Diagrams and Forms are now rendered as tabs within Create page, redirects handle legacy routes
-const DiagramEditor = lazy(() => import('./pages/DiagramEditor'));
-const FormBuilder = lazy(() => import('./pages/FormBuilder'));
-const FormFiller = lazy(() => import('./pages/FormFiller'));
-const FormResponses = lazy(() => import('./pages/FormResponses'));
+// GraphView is rendered as a tab within Notes; legacy /graph redirects there.
 const TimeTracking = lazy(() => import('./pages/TimeTracking').then((m) => ({ default: m.TimeTracking })));
 const LinkLibrary = lazy(() => import('./pages/LinkLibrary'));
 const Automations = lazy(() => import('./pages/Automations').then((m) => ({ default: m.Automations })));
 const Today = lazy(() => import('./pages/Today').then((m) => ({ default: m.Today })));
 const Focus = lazy(() => import('./pages/Focus').then((m) => ({ default: m.Focus })));
 // Habits is now rendered as a tab within Tasks page, redirect handles /habits route
-// Create page (formerly Docs) - contains docs, diagrams, and forms as tabs
+// Create page is the local document center
 const Create = lazy(() => import('./pages/Docs').then((m) => ({ default: m.Docs })));
 // PM Dashboard - Project management overview
 const PMDashboard = lazy(() => import('./pages/PMDashboard').then((m) => ({ default: m.PMDashboard })));
@@ -118,48 +113,9 @@ function App() {
               path="/graph"
               element={<Navigate to="/notes?tab=graph" replace />}
             />
-            {/* Redirect /diagrams to /create?tab=diagrams */}
-            <Route
-              path="/diagrams"
-              element={<Navigate to="/create?tab=diagrams" replace />}
-            />
-            <Route
-              path="/diagrams/:id"
-              element={
-                <StoreErrorBoundary storeName="diagrams">
-                  <DiagramEditor />
-                </StoreErrorBoundary>
-              }
-            />
-            {/* Redirect /forms to /create?tab=forms */}
-            <Route
-              path="/forms"
-              element={<Navigate to="/create?tab=forms" replace />}
-            />
-            <Route
-              path="/forms/:id/edit"
-              element={
-                <StoreErrorBoundary storeName="forms">
-                  <FormBuilder />
-                </StoreErrorBoundary>
-              }
-            />
-            <Route
-              path="/forms/:id/fill"
-              element={
-                <StoreErrorBoundary storeName="forms">
-                  <FormFiller />
-                </StoreErrorBoundary>
-              }
-            />
-            <Route
-              path="/forms/:id/responses"
-              element={
-                <StoreErrorBoundary storeName="forms">
-                  <FormResponses />
-                </StoreErrorBoundary>
-              }
-            />
+            {/* Legacy office routes no longer load hidden editors. */}
+            <Route path="/diagrams/*" element={<Navigate to="/create" replace />} />
+            <Route path="/forms/*" element={<Navigate to="/create" replace />} />
             <Route
               path="/inbox"
               element={

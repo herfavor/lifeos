@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors, createTask } from './helpers';
+import {
+  assertNoConsoleErrors,
+  clickPrimaryNavigationLink,
+  isMobileViewport,
+  navigateTo,
+  setupConsoleMonitor,
+} from './helpers';
 
 /**
  * Application Basics E2E Tests
@@ -16,35 +22,22 @@ test.describe('Application Basics', () => {
   test('loads the dashboard with correct title', async ({ page }) => {
     await navigateTo(page, '/');
     await expect(page).toHaveTitle(/LifeOS/i);
-    await expect(page.getByRole('navigation')).toBeVisible();
+    const navLabel = isMobileViewport(page) ? '移动端导航' : '主导航';
+    await expect(page.getByRole('navigation', { name: navLabel })).toBeVisible();
     assertNoConsoleErrors(page);
   });
 
   test('navigation works between pages', async ({ page }) => {
     await navigateTo(page, '/');
 
-    // Navigate to Tasks
-    const tasksLink = page.getByRole('link', { name: /任务/i }).first();
-    if (await tasksLink.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await tasksLink.click();
-      await page.waitForTimeout(500);
-      await expect(page).toHaveURL(/.*tasks/);
-    }
+    await clickPrimaryNavigationLink(page, '任务');
+    await expect(page).toHaveURL(/\/tasks(?:\?|$)/);
 
-    // Navigate to Notes
-    const notesLink = page.getByRole('link', { name: /笔记/i }).first();
-    if (await notesLink.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await notesLink.click();
-      await page.waitForTimeout(500);
-      await expect(page).toHaveURL(/.*notes/);
-    }
+    await clickPrimaryNavigationLink(page, '笔记');
+    await expect(page).toHaveURL(/\/notes(?:\?|$)/);
 
-    // Navigate back to Dashboard
-    const dashLink = page.getByRole('link', { name: /首页/i }).first();
-    if (await dashLink.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await dashLink.click();
-      await page.waitForTimeout(500);
-    }
+    await clickPrimaryNavigationLink(page, '首页');
+    await expect(page).toHaveURL(/\/$/);
 
     assertNoConsoleErrors(page);
   });
@@ -82,21 +75,26 @@ test.describe('Theme and Accessibility', () => {
   test('theme toggle works', async ({ page }) => {
     await navigateTo(page, '/');
 
-    const themeToggle = page.locator('[aria-label*="模式"], [aria-label*="主题"], [title*="模式"], [title*="主题"]').first();
-    if (await themeToggle.isVisible({ timeout: 3000 }).catch(() => false)) {
-      const initialTheme = await page.evaluate(() =>
-        document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-      );
+    const initialTheme = await page.evaluate(() =>
+      document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+    );
 
+    if (isMobileViewport(page)) {
+      await navigateTo(page, '/settings?tab=appearance');
+      const targetMode = initialTheme === 'dark' ? '浅色' : '深色';
+      await page.getByRole('button', { name: targetMode, exact: true }).click();
+    } else {
+      const themeToggle = page.getByRole('button', {
+        name: initialTheme === 'dark' ? '切换到浅色模式' : '切换到深色模式',
+      });
       await themeToggle.click();
-      await page.waitForTimeout(300);
-
-      const newTheme = await page.evaluate(() =>
-        document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-      );
-
-      expect(newTheme).not.toBe(initialTheme);
     }
+
+    await expect.poll(() =>
+      page.evaluate(() =>
+        document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+      )
+    ).not.toBe(initialTheme);
 
     assertNoConsoleErrors(page);
   });

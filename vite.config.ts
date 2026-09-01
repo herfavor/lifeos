@@ -182,9 +182,6 @@ export default defineConfig({
           // Charts chunk: Heavy visualization libraries
           charts: ['recharts', 'd3'],
 
-          // Canvas chunk: Konva for diagrams
-          canvas: ['konva', 'react-konva'],
-
           // Store chunk: State management
           store: ['zustand', 'dexie']
 

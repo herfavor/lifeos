@@ -7,16 +7,12 @@
  * Tiers:
  *  - 'core'     → shown in the main sidebar by default
  *  - 'advanced' → grouped under the "更多功能" disclosure in the sidebar
- *                 (and still reachable via routes / command palette)
- *  - 'hidden'   → source code, routes and data are fully preserved, but no
- *                 entry point is exposed in the default UI. Users can still
- *                 reach these via direct URL or in-page tabs.
+ *  - 'hidden'   → reserved for a temporary compatibility gate while a feature
+ *                 is being retired. Hidden does not imply that its runtime,
+ *                 routes, or implementation must be preserved.
  *
- * IMPORTANT:
- *  - This registry only controls VISIBILITY. It never deletes code,
- *    components or persisted data.
- *  - Routes for hidden features remain registered in App.tsx.
- *  - To promote/demote a feature, change its `tier` here — nothing else.
+ * The registry is authoritative for product exposure. Unknown feature ids
+ * fail closed so stale callers cannot accidentally resurrect retired modules.
  *
  * Note on persistence: sidebar order (useSidebarNavStore) stores feature
  * ids; unknown/stale ids are ignored gracefully, so re-tiering a feature
@@ -217,77 +213,8 @@ export const FEATURES: FeatureDefinition[] = [
     description: '富文本文档的创作与管理',
   },
 
-  // ─────────────────────────────────────────────── hidden (preserved)
-  // Routes stay registered; data stays intact; no default UI entry points.
-  {
-    id: 'spreadsheets',
-    label: '表格',
-    icon: '📊',
-    path: '/create?tab=spreadsheets',
-    tier: 'hidden',
-    description: '电子表格（保留能力，未默认展示）',
-  },
-  {
-    id: 'presentations',
-    label: '演示文稿',
-    icon: '📽️',
-    path: '/create?tab=presentations',
-    tier: 'hidden',
-    description: '幻灯片编辑（保留能力，未默认展示）',
-  },
-  {
-    id: 'diagrams',
-    label: '绘图',
-    icon: '🔷',
-    path: '/create?tab=diagrams',
-    tier: 'hidden',
-    description: '图表与流程图画布（保留能力）',
-  },
-  {
-    id: 'forms',
-    label: '表单',
-    icon: '🧾',
-    path: '/create?tab=forms',
-    tier: 'hidden',
-    description: '表单构建与填写（保留能力）',
-  },
-  {
-    id: 'invoices',
-    label: '发票',
-    icon: '💳',
-    path: '/schedule?tab=timer&section=invoices',
-    tier: 'hidden',
-    description: '从计时记录生成发票（自由职业向，保留能力）',
-  },
-  {
-    id: 'billable-reports',
-    label: '计时报表',
-    icon: '🧮',
-    path: '/schedule?tab=timer&section=reports',
-    tier: 'hidden',
-    description: '可计费时间报表（自由职业向，保留能力）',
-  },
-  {
-    id: 'quests',
-    label: '每日任务 (Quest/XP)',
-    icon: '📜',
-    tier: 'hidden',
-    description: '游戏化任务与经验值（默认不展示，也不进入首页组件管理器）',
-  },
-  {
-    id: 'flashcards',
-    label: '闪卡复习',
-    icon: '🃏',
-    tier: 'hidden',
-    description: '间隔重复记忆卡片（默认不展示，也不进入首页组件管理器）',
-  },
-  {
-    id: 'gamification',
-    label: '生产力评分 / XP',
-    icon: '🔮',
-    tier: 'hidden',
-    description: '游戏化统计组件与生产力评分（默认不展示，也不进入首页组件管理器）',
-  },
+  // No hidden runtime features are registered here. Legacy persisted shapes may
+  // remain in compatibility types/stores, but unsupported editors are not routes.
 ];
 
 // ─────────────────────────────────────────────────────────── helpers
@@ -329,9 +256,10 @@ export function getFeature(id: string): FeatureDefinition | undefined {
   return FEATURES.find((f) => f.id === id);
 }
 
-/** Whether a feature may appear in the default product UI. */
+/** Whether a registered feature may appear in the product UI. */
 export function isFeatureExposed(id: string): boolean {
-  return getFeature(id)?.tier !== 'hidden';
+  const feature = getFeature(id);
+  return feature !== undefined && feature.tier !== 'hidden';
 }
 
 /**
@@ -342,9 +270,6 @@ export function isFeatureExposed(id: string): boolean {
  */
 const WIDGET_FEATURE_IDS: Readonly<Record<string, string>> = {
   forms: 'forms',
-  flashcard: 'flashcards',
-  dailyquests: 'quests',
-  productivitykarma: 'gamification',
 };
 
 export function isWidgetExposed(widgetId: string): boolean {

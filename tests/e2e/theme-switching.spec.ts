@@ -1,77 +1,50 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helpers';
-
-/**
- * Theme Switching E2E Tests
- *
- * Tests light/dark/system theme toggling
- * and verifies CSS class application.
- */
+import { assertNoConsoleErrors, navigateTo, setupConsoleMonitor } from './helpers';
 
 test.describe('Theme Switching', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/');
+    await navigateTo(page, '/settings?tab=appearance');
   });
 
-  test('has theme toggle', async ({ page }) => {
-    const themeBtn = page.locator('[aria-label*="模式"], [aria-label*="主题"], [title*="模式"], [title*="主题"]').first();
-    if (await themeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await expect(themeBtn).toBeVisible();
-    }
+  test('exposes light, dark, and system modes', async ({ page }) => {
+    await expect(page.getByRole('button', { name: '浅色', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: '深色', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: '跟随系统', exact: true })).toBeVisible();
     assertNoConsoleErrors(page);
   });
 
-  test('can toggle theme', async ({ page }) => {
-    const themeBtn = page.locator('[aria-label*="模式"], [aria-label*="主题"], [title*="模式"], [title*="主题"]').first();
-    if (await themeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      const wasDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-      await themeBtn.click();
-      await page.waitForTimeout(300);
-      const isDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-      expect(isDark).not.toBe(wasDark);
-    }
+  test('dark mode applies the dark class', async ({ page }) => {
+    await page.getByRole('button', { name: '深色', exact: true }).click();
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(true);
     assertNoConsoleErrors(page);
   });
 
-  test('dark mode applies dark class to html', async ({ page }) => {
-    // Navigate to settings to use the explicit dark mode button
-    await navigateTo(page, '/settings');
-    const darkBtn = page.getByRole('button', { name: '深色', exact: true });
-    if (await darkBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await darkBtn.click();
-      await page.waitForTimeout(300);
-      const hasDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-      expect(hasDark).toBe(true);
-    }
+  test('light mode removes the dark class', async ({ page }) => {
+    await page.getByRole('button', { name: '浅色', exact: true }).click();
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(false);
     assertNoConsoleErrors(page);
   });
 
-  test('light mode removes dark class from html', async ({ page }) => {
-    await navigateTo(page, '/settings');
-    const lightBtn = page.getByRole('button', { name: '浅色', exact: true });
-    if (await lightBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await lightBtn.click();
-      await page.waitForTimeout(300);
-      const hasDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-      expect(hasDark).toBe(false);
-    }
-    assertNoConsoleErrors(page);
-  });
+  test('explicit mode persists across page navigation and reload', async ({ page }) => {
+    await page.getByRole('button', { name: '深色', exact: true }).click();
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(true);
 
-  test('theme persists across page navigation', async ({ page }) => {
-    await navigateTo(page, '/settings');
-    const darkBtn = page.getByRole('button', { name: '深色', exact: true });
-    if (await darkBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await darkBtn.click();
-      await page.waitForTimeout(300);
+    await navigateTo(page, '/tasks');
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(true);
 
-      // Navigate to another page
-      await navigateTo(page, '/tasks');
-      await page.waitForTimeout(500);
-      const hasDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
-      expect(hasDark).toBe(true);
-    }
+    await page.reload();
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains('dark'))
+    ).toBe(true);
     assertNoConsoleErrors(page);
   });
 });

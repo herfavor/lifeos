@@ -20,11 +20,15 @@ vi.mock('../logger', () => ({
   },
 }));
 
+const { getTemplateMock } = vi.hoisted(() => ({
+  getTemplateMock: vi.fn(),
+}));
+
 // Mock templateStore
 vi.mock('../../stores/useTemplateStore', () => ({
   useTemplateStore: {
     getState: () => ({
-      getTemplate: vi.fn().mockReturnValue(null),
+      getTemplate: getTemplateMock,
     }),
   },
 }));
@@ -64,6 +68,7 @@ function createRecurringTask(overrides: Partial<Task> = {}): Task {
 describe('taskRecurrence', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getTemplateMock.mockReturnValue(null);
   });
 
   describe('calculateNextOccurrence', () => {
@@ -532,20 +537,13 @@ describe('taskRecurrence', () => {
         },
       });
 
-      // Mock template store to return a template
-      vi.mock('../../stores/useTemplateStore', () => ({
-        useTemplateStore: {
-          getState: () => ({
-            getTemplate: vi.fn().mockReturnValue({
-              id: 'template-1',
-              name: 'Test Template',
-              description: 'Template description',
-              tags: ['tag1', 'tag2'],
-              checklist: [{ id: 'c1', text: 'Item 1', completed: false }],
-            }),
-          }),
-        },
-      }));
+      getTemplateMock.mockReturnValueOnce({
+        id: 'template-1',
+        name: 'Test Template',
+        description: 'Template description',
+        tags: ['tag1', 'tag2'],
+        checklist: [{ id: 'c1', text: 'Item 1', completed: false }],
+      });
 
       const instance = generateNextInstance(parent);
       expect(instance).not.toBeNull();

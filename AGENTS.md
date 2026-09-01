@@ -34,7 +34,7 @@ Run the repository verification gate:
 npm run ci
 ```
 
-This includes lint warning budget, repository hygiene, source-size and documentation-link checks, TypeScript, unit tests, design tokens, browser-test inventory, production build, and a non-blocking production dependency audit.
+This includes lint warning budget, repository hygiene, source-size and documentation-link checks, TypeScript, unit tests, design tokens, browser-test inventory, production build, and a blocking high-severity production dependency audit.
 
 Full Playwright browser tests run only through the repository's hosted GitHub Actions workflow. Do not point browser tests at production data or real accounts.
 

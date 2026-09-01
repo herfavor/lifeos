@@ -54,12 +54,6 @@ export function TimeTrackingTimer() {
   const [description, setDescription] = useState(currentDescription || '');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(currentProjectId || null);
   const [timerTags, setTimerTags] = useState<string[]>([]);
-  const [isBillable, setIsBillable] = useState(() => {
-    // Load billable default from localStorage (default: false — sessions are
-    // personal by default; marking billable is an explicit opt-in).
-    const saved = localStorage.getItem('timeTracking:billableDefault');
-    return saved === 'true';
-  });
   const [showManualEntryModal, setShowManualEntryModal] = useState(false);
   const [recentEntries, setRecentEntries] = useState<TimeEntry[]>([]);
   const [todayTotal, setTodayTotal] = useState<number>(0);
@@ -138,13 +132,9 @@ export function TimeTrackingTimer() {
 
   // Handlers
   const handleStartTimer = () => {
-    // Save billable preference for next time
-    localStorage.setItem('timeTracking:billableDefault', String(isBillable));
-
     startTimer({
       description: description || '未命名任务',
       projectId: selectedProjectId || undefined,
-      billable: isBillable,
     });
 
     // Apply tags to the newly created active entry
@@ -153,11 +143,6 @@ export function TimeTrackingTimer() {
     }
   };
 
-  const handleBillableChange = (billable: boolean) => {
-    setIsBillable(billable);
-    // Save immediately so it persists across page refreshes
-    localStorage.setItem('timeTracking:billableDefault', String(billable));
-  };
 
   const handleStopTimer = async () => {
     await stopTimer();
@@ -284,23 +269,6 @@ export function TimeTrackingTimer() {
                 }}
                 placeholder="添加标签（如：会议、编码、评审）"
               />
-
-              {/* Billable Toggle */}
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  id="timer-billable"
-                  type="checkbox"
-                  checked={isBillable}
-                  onChange={(e) => handleBillableChange(e.target.checked)}
-                  className="w-4 h-4 text-accent-primary bg-surface-light-elevated dark:bg-surface-dark-elevated border-border-light dark:border-border-dark rounded focus:ring-2 focus:ring-accent-primary cursor-pointer"
-                />
-                <label
-                  htmlFor="timer-billable"
-                  className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer"
-                >
-                  可计费时间
-                </label>
-              </div>
             </div>
 
             {/* Timer Controls */}

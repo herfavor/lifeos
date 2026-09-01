@@ -1,12 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helpers';
-
-/**
- * Note Editor Deep E2E Tests
- *
- * Tests the Lexical rich text editor features:
- * formatting toolbar, slash commands, templates.
- */
+import {
+  assertNoConsoleErrors,
+  createBlankNote,
+  navigateTo,
+  setupConsoleMonitor,
+} from './helpers';
 
 test.describe('Note Editor', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,158 +12,56 @@ test.describe('Note Editor', () => {
     await navigateTo(page, '/notes');
   });
 
-  test('can create a new note', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
+  test('creates an editable titled note', async ({ page }) => {
+    const editor = await createBlankNote(page, 'Editor E2E Note');
+    await editor.click();
+    await page.keyboard.type('Editable body');
+
+    await expect(page.getByPlaceholder('无标题笔记')).toHaveValue('Editor E2E Note');
+    await expect(editor).toContainText('Editable body');
+    assertNoConsoleErrors(page);
+  });
+
+  test('exposes the primary formatting toolbar actions', async ({ page }) => {
+    await createBlankNote(page, 'Toolbar E2E Note');
+
+    for (const title of ['加粗 (Cmd+B)', '斜体 (Cmd+I)', '二级标题', '项目符号列表', '插入代码块']) {
+      await expect(page.locator(`button[title="${title}"]`)).toBeVisible();
     }
     assertNoConsoleErrors(page);
   });
 
-  test('editor area is editable', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
+  test('opens slash commands from the editor', async ({ page }) => {
+    const editor = await createBlankNote(page, 'Slash Command Note');
+    await editor.click();
+    await page.keyboard.type('/');
 
-      const editor = page.locator('[contenteditable="true"]').first();
-      if (await editor.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await expect(editor).toBeVisible();
-        await editor.click();
-        await page.keyboard.type('E2E Test Content');
-        await page.waitForTimeout(200);
-      }
-    }
+    await expect(page.locator('[role="menu"], [role="listbox"]').first()).toBeVisible();
     assertNoConsoleErrors(page);
   });
 
-  test('has bold formatting button', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
+  test('applies keyboard bold formatting', async ({ page }) => {
+    const editor = await createBlankNote(page, 'Bold Note');
+    await editor.click();
+    await page.keyboard.press('Control+b');
+    await page.keyboard.type('bold text');
+    await page.keyboard.press('Control+b');
 
-      const boldBtn = page.locator('[aria-label="加粗"], [title^="加粗"]').first();
-      if (await boldBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(boldBtn).toBeVisible();
-      }
-    }
+    await expect(editor.locator('strong, b')).toContainText('bold text');
     assertNoConsoleErrors(page);
   });
 
-  test('has italic formatting button', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const italicBtn = page.locator('[aria-label="斜体"], [title^="斜体"]').first();
-      if (await italicBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(italicBtn).toBeVisible();
-      }
-    }
+  test('opens the template library from the empty state', async ({ page }) => {
+    await page.getByRole('button', { name: '从模板创建', exact: true }).click();
+    await expect(page.getByRole('heading', { name: '模板库', exact: true })).toBeVisible();
     assertNoConsoleErrors(page);
   });
 
-  test('has heading formatting options', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const headingBtn = page.locator('[aria-label*="标题"], [title*="标题"]').first();
-      if (await headingBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(headingBtn).toBeVisible();
-      }
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('has bullet list button', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const listBtn = page.locator('[aria-label*="列表"], [title*="列表"]').first();
-      if (await listBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(listBtn).toBeVisible();
-      }
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('has code block button', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const codeBtn = page.locator('[aria-label*="代码"], [title*="代码"]').first();
-      if (await codeBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(codeBtn).toBeVisible();
-      }
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('slash command menu opens on /', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const editor = page.locator('[contenteditable="true"]').first();
-      if (await editor.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await editor.click();
-        await page.keyboard.type('/');
-        await page.waitForTimeout(500);
-
-        // Slash command menu should appear
-        const menu = page.locator('[role="menu"], [role="listbox"]').first();
-        if (await menu.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await expect(menu).toBeVisible();
-        }
-      }
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('has note title input', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const titleInput = page.getByPlaceholder(/无标题|标题/i).first();
-      if (await titleInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(titleInput).toBeVisible();
-        await titleInput.fill('E2E Test Note Title');
-      }
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('has template library button', async ({ page }) => {
-    const templateBtn = page.getByRole('button', { name: /模板/i });
-    if (await templateBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await expect(templateBtn).toBeVisible();
-    }
-    assertNoConsoleErrors(page);
-  });
-
-  test('has folder selector', async ({ page }) => {
-    const newBtn = page.getByRole('button', { name: /新建笔记|创建.*笔记|新.*笔记|\+/i }).first();
-    if (await newBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await newBtn.click();
-      await page.waitForTimeout(500);
-
-      const folderSelect = page.locator('select').filter({ has: page.locator('option', { hasText: /folder|all/i }) }).first();
-      if (await folderSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await expect(folderSelect).toBeVisible();
-      }
-    }
+  test('note details are available without a separate folder selector', async ({ page }) => {
+    await createBlankNote(page, 'Details Note');
+    const details = page.getByRole('button', { name: /详情/ });
+    await details.click();
+    await expect(details).toHaveAttribute('aria-expanded', 'true');
     assertNoConsoleErrors(page);
   });
 });
