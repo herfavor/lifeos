@@ -13,7 +13,7 @@ test.describe('Primary Navigation', () => {
   test('exposes the current core navigation', async ({ page }) => {
     if (isMobileViewport(page)) {
       const nav = page.getByRole('navigation', { name: '移动端导航' });
-      for (const label of ['AI', '今天', '收件箱', '任务', '笔记']) {
+      for (const label of ['今天', '收件箱', '任务', '笔记']) {
         await expect(nav.getByRole('link', { name: label, exact: true })).toBeVisible();
       }
       await expect(nav.getByRole('button', { name: '更多导航选项' })).toBeVisible();
@@ -21,7 +21,18 @@ test.describe('Primary Navigation', () => {
     }
 
     const nav = page.getByRole('navigation', { name: '主导航' });
-    for (const label of ['首页', 'AI', '今天', '收件箱', '项目', '任务', '日程', '笔记', '收藏', '回顾']) {
+    for (const label of ['今天', '收件箱', '任务', '项目', '日程', '笔记', '回顾']) {
+      await expect(nav.getByRole('link', { name: label, exact: true })).toBeVisible();
+    }
+  });
+
+  test('keeps secondary destinations behind the 更多功能 disclosure', async ({ page }) => {
+    test.skip(isMobileViewport(page), 'Desktop sidebar disclosure is not a mobile interaction.');
+
+    const nav = page.getByRole('navigation', { name: '主导航' });
+    await nav.getByRole('button', { name: '更多功能' }).click();
+
+    for (const label of ['概览', 'AI', '收藏']) {
       await expect(nav.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
   });
@@ -31,8 +42,8 @@ test.describe('Primary Navigation', () => {
       ['任务', /\/tasks(?:\?|$)/],
       ['笔记', /\/notes(?:\?|$)/],
       ['日程', /\/schedule(?:\?|$)/],
-      ['收藏', /\/links(?:\?|$)/],
-      ['首页', /\/$/],
+      ['项目', /\/pm(?:\?|$)/],
+      ['概览', /\/$/],
     ] as const) {
       await clickPrimaryNavigationLink(page, label);
       await expect(page).toHaveURL(route);

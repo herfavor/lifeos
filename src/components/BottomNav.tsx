@@ -10,9 +10,8 @@ interface BottomNavItem {
   path: string;
 }
 
-// AI is a primary way to operate LifeOS, not a secondary utility. Keep it
-// visible on mobile alongside the daily workflow instead of burying it in More.
-const MAIN_FEATURE_IDS = new Set(['ai-assistant', 'today', 'inbox', 'tasks', 'notes']);
+// Mobile keeps the daily loop one tap away; everything else lives in More.
+const MAIN_FEATURE_IDS = new Set(['today', 'inbox', 'tasks', 'notes']);
 
 const toNavItem = (id: string): BottomNavItem | null => {
   const feature = getFeature(id);
@@ -33,9 +32,12 @@ const mainItems: BottomNavItem[] = CORE_FEATURES
   }));
 
 const moreItems: BottomNavItem[] = [
+  toNavItem('ai-assistant'),
   ...CORE_FEATURES
     .filter((feature) => !MAIN_FEATURE_IDS.has(feature.id) && feature.path)
     .map((feature) => ({ icon: NAV_ICONS[feature.id] ?? Circle, label: feature.label, path: feature.path! })),
+  toNavItem('home'),
+  toNavItem('bookmarks'),
   toNavItem('docs-center'),
   toNavItem('focus'),
   { icon: Settings, label: '设置', path: '/settings' },

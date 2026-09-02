@@ -48,27 +48,27 @@ export interface EmptyStateProps {
 
 const sizeConfig = {
   sm: {
-    container: 'py-8',
-    iconWrapper: 'p-4',
-    icon: 'w-10 h-10',
-    title: 'text-lg',
+    container: 'py-6',
+    iconWrapper: 'p-2.5',
+    icon: 'w-6 h-6',
+    title: 'text-base',
     description: 'text-sm',
     button: 'text-sm px-4 py-2',
   },
   md: {
-    container: 'py-12',
-    iconWrapper: 'p-6',
-    icon: 'w-16 h-16',
-    title: 'text-2xl',
-    description: 'text-base',
+    container: 'py-10',
+    iconWrapper: 'p-3',
+    icon: 'w-8 h-8',
+    title: 'text-lg',
+    description: 'text-sm',
     button: 'text-base px-6 py-3',
   },
   lg: {
-    container: 'py-16',
-    iconWrapper: 'p-8',
-    icon: 'w-20 h-20',
-    title: 'text-3xl',
-    description: 'text-lg',
+    container: 'py-14',
+    iconWrapper: 'p-4',
+    icon: 'w-10 h-10',
+    title: 'text-xl',
+    description: 'text-base',
     button: 'text-lg px-8 py-4',
   },
 };
@@ -118,14 +118,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className={`text-center ${config.container} ${className} animate-fade-in`}>
       {/* Icon */}
-      <div className="flex justify-center mb-6">
-        <div className={`${config.iconWrapper} rounded-2xl bg-accent-primary/10`}>
+      <div className="flex justify-center mb-4">
+        <div className={`${config.iconWrapper} rounded-xl bg-accent-primary/10`}>
           <Icon className={`${config.icon} text-accent-primary`} />
         </div>
       </div>
 
       {/* Title */}
-      <h3 className={`${config.title} font-bold text-text-light-primary dark:text-text-dark-primary mb-3`}>
+      <h3 className={`${config.title} font-semibold text-text-light-primary dark:text-text-dark-primary mb-2`}>
         {title}
       </h3>
 

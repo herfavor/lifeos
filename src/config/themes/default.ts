@@ -1,9 +1,9 @@
 /**
  * Default Theme — LifeOS Classic
  *
- * These values match the :root declarations in index.css.
- * When this theme is active, the injected <style> is removed
- * and the CSS falls back to index.css defaults.
+ * Like every named theme, these values are injected at runtime
+ * (see registry.ts); the :root declarations in index.css are only
+ * the pre-injection fallback.
  *
  * Light and dark modes share most values, but dark mode uses
  * lightened accent colors for WCAG AA contrast on dark surfaces.

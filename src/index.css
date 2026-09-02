@@ -22,8 +22,8 @@
   --text-xl: 24px;
   --text-xl--line-height: 32px;
 
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-card-hover: 0 4px 12px rgba(16, 24, 40, 0.08);
   --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.16);
   --shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.14);
 
@@ -150,61 +150,62 @@
 /* Theme definitions: src/config/themes/ */
 
 :root {
-  /* Calm slate defaults. Named themes can still override these variables. */
-  --surface-light: #F8FAFC;
-  --surface-light-elevated: #F1F5F9;
+  /* Quiet neutral defaults matching the ink-wash light palette.
+     Named themes override these variables via runtime injection. */
+  --surface-light: #F7F8FA;
+  --surface-light-elevated: #ECF0F4;
   --surface-dark: #0B1120;
   --surface-dark-elevated: #152033;
 
   /* Text colors (WCAG AA compliant: 4.5:1 minimum contrast ratio) */
-  --text-light-primary: #0F172A;
-  --text-light-secondary: #475569;
+  --text-light-primary: #17191C;
+  --text-light-secondary: #667085;
   --text-light-tertiary: #64748B;
   --text-dark-primary: #F1F5F9;
   --text-dark-secondary: #CBD5E1;
   --text-dark-tertiary: #94A3B8;
 
   /* Border colors */
-  --border-light: #E2E8F0;
+  --border-light: #E6E8EC;
   --border-dark: rgba(148, 163, 184, 0.25);
 
-  /* Accent colors — Evergreen dark mode palette */
-  --accent-blue: #60A0E8;
-  --accent-blue-hover: #4A90D8;
-  --accent-magenta: #D868A8;
-  --accent-magenta-hover: #E878B8;
-  --accent-cyan: #40E8D0;
-  --accent-cyan-hover: #50F0E0;
+  /* Accent colors — hues carry meaning, blue is reserved for actions */
+  --accent-blue: #3478F6;
+  --accent-blue-hover: #2B68E0;
+  --accent-magenta: #DB2777;
+  --accent-magenta-hover: #BE185D;
+  --accent-cyan: #0E7490;
+  --accent-cyan-hover: #155E75;
 
   /* Extended accent colors */
-  --accent-green: #22C55E;
-  --accent-green-hover: #4ADE80;
+  --accent-green: #16A34A;
+  --accent-green-hover: #15803D;
   --accent-neon-green: #4ADE80;
-  --accent-purple: #9575CD;
-  --accent-purple-hover: #AB8FDD;
-  --accent-red: #E04040;
-  --accent-red-hover: #E86060;
-  --accent-yellow: #E0A020;
-  --accent-yellow-hover: #F0B040;
-  --accent-orange: #D48020;
-  --accent-orange-hover: #E49030;
+  --accent-purple: #7C3AED;
+  --accent-purple-hover: #6D28D9;
+  --accent-red: #DC2626;
+  --accent-red-hover: #B91C1C;
+  --accent-yellow: #D97706;
+  --accent-yellow-hover: #B45309;
+  --accent-orange: #EA580C;
+  --accent-orange-hover: #C2410C;
 
-  /* One calm action accent; other hues are reserved for real statuses. */
-  --accent-primary: #7BA8B8;
-  --accent-primary-hover: #8BB8C8;
-  --accent-secondary: #9BA8A0;
-  --accent-secondary-hover: #ABB8B0;
+  /* One action accent; other hues are reserved for real statuses. */
+  --accent-primary: #3478F6;
+  --accent-primary-hover: #2B68E0;
+  --accent-secondary: #0E7490;
+  --accent-secondary-hover: #155E75;
 
   /* Status colors */
-  --status-success: #22C55E;
-  --status-warning: #E0A020;
-  --status-error: #E04040;
-  --status-info: #60A0E8;
+  --status-success: #16A34A;
+  --status-warning: #D97706;
+  --status-error: #DC2626;
+  --status-info: #3478F6;
 }
 
 /* ==================== COMPONENT CLASSES ==================== */
 @utility bento-card {
-  @apply bg-surface-light dark:bg-surface-dark-elevated;
+  @apply bg-white dark:bg-surface-dark-elevated;
   @apply border border-border-light dark:border-border-dark;
   @apply rounded-card shadow-card;
   transition: border-color 200ms ease, box-shadow 200ms ease;
@@ -348,29 +349,29 @@
     @apply text-text-light-primary dark:text-text-dark-primary;
   }
 
-  /* Typography Hierarchy */
+  /* Typography Hierarchy — one clear middle tier between titles and body */
   h1 {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.25;
     letter-spacing: -0.02em;
   }
 
   h2 {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1.3;
+    font-size: 20px;
+    font-weight: 650;
+    line-height: 1.35;
     letter-spacing: -0.01em;
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     line-height: 1.4;
   }
 
   h4 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.4;
   }

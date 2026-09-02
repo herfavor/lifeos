@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useState, useCallback, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, Sparkles } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { PageHeader } from './PageHeader';
 import { ErrorToastContainer } from './ErrorToast';
@@ -394,6 +394,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Bottom navigation bar for mobile (below md breakpoint) */}
       <BottomNav />
+
+      {/* Floating AI assistant entry — keeps the assistant one click away on
+          any page without giving it a permanent seat in the primary nav */}
+      {location.pathname !== '/ai' && (
+        <Link
+          to="/ai"
+          className="hidden md:flex fixed bottom-24 right-6 z-40 h-12 w-12 items-center justify-center rounded-full bg-accent-purple text-white shadow-elevated transition-all duration-standard ease-smooth hover:bg-accent-purple-hover hover:scale-105"
+          aria-label="打开 AI 助手"
+          title="AI 助手"
+        >
+          <Sparkles className="h-5 w-5" aria-hidden="true" />
+        </Link>
+      )}
 
       {/* Error Toast Notifications */}
       <ErrorToastContainer />

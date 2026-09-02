@@ -34,30 +34,15 @@ export interface FeatureDefinition {
 
 /** Sidebar items the user may drag-reorder (subset of core). */
 export const DRAGGABLE_CORE_IDS = [
-  'projects',
   'tasks',
+  'projects',
   'calendar',
   'notes',
-  'bookmarks',
 ];
 
 export const FEATURES: FeatureDefinition[] = [
   // ─────────────────────────────────────────────── core (main sidebar)
-  {
-    id: 'home',
-    label: '首页',
-    icon: '🏠',
-    path: '/',
-    tier: 'core',
-  },
-  {
-    id: 'ai-assistant',
-    label: 'AI',
-    icon: '✨',
-    path: '/ai',
-    tier: 'core',
-    description: '对话式管理任务、日程与笔记',
-  },
+  // The core loop mirrors a day of work: capture → clarify → act → reflect.
   {
     id: 'today',
     label: '今天',
@@ -73,17 +58,17 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'core',
   },
   {
-    id: 'projects',
-    label: '项目',
-    icon: '📋',
-    path: '/pm',
-    tier: 'core',
-  },
-  {
     id: 'tasks',
     label: '任务',
     icon: '✓',
     path: '/tasks',
+    tier: 'core',
+  },
+  {
+    id: 'projects',
+    label: '项目',
+    icon: '📋',
+    path: '/pm',
     tier: 'core',
   },
   {
@@ -101,13 +86,6 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'core',
   },
   {
-    id: 'bookmarks',
-    label: '收藏',
-    icon: '🔖',
-    path: '/links',
-    tier: 'core',
-  },
-  {
     id: 'review',
     label: '回顾',
     icon: '📊',
@@ -116,6 +94,30 @@ export const FEATURES: FeatureDefinition[] = [
   },
 
   // ──────────────────────────────────────────── advanced ("更多功能")
+  {
+    id: 'home',
+    label: '概览',
+    icon: '🏠',
+    path: '/',
+    tier: 'advanced',
+    description: '可自定义的全局仪表盘',
+  },
+  {
+    id: 'ai-assistant',
+    label: 'AI',
+    icon: '✨',
+    path: '/ai',
+    tier: 'advanced',
+    description: '对话式管理任务、日程与笔记',
+  },
+  {
+    id: 'bookmarks',
+    label: '收藏',
+    icon: '🔖',
+    path: '/links',
+    tier: 'advanced',
+    description: '保存以后还想看的内容',
+  },
   {
     id: 'time-tracking',
     label: '时间统计',

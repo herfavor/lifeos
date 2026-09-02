@@ -36,7 +36,7 @@ test.describe('Application Basics', () => {
     await clickPrimaryNavigationLink(page, '笔记');
     await expect(page).toHaveURL(/\/notes(?:\?|$)/);
 
-    await clickPrimaryNavigationLink(page, '首页');
+    await clickPrimaryNavigationLink(page, '概览');
     await expect(page).toHaveURL(/\/$/);
 
     assertNoConsoleErrors(page);

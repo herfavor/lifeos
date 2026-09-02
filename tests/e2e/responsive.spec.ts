@@ -59,14 +59,14 @@ test.describe('Responsive - Tablet (768px)', () => {
 test.describe('Responsive - Desktop (1440px)', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('core navigation and AI are visible directly on desktop', async ({ page }) => {
+  test('core navigation is visible directly on desktop', async ({ page }) => {
     await navigateTo(page, '/');
 
     const sidebar = page.getByRole('complementary', { name: '主导航侧边栏' });
     await expect(sidebar).toBeVisible();
 
     const nav = page.getByRole('navigation', { name: '主导航' });
-    for (const label of ['首页', 'AI', '任务', '笔记', '日程', '收藏']) {
+    for (const label of ['今天', '收件箱', '任务', '项目', '日程', '笔记', '回顾']) {
       await expect(nav.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
   });

@@ -40,9 +40,9 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
   return useMemo(() => {
     const segments: BreadcrumbSegment[] = [];
 
-    // Always start with Home
+    // Always start with the overview dashboard
     segments.push({
-      label: '首页',
+      label: '概览',
       path: '/',
       icon: <Home className="w-3.5 h-3.5" />,
     });

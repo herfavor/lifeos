@@ -127,6 +127,14 @@ export async function clickPrimaryNavigationLink(page: Page, label: string): Pro
   }
 
   const primaryNav = page.getByRole('navigation', { name: '主导航' });
+  const directLink = primaryNav.getByRole('link', { name: label, exact: true });
+  if (await directLink.isVisible().catch(() => false)) {
+    await directLink.click();
+    return;
+  }
+
+  // Destinations outside the core loop live behind the 更多功能 disclosure.
+  await primaryNav.getByRole('button', { name: '更多功能' }).click();
   await primaryNav.getByRole('link', { name: label, exact: true }).click();
 }
 

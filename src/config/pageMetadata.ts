@@ -12,7 +12,7 @@ export interface PageMetadata {
 
 export const PAGE_METADATA: Record<string, PageMetadata> = {
   '/': {
-    title: '首页',
+    title: '概览',
     subtitle: '看清全局，继续最重要的下一步',
   },
   '/ai': {

@@ -11,26 +11,29 @@ import {
 describe('feature visibility', () => {
   it('keeps the default navigation focused on the daily action loop', () => {
     expect(CORE_FEATURES.map((feature) => feature.id)).toEqual([
-      'home',
-      'ai-assistant',
       'today',
       'inbox',
-      'projects',
       'tasks',
+      'projects',
       'calendar',
       'notes',
-      'bookmarks',
       'review',
     ]);
   });
 
-  it('keeps AI visible as a first-class core capability', () => {
-    expect(CORE_FEATURES.find((feature) => feature.id === 'ai-assistant')).toMatchObject({
+  it('keeps AI reachable without a permanent seat in the core loop', () => {
+    expect(CORE_FEATURES.some((feature) => feature.id === 'ai-assistant')).toBe(false);
+    expect(ADVANCED_FEATURES.find((feature) => feature.id === 'ai-assistant')).toMatchObject({
       label: 'AI',
       path: '/ai',
-      tier: 'core',
+      tier: 'advanced',
     });
-    expect(ADVANCED_FEATURES.some((feature) => feature.id === 'ai-assistant')).toBe(false);
+    expect(isFeatureExposed('ai-assistant')).toBe(true);
+  });
+
+  it('keeps the dashboard and bookmarks available outside the core loop', () => {
+    expect(getFeature('home')).toMatchObject({ label: '概览', path: '/', tier: 'advanced' });
+    expect(getFeature('bookmarks')).toMatchObject({ path: '/links', tier: 'advanced' });
   });
 
   it('gives Inbox one dedicated route instead of nesting it inside Tasks', () => {
