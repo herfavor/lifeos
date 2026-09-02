@@ -36,6 +36,7 @@ import { TomorrowPlanning } from '../components/today/TomorrowPlanning';
 import { WeeklyPlanning } from '../components/today/WeeklyPlanning';
 import { CapacityBar } from '../components/today/CapacityBar';
 import { MorningRitual } from '../components/today/MorningRitual';
+import { EnergyCheckIn } from '../components/today/EnergyCheckIn';
 import { EveningReview as EveningReviewFlow } from '../components/today/EveningReview';
 import { RolloverModal } from '../components/today/RolloverModal';
 import { QuickAddModal } from '../widgets/Kanban/QuickAddModal';
@@ -507,6 +508,8 @@ export const Today: React.FC = () => {
 
         {/* One state-driven primary action plus a schedule escape hatch. */}
         <div className="flex flex-wrap items-center gap-2">
+          <EnergyCheckIn />
+          <span className="mx-1 hidden h-5 w-px bg-border-light sm:block dark:bg-border-dark" aria-hidden="true" />
           {!isMorningRitualCompleted && (
             <button
               onClick={() => setShowMorningRitual(true)}

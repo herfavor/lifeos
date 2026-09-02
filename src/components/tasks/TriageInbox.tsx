@@ -183,7 +183,7 @@ export const TriageInbox: React.FC<TriageInboxProps> = ({ onTaskClick }) => {
             回到今天
           </button>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/overview')}
             className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-light-primary hover:border-accent-primary dark:border-border-dark dark:text-text-dark-primary"
           >
             快速记录新想法
