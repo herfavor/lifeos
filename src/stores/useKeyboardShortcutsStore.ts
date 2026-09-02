@@ -36,7 +36,7 @@ interface KeyboardShortcutsState {
 // Build a combined list of all known shortcuts for conflict detection
 // (DEFAULT_SHORTCUTS from shortcuts.ts + extended shortcuts)
 const EXTENDED_SHORTCUT_DEFS: Array<{ id: string; keys: string[]; label: string }> = [
-  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往首页' },
+  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往概览' },
   { id: 'go-tasks', keys: ['g', 't'], label: '前往任务' },
   { id: 'go-notes', keys: ['g', 'n'], label: '前往笔记' },
   { id: 'go-calendar', keys: ['g', 'c'], label: '前往日历' },

@@ -43,7 +43,7 @@ test.describe('Primary Navigation', () => {
       ['笔记', /\/notes(?:\?|$)/],
       ['日程', /\/schedule(?:\?|$)/],
       ['项目', /\/pm(?:\?|$)/],
-      ['概览', /\/$/],
+      ['概览', /\/overview$/],
     ] as const) {
       await clickPrimaryNavigationLink(page, label);
       await expect(page).toHaveURL(route);
@@ -127,6 +127,9 @@ test.describe('Direct URL Routing', () => {
   });
 
   test('legacy routes converge on their current homes', async ({ page }) => {
+    await navigateTo(page, '/');
+    await expect(page).toHaveURL(/\/today$/);
+
     await navigateTo(page, '/docs');
     await expect(page).toHaveURL(/\/create$/);
 

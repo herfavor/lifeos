@@ -11,7 +11,7 @@ import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helper
 test.describe('Dashboard Widgets', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
   });
 
   test('can add a widget to dashboard', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('Dashboard Widgets', () => {
     }
 
     // Navigate back to dashboard
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     // Find TaskSummary widget
     const taskSummaryWidget = page.locator('[data-widget="task-summary"], [data-widget-type="TaskSummary"]').or(
@@ -167,7 +167,7 @@ test.describe('Dashboard Widgets', () => {
     }
 
     // Navigate back to dashboard
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     // Find UpcomingEvents widget
     const upcomingEventsWidget = page.locator('[data-widget="upcoming-events"], [data-widget-type="UpcomingEvents"]').or(
@@ -198,7 +198,7 @@ test.describe('Dashboard Widgets', () => {
     }
 
     // Navigate back to dashboard
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     // TaskSummary widget should show updated count
     const taskSummaryWidget = page.locator('[data-widget="task-summary"], [data-widget-type="TaskSummary"]').or(

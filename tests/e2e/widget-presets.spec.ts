@@ -11,7 +11,7 @@ import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helper
 test.describe('Widget Presets', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
   });
 
   test('dashboard has settings gear', async ({ page }) => {

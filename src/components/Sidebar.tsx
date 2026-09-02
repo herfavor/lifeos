@@ -408,7 +408,7 @@ export const Sidebar: React.FC = () => {
       >
       {/* Logo Section */}
       <div className="border-b border-border-light px-4 py-4 dark:border-border-dark">
-        <Link to="/" className="flex flex-col items-center overflow-hidden" aria-label="LifeOS 首页">
+        <Link to="/today" className="flex flex-col items-center overflow-hidden" aria-label="LifeOS 今天">
           {!isCollapsed ? (
             <>
               <img

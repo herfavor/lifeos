@@ -11,7 +11,7 @@ import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helper
 test.describe('Quick Note', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
   });
 
   test('dashboard has quick note widget', async ({ page }) => {

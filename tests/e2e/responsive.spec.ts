@@ -5,7 +5,7 @@ test.describe('Responsive - Mobile (375px)', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test('dashboard uses mobile navigation and keeps desktop sidebar inert', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     await expect(page.getByRole('navigation', { name: '移动端导航' })).toBeVisible();
     const sidebar = page.locator('aside[aria-label="主导航侧边栏"]');
@@ -28,7 +28,7 @@ test.describe('Responsive - Mobile (375px)', () => {
   });
 
   test('daily actions and every More-menu destination are touch reachable', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     const mobileNav = page.getByRole('navigation', { name: '移动端导航' });
     for (const label of ['AI', '今天', '收件箱', '任务', '笔记']) {
@@ -47,7 +47,7 @@ test.describe('Responsive - Tablet (768px)', () => {
   test.use({ viewport: { width: 768, height: 1024 } });
 
   test('dashboard and desktop-style navigation load at md breakpoint', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     const nav = page.getByRole('navigation', { name: '主导航' });
     await expect(nav).toBeVisible();
@@ -60,7 +60,7 @@ test.describe('Responsive - Desktop (1440px)', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test('core navigation is visible directly on desktop', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     const sidebar = page.getByRole('complementary', { name: '主导航侧边栏' });
     await expect(sidebar).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('Responsive - Desktop (1440px)', () => {
   });
 
   test('home keeps the five-step workflow on one row', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     const workflow = page.getByRole('navigation', { name: 'LifeOS 工作流' });
     const topPositions: number[] = [];

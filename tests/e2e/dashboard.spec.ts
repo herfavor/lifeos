@@ -10,7 +10,7 @@ import { navigateTo } from './helpers';
 
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
   });
 
   test('loads the dashboard page', async ({ page }) => {
@@ -45,7 +45,7 @@ test.describe('Dashboard', () => {
 
 test.describe('Dashboard - Widget Manager', () => {
   test('can open widget manager from empty state', async ({ page }) => {
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     // If there's a "Customize Widgets" button (empty state)
     const customizeBtn = page.getByRole('button', { name: /Customize.*Widget/i });
@@ -59,7 +59,7 @@ test.describe('Dashboard - Widget Manager', () => {
 
   test('widget manager has search and categories', async ({ page }) => {
     // Navigate to settings to open widget manager
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
 
     // Try to open via URL hash
     await page.goto('/#customize-widgets');

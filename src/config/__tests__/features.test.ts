@@ -32,7 +32,7 @@ describe('feature visibility', () => {
   });
 
   it('keeps the dashboard and bookmarks available outside the core loop', () => {
-    expect(getFeature('home')).toMatchObject({ label: '概览', path: '/', tier: 'advanced' });
+    expect(getFeature('home')).toMatchObject({ label: '概览', path: '/overview', tier: 'advanced' });
     expect(getFeature('bookmarks')).toMatchObject({ path: '/links', tier: 'advanced' });
   });
 

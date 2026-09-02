@@ -90,7 +90,9 @@ function App() {
       <Layout>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            {/* Today is the landing page; the customizable dashboard lives at /overview */}
+            <Route path="/" element={<Navigate to="/today" replace />} />
+            <Route path="/overview" element={<Dashboard />} />
             <Route path="/ai" element={<AICommandCenterPage />} />
             <Route
               path="/today"

@@ -722,7 +722,7 @@ export function getWidgetsResults(navigate: (path: string) => void): SearchResul
     icon: widget.icon,
     score: 0,
     keywords: ['widget', 'dashboard', widget.category, widget.name.toLowerCase()],
-    action: () => navigate('/'), // Navigate to dashboard where widgets are
+    action: () => navigate('/overview'), // Navigate to the dashboard where widgets are
     metadata: {
       widgetId: widget.id,
       category: widget.category,
@@ -1605,14 +1605,14 @@ export function getCommands(
     // Navigation commands (quick jumps)
     {
       id: 'cmd-go-dashboard',
-      name: '前往首页',
-      aliases: ['home', 'dashboard'],
-      description: '跳转到首页',
+      name: '前往概览',
+      aliases: ['home', 'dashboard', 'overview'],
+      description: '跳转到概览仪表盘',
       icon: '🏠',
       category: 'navigation',
-      keywords: ['go', 'dashboard', 'home', 'main'],
+      keywords: ['go', 'dashboard', 'home', 'main', 'overview'],
       handler: () => {
-        navigate('/');
+        navigate('/overview');
         return true;
       },
     },

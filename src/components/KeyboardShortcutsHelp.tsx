@@ -30,7 +30,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
     {
       category: '导航（Ctrl+数字键）',
       items: [
-        { keys: ['Ctrl+1'], description: '首页' },
+        { keys: ['Ctrl+1'], description: '概览' },
         { keys: ['Ctrl+2'], description: '今日' },
         { keys: ['Ctrl+3'], description: '笔记' },
         { keys: ['Ctrl+4'], description: '任务' },
@@ -43,7 +43,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
     {
       category: '跳转（先按 G 再按按键）',
       items: [
-        { keys: ['G', 'D'], description: '前往首页' },
+        { keys: ['G', 'D'], description: '前往概览' },
         { keys: ['G', 'T'], description: '前往任务' },
         { keys: ['G', 'N'], description: '前往笔记' },
         { keys: ['G', 'H'], description: '前往习惯' },

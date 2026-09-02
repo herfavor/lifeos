@@ -27,7 +27,7 @@ interface ShortcutGroup {
 const EXTENDED_SHORTCUTS: ShortcutDefinition[] = [
   // Global
   { id: 'toggle-sidebar', keys: ['mod', 'b'], label: '切换侧边栏', context: 'global' },
-  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往首页', context: 'global' },
+  { id: 'go-dashboard', keys: ['g', 'd'], label: '前往概览', context: 'global' },
   { id: 'go-tasks', keys: ['g', 't'], label: '前往任务', context: 'global' },
   { id: 'go-notes', keys: ['g', 'n'], label: '前往笔记', context: 'global' },
   { id: 'go-calendar', keys: ['g', 'c'], label: '前往日历', context: 'global' },

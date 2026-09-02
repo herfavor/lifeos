@@ -43,7 +43,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
     // Always start with the overview dashboard
     segments.push({
       label: '概览',
-      path: '/',
+      path: '/overview',
       icon: <Home className="w-3.5 h-3.5" />,
     });
 

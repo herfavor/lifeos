@@ -139,9 +139,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useShortcut({
     id: 'nav-dashboard',
     keys: ['mod', '1'],
-    label: '前往首页',
-    description: '导航至首页',
-    handler: useCallback(() => navigate('/'), [navigate]),
+    label: '前往概览',
+    description: '导航至概览仪表盘',
+    handler: useCallback(() => navigate('/overview'), [navigate]),
     priority: 30,
   });
 
@@ -300,13 +300,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
 
         const routes: Record<string, string> = {
-          d: '/',           // Dashboard
+          d: '/overview',   // Dashboard
           t: '/tasks',      // Tasks
           n: '/notes',      // Notes
           h: '/tasks?tab=habits', // Habits
           c: '/schedule',   // Calendar/Schedule
           s: '/settings',   // Settings
-          o: '/today',      // Today/Overview
+          o: '/today',      // Today
           l: '/links',      // Links
           f: '/focus',      // Focus
         };

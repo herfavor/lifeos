@@ -11,7 +11,7 @@ import { navigateTo, setupConsoleMonitor, assertNoConsoleErrors } from './helper
 test.describe('Widget Manager', () => {
   test.beforeEach(async ({ page }) => {
     setupConsoleMonitor(page);
-    await navigateTo(page, '/');
+    await navigateTo(page, '/overview');
   });
 
   async function openWidgetManager(page: import('@playwright/test').Page) {

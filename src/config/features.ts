@@ -98,7 +98,7 @@ export const FEATURES: FeatureDefinition[] = [
     id: 'home',
     label: '概览',
     icon: '🏠',
-    path: '/',
+    path: '/overview',
     tier: 'advanced',
     description: '可自定义的全局仪表盘',
   },
