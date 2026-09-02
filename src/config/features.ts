@@ -134,14 +134,7 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'advanced',
     description: '每日打卡与连续记录',
   },
-  {
-    id: 'gantt',
-    label: '甘特图',
-    icon: '📈',
-    path: '/tasks?tab=timeline',
-    tier: 'advanced',
-    description: '任务依赖与项目时间线',
-  },
+
   {
     id: 'knowledge-graph',
     label: '知识图谱',
@@ -158,14 +151,7 @@ export const FEATURES: FeatureDefinition[] = [
     tier: 'advanced',
     description: '规则与自动化工作流',
   },
-  {
-    id: 'portfolio',
-    label: '项目组合',
-    icon: '📂',
-    path: '/portfolio',
-    tier: 'advanced',
-    description: '跨项目健康度与高级统计',
-  },
+
   {
     id: 'energy',
     label: '精力追踪',

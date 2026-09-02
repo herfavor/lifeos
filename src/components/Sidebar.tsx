@@ -20,7 +20,6 @@ import {
   ChartNoAxesCombined,
   FileStack,
   FolderKanban,
-  GanttChartSquare,
   Home,
   Inbox,
   ListChecks,
@@ -37,7 +36,6 @@ import {
   Target,
   Dumbbell,
   Workflow,
-  Briefcase,
 } from 'lucide-react';
 import {
   CORE_FEATURES,
@@ -80,13 +78,11 @@ export const NAV_ICONS: Record<string, React.ComponentType<{ className?: string 
   review: ChartNoAxesCombined,
   focus: Target,
   habits: Dumbbell,
-  gantt: GanttChartSquare,
   'knowledge-graph': Network,
   energy: BatteryCharging,
   availability: CalendarCheck2,
   'docs-center': FileStack,
   automations: Workflow,
-  portfolio: Briefcase,
 };
 
 /**

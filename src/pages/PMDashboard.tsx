@@ -293,6 +293,23 @@ export function PMDashboard() {
             {label}
           </button>
         ))}
+
+        {/* Timeline and portfolio are views of the same projects, not separate products */}
+        <div className="ml-auto flex items-center gap-1">
+          {([
+            ['/tasks?tab=timeline', '时间线'],
+            ['/portfolio', '组合'],
+          ] as const).map(([path, label]) => (
+            <button
+              key={path}
+              type="button"
+              onClick={() => navigate(path)}
+              className="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-light-secondary transition-colors hover:text-text-light-primary dark:text-text-dark-secondary dark:hover:text-text-dark-primary"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {showCreateProject && (
