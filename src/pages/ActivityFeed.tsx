@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { List } from 'react-window';
 import { AutoSizer } from 'react-virtualized-auto-sizer';
 import { Activity as ActivityIcon, CheckCircle2, Check, ListTodo } from 'lucide-react';
@@ -27,6 +27,8 @@ import { toast } from '../stores/useToastStore';
 const ActivityHeatmap = lazy(() => import('../components/Analytics/ActivityHeatmap').then(m => ({ default: m.ActivityHeatmap })));
 const ModuleUsageChart = lazy(() => import('../components/Analytics/ModuleUsageChart').then(m => ({ default: m.ModuleUsageChart })));
 const ProductivityTrends = lazy(() => import('../components/Analytics/ProductivityTrends').then(m => ({ default: m.ProductivityTrends })));
+// 每周回顾 lives here as a tab; the legacy /retrospective route redirects to /activity?tab=weekly
+const WeeklyRetrospectiveContent = lazy(() => import('./WeeklyRetrospective'));
 
 const MODULE_ICONS: Record<ModuleType, string> = {
   notes: '\u{1F4DD}',
@@ -259,7 +261,16 @@ export const ActivityFeed: React.FC = () => {
 
   const [moduleFilter, setModuleFilter] = useState<ModuleType | ''>('');
   const [dateRange, setDateRange] = useState<DateRange>('all');
-  const [activeTab, setActiveTab] = useState<'review' | 'feed' | 'analytics'>('review');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: 'review' | 'feed' | 'analytics' | 'weekly' =
+    tabParam === 'feed' || tabParam === 'analytics' || tabParam === 'weekly' ? tabParam : 'review';
+  const setActiveTab = useCallback(
+    (tab: 'review' | 'feed' | 'analytics' | 'weekly') => {
+      setSearchParams(tab === 'review' ? {} : { tab }, { replace: true });
+    },
+    [setSearchParams],
+  );
   const [learning, setLearning] = useState('');
   const [energy, setEnergy] = useState('');
   const [nextActions, setNextActions] = useState('');
@@ -401,7 +412,11 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
         <div>
           <h2 className="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary">工作记录</h2>
           <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary mt-0.5">
-            {activeTab === 'review' ? '关闭开放循环，决定下一轮' : `${filteredEvents.length} 个事件${mergedEventCount > 0 ? ` · 已合并 ${mergedEventCount} 条重复更新` : ''}`}
+            {activeTab === 'review'
+              ? '关闭开放循环，决定下一轮'
+              : activeTab === 'weekly'
+                ? '本周进展、洞察与下一步'
+                : `${filteredEvents.length} 个事件${mergedEventCount > 0 ? ` · 已合并 ${mergedEventCount} 条重复更新` : ''}`}
           </p>
         </div>
 
@@ -432,6 +447,16 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
             }`}
           >
             统计
+          </button>
+          <button
+            onClick={() => setActiveTab('weekly')}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+              activeTab === 'weekly'
+                ? 'bg-accent-primary text-white'
+                : 'text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary'
+            }`}
+          >
+            每周回顾
           </button>
         </div>
       </div>
@@ -509,7 +534,7 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
           </section>
           <div className="mt-5 flex flex-wrap gap-2">
             <button onClick={() => navigate('/today')} className="rounded-lg bg-accent-primary px-4 py-2 text-sm font-medium text-white">处理今天</button>
-            <button onClick={() => navigate('/retrospective')} className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-light-primary dark:border-border-dark dark:text-text-dark-primary">开始每周回顾</button>
+            <button onClick={() => setActiveTab('weekly')} className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-light-primary dark:border-border-dark dark:text-text-dark-primary">开始每周回顾</button>
             <button onClick={() => setActiveTab('feed')} className="rounded-lg border border-border-light px-4 py-2 text-sm text-text-light-secondary dark:border-border-dark dark:text-text-dark-secondary">展开活动记录</button>
           </div>
         </div>
@@ -570,6 +595,12 @@ ${actionTitles.length > 0 ? actionTitles.map((title) => `- [ ] ${title}`).join('
             )}
           </div>
         </>
+      ) : activeTab === 'weekly' ? (
+        <div className="flex-1 overflow-y-auto px-4 py-5 md:px-6">
+          <Suspense fallback={<div className="h-48 rounded-xl border border-border-light dark:border-border-dark animate-pulse bg-surface-light-elevated dark:bg-surface-dark-elevated" />}>
+            <WeeklyRetrospectiveContent />
+          </Suspense>
+        </div>
       ) : (
         /* Analytics Tab */
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 md:px-6">

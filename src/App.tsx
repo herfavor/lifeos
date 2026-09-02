@@ -31,7 +31,6 @@ const PMDashboard = lazy(() => import('./pages/PMDashboard').then((m) => ({ defa
 const ActivityFeed = lazy(() => import('./pages/ActivityFeed').then((m) => ({ default: m.ActivityFeed })));
 const Energy = lazy(() => import('./pages/Energy').then((m) => ({ default: m.Energy })));
 const Portfolio = lazy(() => import('./pages/Portfolio').then((m) => ({ default: m.Portfolio })));
-const WeeklyRetrospective = lazy(() => import('./pages/WeeklyRetrospective').then((m) => ({ default: m.WeeklyRetrospective })));
 const Availability = lazy(() => import('./pages/Availability'));
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })));
 const Privacy = lazy(() => import('./pages/Privacy').then((m) => ({ default: m.Privacy })));
@@ -195,14 +194,10 @@ function App() {
                 </StoreErrorBoundary>
               }
             />
-            {/* Weekly Retrospective */}
+            {/* Weekly retrospective is a tab inside 回顾; keep the legacy route working */}
             <Route
               path="/retrospective"
-              element={
-                <StoreErrorBoundary storeName="retrospective">
-                  <WeeklyRetrospective />
-                </StoreErrorBoundary>
-              }
+              element={<Navigate to="/activity?tab=weekly" replace />}
             />
             {/* Availability sharing */}
             <Route path="/availability" element={<Availability />} />

@@ -159,14 +159,6 @@ export const FEATURES: FeatureDefinition[] = [
     description: '规则与自动化工作流',
   },
   {
-    id: 'retrospective',
-    label: '每周回顾',
-    icon: '🔄',
-    path: '/retrospective',
-    tier: 'advanced',
-    description: '每周复盘与改进建议',
-  },
-  {
     id: 'portfolio',
     label: '项目组合',
     icon: '📂',

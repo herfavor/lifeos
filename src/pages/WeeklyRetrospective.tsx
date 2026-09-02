@@ -1,8 +1,9 @@
 /**
- * Weekly Retrospective Page
+ * Weekly Retrospective
  *
- * Provides a comprehensive view of weekly productivity metrics
- * with AI-powered insights and week-over-week comparisons.
+ * Comprehensive view of weekly productivity metrics with AI-powered
+ * insights and week-over-week comparisons. Rendered as the 每周回顾 tab
+ * inside 回顾 (/activity); the legacy /retrospective route redirects there.
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -29,7 +30,6 @@ import {
   hasRetrospectiveEvidence,
 } from '../services/ai/insightsGenerator';
 import type { WeeklyInsights } from '../services/ai/insightsGenerator';
-import { PageContent } from '../components/PageContent';
 import { EmptyState } from '../components/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { useNotesStore } from '../stores/useNotesStore';
@@ -68,7 +68,7 @@ function DeltaBadge({ value, suffix = '' }: { value: number; suffix?: string }) 
 
 // ─── Component ──────────────────────────────────────────────
 
-export function WeeklyRetrospective() {
+export function WeeklyRetrospectiveContent() {
   const navigate = useNavigate();
   const createNote = useNotesStore((state) => state.createNote);
   const addTask = useKanbanStore((state) => state.addTask);
@@ -201,19 +201,17 @@ ${hasRetrospectiveEvidence(retroData) ? `## 生产力评分：${insights.product
 
   if (!retroData || !insights) {
     return (
-      <PageContent page="retrospective">
-        <EmptyState
-          icon={CalendarDays}
-          title="本周还没有可回顾的记录"
-          description="完成任务、安排日程或记录专注时间后，这里会整理出本周的进展与下一步。"
-          action={{ label: '去安排本周任务', onClick: () => navigate('/tasks') }}
-        />
-      </PageContent>
+      <EmptyState
+        icon={CalendarDays}
+        title="本周还没有可回顾的记录"
+        description="完成任务、安排日程或记录专注时间后，这里会整理出本周的进展与下一步。"
+        action={{ label: '去安排本周任务', onClick: () => navigate('/tasks') }}
+      />
     );
   }
 
   return (
-    <PageContent page="retrospective" className="pb-24">
+    <div className="pb-24">
       <div className="space-y-6">
       {/* Header with week navigation */}
       <div className="flex items-center justify-between">
@@ -465,7 +463,7 @@ ${hasRetrospectiveEvidence(retroData) ? `## 生产力评分：${insights.product
         </div>
       </div>
       </div>
-    </PageContent>
+    </div>
   );
 }
 
@@ -500,4 +498,4 @@ function MetricCard({
   );
 }
 
-export default WeeklyRetrospective;
+export default WeeklyRetrospectiveContent;
