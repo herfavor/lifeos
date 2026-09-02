@@ -41,9 +41,10 @@ describe('feature visibility', () => {
     expect(getFeature('tasks')).toMatchObject({ path: '/tasks', tier: 'core' });
   });
 
-  it('keeps time tracking and pomodoro secondary to the schedule', () => {
-    expect(getFeature('time-tracking')).toMatchObject({ path: '/time', tier: 'advanced' });
-    expect(getFeature('pomodoro')).toMatchObject({ path: '/schedule?tab=pomodoro', tier: 'advanced' });
+  it('exposes one Focus concept while timers stay inside the schedule', () => {
+    expect(getFeature('focus')).toMatchObject({ path: '/focus', tier: 'advanced' });
+    expect(getFeature('time-tracking')).toBeUndefined();
+    expect(getFeature('pomodoro')).toBeUndefined();
   });
 
   it('keeps retired runtime features absent and fail-closed', () => {

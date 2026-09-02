@@ -12,7 +12,6 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  AlarmClock,
   BatteryCharging,
   Bookmark,
   CalendarCheck2,
@@ -37,7 +36,6 @@ import {
   Sparkles,
   Sun,
   Target,
-  Timer,
   Dumbbell,
   Workflow,
   Briefcase,
@@ -81,8 +79,6 @@ export const NAV_ICONS: Record<string, React.ComponentType<{ className?: string 
   notes: NotebookPen,
   bookmarks: Bookmark,
   review: ChartNoAxesCombined,
-  'time-tracking': Timer,
-  pomodoro: AlarmClock,
   focus: Target,
   habits: Dumbbell,
   gantt: GanttChartSquare,
