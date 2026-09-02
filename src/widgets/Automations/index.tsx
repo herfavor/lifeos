@@ -35,6 +35,32 @@ const AUTOMATION_TEMPLATES: AutomationRule[] = [
     created: '',
     runCount: 0,
   },
+  {
+    id: '',
+    name: '逾期任务升级',
+    description: '任务逾期后自动提升为高优先级并加上「需关注」标签。',
+    enabled: true,
+    trigger: { type: 'task.overdue' },
+    conditions: [],
+    actions: [
+      { type: 'set_priority', config: { priority: 'high' } },
+      { type: 'add_tag', config: { tag: '需关注' } },
+      { type: 'notify', config: { message: '有任务逾期了，已帮你标出。' } },
+    ],
+    created: '',
+    runCount: 0,
+  },
+  {
+    id: '',
+    name: '完成后自动归档',
+    description: '任务完成后直接归档，让看板只留下还没做的事。',
+    enabled: true,
+    trigger: { type: 'task.completed' },
+    conditions: [],
+    actions: [{ type: 'archive', config: {} }],
+    created: '',
+    runCount: 0,
+  },
 ];
 
 const ACTION_LABELS: Record<string, string> = {

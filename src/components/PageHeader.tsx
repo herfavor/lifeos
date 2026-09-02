@@ -28,7 +28,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const timeFormat = useSettingsStore((state) => state.timeFormat);
   const [now, setNow] = useState(() => new Date());
 
-  const showDate = location.pathname === '/' || location.pathname === '/today';
+  const showDate = location.pathname === '/overview' || location.pathname === '/today';
   const showProjectContext = PROJECT_AWARE_ROUTES.has(location.pathname);
 
   useEffect(() => {

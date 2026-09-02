@@ -165,8 +165,10 @@ export const Breadcrumbs: React.FC = () => {
   const navigate = useNavigate();
   const segments = useBreadcrumbs();
 
-  // Don't render breadcrumbs if we're on the root with no sub-segments
-  if (segments.length <= 1) return null;
+  // First-level pages already say their name in the page title, so a
+  // 概览 > X trail is noise; only deeper contexts (tabs, folders, docs)
+  // earn a breadcrumb.
+  if (segments.length <= 2) return null;
 
   return (
     <nav

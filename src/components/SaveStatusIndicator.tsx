@@ -25,16 +25,21 @@ export const SaveStatusIndicator: React.FC = () => {
       ? '保存中…'
       : status === 'error'
         ? '保存失败'
-        : lastSaveTime
-          ? formatDistanceToNow(lastSaveTime, { addSuffix: true, locale: zhCN })
-          : '已本地保存';
+        : '已保存';
+
+  const detail =
+    status === 'saving' || status === 'error'
+      ? '所有数据实时保存在本机浏览器中'
+      : lastSaveTime
+        ? `上次保存于${formatDistanceToNow(lastSaveTime, { addSuffix: true, locale: zhCN })}；所有数据实时保存在本机浏览器中`
+        : '所有数据实时保存在本机浏览器中';
 
   return (
     <div
       className="hidden items-center gap-1.5 rounded-full border border-border-light bg-surface-light/80 px-2.5 py-1 backdrop-blur md:flex dark:border-border-dark dark:bg-surface-dark/80"
       role="status"
       aria-live="polite"
-      title="所有数据实时保存在本机浏览器中"
+      title={detail}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${DOT_CLASS[status] ?? DOT_CLASS.idle}`} aria-hidden="true" />
       <span className="text-[11px] font-medium leading-none text-text-light-tertiary dark:text-text-dark-tertiary">
