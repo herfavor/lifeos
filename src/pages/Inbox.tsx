@@ -20,7 +20,7 @@ const priorityDot: Record<TaskPriority, string> = {
   high: 'bg-status-error',
 };
 
-function InboxTaskCard({
+function InboxTaskRow({
   task,
   projects,
   onOpen,
@@ -44,48 +44,38 @@ function InboxTaskCard({
   };
 
   return (
-    <article className="group rounded-xl border border-border-light bg-surface-light p-4 transition-colors hover:border-accent-primary/35 dark:border-border-dark dark:bg-surface-dark">
-      <div className="flex items-start gap-3">
-        <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${priorityDot[task.priority]}`} aria-label={`${PRIORITY_LABELS[task.priority]}优先级`} />
-        <button
-          type="button"
-          onClick={() => onOpen(task)}
-          className="min-w-0 flex-1 text-left"
-        >
-          <div className="flex items-center gap-2">
-            {task.cardNumber && (
-              <span className="text-[11px] font-mono text-text-light-tertiary dark:text-text-dark-tertiary">
-                KAN-{task.cardNumber}
-              </span>
-            )}
-            <h3 className="truncate text-[15px] font-semibold text-text-light-primary dark:text-text-dark-primary">
-              {task.title}
-            </h3>
-          </div>
-          {task.description && (
-            <p className="mt-1 line-clamp-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              {task.description}
-            </p>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={archiveInboxTask}
-          aria-label={`归档「${task.title}」`}
-          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary opacity-0 transition hover:bg-surface-light-elevated hover:text-text-light-secondary focus:opacity-100 group-hover:opacity-100 dark:text-text-dark-tertiary dark:hover:bg-surface-dark-elevated dark:hover:text-text-dark-secondary"
-          title="归档"
-        >
-          <Archive className="h-4 w-4" />
-        </button>
-      </div>
+    <article className="group flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 transition-colors hover:bg-surface-light-elevated/60 dark:hover:bg-surface-dark-elevated/40">
+      <span className={`h-2 w-2 shrink-0 rounded-full ${priorityDot[task.priority]}`} aria-label={`${PRIORITY_LABELS[task.priority]}优先级`} />
 
-      <div className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_160px_auto]">
+      <button
+        type="button"
+        onClick={() => onOpen(task)}
+        className="min-w-0 flex-1 text-left"
+      >
+        <span className="flex items-baseline gap-2">
+          {task.cardNumber && (
+            <span className="text-[11px] font-mono text-text-light-tertiary dark:text-text-dark-tertiary">
+              KAN-{task.cardNumber}
+            </span>
+          )}
+          <span className="truncate text-sm font-medium text-text-light-primary dark:text-text-dark-primary">
+            {task.title}
+          </span>
+        </span>
+        {task.description && (
+          <span className="mt-0.5 block truncate text-xs text-text-light-secondary dark:text-text-dark-secondary">
+            {task.description}
+          </span>
+        )}
+      </button>
+
+      <div className="flex shrink-0 items-center gap-2">
         <label className="sr-only" htmlFor={`inbox-project-${task.id}`}>所属项目</label>
         <select
           id={`inbox-project-${task.id}`}
           value={task.projectIds[0] ?? ''}
           onChange={(event) => updateTask(task.id, { projectIds: event.target.value ? [event.target.value] : [] })}
-          className="h-9 min-w-0 rounded-lg border border-border-light bg-surface-light px-2.5 text-sm text-text-light-secondary outline-none focus:border-accent-primary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-secondary"
+          className="h-8 w-36 rounded-lg border border-transparent bg-transparent px-2 text-xs text-text-light-secondary outline-none hover:border-border-light focus:border-accent-primary dark:text-text-dark-secondary dark:hover:border-border-dark"
         >
           <option value="">未归属项目</option>
           {projects.filter((project) => !project.archivedAt).map((project) => (
@@ -99,16 +89,26 @@ function InboxTaskCard({
           type="date"
           value={task.dueDate ?? ''}
           onChange={(event) => updateTask(task.id, { dueDate: event.target.value || null })}
-          className="h-9 rounded-lg border border-border-light bg-surface-light px-2.5 text-sm text-text-light-secondary outline-none focus:border-accent-primary dark:border-border-dark dark:bg-surface-dark-elevated dark:text-text-dark-secondary"
+          className="h-8 rounded-lg border border-transparent bg-transparent px-2 text-xs text-text-light-secondary outline-none hover:border-border-light focus:border-accent-primary dark:text-text-dark-secondary dark:hover:border-border-dark"
         />
 
         <button
           type="button"
           onClick={scheduleTask}
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent-primary px-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          className="inline-flex h-8 items-center justify-center gap-1 rounded-lg px-2.5 text-xs font-medium text-accent-primary transition-colors hover:bg-accent-primary/10"
         >
           安排
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ArrowRight className="h-3 w-3" />
+        </button>
+
+        <button
+          type="button"
+          onClick={archiveInboxTask}
+          aria-label={`归档「${task.title}」`}
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-text-light-tertiary opacity-0 transition hover:bg-surface-light-elevated hover:text-text-light-secondary focus:opacity-100 group-hover:opacity-100 dark:text-text-dark-tertiary dark:hover:bg-surface-dark-elevated dark:hover:text-text-dark-secondary"
+          title="归档"
+        >
+          <Archive className="h-3.5 w-3.5" />
         </button>
       </div>
     </article>
@@ -180,7 +180,7 @@ export const Inbox: React.FC = () => {
           <ListChecks className="mx-auto h-8 w-8 text-accent-primary" />
           <h3 className="mt-3 text-base font-semibold text-text-light-primary dark:text-text-dark-primary">收件箱清空</h3>
           <p className="mt-1 text-sm text-text-light-secondary dark:text-text-dark-secondary">
-            新想法可以继续从首页快速收集，明确后再安排到任务或日程。
+            新想法可以继续从概览快速收集，明确后再安排到任务或日程。
           </p>
         </div>
       ) : (
@@ -194,9 +194,9 @@ export const Inbox: React.FC = () => {
                 </div>
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{grouped.needsArrangement.length} 项</span>
               </div>
-              <div className="grid gap-3 xl:grid-cols-2">
+              <div className="divide-y divide-border-light/70 overflow-hidden rounded-xl border border-border-light bg-surface-light dark:divide-border-dark/50 dark:border-border-dark dark:bg-surface-dark">
                 {grouped.needsArrangement.map((task) => (
-                  <InboxTaskCard key={task.id} task={task} projects={projects} onOpen={openTask} />
+                  <InboxTaskRow key={task.id} task={task} projects={projects} onOpen={openTask} />
                 ))}
               </div>
             </section>
@@ -211,9 +211,9 @@ export const Inbox: React.FC = () => {
                 </div>
                 <span className="text-xs text-text-light-tertiary dark:text-text-dark-tertiary">{grouped.ready.length} 项</span>
               </div>
-              <div className="grid gap-3 xl:grid-cols-2">
+              <div className="divide-y divide-border-light/70 overflow-hidden rounded-xl border border-border-light bg-surface-light dark:divide-border-dark/50 dark:border-border-dark dark:bg-surface-dark">
                 {grouped.ready.map((task) => (
-                  <InboxTaskCard key={task.id} task={task} projects={projects} onOpen={openTask} />
+                  <InboxTaskRow key={task.id} task={task} projects={projects} onOpen={openTask} />
                 ))}
               </div>
             </section>
